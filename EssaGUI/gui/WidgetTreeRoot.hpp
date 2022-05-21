@@ -7,12 +7,16 @@
 #include <list>
 #include <memory>
 
-namespace GUI {
+namespace GUI
+{
 
-class WidgetTreeRoot : public EventLoop {
+class WidgetTreeRoot : public EventLoop
+{
 public:
     explicit WidgetTreeRoot(sf::RenderWindow& wnd)
-        : m_window(wnd) { }
+        : m_window(wnd)
+    {
+    }
 
     WidgetTreeRoot(WidgetTreeRoot const&) = delete;
     WidgetTreeRoot& operator=(WidgetTreeRoot const&) = delete;
@@ -26,7 +30,8 @@ public:
     void set_needs_relayout() { m_needs_relayout = true; }
 
     template<class T, class... Args>
-    auto& set_main_widget(Args&&... args) {
+    auto& set_main_widget(Args&&... args)
+    {
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         auto widget_ptr = widget.get();
         m_main_widget = std::move(widget);
@@ -35,19 +40,24 @@ public:
     }
 
     template<class T, class... Args>
-    auto& set_created_main_widget(std::shared_ptr<T> w) {
+    auto& set_created_main_widget(std::shared_ptr<T> w)
+    {
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
         m_needs_relayout = true;
         return *widget_ptr;
     }
 
-    void set_id(std::string id){m_id = id;}
+    void set_id(std::string id) { m_id = id; }
 
     virtual void draw();
     virtual void handle_event(sf::Event);
-    virtual void handle_events() {}
-    virtual void update() { m_main_widget->do_update(); }
+    virtual void handle_events() { }
+    virtual void update()
+    {
+        if (m_main_widget)
+            m_main_widget->do_update();
+    }
 
     virtual sf::Vector2f position() const = 0;
     virtual sf::Vector2f size() const = 0;
