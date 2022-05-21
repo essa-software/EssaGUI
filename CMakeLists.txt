@@ -68,7 +68,7 @@ function(setup_target targetname)
     endif()
 
     target_include_directories(${targetname} PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
 endfunction()
 
