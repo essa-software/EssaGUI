@@ -8,41 +8,41 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 
 add_library(essa-gui
-    src/gfx/ClipViewScope.cpp
-    src/gfx/RoundedEdgeRectangleShape.cpp
+    EssaGUI/gfx/ClipViewScope.cpp
+    EssaGUI/gfx/RoundedEdgeRectangleShape.cpp
 
-    src/gui/Application.cpp
-    src/gui/ArrowButton.cpp
-    src/gui/Button.cpp
-    src/gui/ColorPicker.cpp
-    src/gui/Console.cpp
-    src/gui/Container.cpp
-    src/gui/Datebox.cpp
-    src/gui/EventLoop.cpp
-    src/gui/FileExplorer.cpp
-    src/gui/FilePrompt.cpp
-    src/gui/Frame.cpp
-    src/gui/ImageButton.cpp
-    src/gui/ListView.cpp
-    src/gui/MessageBox.cpp
-    src/gui/Prompt.cpp
-    src/gui/SettingsMenu.cpp
-    src/gui/SelectWidget.cpp
-    src/gui/Slider.cpp
-    src/gui/TabWidget.cpp
-    src/gui/Textbox.cpp
-    src/gui/TextButton.cpp
-    src/gui/Textfield.cpp
-    src/gui/Tooltip.cpp
-    src/gui/ToolWindow.cpp
-    src/gui/ValueSlider.cpp
-    src/gui/Widget.cpp
-    src/gui/WidgetTreeRoot.cpp
+    EssaGUI/gui/Application.cpp
+    EssaGUI/gui/ArrowButton.cpp
+    EssaGUI/gui/Button.cpp
+    EssaGUI/gui/ColorPicker.cpp
+    EssaGUI/gui/Console.cpp
+    EssaGUI/gui/Container.cpp
+    EssaGUI/gui/Datebox.cpp
+    EssaGUI/gui/EventLoop.cpp
+    EssaGUI/gui/FileExplorer.cpp
+    EssaGUI/gui/FilePrompt.cpp
+    EssaGUI/gui/Frame.cpp
+    EssaGUI/gui/ImageButton.cpp
+    EssaGUI/gui/ListView.cpp
+    EssaGUI/gui/MessageBox.cpp
+    EssaGUI/gui/Prompt.cpp
+    EssaGUI/gui/SettingsMenu.cpp
+    EssaGUI/gui/SelectWidget.cpp
+    EssaGUI/gui/Slider.cpp
+    EssaGUI/gui/TabWidget.cpp
+    EssaGUI/gui/Textbox.cpp
+    EssaGUI/gui/TextButton.cpp
+    EssaGUI/gui/Textfield.cpp
+    EssaGUI/gui/Tooltip.cpp
+    EssaGUI/gui/ToolWindow.cpp
+    EssaGUI/gui/ValueSlider.cpp
+    EssaGUI/gui/Widget.cpp
+    EssaGUI/gui/WidgetTreeRoot.cpp
 
     # FIXME: There are many things in util that are used in Essa
     #        but not in GUI. Get rid of them here.
-    src/util/SimulationClock.cpp
-    src/util/UnitDisplay.cpp
+    EssaGUI/util/SimulationClock.cpp
+    EssaGUI/util/UnitDisplay.cpp
 )
 
 target_link_libraries(
