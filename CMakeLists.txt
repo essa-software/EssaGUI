@@ -77,3 +77,5 @@ setup_target(essa-gui)
 install(FILES cmake/EssaGUIConfig.cmake DESTINATION lib/cmake/EssaGUI)
 install(DIRECTORY EssaGUI/ DESTINATION include/EssaGUI FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(EXPORT EssaGUI DESTINATION lib/cmake/EssaGUI)
+
+add_subdirectory(examples)
