@@ -3,15 +3,18 @@
 #include "TextAlign.hpp"
 #include <SFML/System/Vector2.hpp>
 
-namespace GUI {
+namespace GUI
+{
 
-void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color)
+{
     m_bg_color = bg_color;
     m_fg_color = fg_color;
     m_text_color = text_color;
 }
 
-void Textfield::draw(sf::RenderWindow& window) const {
+void Textfield::draw(sf::RenderWindow& window) const
+{
     sf::RectangleShape rect(size());
     rect.setFillColor(m_bg_color);
     /*rect.setOutlineColor(m_fg_color);
@@ -25,6 +28,13 @@ void Textfield::draw(sf::RenderWindow& window) const {
     align_text(m_alignment, size(), text);
 
     window.draw(text);
+}
+
+sf::Vector2f Textfield::calculate_text_size() const
+{
+    sf::Text text(m_content, Application::the().font, m_font_size);
+    auto bounds = text.getLocalBounds();
+    return { bounds.width, bounds.height };
 }
 
 }
