@@ -13,7 +13,6 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
     set_title(std::move(title));
 
     auto& prompt_container = set_main_widget<GUI::Container>();
-    prompt_container.set_background_color(sf::Color(70, 70, 70, 100));
 
     auto& prompt_container_layout = prompt_container.set_layout<GUI::VerticalBoxLayout>();
     prompt_container_layout.set_spacing(20);
