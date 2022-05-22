@@ -170,8 +170,6 @@ void ToolWindow::draw() {
     sf::Vector2f position { std::round(this->position().x), std::round(this->position().y) };
     sf::Vector2f size { std::round(this->size().x), std::round(this->size().y) };
 
-    std::cout << position.x << "," << position.y << ":" << size.x << "," << size.y << std::endl;
-
     sf::RectangleShape background { size };
     background.setFillColor(sf::Color(50, 50, 50, 180));
     background.setPosition(position);
