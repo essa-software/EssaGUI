@@ -168,7 +168,7 @@ void ToolWindow::handle_events() {
 
 void ToolWindow::draw() {
     sf::RectangleShape background { size() };
-    background.setFillColor(sf::Color(50, 50, 50, 120));
+    background.setFillColor(sf::Color(50, 50, 50, 180));
     background.setPosition(position());
     window().draw(background);
 
