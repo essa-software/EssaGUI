@@ -16,8 +16,8 @@ public:
     static Theme& default_theme();
 
     struct BgTextColors {
-        sf::Color background;
-        sf::Color text;
+        sf::Color background {};
+        sf::Color text {};
     };
 
     struct ButtonColors {

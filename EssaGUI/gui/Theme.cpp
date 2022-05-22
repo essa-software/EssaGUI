@@ -16,6 +16,7 @@ Theme& Theme::default_theme() {
             .inactive = { .background = sf::Color { 92, 89, 89 }, .text = sf::Color::White },
         };
         theme.tab_button = {
+            .untoggleable = {},
             .active = { .background = sf::Color { 200, 200, 200, 100 }, .text = sf::Color::White },
             .inactive = { .background = sf::Color { 120, 120, 120, 100 }, .text = sf::Color { 180, 180, 180 } }
         };
