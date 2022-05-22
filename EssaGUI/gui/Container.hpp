@@ -19,6 +19,9 @@ public:
     Layout(Container& c)
         : m_container(c) { }
 
+    Layout(Layout const&) = delete;
+    Layout& operator=(Layout const&) = delete;
+
     virtual ~Layout() = default;
 
     virtual void run() = 0;
