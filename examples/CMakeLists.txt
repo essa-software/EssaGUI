@@ -4,3 +4,4 @@ function(add_example targetname)
 endfunction()
 
 add_example(file-explorer)
+add_example(message-box-multiline)
