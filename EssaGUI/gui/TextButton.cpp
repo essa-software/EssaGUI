@@ -7,7 +7,7 @@ namespace GUI {
 
 TextButton::TextButton(Container& c)
     : Button(c) {
-    set_display_attributes(sf::Color(200, 80, 80), sf::Color::Blue, sf::Color::White);
+    set_display_attributes(sf::Color(120, 120, 120), sf::Color::Blue, sf::Color::White);
     set_active_display_attributes(sf::Color(80, 200, 80), sf::Color::Blue, sf::Color::White);
 }
 
