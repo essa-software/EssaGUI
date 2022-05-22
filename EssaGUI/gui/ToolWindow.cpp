@@ -167,27 +167,32 @@ void ToolWindow::handle_events() {
 }
 
 void ToolWindow::draw() {
-    sf::RectangleShape background { size() };
+    sf::Vector2f position { std::round(this->position().x), std::round(this->position().y) };
+    sf::Vector2f size { std::round(this->size().x), std::round(this->size().y) };
+
+    std::cout << position.x << "," << position.y << ":" << size.x << "," << size.y << std::endl;
+
+    sf::RectangleShape background { size };
     background.setFillColor(sf::Color(50, 50, 50, 180));
-    background.setPosition(position());
+    background.setPosition(position);
     window().draw(background);
 
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
     auto color = Application::the().focused_overlay() == this ? sf::Color(160, 160, 160, 150) : sf::Color(127, 127, 127, 150);
 
-    RoundedEdgeRectangleShape rs_titlebar({ size().x + 2, TitleBarSize }, 5);
+    RoundedEdgeRectangleShape rs_titlebar({ size.x + 2, TitleBarSize }, 5);
     rs_titlebar.set_border_radius_bottom_left(0);
     rs_titlebar.set_border_radius_bottom_right(0);
-    rs_titlebar.setPosition(position() - sf::Vector2f(1, TitleBarSize));
+    rs_titlebar.setPosition(position - sf::Vector2f(1, TitleBarSize));
     rs_titlebar.setFillColor(color);
     window().draw(rs_titlebar);
 
     sf::Text title_text(title(), Application::the().font, 15);
-    title_text.setPosition(position() + sf::Vector2f(10, 4 - ToolWindow::TitleBarSize));
+    title_text.setPosition(position + sf::Vector2f(10, 4 - ToolWindow::TitleBarSize));
     window().draw(title_text);
 
-    float titlebar_button_position_x = position().x + size().x - TitleBarSize + 1;
+    float titlebar_button_position_x = position.x + size.x - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {
         // FIXME: For now, there is only a close button. If this becomes not
         //        a case anymore, find a better place for this rendering code.
@@ -197,10 +202,10 @@ void ToolWindow::draw() {
         };
         tbb_background.set_border_radius_top_right(5);
         tbb_background.setFillColor(button.hovered ? sf::Color(240, 80, 80, 100) : sf::Color(200, 50, 50, 100));
-        tbb_background.setPosition(titlebar_button_position_x, position().y - TitleBarSize);
+        tbb_background.setPosition(titlebar_button_position_x, position.y - TitleBarSize);
         window().draw(tbb_background);
 
-        sf::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position().y - TitleBarSize / 2.f) - 1 };
+        sf::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y - TitleBarSize / 2.f) - 1 };
 
         sf::VertexArray varr(sf::Lines, 4);
         sf::Color const CloseButtonColor { 200, 200, 200 };
@@ -214,10 +219,10 @@ void ToolWindow::draw() {
     }
 
     sf::VertexArray varr_border(sf::LineStrip, 4);
-    varr_border[0] = sf::Vertex(position() + sf::Vector2f(-1, 0), color);
-    varr_border[1] = sf::Vertex(position() + sf::Vector2f(-1, size().y), color);
-    varr_border[2] = sf::Vertex(position() + sf::Vector2f(size().x, size().y), color);
-    varr_border[3] = sf::Vertex(position() + sf::Vector2f(size().x, -1), color);
+    varr_border[0] = sf::Vertex(position, color);
+    varr_border[1] = sf::Vertex(position + sf::Vector2f(0, size.y + 1), color);
+    varr_border[2] = sf::Vertex(position + sf::Vector2f(size.x + 1, size.y + 1), color);
+    varr_border[3] = sf::Vertex(position + sf::Vector2f(size.x + 1, 0), color);
     window().draw(varr_border);
     {
         Gfx::ClipViewScope scope(window(), rect(), Gfx::ClipViewScope::Mode::Override);
