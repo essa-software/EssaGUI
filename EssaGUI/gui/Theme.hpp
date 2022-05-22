@@ -29,6 +29,10 @@ public:
     ButtonColors text_button;
     ButtonColors image_button;
     ButtonColors tab_button;
+
+    sf::Color positive; // "green" / the "good" thing like applying changes
+    sf::Color negative; // "red" / the "bad" thing like removing objects
+    sf::Color neutral;  // "blue"
 };
 
 }

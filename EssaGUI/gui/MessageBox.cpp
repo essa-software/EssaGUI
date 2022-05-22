@@ -11,7 +11,6 @@ namespace GUI {
 MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String title, Buttons buttons)
     : ToolWindow(wnd, "MessageBox") {
     set_title(std::move(title));
-    center_on_screen();
 
     auto& prompt_container = set_main_widget<GUI::Container>();
     prompt_container.set_background_color(sf::Color(70, 70, 70, 100));
@@ -28,6 +27,7 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
         auto text_size = prompt_text->calculate_text_size();
         sf::Vector2f total_size { 40 + text_size.x, 90 + text_size.y };
         set_size(total_size);
+        center_on_screen();
     }
 
     auto button_container = prompt_container.add_widget<GUI::Container>();
@@ -47,11 +47,11 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
     };
 
     if (buttons == Buttons::YesNo) {
-        m_default_button = add_button(ButtonRole::Yes, "Yes", sf::Color(100, 200, 100));
-        add_button(ButtonRole::No, "No", sf::Color(100, 100, 100));
+        m_default_button = add_button(ButtonRole::Yes, "Yes", theme().positive);
+        add_button(ButtonRole::No, "No", theme().negative);
     }
     else if (buttons == Buttons::Ok) {
-        m_default_button = add_button(ButtonRole::Ok, "Ok", sf::Color(100, 100, 200));
+        m_default_button = add_button(ButtonRole::Ok, "Ok", theme().neutral);
     }
 }
 

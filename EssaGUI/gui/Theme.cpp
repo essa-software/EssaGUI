@@ -19,6 +19,9 @@ Theme& Theme::default_theme() {
             .active = { .background = sf::Color { 200, 200, 200, 100 }, .text = sf::Color::White },
             .inactive = { .background = sf::Color { 120, 120, 120, 100 }, .text = sf::Color { 180, 180, 180 } }
         };
+        theme.positive = sf::Color(100, 200, 100);
+        theme.negative = sf::Color(200, 100, 100);
+        theme.neutral = sf::Color(100, 100, 200);
         return theme;
     }();
     return th;
