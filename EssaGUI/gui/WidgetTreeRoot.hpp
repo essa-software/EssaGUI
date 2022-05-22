@@ -70,6 +70,8 @@ public:
 protected:
     virtual void tick() override;
 
+    Theme const& theme() const;
+
     bool pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event);
     sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
 

@@ -6,23 +6,19 @@
 #include <cassert>
 #include <iostream>
 
-namespace GUI
-{
+namespace GUI {
 
-void WidgetTreeRoot::set_focused_widget(Widget* w)
-{
+void WidgetTreeRoot::set_focused_widget(Widget* w) {
     m_focused_widget = w;
 }
 
-void WidgetTreeRoot::draw()
-{
+void WidgetTreeRoot::draw() {
     sf::View gui_view { sf::FloatRect(position(), size()) };
     m_window.setView(gui_view);
 
     if (!m_main_widget)
         return;
-    if (m_needs_relayout)
-    {
+    if (m_needs_relayout) {
         // std::cout << m_id << "\n"
         m_main_widget->set_size({ { size().x, Length::Unit::Px }, { size().y, Length::Unit::Px } });
         m_main_widget->set_raw_size(size());
@@ -33,16 +29,14 @@ void WidgetTreeRoot::draw()
     m_main_widget->do_draw(m_window);
 }
 
-void WidgetTreeRoot::handle_event(sf::Event event)
-{
+void WidgetTreeRoot::handle_event(sf::Event event) {
     if (!m_main_widget)
         return;
     Event gui_event(event);
     m_main_widget->do_handle_event(gui_event);
 }
 
-void WidgetTreeRoot::tick()
-{
+void WidgetTreeRoot::tick() {
     // Handle events only for the current WTR...
     // (so that e.g. the simulation doesn't run)
     handle_events();
@@ -65,15 +59,12 @@ void WidgetTreeRoot::tick()
     Application::the().remove_closed_overlays();
 }
 
-sf::Event WidgetTreeRoot::transform_event(sf::Vector2f offset, sf::Event event) const
-{
-    if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased)
-    {
+sf::Event WidgetTreeRoot::transform_event(sf::Vector2f offset, sf::Event event) const {
+    if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
         event.mouseButton.x -= offset.x;
         event.mouseButton.y -= offset.y;
     }
-    else if (event.type == sf::Event::MouseMoved)
-    {
+    else if (event.type == sf::Event::MouseMoved) {
         event.mouseMove.x -= offset.x;
         event.mouseMove.y -= offset.y;
     }
@@ -81,12 +72,15 @@ sf::Event WidgetTreeRoot::transform_event(sf::Vector2f offset, sf::Event event) 
     return event;
 }
 
-bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event)
-{
+bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event) {
     wtr.handle_event(transform_event(wtr.position(), event));
     bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
         && !wtr.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
     return !(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window);
+}
+
+Theme const& WidgetTreeRoot::theme() const {
+    return Application::the().theme();
 }
 
 }
