@@ -1,10 +1,10 @@
 #include "ToolWindow.hpp"
 
-#include <EssaGUI/gfx/ClipViewScope.hpp>
-#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
 #include "Application.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
+#include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
 
 #include <SFML/Window/Cursor.hpp>
 #include <cassert>
@@ -200,7 +200,7 @@ void ToolWindow::draw() {
         tbb_background.setPosition(titlebar_button_position_x, position().y - TitleBarSize);
         window().draw(tbb_background);
 
-        sf::Vector2f button_center { titlebar_button_position_x + TitleBarSize / 2.f, position().y - TitleBarSize / 2.f };
+        sf::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position().y - TitleBarSize / 2.f) - 1 };
 
         sf::VertexArray varr(sf::Lines, 4);
         sf::Color const CloseButtonColor { 200, 200, 200 };
@@ -213,12 +213,12 @@ void ToolWindow::draw() {
         titlebar_button_position_x -= TitleBarSize;
     }
 
-    sf::RectangleShape rs_border(size() - sf::Vector2f(0, 1));
-    rs_border.setPosition(position() + sf::Vector2f(0, 1));
-    rs_border.setFillColor(sf::Color::Transparent);
-    rs_border.setOutlineColor(color);
-    rs_border.setOutlineThickness(1);
-    window().draw(rs_border);
+    sf::VertexArray varr_border(sf::LineStrip, 4);
+    varr_border[0] = sf::Vertex(position() + sf::Vector2f(-1, 0), color);
+    varr_border[1] = sf::Vertex(position() + sf::Vector2f(-1, size().y), color);
+    varr_border[2] = sf::Vertex(position() + sf::Vector2f(size().x, size().y), color);
+    varr_border[3] = sf::Vertex(position() + sf::Vector2f(size().x, -1), color);
+    window().draw(varr_border);
     {
         Gfx::ClipViewScope scope(window(), rect(), Gfx::ClipViewScope::Mode::Override);
         WidgetTreeRoot::draw();
