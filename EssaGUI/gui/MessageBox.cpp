@@ -16,7 +16,7 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
     center_on_screen();
 
     auto& prompt_container = set_main_widget<GUI::Container>();
-    prompt_container.set_background_color(sf::Color::White);
+    prompt_container.set_background_color(sf::Color(70, 70, 70, 100));
 
     auto& prompt_container_layout = prompt_container.set_layout<GUI::VerticalBoxLayout>();
     prompt_container_layout.set_spacing(20);
@@ -25,7 +25,6 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
     auto prompt_text = prompt_container.add_widget<GUI::Textfield>();
     prompt_text->set_content(std::move(message));
     prompt_text->set_alignment(GUI::Align::Center);
-    prompt_text->set_display_attributes(sf::Color::Transparent, sf::Color::Transparent, sf::Color::Black);
 
     {
         auto text_size = prompt_text->calculate_text_size();
