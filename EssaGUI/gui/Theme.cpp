@@ -17,7 +17,7 @@ Theme& Theme::default_theme() {
         };
         theme.tab_button = {
             .active = { .background = sf::Color { 200, 200, 200, 100 }, .text = sf::Color::White },
-            .inactive = { .background = sf::Color { 80, 80, 80, 100 }, .text = sf::Color { 180, 180, 180 } }
+            .inactive = { .background = sf::Color { 120, 120, 120, 100 }, .text = sf::Color { 180, 180, 180 } }
         };
         return theme;
     }();
