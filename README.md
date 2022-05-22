@@ -1,6 +1,6 @@
 # EssaGUI
 
-A GUI framework written in C++. It was initially a component of []
+A GUI framework written in C++. It was initially a component of [ESSA](https://github.com/Adam-Ratajczak/essa).
 
 ## Build
 
