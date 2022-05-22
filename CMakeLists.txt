@@ -33,6 +33,7 @@ add_library(essa-gui
     EssaGUI/gui/Textbox.cpp
     EssaGUI/gui/TextButton.cpp
     EssaGUI/gui/Textfield.cpp
+    EssaGUI/gui/Theme.cpp
     EssaGUI/gui/Tooltip.cpp
     EssaGUI/gui/ToolWindow.cpp
     EssaGUI/gui/ValueSlider.cpp

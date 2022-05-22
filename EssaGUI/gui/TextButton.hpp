@@ -26,6 +26,8 @@ public:
 private:
     virtual void draw(sf::RenderWindow& window) const override;
 
+    virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
+
     sf::String m_content;
     sf::String m_active_content;
     unsigned m_font_size = 20;

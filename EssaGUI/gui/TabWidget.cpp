@@ -1,8 +1,8 @@
 #include "TabWidget.hpp"
 
-#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
 #include "Application.hpp"
 #include "Container.hpp"
+#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -17,6 +17,8 @@ public:
     static sf::Color const BgColor;
 
 private:
+    virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
+
     virtual void draw(sf::RenderWindow&) const override;
 };
 
@@ -52,10 +54,6 @@ void TabSelectWidget::add_button(std::string caption, size_t tab_index) {
     button->set_active_content(caption);
     button->set_content(std::move(caption));
     button->set_active(tab_index == 0);
-    button->set_active_display_attributes(TabButton::BgColor + sf::Color(60, 60, 60, 0), sf::Color::Transparent, sf::Color::White);
-    button->set_display_attributes(sf::Color(80, 80, 80, 100),
-        sf::Color::Transparent,
-        sf::Color(180, 180, 180));
     button->on_click = [this, tab_index]() {
         switch_to_tab(tab_index);
         static_cast<TabWidget*>(parent())->switch_to_tab(tab_index);
@@ -86,10 +84,10 @@ TabWidget::TabWidget(Container& c)
 void TabWidget::switch_to_tab(size_t index) {
     assert(index < m_tabs.size());
 
-    if(on_tab_switch)
+    if (on_tab_switch)
         on_tab_switch(index);
     m_index = index;
-    
+
     for (size_t s = 0; s < m_tabs.size(); s++)
         m_tabs[s]->set_visible(s == index);
     m_tab_select->switch_to_tab(index);

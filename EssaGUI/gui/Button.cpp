@@ -20,33 +20,23 @@ void Button::handle_event(Event& event) {
 }
 
 sf::Color Button::text_color_for_state() const {
-    return is_active() ? m_active_text_color : m_text_color;
+    auto colors = m_button_colors_override.value_or(default_button_colors());
+    return color_for_state(m_toggleable
+            ? (m_active ? colors.active.text : colors.inactive.text)
+            : colors.untoggleable.text);
 }
 
 sf::Color Button::bg_color_for_state() const {
-    sf::Color base_color = is_active() ? m_active_bg_color : m_bg_color;
+    auto colors = m_button_colors_override.value_or(default_button_colors());
+    return color_for_state(m_toggleable
+            ? (m_active ? colors.active.background : colors.inactive.background)
+            : colors.untoggleable.background);
+}
+
+sf::Color Button::color_for_state(sf::Color color) const {
     if (is_hover())
-        base_color += sf::Color { 20, 20, 20, 0 };
-    return base_color;
-}
-
-sf::Color Button::fg_color_for_state() const {
-    sf::Color base_color = is_active() ? m_active_fg_color : m_fg_color;
-    if (is_hover())
-        base_color += sf::Color { 20, 20, 20, 0 };
-    return base_color;
-}
-
-void Button::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
-    m_bg_color = bg_color;
-    m_fg_color = fg_color;
-    m_text_color = text_color;
-}
-
-void Button::set_active_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
-    m_active_bg_color = bg_color;
-    m_active_fg_color = fg_color;
-    m_active_text_color = text_color;
+        color += sf::Color { 20, 20, 20, 0 };
+    return color;
 }
 
 void Button::click() {

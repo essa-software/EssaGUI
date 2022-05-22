@@ -7,15 +7,11 @@ namespace GUI {
 
 TextButton::TextButton(Container& c)
     : Button(c) {
-    set_display_attributes(sf::Color(120, 120, 120), sf::Color::Blue, sf::Color::White);
-    set_active_display_attributes(sf::Color(80, 200, 80), sf::Color::Blue, sf::Color::White);
 }
 
 void TextButton::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
     rect.setFillColor(bg_color_for_state());
-    rect.setOutlineColor(fg_color_for_state());
-    rect.setOutlineThickness(3);
     window.draw(rect);
 
     sf::Text text(m_content, Application::the().font, 15);

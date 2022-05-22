@@ -13,6 +13,8 @@ public:
 private:
     virtual LengthVector initial_size() const override;
 
+    virtual Theme::ButtonColors default_button_colors() const override { return theme().image_button; }
+
     sf::Texture m_texture;
 };
 

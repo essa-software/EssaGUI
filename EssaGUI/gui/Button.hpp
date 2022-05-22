@@ -4,6 +4,7 @@
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>
+#include <optional>
 
 namespace GUI {
 
@@ -27,31 +28,32 @@ public:
         }
     }
 
-    void set_active_without_action(bool state){m_active = state;}
-
+    void set_active_without_action(bool state) { m_active = state; }
     void set_toggleable(bool t) { m_toggleable = t; }
-
-    void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
-    void set_active_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
 
     std::function<void(bool)> on_change;
 
+    // TODO: Replace this with full theme override system
+    virtual Theme::ButtonColors& override_button_colors() {
+        if (m_button_colors_override)
+            return *m_button_colors_override;
+        m_button_colors_override = default_button_colors();
+        return *m_button_colors_override;
+    }
+
 protected:
+    sf::Color color_for_state(sf::Color) const;
     sf::Color bg_color_for_state() const;
-    sf::Color fg_color_for_state() const;
     sf::Color text_color_for_state() const;
+
+    virtual Theme::ButtonColors default_button_colors() const = 0;
 
     virtual bool accepts_focus() const override { return true; }
 
 private:
     void click();
 
-    sf::Color m_bg_color { 92, 89, 89 };
-    sf::Color m_fg_color { 0, 0, 255 };
-    sf::Color m_text_color { 255, 255, 255 };
-    sf::Color m_active_bg_color { 0, 80, 255 };
-    sf::Color m_active_fg_color { 0, 0, 255 };
-    sf::Color m_active_text_color { 255, 255, 255 };
+    std::optional<Theme::ButtonColors> m_button_colors_override;
 
     bool m_toggleable { false };
     bool m_active { false };

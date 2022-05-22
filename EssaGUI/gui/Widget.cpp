@@ -1,9 +1,9 @@
 #include "Widget.hpp"
 
-#include <EssaGUI/gfx/ClipViewScope.hpp>
 #include "Application.hpp"
 #include "Container.hpp"
 #include "Tooltip.hpp"
+#include <EssaGUI/gfx/ClipViewScope.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -135,6 +135,10 @@ void Widget::set_needs_relayout() {
 
 sf::RenderWindow& Widget::window() const {
     return m_widget_tree_root.window();
+}
+
+Theme const& Widget::theme() const {
+    return Application::the().theme();
 }
 
 void Widget::dump(unsigned depth) {

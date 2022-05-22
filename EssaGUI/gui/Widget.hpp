@@ -1,34 +1,30 @@
 #pragma once
 
+#include <EssaGUI/gui/Theme.hpp>
 #include <EssaGUI/util/Units.hpp>
 #include <SFML/Graphics.hpp>
 #include <cassert>
 #include <string_view>
 
-namespace GUI
-{
+namespace GUI {
 
 class Container;
 class TooltipOverlay;
 class WidgetTreeRoot;
 
-struct LengthVector
-{
+struct LengthVector {
     Length x;
     Length y;
 };
 
-constexpr bool operator==(LengthVector const& a, LengthVector const& b)
-{
+constexpr bool operator==(LengthVector const& a, LengthVector const& b) {
     return a.x == b.x && a.y == b.y;
 }
 
-class Event
-{
+class Event {
 public:
     Event(sf::Event const& event)
-        : m_event(event)
-    {
+        : m_event(event) {
     }
 
     sf::Event event() const { return m_event; }
@@ -41,13 +37,11 @@ public:
 
     sf::Event::EventType type() const { return m_event.type; }
 
-    bool is_mouse_related() const
-    {
+    bool is_mouse_related() const {
         return m_event.type == sf::Event::MouseMoved || m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased;
     }
 
-    sf::Vector2f mouse_position() const
-    {
+    sf::Vector2f mouse_position() const {
         assert(is_mouse_related());
         if (m_event.type == sf::Event::MouseMoved)
             return { static_cast<float>(m_event.mouseMove.x), static_cast<float>(m_event.mouseMove.y) };
@@ -62,8 +56,7 @@ private:
     bool m_seen = false;
 };
 
-class Widget
-{
+class Widget {
 public:
     explicit Widget(Container& parent);
 
@@ -78,23 +71,19 @@ public:
     virtual void do_update();
     virtual void draw(sf::RenderWindow& window) const;
 
-    void set_raw_position(sf::Vector2f p)
-    {
+    void set_raw_position(sf::Vector2f p) {
         m_pos = p;
     }
-    void set_raw_size(sf::Vector2f s)
-    {
+    void set_raw_size(sf::Vector2f s) {
         m_size = s;
     }
 
-    void set_position(LengthVector l)
-    {
+    void set_position(LengthVector l) {
         m_expected_pos = l;
         set_needs_relayout();
     }
 
-    void set_size(LengthVector l)
-    {
+    void set_size(LengthVector l) {
         m_input_size = l;
         set_needs_relayout();
     }
@@ -109,10 +98,8 @@ public:
     virtual void do_relayout();
     virtual void do_draw(sf::RenderWindow&) const;
 
-    void set_visible(bool visible)
-    {
-        if (m_visible != visible)
-        {
+    void set_visible(bool visible) {
+        if (m_visible != visible) {
             m_visible = visible;
             set_needs_relayout();
         }
@@ -143,11 +130,11 @@ public:
 
 protected:
     explicit Widget(WidgetTreeRoot& wtr)
-        : m_widget_tree_root(wtr)
-    {
+        : m_widget_tree_root(wtr) {
     }
 
     WidgetTreeRoot& widget_tree_root() const { return m_widget_tree_root; }
+    Theme const& theme() const;
 
     virtual void relayout() { }
     virtual bool is_mouse_over(sf::Vector2i) const;

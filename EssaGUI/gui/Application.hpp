@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Container.hpp"
+#include "Theme.hpp"
 #include "ToolWindow.hpp"
 #include "Tooltip.hpp"
 #include "WidgetTreeRoot.hpp"
@@ -9,9 +10,11 @@
 #include <iostream>
 #include <list>
 
-namespace GUI {
+namespace GUI
+{
 
-class Application : public WidgetTreeRoot {
+class Application : public WidgetTreeRoot
+{
 public:
     explicit Application(sf::RenderWindow&);
 
@@ -27,18 +30,21 @@ public:
     sf::Font bold_font;
     sf::Font fixed_width_font;
 
-    enum class NotificationLevel {
+    enum class NotificationLevel
+    {
         Error
     };
     void spawn_notification(std::string message, NotificationLevel);
 
     template<class T = Overlay, class... Args>
     requires(std::is_base_of_v<Overlay, T>)
-        T& open_overlay(Args&&... args) {
+        T& open_overlay(Args&&... args)
+    {
         return static_cast<T&>(open_overlay_impl(std::make_unique<T>(window(), std::forward<Args>(args)...)));
     }
 
-    struct OpenOrFocusResult {
+    struct OpenOrFocusResult
+    {
         ToolWindow* window {};
         bool opened {};
     };
@@ -47,7 +53,8 @@ public:
     Overlay* focused_overlay() const { return m_focused_overlay; }
 
     template<class Callback>
-    void for_each_overlay(Callback&& callback) {
+    void for_each_overlay(Callback&& callback)
+    {
         for (auto& wnd : m_overlays)
             callback(*wnd);
     }
@@ -58,11 +65,15 @@ public:
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
 
+    void set_theme(Theme const& theme) { m_theme = &theme; }
+    Theme const& theme() const { return *m_theme; }
+
 private:
     virtual void handle_events() override;
     virtual void update() override;
 
-    struct Notification {
+    struct Notification
+    {
         int remaining_ticks = 120;
         std::string message;
         NotificationLevel level {};
@@ -80,6 +91,7 @@ private:
     sf::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
+    Theme const* m_theme = &Theme::default_theme();
 };
 
 }

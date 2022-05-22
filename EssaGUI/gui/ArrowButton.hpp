@@ -27,6 +27,8 @@ public:
     double arrow_size() const { return m_arrow_size; }
 
 private:
+    virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
+
     sf::Color m_arrow_color = sf::Color(200, 200, 200);
     ArrowType m_arrow_type = ArrowType::TOPARROW;
     double m_arrow_size = 8;
