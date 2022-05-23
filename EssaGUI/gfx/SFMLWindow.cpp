@@ -220,9 +220,9 @@ void SFMLWindow::draw_text(sf::String const& text, sf::Font const& font, sf::Vec
     draw_vertices(GL_TRIANGLES, vertices);
     set_texture(nullptr);
 
-    auto size = calculate_text_size(text, font, options);
-    draw_rectangle({ position, { size.x, 1 } }, debug_rect);
-    draw_rectangle({ position, { 1, -size.y } }, debug_rect);
+    // auto size = calculate_text_size(text, font, options);
+    // draw_rectangle({ position, { size.x, 1 } }, debug_rect);
+    // draw_rectangle({ position, { 1, -size.y } }, debug_rect);
 }
 
 void SFMLWindow::draw_text_aligned_in_rect(sf::String const& text, sf::FloatRect rect, sf::Font const& font, TextDrawOptions const& options) {
