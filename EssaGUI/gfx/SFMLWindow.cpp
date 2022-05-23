@@ -174,9 +174,14 @@ void SFMLWindow::draw_text(sf::String const& text, sf::Font const& font, sf::Vec
     RectangleDrawOptions debug_rect;
     debug_rect.fill_color = sf::Color::Red;
 
-    // TODO: Handle newlines
     auto texture = &font.getTexture(options.font_size);
     for (auto codepoint : text) {
+        if (codepoint == '\n') {
+            current_pos.x = position.x;
+            current_pos.y += font.getLineSpacing(options.font_size);
+            continue;
+        }
+
         auto glyph = font.getGlyph(codepoint, options.font_size, false);
         float texture_size_y = texture->getSize().y;
 
@@ -247,7 +252,7 @@ void SFMLWindow::draw_text_aligned_in_rect(sf::String const& text, sf::FloatRect
         // TODO: Handle other alignments
         offset = {};
     }
-    draw_text(text, font, sf::Vector2f { rect.left, rect.top + text_size.y } + offset, options);
+    draw_text(text, font, sf::Vector2f { rect.left, rect.top + font.getGlyph('x', options.font_size, false).bounds.height } + offset, options);
 }
 
 void SFMLWindow::draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOptions const& options) {
@@ -268,11 +273,21 @@ void SFMLWindow::draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOption
 sf::Vector2f SFMLWindow::calculate_text_size(sf::String const& text, sf::Font const& font, TextDrawOptions const& options) {
     sf::Vector2f total_size;
     total_size.y = font.getGlyph('x', options.font_size, false).bounds.height;
-    // TODO: Handle newlines
+    float line_size_x = 0;
     for (auto codepoint : text) {
+        if (codepoint == '\n') {
+            total_size.y += font.getLineSpacing(options.font_size);
+            if (line_size_x > total_size.x) {
+                total_size.x = line_size_x;
+            }
+            line_size_x = 0;
+            continue;
+        }
         auto glyph = font.getGlyph(codepoint, options.font_size, false);
-        total_size.x += glyph.advance;
+        line_size_x += glyph.advance;
     }
+    if (line_size_x > total_size.x)
+        total_size.x = line_size_x;
     return total_size;
 }
 
