@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include <SFML/Graphics.hpp>
 
 namespace Gfx {
@@ -11,13 +12,13 @@ public:
         Intersect   // current = old ∩ new
     };
 
-    ClipViewScope(sf::RenderTarget& target, sf::FloatRect rect, Mode);
+    ClipViewScope(GUI::SFMLWindow& target, sf::FloatRect rect, Mode);
     ~ClipViewScope();
 
 private:
     sf::View create_clip_view(sf::FloatRect const&) const;
 
-    sf::RenderTarget& m_target;
+    GUI::SFMLWindow& m_target;
     sf::View m_old_view;
 };
 

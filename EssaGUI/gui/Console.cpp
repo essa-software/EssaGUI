@@ -1,6 +1,7 @@
 #include "Console.hpp"
 
 #include "Application.hpp"
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include <SFML/Graphics.hpp>
 
 namespace GUI {
@@ -42,13 +43,13 @@ void Console::clear() {
 
 constexpr float PADDING = 5;
 
-void Console::draw(sf::RenderWindow& window) const {
+void Console::draw(GUI::SFMLWindow& window) const {
     size_t s = 0;
     for (auto& line : m_lines) {
-        sf::Text text(line.text, Application::the().fixed_width_font, 15);
-        text.setPosition(PADDING, s * LINE_SPACING - m_scroll + PADDING);
-        text.setFillColor(line.color);
-        window.draw(text);
+        TextDrawOptions options;
+        options.fill_color = line.color;
+        options.font_size = 15;
+        window.draw_text(line.text, Application::the().fixed_width_font, { PADDING, s * LINE_SPACING - m_scroll + PADDING + 12 }, options);
         s++;
     }
 
@@ -56,9 +57,7 @@ void Console::draw(sf::RenderWindow& window) const {
     float scroll_area_size = this->scroll_area_size();
     float content_size = this->content_size();
     if (content_size > scroll_area_size) {
-        sf::RectangleShape scrollbar(sf::Vector2f(3, scroll_area_size / content_size * scroll_area_size));
-        scrollbar.setPosition(size().x - 3, m_scroll * scroll_area_size / content_size + PADDING);
-        window.draw(scrollbar);
+        window.draw_rectangle({ { size().x - 3, m_scroll * scroll_area_size / content_size + PADDING }, { 3, scroll_area_size / content_size * scroll_area_size } });
     }
 }
 

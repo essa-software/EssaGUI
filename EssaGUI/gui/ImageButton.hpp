@@ -8,7 +8,7 @@ class ImageButton : public Button {
 public:
     ImageButton(Container&, sf::Image);
 
-    virtual void draw(sf::RenderWindow& window) const override;
+    virtual void draw(GUI::SFMLWindow& window) const override;
 
 private:
     virtual LengthVector initial_size() const override;

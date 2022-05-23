@@ -1,10 +1,10 @@
 #include "Application.hpp"
 
-#include <EssaGUI/gfx/ClipViewScope.hpp>
-#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "ToolWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
+#include <EssaGUI/gfx/ClipViewScope.hpp>
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -20,7 +20,7 @@ Application& Application::the() {
     return *s_the;
 }
 
-Application::Application(sf::RenderWindow& wnd)
+Application::Application(GUI::SFMLWindow& wnd)
     : WidgetTreeRoot(wnd) {
     assert(!s_the);
     s_the = this;
@@ -117,20 +117,21 @@ void Application::draw() {
 }
 
 void Application::draw_notification(Notification const& notification, float y) const {
-    sf::Text text { notification.message, font, 15 };
-    auto text_bounds = text.getLocalBounds();
-    text.setPosition(window().getSize().x - text_bounds.width - 20, y + 20);
+    TextDrawOptions text;
+    text.font_size = 15;
+    auto text_bounds = window().calculate_text_size(notification.message, font, text);
+    sf::Vector2f text_position { window().getSize().x - text_bounds.x - 20, y + 20 };
 
-    RoundedEdgeRectangleShape rs { { text_bounds.width + 20, text_bounds.height + 30 }, 10 };
-    rs.setPosition(text_bounds.left - 10 + text.getPosition().x, text_bounds.top - 15 + text.getPosition().y);
-    sf::Color rs_fill_color;
+    RectangleDrawOptions rs;
+    rs.set_border_radius(10);
     switch (notification.level) {
     case NotificationLevel::Error:
-        rs_fill_color = { 155, 50, 50, 100 };
+        rs.fill_color = { 155, 50, 50, 100 };
+        break;
     }
-    rs.setFillColor(rs_fill_color);
-    window().draw(rs);
-    window().draw(text);
+
+    window().draw_rectangle({ { text_position.x - 10 + text_position.x, text_position.y - 15 + text_position.y }, { text_bounds.x + 20, text_bounds.y + 30 } });
+    window().draw_text(notification.message, font, { window().getSize().x - text_bounds.x - 20, y + 20 });
 }
 
 void Application::spawn_notification(std::string message, NotificationLevel level) {

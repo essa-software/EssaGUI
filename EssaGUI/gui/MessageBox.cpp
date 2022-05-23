@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String title, Buttons buttons)
+MessageBox::MessageBox(GUI::SFMLWindow& wnd, sf::String message, sf::String title, Buttons buttons)
     : ToolWindow(wnd, "MessageBox") {
     set_title(std::move(title));
 
@@ -24,7 +24,7 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
 
     {
         auto text_size = prompt_text->calculate_text_size();
-        sf::Vector2f total_size { 40 + text_size.x, 90 + text_size.y };
+        sf::Vector2f total_size { 40 + text_size.x, 110 + text_size.y };
         set_size(total_size);
         center_on_screen();
     }

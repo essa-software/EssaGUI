@@ -2,22 +2,26 @@
 
 #include "Application.hpp"
 
+#include <EssaGUI/gfx/SFMLWindow.hpp>
+
 namespace GUI {
 
 void TooltipOverlay::draw() {
-    sf::Text text(m_tooltip.text, Application::the().font, 15);
-    text.setFillColor(sf::Color::Black);
-    text.setPosition(position());
+    TextDrawOptions text;
+    text.font_size = 15;
+    text.fill_color = sf::Color::Black;
+    text.text_align = Align::CenterLeft;
 
-    auto bounds = text.getGlobalBounds();
+    auto bounds = window().calculate_text_size(m_tooltip.text, Application::the().font, text);
 
-    sf::RectangleShape bg { { bounds.width + 10, bounds.height + 10 } };
-    auto x_pos = std::min(window().getSize().x - bg.getSize().x, bounds.left - 5);
-    bg.setPosition(x_pos, bounds.top - 5);
-    text.setPosition(x_pos + 5, text.getPosition().y);
-    window().draw(bg);
+    auto x_pos = std::min(window().getSize().x - (bounds.x + 10), position().x - 5);
+    window().draw_rectangle({
+        { x_pos, position().y - 15 },
+        { bounds.x + 10, bounds.y + 10 },
+    });
 
-    window().draw(text);
+    // FIXME: Text size is calculated 2x
+    window().draw_text_aligned_in_rect(m_tooltip.text, rect(), Application::the().font, text);
 }
 
 }

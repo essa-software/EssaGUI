@@ -132,7 +132,7 @@ std::string FileModel::file_type(std::filesystem::path path) {
     return it->second;
 }
 
-FileExplorer::FileExplorer(sf::RenderWindow& wnd)
+FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     : ToolWindow(wnd) {
 
     auto& container = set_main_widget<GUI::Container>();

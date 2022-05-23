@@ -24,7 +24,7 @@ public:
     sf::String active_content() const { return m_content; }
 
 private:
-    virtual void draw(sf::RenderWindow& window) const override;
+    virtual void draw(GUI::SFMLWindow& window) const override;
 
     virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
 

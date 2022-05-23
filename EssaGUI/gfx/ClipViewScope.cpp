@@ -2,9 +2,9 @@
 
 namespace Gfx {
 
-ClipViewScope::ClipViewScope(sf::RenderTarget& target, sf::FloatRect rect, Mode mode)
+ClipViewScope::ClipViewScope(GUI::SFMLWindow& target, sf::FloatRect rect, Mode mode)
     : m_target(target)
-    , m_old_view(target.getView()) {
+    , m_old_view(target.view()) {
 
     auto clip_rect = [&]() {
         switch (mode) {
@@ -25,11 +25,11 @@ ClipViewScope::ClipViewScope(sf::RenderTarget& target, sf::FloatRect rect, Mode 
         }
         __builtin_unreachable();
     }();
-    m_target.setView(create_clip_view(clip_rect));
+    m_target.set_view(create_clip_view(clip_rect));
 }
 
 ClipViewScope::~ClipViewScope() {
-    m_target.setView(m_old_view);
+    m_target.set_view(m_old_view);
 }
 
 sf::View ClipViewScope::create_clip_view(sf::FloatRect const& rect) const {

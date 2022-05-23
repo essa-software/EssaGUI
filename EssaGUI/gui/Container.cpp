@@ -158,7 +158,7 @@ void Container::do_relayout() {
     }
 }
 
-void Container::do_draw(sf::RenderWindow& window) const {
+void Container::do_draw(GUI::SFMLWindow& window) const {
     Widget::do_draw(window);
     for (auto const& w : m_widgets) {
         if (w->is_visible())

@@ -1,15 +1,15 @@
 #include "Frame.hpp"
-
-#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 
 #include <iostream>
 
 namespace GUI {
 
-void Frame::draw(sf::RenderWindow& window) const {
-    RoundedEdgeRectangleShape rers(size(), BorderRadius);
-    rers.setFillColor(sf::Color(50, 50, 50, 150));
-    window.draw(rers);
+void Frame::draw(GUI::SFMLWindow& window) const {
+    RectangleDrawOptions rect;
+    rect.set_border_radius(BorderRadius);
+    rect.fill_color = sf::Color(50, 50, 50, 150);
+    window.draw_rectangle(local_rect(), rect);
 }
 
 }

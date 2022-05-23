@@ -39,7 +39,7 @@ public:
     void set_index(unsigned index);
 
 private:
-    virtual void draw(sf::RenderWindow& window) const override;
+    virtual void draw(GUI::SFMLWindow& window) const override;
     virtual void handle_event(Event& event) override;
 
     std::vector<std::pair<std::string, State>> m_states;

@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "Button.hpp"
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 
 namespace GUI {
 
@@ -9,18 +10,20 @@ TextButton::TextButton(Container& c)
     : Button(c) {
 }
 
-void TextButton::draw(sf::RenderWindow& window) const {
-    sf::RectangleShape rect(size());
-    rect.setFillColor(bg_color_for_state());
-    window.draw(rect);
+void TextButton::draw(GUI::SFMLWindow& window) const {
+    RectangleDrawOptions rect;
+    rect.fill_color = bg_color_for_state();
+    window.draw_rectangle(local_rect(), rect);
 
-    sf::Text text(m_content, Application::the().font, 15);
-    text.setFillColor(text_color_for_state());
-    align_text(m_alignment, size(), text);
+    TextDrawOptions text;
+    text.font_size = 15;
+    text.fill_color = text_color_for_state();
+    text.text_align = m_alignment;
 
     if (is_active())
-        text.setString(m_active_content);
-    window.draw(text);
+        window.draw_text_aligned_in_rect(m_active_content, local_rect(), Application::the().font, text);
+    else
+        window.draw_text_aligned_in_rect(m_content, local_rect(), Application::the().font, text);
 }
 
 }

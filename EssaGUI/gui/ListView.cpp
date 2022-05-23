@@ -1,7 +1,8 @@
 #include "ListView.hpp"
 
-#include <EssaGUI/gfx/ClipViewScope.hpp>
 #include "Application.hpp"
+#include "EssaGUI/gfx/SFMLWindow.hpp"
+#include <EssaGUI/gfx/ClipViewScope.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
@@ -11,7 +12,7 @@ namespace GUI {
 float const RowHeight = 30;
 float const Padding = 5;
 
-void ListView::draw(sf::RenderWindow& wnd) const {
+void ListView::draw(GUI::SFMLWindow& wnd) const {
     assert(m_model);
 
     size_t rows = m_model->row_count();
@@ -25,24 +26,23 @@ void ListView::draw(sf::RenderWindow& wnd) const {
     // Background
     for (size_t r = 0; r < rows; r++) {
         sf::Color bg_color = r % 2 == 0 ? sf::Color { 100, 100, 100, 128 } : sf::Color { 80, 80, 80, 128 };
-        sf::RectangleShape rs({ size().x, RowHeight });
-        rs.setPosition(0, RowHeight * (r + 1));
-        rs.setFillColor(bg_color);
-        wnd.draw(rs);
+        RectangleDrawOptions rs;
+        rs.fill_color = bg_color;
+        wnd.draw_rectangle({ { 0, RowHeight * (r + 1) }, { size().x, RowHeight } }, rs);
     }
 
     // Column names
     {
-        sf::RectangleShape rs({ size().x, RowHeight });
-        rs.setFillColor({ 200, 200, 200, 128 });
-        wnd.draw(rs);
+        RectangleDrawOptions rs;
+        rs.fill_color = { 200, 200, 200, 128 };
+        wnd.draw_rectangle({ {}, { size().x, RowHeight } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
             auto column = m_model->column(c);
-            sf::Text text(column.name, Application::the().bold_font, 16);
-            text.setPosition({x_pos + 5, 5});
-            wnd.draw(text);
+            TextDrawOptions text;
+            text.font_size = 16;
+            wnd.draw_text(column.name, Application::the().bold_font, { x_pos + 5, 20 }, text);
             x_pos += column.width;
         }
     }
@@ -58,9 +58,10 @@ void ListView::draw(sf::RenderWindow& wnd) const {
             // TODO: ClipViewScope it
 
             // TODO: Make this all (font, font size, alignment) configurable
-            sf::Text text(data, Application::the().font, 15);
-            text.setPosition(cell_position);
-            wnd.draw(text);
+            TextDrawOptions text;
+            text.font_size = 15;
+            text.text_align = Align::CenterLeft;
+            wnd.draw_text_aligned_in_rect(data, { cell_position, cell_size(r, c) }, Application::the().bold_font, text);
         }
         // FIXME: Double lookup, probably harmless but still
         current_x_pos += column.width;
@@ -71,17 +72,17 @@ sf::Vector2f ListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, RowHeight };
 }
 
-void ListView::do_handle_event(Event &event){
+void ListView::do_handle_event(Event& event) {
     size_t rows = m_model->row_count();
-    if(event.type() == sf::Event::MouseButtonPressed){
+    if (event.type() == sf::Event::MouseButtonPressed) {
         sf::Vector2i mouse_pos(event.mouse_position());
 
-        if(is_mouse_over(mouse_pos)){
+        if (is_mouse_over(mouse_pos)) {
             for (size_t r = 0; r < rows; r++) {
                 sf::Rect<int> rect(position().x, position().y + RowHeight * (r + 1), size().x, RowHeight);
 
-                if(rect.contains(mouse_pos)){
-                    if(on_click)
+                if (rect.contains(mouse_pos)) {
+                    if (on_click)
                         on_click(r);
                     return;
                 }

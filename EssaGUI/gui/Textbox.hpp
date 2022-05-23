@@ -39,7 +39,7 @@ public:
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
     virtual void handle_event(Event&) override;
-    virtual void draw(sf::RenderWindow& window) const override;
+    virtual void draw(GUI::SFMLWindow& window) const override;
     void set_limit(unsigned limit) { m_limit = limit; }
 
     sf::String get_content() const { return (m_type == Type::NUMBER && m_content.isEmpty()) ? "0" : m_content; }

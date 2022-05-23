@@ -1,9 +1,9 @@
 #include "Textbox.hpp"
 
-#include <EssaGUI/util/CharacterType.hpp>
 #include "Application.hpp"
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
+#include <EssaGUI/util/CharacterType.hpp>
 #include <SFML/Graphics.hpp>
 #include <cassert>
 #include <cctype>
@@ -27,6 +27,7 @@ unsigned Textbox::m_character_pos_from_mouse(Event& event) {
     if (delta.x < 0)
         return 0;
 
+    // TODO: Port this to SFMLWindow
     sf::Text text = generate_sf_text();
 
     // We can just check the offset of 1st character because we use
@@ -304,7 +305,7 @@ sf::Text Textbox::generate_sf_text() const {
     // TODO: Cache the result
     sf::Text text(m_content, Application::the().fixed_width_font, 16);
     text.setFillColor(m_text_color);
-    text.setPosition(5, 2 + size().y / 2 - 12);
+    text.setPosition(5, 2 + size().y / 2);
     text.move(m_scroll, 0);
     text.setOrigin(0, 0); // -6 because of SFML not taking descenders into account
 
@@ -320,40 +321,45 @@ sf::Vector2f Textbox::calculate_cursor_position() const {
     return generate_sf_text().findCharacterPos(m_cursor);
 }
 
-void Textbox::draw(sf::RenderWindow& window) const {
-    sf::RectangleShape rect(size());
-    rect.setOutlineColor(sf::Color(80, 80, 80));
-    rect.setOutlineThickness(-2);
-    rect.setFillColor(are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0));
+void Textbox::draw(GUI::SFMLWindow& window) const {
+    RectangleDrawOptions rect;
+    rect.outline_color = sf::Color(80, 80, 80);
+    rect.outline_thickness = -2;
+    rect.fill_color = are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0);
 
     if (is_focused())
-        rect.setOutlineColor(are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0));
+        rect.outline_color = are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0);
 
-    window.draw(rect);
+    window.draw_rectangle(local_rect(), rect);
 
     auto const cursor_height = std::min(size().y - 6, 30.f);
     auto text = generate_sf_text();
     auto selection_start_pos = text.findCharacterPos(std::min(m_selection_start, m_cursor)).x;
     auto selection_end_pos = text.findCharacterPos(std::max(m_selection_start, m_cursor)).x;
-    sf::RectangleShape selected_rect({ selection_end_pos - selection_start_pos, cursor_height });
-    selected_rect.setFillColor(is_focused() ? sf::Color(160, 160, 255) : sf::Color(160, 160, 160));
-    selected_rect.setPosition({ selection_start_pos, size().y / 2 - selected_rect.getSize().y / 2 });
-    window.draw(selected_rect);
-    window.draw(text);
+
+    RectangleDrawOptions selected_rect;
+    selected_rect.fill_color = is_focused() ? sf::Color(160, 160, 255) : sf::Color(160, 160, 160);
+    window.draw_rectangle({ { selection_start_pos, size().y / 2 - cursor_height / 2 }, { selection_end_pos - selection_start_pos, cursor_height } }, selected_rect);
+
+    // TODO: Port this fully to SFMLWindow TextDrawOptions or something like this
+    TextDrawOptions text_options;
+    text_options.font_size = text.getCharacterSize();
+    text_options.fill_color = text.getFillColor();
+    window.draw_text(text.getString(), *text.getFont(), text.getPosition(), text_options);
 
     if (is_focused()) {
-        // std::cout << m_cursor << std::endl;
+        // FIXME: Reset timer when writing/selecting etc
         if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
-            sf::RectangleShape cursor(sf::Vector2f(2, cursor_height));
             auto position = calculate_cursor_position();
-            cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
-            cursor.setFillColor(sf::Color::Black);
-            window.draw(cursor);
+            RectangleDrawOptions cursor;
+            cursor.fill_color = sf::Color::Black;
+            window.draw_rectangle({ { position.x, size().y / 2 - cursor_height / 2 }, sf::Vector2f(2, cursor_height) }, cursor);
         }
     }
 
-    rect.setFillColor(sf::Color::Transparent);
-    window.draw(rect);
+    // Border once again so that it covers text
+    rect.fill_color = sf::Color::Transparent;
+    window.draw_rectangle(local_rect(), rect);
 }
 
 bool Textbox::can_insert_character(uint32_t ch) const {

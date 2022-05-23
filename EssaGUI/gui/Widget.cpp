@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "Tooltip.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
 
@@ -105,15 +106,16 @@ void Widget::handle_event(Event& event) {
         set_needs_relayout();
 }
 
-void Widget::draw(sf::RenderWindow& window) const {
-    sf::RectangleShape background(size());
+void Widget::draw(GUI::SFMLWindow& window) const {
+    RectangleDrawOptions background;
+    background.fill_color = m_background_color;
+    window.draw_rectangle(local_rect(), background);
     // background.setOutlineThickness(-1);
     // background.setOutlineColor(is_focused() ? sf::Color::Green : sf::Color::Red);
-    background.setFillColor(m_background_color);
-    window.draw(background);
 }
 
-void Widget::do_draw(sf::RenderWindow& window) const {
+void Widget::do_draw(GUI::SFMLWindow& window) const {
+    // std::cout << "do_draw "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
     Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
     this->draw(window);
     Widget::draw(window);
@@ -133,7 +135,7 @@ void Widget::set_needs_relayout() {
     m_widget_tree_root.set_needs_relayout();
 }
 
-sf::RenderWindow& Widget::window() const {
+GUI::SFMLWindow& Widget::window() const {
     return m_widget_tree_root.window();
 }
 

@@ -2,6 +2,8 @@
 
 #include "ToolWindow.hpp"
 
+#include <EssaGUI/gfx/SFMLWindow.hpp>
+
 namespace GUI {
 
 class Button;
@@ -13,7 +15,7 @@ public:
         Ok
     };
 
-    explicit MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String title, Buttons buttons);
+    explicit MessageBox(GUI::SFMLWindow& wnd, sf::String message, sf::String title, Buttons buttons);
 
     enum class ButtonRole {
         None,

@@ -22,7 +22,7 @@ struct Tooltip {
 
 class TooltipOverlay : public Overlay {
 public:
-    TooltipOverlay(sf::RenderWindow& wnd, Tooltip tooltip, std::string id = "TooltipOverlay")
+    TooltipOverlay(GUI::SFMLWindow& wnd, Tooltip tooltip, std::string id = "TooltipOverlay")
         : Overlay(wnd, std::move(id))
         , m_tooltip(std::move(tooltip)) { }
 

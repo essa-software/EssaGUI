@@ -8,8 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 
 add_library(essa-gui
+    EssaGUI/gfx/DefaultGUIShader.cpp
     EssaGUI/gfx/ClipViewScope.cpp
     EssaGUI/gfx/RoundedEdgeRectangleShape.cpp
+    EssaGUI/gfx/SFMLWindow.cpp
 
     EssaGUI/gui/Application.cpp
     EssaGUI/gui/ArrowButton.cpp
@@ -46,11 +48,7 @@ add_library(essa-gui
     EssaGUI/util/UnitDisplay.cpp
 )
 
-target_link_libraries(
-    essa-gui
-    PUBLIC
-    sfml-graphics
-)
+target_link_libraries(essa-gui PUBLIC sfml-graphics GL GLEW)
 
 function(setup_target targetname)
     install(TARGETS ${targetname} EXPORT EssaGUI DESTINATION lib)

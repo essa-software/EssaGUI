@@ -2,8 +2,8 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
-#include <EssaGUI/gfx/RoundedEdgeRectangleShape.hpp>
 
+#include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -19,29 +19,27 @@ public:
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
 
-    virtual void draw(sf::RenderWindow&) const override;
+    virtual void draw(GUI::SFMLWindow&) const override;
 };
 
 sf::Color const TabButton::BgColor { 120, 120, 120, 100 };
 
-void TabButton::draw(sf::RenderWindow& window) const {
-    RoundedEdgeRectangleShape rect(size(), 10);
-    rect.set_border_radius_bottom_left(0);
-    rect.set_border_radius_bottom_right(0);
-    rect.setFillColor(bg_color_for_state());
-    if (!is_active())
-        rect.move(0, 4);
-    window.draw(rect);
+void TabButton::draw(GUI::SFMLWindow& window) const {
+    RectangleDrawOptions rect;
+    rect.set_border_radius(10);
+    rect.border_radius_bottom_left = 0;
+    rect.border_radius_bottom_right = 0;
+    rect.fill_color = bg_color_for_state();
+    window.draw_rectangle(is_active() ? sf::FloatRect { { 0, 4 }, size() } : local_rect(), rect);
 
-    sf::Text text(content(), Application::the().font, 15);
-    text.setFillColor(text_color_for_state());
-    align_text(get_alignment(), size(), text);
-
+    sf::Vector2f text_position;
     if (is_active())
-        text.setString(active_content());
-    else
-        text.move(0, 2);
-    window.draw(text);
+        text_position.y = 4;
+    TextDrawOptions text;
+    text.fill_color = text_color_for_state();
+    text.font_size = 15;
+    text.text_align = Align::Center;
+    window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font, text);
 }
 
 TabSelectWidget::TabSelectWidget(Container& c)

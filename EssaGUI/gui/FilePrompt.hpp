@@ -9,7 +9,7 @@ namespace GUI {
 
 class FilePrompt : public ToolWindow {
 public:
-    explicit FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder);
+    explicit FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder);
 
     std::optional<sf::String> result() const { return m_result; }
 

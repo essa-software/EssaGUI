@@ -1,15 +1,15 @@
 #include "ColorPicker.hpp"
 
 #include "Container.hpp"
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "Textfield.hpp"
 
 namespace GUI {
 
-void ColorPickerDisplay::draw(sf::RenderWindow& window) const {
-    sf::RectangleShape rs({ size().x - 10, size().y - 10 });
-    rs.setPosition(5, 5);
-    rs.setFillColor(m_color);
-    window.draw(rs);
+void ColorPickerDisplay::draw(GUI::SFMLWindow& window) const {
+    RectangleDrawOptions options;
+    options.fill_color = m_color;
+    window.draw_rectangle({ { 5, 5 }, { size() - sf::Vector2f { 10, 10 } } }, options);
 }
 
 ColorPicker::ColorPicker(Container& c)
@@ -59,7 +59,7 @@ sf::Color ColorPicker::value() const {
     };
 }
 
-void ColorPicker::set_value(sf::Color color){
+void ColorPicker::set_value(sf::Color color) {
     m_r_slider->set_value(color.r);
     m_g_slider->set_value(color.g);
     m_b_slider->set_value(color.b);

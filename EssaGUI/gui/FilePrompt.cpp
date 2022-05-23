@@ -11,7 +11,7 @@
 namespace GUI
 {
 
-FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder)
+FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder)
     : ToolWindow(wnd, "Prompt")
 {
 

@@ -16,7 +16,7 @@ namespace GUI
 class Application : public WidgetTreeRoot
 {
 public:
-    explicit Application(sf::RenderWindow&);
+    explicit Application(GUI::SFMLWindow&);
 
     static Application& the();
 

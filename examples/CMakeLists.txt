@@ -3,5 +3,6 @@ function(add_example targetname)
     target_link_libraries(${targetname} essa-gui)
 endfunction()
 
-add_example(file-explorer)
-add_example(message-box-multiline)
+add_example("file-explorer")
+add_example("gfx-test")
+add_example("message-box-multiline")

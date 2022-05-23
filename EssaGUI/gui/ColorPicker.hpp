@@ -15,7 +15,7 @@ public:
 private:
     sf::Color m_color;
 
-    virtual void draw(sf::RenderWindow& window) const override;
+    virtual void draw(GUI::SFMLWindow& window) const override;
 };
 
 class ColorPicker : public Container {

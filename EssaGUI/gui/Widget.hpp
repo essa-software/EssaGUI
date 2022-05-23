@@ -1,5 +1,6 @@
 #pragma once
 
+#include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/Theme.hpp>
 #include <EssaGUI/util/Units.hpp>
 #include <SFML/Graphics.hpp>
@@ -69,7 +70,7 @@ public:
 
     virtual void do_handle_event(Event& event);
     virtual void do_update();
-    virtual void draw(sf::RenderWindow& window) const;
+    virtual void draw(GUI::SFMLWindow& window) const;
 
     void set_raw_position(sf::Vector2f p) {
         m_pos = p;
@@ -91,12 +92,13 @@ public:
     sf::Vector2f position() const { return m_pos; }
     sf::Vector2f size() const { return m_size; }
     sf::FloatRect rect() const;
+    sf::FloatRect local_rect() const { return { {}, m_size }; }
     LengthVector input_position() const { return m_expected_pos; }
     LengthVector input_size() const { return m_input_size; }
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
-    virtual void do_draw(sf::RenderWindow&) const;
+    virtual void do_draw(GUI::SFMLWindow&) const;
 
     void set_visible(bool visible) {
         if (m_visible != visible) {
@@ -114,7 +116,7 @@ public:
     void set_focused();
     bool is_focused() const;
 
-    sf::RenderWindow& window() const;
+    GUI::SFMLWindow& window() const;
     Container* parent() const { return m_parent; }
 
     void set_tooltip_text(std::string t) { m_tooltip_text = std::move(t); }

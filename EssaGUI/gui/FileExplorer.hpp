@@ -57,7 +57,7 @@ private:
 class FileExplorer : public ToolWindow
 {
 public:
-    explicit FileExplorer(sf::RenderWindow& wnd);
+    explicit FileExplorer(GUI::SFMLWindow& wnd);
 
     enum class FileExplorerType
     {

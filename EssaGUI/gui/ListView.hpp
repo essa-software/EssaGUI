@@ -36,7 +36,7 @@ public:
         return *model_ptr;
     }
 
-    virtual void draw(sf::RenderWindow&) const override;
+    virtual void draw(GUI::SFMLWindow&) const override;
     virtual void do_handle_event(Event&) override;
 
     std::function<void(unsigned)> on_click;

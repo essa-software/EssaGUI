@@ -8,7 +8,7 @@ namespace GUI {
 
 class Prompt : public ToolWindow {
 public:
-    explicit Prompt(sf::RenderWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder);
+    explicit Prompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder);
 
     std::optional<sf::String> result() const { return m_result; }
 

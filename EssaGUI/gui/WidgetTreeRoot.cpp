@@ -14,7 +14,7 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 
 void WidgetTreeRoot::draw() {
     sf::View gui_view { sf::FloatRect(position(), size()) };
-    m_window.setView(gui_view);
+    m_window.set_view(gui_view);
 
     if (!m_main_widget)
         return;

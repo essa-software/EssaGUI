@@ -20,7 +20,7 @@ public:
 
 private:
     virtual void handle_event(Event&) override;
-    virtual void draw(sf::RenderWindow&) const override;
+    virtual void draw(GUI::SFMLWindow&) const override;
 
     std::deque<LogLine> m_lines;
     float m_scroll {};

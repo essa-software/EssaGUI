@@ -3,19 +3,16 @@
 #include "EventLoop.hpp"
 #include "Widget.hpp"
 
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <list>
 #include <memory>
 
-namespace GUI
-{
+namespace GUI {
 
-class WidgetTreeRoot : public EventLoop
-{
+class WidgetTreeRoot : public EventLoop {
 public:
-    explicit WidgetTreeRoot(sf::RenderWindow& wnd)
-        : m_window(wnd)
-    {
+    explicit WidgetTreeRoot(GUI::SFMLWindow& wnd)
+        : m_window(wnd) {
     }
 
     WidgetTreeRoot(WidgetTreeRoot const&) = delete;
@@ -23,15 +20,14 @@ public:
 
     virtual ~WidgetTreeRoot() = default;
 
-    sf::RenderWindow& window() const { return m_window; }
+    GUI::SFMLWindow& window() const { return m_window; }
     Widget* focused_widget() const { return m_focused_widget; }
     void set_focused_widget(Widget* w);
 
     void set_needs_relayout() { m_needs_relayout = true; }
 
     template<class T, class... Args>
-    auto& set_main_widget(Args&&... args)
-    {
+    auto& set_main_widget(Args&&... args) {
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         auto widget_ptr = widget.get();
         m_main_widget = std::move(widget);
@@ -40,8 +36,7 @@ public:
     }
 
     template<class T, class... Args>
-    auto& set_created_main_widget(std::shared_ptr<T> w)
-    {
+    auto& set_created_main_widget(std::shared_ptr<T> w) {
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
         m_needs_relayout = true;
@@ -53,8 +48,7 @@ public:
     virtual void draw();
     virtual void handle_event(sf::Event);
     virtual void handle_events() { }
-    virtual void update()
-    {
+    virtual void update() {
         if (m_main_widget)
             m_main_widget->do_update();
     }
@@ -76,7 +70,7 @@ protected:
     sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
 
 private:
-    sf::RenderWindow& m_window;
+    GUI::SFMLWindow& m_window;
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
