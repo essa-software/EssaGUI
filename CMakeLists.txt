@@ -56,8 +56,6 @@ function(setup_target targetname)
     target_compile_options(${targetname} PRIVATE -Wall -Wextra -Werror)
     target_compile_options(${targetname} PRIVATE
         -Wnon-virtual-dtor
-        -Wno-error=unknown-warning-option           # FIXME: This is to migitate CI failure about missing potentially-evaluated-expression warning
-        -Wno-error=potentially-evaluated-expression # FIXME: This annoys in Container.cpp
         -Wno-error=missing-field-initializers       # FIXME: This is buggy (?) for *DrawOptions
     )
 
