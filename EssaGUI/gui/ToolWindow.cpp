@@ -22,6 +22,9 @@ ToolWindow::ToolWindow(GUI::SFMLWindow& wnd, std::string id)
 }
 
 void ToolWindow::handle_event(sf::Event event) {
+    if (m_first_tick)
+        return;
+
     Event gui_event { event };
     if (gui_event.is_mouse_related()) {
         sf::Vector2f mouse_position = gui_event.mouse_position();

@@ -30,6 +30,7 @@ public:
 
 private:
     virtual void handle_events() override;
+    virtual void update() override { m_first_tick = false; }
 
     enum class Resize {
         LEFT,
@@ -47,6 +48,7 @@ private:
     bool m_dragging = false;
     bool m_resizing = false;
     sf::Vector2f m_drag_position;
+    bool m_first_tick = true;
 
     struct TitlebarButton {
         std::function<void()> on_click;
