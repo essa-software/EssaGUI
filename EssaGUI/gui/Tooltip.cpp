@@ -16,7 +16,7 @@ void TooltipOverlay::draw() {
 
     auto x_pos = std::min(window().getSize().x - (bounds.x + 10), position().x - 5);
     window().draw_rectangle({
-        { x_pos, position().y - 15 },
+        { x_pos, position().y - 10 },
         { bounds.x + 10, bounds.y + 10 },
     });
 
