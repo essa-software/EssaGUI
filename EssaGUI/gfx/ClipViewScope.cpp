@@ -6,12 +6,12 @@ ClipViewScope::ClipViewScope(GUI::SFMLWindow& target, sf::FloatRect rect, Mode m
     : m_target(target)
     , m_old_view(target.view()) {
 
+    auto old_viewport = m_old_view.getViewport();
     auto clip_rect = [&]() {
         switch (mode) {
         case Mode::Override:
             return rect;
         case Mode::Intersect: {
-            auto old_viewport = m_old_view.getViewport();
             sf::FloatRect old_clip_rect {
                 old_viewport.left * target.getSize().x,
                 old_viewport.top * target.getSize().y,
@@ -25,7 +25,16 @@ ClipViewScope::ClipViewScope(GUI::SFMLWindow& target, sf::FloatRect rect, Mode m
         }
         __builtin_unreachable();
     }();
-    m_target.set_view(create_clip_view(clip_rect));
+    auto clip_view = create_clip_view(clip_rect);
+    if (mode == Mode::Intersect) {
+        auto x = rect.left;
+        auto y = rect.top;
+        auto vx = clip_view.getViewport().left;
+        auto vy = clip_view.getViewport().top;
+        sf::Vector2f offset_position = sf::Vector2f(vx * target.getSize().x - x, vy * target.getSize().y - y);
+        clip_view.move(offset_position);
+    }
+    m_target.set_view(clip_view);
 }
 
 ClipViewScope::~ClipViewScope() {
