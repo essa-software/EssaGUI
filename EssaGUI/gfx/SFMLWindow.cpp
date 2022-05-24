@@ -242,6 +242,9 @@ void SFMLWindow::draw_text_aligned_in_rect(sf::String const& text, sf::FloatRect
     // draw_rectangle(rect, debug_rect);
 
     switch (options.text_align) {
+    case Align::TopRight:
+        offset = sf::Vector2f(std::round(size.x - text_size.x), 0);
+        break;
     case Align::CenterLeft:
         offset = sf::Vector2f(0, std::round(size.y / 2 - text_size.y / 2));
         break;

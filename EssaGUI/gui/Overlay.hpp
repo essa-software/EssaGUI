@@ -2,6 +2,8 @@
 
 #include "WidgetTreeRoot.hpp"
 
+#include <functional>
+
 namespace GUI {
 
 class Overlay : public WidgetTreeRoot {
