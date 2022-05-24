@@ -160,6 +160,15 @@ Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String
     return result;
 }
 
+void Application::focus_overlay(Overlay& overlay) {
+    for (auto it = m_overlays.begin(); it != m_overlays.end(); it++) {
+        if (it->get() == &overlay) {
+            focus_window(it);
+            return;
+        }
+    }
+}
+
 void Application::update() {
     WidgetTreeRoot::update();
     remove_closed_overlays();

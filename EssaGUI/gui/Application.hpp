@@ -68,6 +68,8 @@ public:
     void set_theme(Theme const& theme) { m_theme = &theme; }
     Theme const& theme() const { return *m_theme; }
 
+    void focus_overlay(Overlay&);
+
 private:
     virtual void handle_events() override;
     virtual void update() override;
