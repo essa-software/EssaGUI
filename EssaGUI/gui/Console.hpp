@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Widget.hpp"
+#include "ScrollableWidget.hpp"
+
 #include <deque>
 
 namespace GUI {
 
-class Console : public Widget {
+class Console : public ScrollableWidget {
 public:
     explicit Console(Container& c)
-        : Widget(c) { }
+        : ScrollableWidget(c) { }
 
     struct LogLine {
         sf::Color color;
@@ -19,16 +20,11 @@ public:
     void clear();
 
 private:
-    virtual void handle_event(Event&) override;
     virtual void draw(GUI::SFMLWindow&) const override;
+    virtual bool accepts_focus() const override { return true; }
+    virtual float content_height() const override;
 
     std::deque<LogLine> m_lines;
-    float m_scroll {};
-
-    virtual bool accepts_focus() const override { return true; }
-
-    float content_size() const;
-    float scroll_area_size() const;
 };
 
 }
