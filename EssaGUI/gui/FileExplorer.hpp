@@ -67,12 +67,11 @@ public:
 
     FileModel* model() { return m_model; }
     void type(FileExplorerType type) { m_type = type; }
+    void open_path(std::filesystem::path path);
 
     std::function<void(std::filesystem::path path)> on_submit;
 
 private:
-    void open_path(std::filesystem::path path);
-
     std::filesystem::path m_current_path;
     Textbox* m_path_textbox {};
     FileModel* m_model {};
