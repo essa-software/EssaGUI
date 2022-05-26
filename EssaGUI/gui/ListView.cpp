@@ -19,13 +19,20 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     size_t rows = m_model->row_count();
     size_t columns = m_model->column_count();
 
+    size_t first_row = -scroll_offset().y / RowHeight;
+    if (first_row > 0)
+        first_row--;
+    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y + scroll_area_height()) / RowHeight);
+    if (last_row < rows - 1)
+        last_row++;
+
     float current_x_pos = 0;
     // TODO: Limit display to widget size
     // TODO: Scrolling
     // TODO: Many more things...
 
     // Background
-    for (size_t r = 0; r < rows; r++) {
+    for (size_t r = first_row; r < last_row; r++) {
         sf::Color bg_color = r % 2 == 0 ? sf::Color { 100, 100, 100, 128 } : sf::Color { 80, 80, 80, 128 };
         RectangleDrawOptions rs;
         rs.fill_color = bg_color;
@@ -52,7 +59,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     for (size_t c = 0; c < columns; c++) {
         auto column = m_model->column(c);
 
-        for (size_t r = 0; r < rows; r++) {
+        for (size_t r = first_row; r < last_row; r++) {
             auto data = m_model->data(r, c);
             sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight + Padding };
             cell_position += scroll_offset();
