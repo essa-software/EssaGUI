@@ -35,7 +35,7 @@ void Console::draw(GUI::SFMLWindow& window) const {
 }
 
 float Console::content_height() const {
-    return m_lines.size() * LINE_SPACING;
+    return m_lines.size() * LINE_SPACING + 10;
 }
 
 }
