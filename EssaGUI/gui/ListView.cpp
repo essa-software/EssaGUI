@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "EssaGUI/gfx/SFMLWindow.hpp"
+#include "EssaGUI/gui/ScrollableWidget.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -28,21 +29,21 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
         sf::Color bg_color = r % 2 == 0 ? sf::Color { 100, 100, 100, 128 } : sf::Color { 80, 80, 80, 128 };
         RectangleDrawOptions rs;
         rs.fill_color = bg_color;
-        wnd.draw_rectangle({ { 0, RowHeight * (r + 1) }, { size().x, RowHeight } }, rs);
+        wnd.draw_rectangle({ sf::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x, RowHeight } }, rs);
     }
 
     // Column names
     {
         RectangleDrawOptions rs;
         rs.fill_color = { 200, 200, 200, 128 };
-        wnd.draw_rectangle({ {}, { size().x, RowHeight } }, rs);
+        wnd.draw_rectangle({ scroll_offset(), { size().x, RowHeight } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
             auto column = m_model->column(c);
             TextDrawOptions text;
             text.font_size = 16;
-            wnd.draw_text(column.name, Application::the().bold_font, { x_pos + 5, 20 }, text);
+            wnd.draw_text(column.name, Application::the().bold_font, sf::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
             x_pos += column.width;
         }
     }
@@ -54,6 +55,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
         for (size_t r = 0; r < rows; r++) {
             auto data = m_model->data(r, c);
             sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight + Padding };
+            cell_position += scroll_offset();
 
             // TODO: ClipViewScope it
 
@@ -66,13 +68,17 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
         // FIXME: Double lookup, probably harmless but still
         current_x_pos += column.width;
     }
+
+    ScrollableWidget::draw_scrollbar(wnd);
 }
 
 sf::Vector2f ListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, RowHeight };
 }
 
-void ListView::do_handle_event(Event& event) {
+void ListView::handle_event(Event& event) {
+    ScrollableWidget::handle_event(event);
+
     size_t rows = m_model->row_count();
     if (event.type() == sf::Event::MouseButtonPressed) {
         sf::Vector2i mouse_pos(event.mouse_position());
@@ -89,6 +95,10 @@ void ListView::do_handle_event(Event& event) {
             }
         }
     }
+}
+
+float ListView::content_height() const {
+    return (m_model->row_count() + 1) * RowHeight;
 }
 
 }

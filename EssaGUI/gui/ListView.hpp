@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Widget.hpp"
+#include "ScrollableWidget.hpp"
 
 #include <functional>
 #include <memory>
@@ -23,10 +23,10 @@ public:
     virtual Column column(size_t column) const = 0;
 };
 
-class ListView : public Widget {
+class ListView : public ScrollableWidget {
 public:
     explicit ListView(Container& parent)
-        : Widget(parent) { }
+        : ScrollableWidget(parent) { }
 
     void set_model(std::unique_ptr<Model> model) { m_model = std::move(model); }
 
@@ -39,11 +39,12 @@ public:
     }
 
     virtual void draw(GUI::SFMLWindow&) const override;
-    virtual void do_handle_event(Event&) override;
+    virtual void handle_event(Event&) override;
 
     std::function<void(unsigned)> on_click;
 
 private:
+    virtual float content_height() const override;
     sf::Vector2f cell_size(size_t row, size_t column) const;
 
     std::unique_ptr<Model> m_model;
