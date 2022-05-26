@@ -85,9 +85,11 @@ void ListView::handle_event(Event& event) {
 
         if (is_mouse_over(mouse_pos)) {
             for (size_t r = 0; r < rows; r++) {
-                sf::Rect<int> rect(position().x, position().y + RowHeight * (r + 1), size().x, RowHeight);
+                sf::Vector2f cell_position { position().x, position().y + RowHeight * (r + 1) };
+                cell_position += scroll_offset();
+                sf::FloatRect rect(cell_position, { size().x, RowHeight });
 
-                if (rect.contains(mouse_pos)) {
+                if (rect.contains(sf::Vector2f { mouse_pos })) {
                     if (on_click)
                         on_click(r);
                     return;
