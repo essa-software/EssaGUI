@@ -11,6 +11,7 @@ int main() {
     auto& file_explorer = app.open_overlay<GUI::FileExplorer>();
     file_explorer.set_size({ 1000, 500 });
     file_explorer.center_on_screen();
+    file_explorer.open_path("/");
     file_explorer.run();
 
     app.run();
