@@ -28,6 +28,7 @@ add_library(essa-gui
     EssaGUI/gui/ListView.cpp
     EssaGUI/gui/MessageBox.cpp
     EssaGUI/gui/Prompt.cpp
+    EssaGUI/gui/ScrollableWidget.cpp
     EssaGUI/gui/SettingsMenu.cpp
     EssaGUI/gui/SelectWidget.cpp
     EssaGUI/gui/Slider.cpp
