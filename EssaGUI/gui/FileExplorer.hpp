@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Container.hpp"
 #include "ListView.hpp"
 #include "Textbox.hpp"
@@ -12,39 +13,31 @@
 #include <string_view>
 #include <vector>
 
-namespace GUI
-{
+namespace GUI {
 
-class FileModel : public Model
-{
+class FileModel : public Model {
 public:
-    virtual size_t row_count() const override
-    {
+    virtual size_t row_count() const override {
         return m_content.size();
     }
-    virtual size_t column_count() const override
-    {
+    virtual size_t column_count() const override {
         return 4;
     }
-    virtual std::string data(size_t row, size_t column) const override
-    {
+    virtual std::string data(size_t row, size_t column) const override {
         return m_content[row][column];
     }
 
     virtual Column column(size_t column) const override;
 
-    std::filesystem::path get_path(size_t row) const
-    {
+    std::filesystem::path get_path(size_t row) const {
         return m_paths[row];
     }
-    void add_desired_extension(const std::string ext)
-    {
+    void add_desired_extension(const std::string ext) {
         m_extensions.push_back(ext);
     }
 
     void update_content(
-        std::filesystem::path path, std::function<bool(std::filesystem::path)> condition = [](std::filesystem::path)
-        { return true; });
+        std::filesystem::path path, std::function<bool(std::filesystem::path)> condition = [](std::filesystem::path) { return true; });
 
 private:
     static std::string file_type(std::filesystem::path);
@@ -54,13 +47,11 @@ private:
     std::vector<std::string> m_extensions;
 };
 
-class FileExplorer : public ToolWindow
-{
+class FileExplorer : public ToolWindow {
 public:
     explicit FileExplorer(GUI::SFMLWindow& wnd);
 
-    enum class FileExplorerType
-    {
+    enum class FileExplorerType {
         FILE,
         FOLDER
     };
@@ -75,6 +66,7 @@ private:
     std::filesystem::path m_current_path;
     Textbox* m_path_textbox {};
     FileModel* m_model {};
+    ListView* m_list {};
 
     FileExplorerType m_type = FileExplorerType::FILE;
 };

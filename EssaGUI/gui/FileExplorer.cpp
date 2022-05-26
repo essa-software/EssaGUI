@@ -10,8 +10,8 @@
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 
-#include <EssaGUI/util/UnitDisplay.hpp>
 #include "ToolWindow.hpp"
+#include <EssaGUI/util/UnitDisplay.hpp>
 
 #include <SFML/Graphics.hpp>
 
@@ -49,12 +49,12 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
             continue;
         bool con = 1;
 
-        for(const auto& e : m_extensions){
-            if(o.path().extension() == e)
+        for (const auto& e : m_extensions) {
+            if (o.path().extension() == e)
                 con = 0;
         }
 
-        if(m_extensions.size() != 0 && con && !std::filesystem::is_directory(o))
+        if (m_extensions.size() != 0 && con && !std::filesystem::is_directory(o))
             continue;
 
         m_paths.push_back(o.path());
@@ -224,17 +224,18 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     auto sidebar = main_container->add_widget<Container>();
     sidebar->set_size({ { 20.0, Length::Percent }, Length::Auto });
 
-    auto list = main_container->add_widget<ListView>();
-    m_model = &list->create_and_set_model<FileModel>();
+    m_list = main_container->add_widget<ListView>();
+    m_model = &m_list->create_and_set_model<FileModel>();
 
-    list->on_click = [&](unsigned row) {
+    m_list->on_click = [&](unsigned row) {
         auto path = m_model->get_path(row);
 
-        if(m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)){
-            if(on_submit)
+        if (m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)) {
+            if (on_submit)
                 on_submit(path);
             close();
-        }else {
+        }
+        else {
             open_path(path);
         }
     };
@@ -268,6 +269,7 @@ void FileExplorer::open_path(std::filesystem::path path) {
     }
     m_current_path = path;
     m_path_textbox->set_content(path.string(), NotifyUser::No);
+    m_list->set_scroll(0);
 }
 
 }
