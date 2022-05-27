@@ -272,9 +272,7 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     };
 
     parent_directory_button->on_click = [&]() {
-        m_current_path = m_current_path.parent_path();
-        m_path_textbox->set_content(m_current_path.string(), NotifyUser::No);
-        m_model->update_content(m_current_path);
+        open_path(m_current_path.parent_path());
     };
 
     open_path("../worlds");
