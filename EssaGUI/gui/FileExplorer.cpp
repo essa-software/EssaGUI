@@ -29,12 +29,14 @@ namespace GUI {
 Model::Column FileModel::column(size_t column) const {
     switch (column) {
     case 0:
-        return { .width = 200, .name = "Name" };
+        return { .width = 30, .name = "" };
     case 1:
-        return { .width = 100, .name = "Size" };
+        return { .width = 200, .name = "Name" };
     case 2:
-        return { .width = 300, .name = "Modified" };
+        return { .width = 100, .name = "Size" };
     case 3:
+        return { .width = 300, .name = "Modified" };
+    case 4:
         return { .width = 150, .name = "File type" };
     }
     return {};
@@ -131,6 +133,26 @@ std::string FileModel::file_type(std::filesystem::path path) {
     if (it == extension_to_name.end())
         return extension + " file";
     return it->second;
+}
+
+static sf::Texture load_texture(std::string const& path) {
+    sf::Texture tex;
+    if (!tex.loadFromFile(path))
+        exit(1);
+    return tex;
+}
+
+sf::Texture const* FileModel::file_icon(size_t row) const {
+    static sf::Texture directory_icon = load_texture("../assets/gui/directory.png");
+    static sf::Texture regular_file_icon = load_texture("../assets/gui/regularFile.png");
+
+    auto status = std::filesystem::status(m_paths[row]);
+    switch (status.type()) {
+    case std::filesystem::file_type::directory:
+        return &directory_icon;
+    default:
+        return &regular_file_icon;
+    }
 }
 
 FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)

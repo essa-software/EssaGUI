@@ -21,10 +21,12 @@ public:
         return m_content.size();
     }
     virtual size_t column_count() const override {
-        return 4;
+        return 5;
     }
-    virtual std::string data(size_t row, size_t column) const override {
-        return m_content[row][column];
+    virtual Variant data(size_t row, size_t column) const override {
+        if (column == 0)
+            return file_icon(row);
+        return m_content[row][column - 1];
     }
 
     virtual Column column(size_t column) const override;
@@ -41,6 +43,7 @@ public:
 
 private:
     static std::string file_type(std::filesystem::path);
+    sf::Texture const* file_icon(size_t row) const;
 
     std::vector<std::vector<std::string>> m_content;
     std::vector<std::filesystem::path> m_paths;
