@@ -11,8 +11,7 @@
 
 namespace GUI {
 
-float const RowHeight = 30;
-float const Padding = 5;
+constexpr float RowHeight = 30;
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
 template<class... Ts>
@@ -69,7 +68,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = m_model->data(r, c);
-                sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight };
+                sf::Vector2f cell_position { current_x_pos, (r + 1) * RowHeight };
                 cell_position += scroll_offset();
                 auto cell_size = this->cell_size(r, c);
 
@@ -83,12 +82,12 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
                             TextDrawOptions text;
                             text.font_size = 15;
                             text.text_align = Align::CenterLeft;
-                            wnd.draw_text_aligned_in_rect(data, { cell_position, cell_size }, Application::the().bold_font, text);
+                            wnd.draw_text_aligned_in_rect(data, { cell_position + sf::Vector2f(5, 0), cell_size }, Application::the().bold_font, text);
                         },
                         [&](sf::Texture const* data) {
                             RectangleDrawOptions rect;
                             rect.texture = data;
-                            wnd.draw_rectangle({ { cell_position.x, cell_position.y + cell_size.y / 2 - 8 }, { 16, 16 } }, rect);
+                            wnd.draw_rectangle({ { cell_position.x + cell_size.x / 2 - 8, cell_position.y + cell_size.y / 2 - 8 }, { 16, 16 } }, rect);
                         } },
                     data);
             }
