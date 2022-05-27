@@ -149,11 +149,20 @@ static sf::Texture load_texture(std::string const& path) {
 sf::Texture const* FileModel::file_icon(size_t row) const {
     static sf::Texture directory_icon = load_texture("../assets/gui/directory.png");
     static sf::Texture regular_file_icon = load_texture("../assets/gui/regularFile.png");
+    static sf::Texture block_device_icon = load_texture("../assets/gui/blockDevice.png");
+    static sf::Texture symlink_icon = load_texture("../assets/gui/symlink.png");
+    static sf::Texture socket_icon = load_texture("../assets/gui/socket.png");
 
-    auto status = std::filesystem::status(m_paths[row]);
+    auto status = std::filesystem::symlink_status(m_paths[row]);
     switch (status.type()) {
     case std::filesystem::file_type::directory:
         return &directory_icon;
+    case std::filesystem::file_type::block:
+        return &block_device_icon;
+    case std::filesystem::file_type::symlink:
+        return &symlink_icon;
+    case std::filesystem::file_type::socket:
+        return &socket_icon;
     default:
         return &regular_file_icon;
     }
