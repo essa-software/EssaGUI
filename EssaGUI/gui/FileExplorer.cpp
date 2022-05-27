@@ -66,9 +66,13 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
 
         m_content.push_back(std::vector<std::string>(4));
         m_content.back()[0] = o.path().filename();
-        m_content.back()[1] = (!std::filesystem::is_directory(o))
-            ? Util::unit_display(o.file_size(), Util::Quantity::FileSize).to_string()
-            : "";
+        try {
+            m_content.back()[1] = (!std::filesystem::is_directory(o))
+                ? Util::unit_display(o.file_size(), Util::Quantity::FileSize).to_string()
+                : "";
+        } catch (...) {
+            m_content.back()[1] = "???";
+        }
         m_content.back()[2] = std::string(std::asctime(std::localtime(&cftime)));
         m_content.back()[2].pop_back(); // trailing \n
         m_content.back()[3] = o.is_directory() ? "Directory" : file_type(o);
