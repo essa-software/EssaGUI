@@ -7,11 +7,16 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <variant>
 
 namespace GUI {
 
 float const RowHeight = 30;
 float const Padding = 5;
+
+// https://en.cppreference.com/w/cpp/utility/variant/visit
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
 
 void ListView::draw(GUI::SFMLWindow& wnd) const {
     assert(m_model);
@@ -64,16 +69,28 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = m_model->data(r, c);
-                sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight + Padding };
+                sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight };
                 cell_position += scroll_offset();
+                auto cell_size = this->cell_size(r, c);
 
                 // TODO: ClipViewScope it
 
                 // TODO: Make this all (font, font size, alignment) configurable
-                TextDrawOptions text;
-                text.font_size = 15;
-                text.text_align = Align::CenterLeft;
-                wnd.draw_text_aligned_in_rect(data, { cell_position, cell_size(r, c) }, Application::the().bold_font, text);
+
+                std::visit(
+                    overloaded {
+                        [&](std::string const& data) {
+                            TextDrawOptions text;
+                            text.font_size = 15;
+                            text.text_align = Align::CenterLeft;
+                            wnd.draw_text_aligned_in_rect(data, { cell_position, cell_size }, Application::the().bold_font, text);
+                        },
+                        [&](sf::Texture const* data) {
+                            RectangleDrawOptions rect;
+                            rect.texture = data;
+                            wnd.draw_rectangle({ { cell_position.x, cell_position.y + cell_size.y / 2 - 8 }, { 16, 16 } }, rect);
+                        } },
+                    data);
             }
             // FIXME: Double lookup, probably harmless but still
             current_x_pos += column.width;
@@ -113,5 +130,4 @@ void ListView::handle_event(Event& event) {
 float ListView::content_height() const {
     return (m_model->row_count() + 1) * RowHeight;
 }
-
 }
