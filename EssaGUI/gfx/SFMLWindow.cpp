@@ -149,22 +149,30 @@ static sf::Vector2f get_rounded_rectangle_vertex(std::size_t index, sf::Vector2f
 void SFMLWindow::draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const& options) {
     if (options.border_radius_bottom_left == 0 && options.border_radius_bottom_right == 0 && options.border_radius_top_left == 0 && options.border_radius_top_right == 0) {
         std::array<Vertex, 4> vertices;
-        vertices[0] = Vertex { .position = { bounds.left, bounds.top }, .color = options.fill_color };
-        vertices[1] = Vertex { .position = { bounds.left + bounds.width, bounds.top }, .color = options.fill_color };
-        vertices[2] = Vertex { .position = { bounds.left, bounds.top + bounds.height }, .color = options.fill_color };
-        vertices[3] = Vertex { .position = { bounds.left + bounds.width, bounds.top + bounds.height }, .color = options.fill_color };
+        vertices[0] = Vertex { .position = { bounds.left, bounds.top }, .color = options.fill_color, .tex_coords = {} };
+        vertices[1] = Vertex { .position = { bounds.left + bounds.width, bounds.top }, .color = options.fill_color, .tex_coords = { 1, 0 } };
+        vertices[2] = Vertex { .position = { bounds.left, bounds.top + bounds.height }, .color = options.fill_color, .tex_coords = { 0, 1 } };
+        vertices[3] = Vertex { .position = { bounds.left + bounds.width, bounds.top + bounds.height }, .color = options.fill_color, .tex_coords = { 1, 1 } };
+        // TODO: Implement TextureScope
+        set_texture(options.texture);
         draw_vertices(GL_TRIANGLE_STRIP, vertices);
+        set_texture(nullptr);
         return;
     }
 
     std::array<Vertex, RoundedRectanglePointCount> vertices;
     for (size_t s = 0; s < RoundedRectanglePointCount; s++) {
+        Vector3 vertex { get_rounded_rectangle_vertex(s, { bounds.width, bounds.height }, options) + sf::Vector2f(bounds.left, bounds.top) };
         vertices[s] = Vertex {
-            .position = Vector3(get_rounded_rectangle_vertex(s, { bounds.width, bounds.height }, options) + sf::Vector2f(bounds.left, bounds.top)),
-            .color = options.fill_color
+            .position = vertex,
+            .color = options.fill_color,
+            .tex_coords = Vector3 { vertex.x / bounds.width, vertex.y / bounds.height }
         };
     }
+    // TODO: Implement TextureScope
+    set_texture(options.texture);
     draw_vertices(GL_TRIANGLE_FAN, vertices);
+    set_texture(nullptr);
 }
 
 void SFMLWindow::draw_text(sf::String const& text, sf::Font const& font, sf::Vector2f position, TextDrawOptions const& options) {

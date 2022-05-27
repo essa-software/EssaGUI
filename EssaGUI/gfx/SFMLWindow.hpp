@@ -15,6 +15,7 @@ namespace GUI {
 struct DrawOptions {
     sf::Color fill_color = sf::Color::White;
     sf::Color outline_color = sf::Color::White;
+    sf::Texture const* texture = nullptr;
     float outline_thickness = 1;
 };
 
