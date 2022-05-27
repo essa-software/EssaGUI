@@ -32,11 +32,13 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     // TODO: Many more things...
 
     // Background
-    for (size_t r = first_row; r < last_row; r++) {
-        sf::Color bg_color = r % 2 == 0 ? sf::Color { 100, 100, 100, 128 } : sf::Color { 80, 80, 80, 128 };
-        RectangleDrawOptions rs;
-        rs.fill_color = bg_color;
-        wnd.draw_rectangle({ sf::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x, RowHeight } }, rs);
+    if (rows > 0) {
+        for (size_t r = first_row; r < last_row; r++) {
+            sf::Color bg_color = r % 2 == 0 ? sf::Color { 100, 100, 100, 128 } : sf::Color { 80, 80, 80, 128 };
+            RectangleDrawOptions rs;
+            rs.fill_color = bg_color;
+            wnd.draw_rectangle({ sf::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x, RowHeight } }, rs);
+        }
     }
 
     // Column names
@@ -56,24 +58,26 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     }
 
     // Data
-    for (size_t c = 0; c < columns; c++) {
-        auto column = m_model->column(c);
+    if (rows > 0) {
+        for (size_t c = 0; c < columns; c++) {
+            auto column = m_model->column(c);
 
-        for (size_t r = first_row; r < last_row; r++) {
-            auto data = m_model->data(r, c);
-            sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight + Padding };
-            cell_position += scroll_offset();
+            for (size_t r = first_row; r < last_row; r++) {
+                auto data = m_model->data(r, c);
+                sf::Vector2f cell_position { current_x_pos + Padding, (r + 1) * RowHeight + Padding };
+                cell_position += scroll_offset();
 
-            // TODO: ClipViewScope it
+                // TODO: ClipViewScope it
 
-            // TODO: Make this all (font, font size, alignment) configurable
-            TextDrawOptions text;
-            text.font_size = 15;
-            text.text_align = Align::CenterLeft;
-            wnd.draw_text_aligned_in_rect(data, { cell_position, cell_size(r, c) }, Application::the().bold_font, text);
+                // TODO: Make this all (font, font size, alignment) configurable
+                TextDrawOptions text;
+                text.font_size = 15;
+                text.text_align = Align::CenterLeft;
+                wnd.draw_text_aligned_in_rect(data, { cell_position, cell_size(r, c) }, Application::the().bold_font, text);
+            }
+            // FIXME: Double lookup, probably harmless but still
+            current_x_pos += column.width;
         }
-        // FIXME: Double lookup, probably harmless but still
-        current_x_pos += column.width;
     }
 
     ScrollableWidget::draw_scrollbar(wnd);
