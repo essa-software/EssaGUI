@@ -30,7 +30,10 @@ public:
 
 private:
     virtual void handle_events() override;
-    virtual void update() override { m_first_tick = false; }
+    virtual void update() override {
+        WidgetTreeRoot::update();
+        m_first_tick = false;
+    }
 
     enum class Resize {
         LEFT,
