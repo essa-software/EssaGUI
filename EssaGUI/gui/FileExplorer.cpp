@@ -199,11 +199,15 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     create_directory_button->on_click = [&]() {
         auto path = GUI::prompt("Folder name: ", "Create folder");
         if (path.has_value()) {
-            // C++ Why mutable paths?!!!
-            auto new_path = m_current_path;
-            new_path.append(path->toAnsiString());
-            std::filesystem::create_directory(new_path);
-            m_model->update_content(m_current_path);
+            try {
+                // C++ Why mutable paths?!!!
+                auto new_path = m_current_path;
+                new_path.append(path->toAnsiString());
+                std::filesystem::create_directory(new_path);
+                m_model->update_content(m_current_path);
+            } catch (std::filesystem::filesystem_error& error) {
+                GUI::message_box(error.what(), "Error", GUI::MessageBox::Buttons::Ok);
+            }
         };
     };
 
