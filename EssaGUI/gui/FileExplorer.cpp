@@ -9,8 +9,8 @@
 #include "TextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
-
 #include "ToolWindow.hpp"
+
 #include <EssaGUI/util/UnitDisplay.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -175,7 +175,7 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     static sf::Texture new_file_icon = load_texture("../assets/gui/newFile.png");
 
     auto& container = set_main_widget<GUI::Container>();
-    container.set_layout<VerticalBoxLayout>();
+    container.set_layout<VerticalBoxLayout>().set_spacing(1);
 
     auto toolbar = container.add_widget<Container>();
     toolbar->set_layout<HorizontalBoxLayout>();
@@ -257,10 +257,26 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     };
 
     auto main_container = container.add_widget<Container>();
-    main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
+    main_container->set_layout<HorizontalBoxLayout>().set_spacing(1);
 
     auto sidebar = main_container->add_widget<Container>();
     sidebar->set_size({ { 20.0, Length::Percent }, Length::Auto });
+    sidebar->set_layout<GUI::VerticalBoxLayout>();
+    sidebar->set_background_color({ 120, 120, 120, 100 });
+
+    auto add_common_location = [&](std::string const& name, std::filesystem::path path) {
+        auto button = sidebar->add_widget<GUI::TextButton>();
+        button->set_content(name);
+        button->set_tooltip_text(path);
+        button->set_size({ Length::Auto, 30.0_px });
+        button->on_click = [this, path]() {
+            open_path(path);
+        };
+    };
+    add_common_location("Root", "/");
+    auto home_directory = getenv("HOME");
+    if (home_directory)
+        add_common_location("Home", home_directory);
 
     m_list = main_container->add_widget<ListView>();
     m_model = &m_list->create_and_set_model<FileModel>();
