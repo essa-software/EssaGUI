@@ -32,6 +32,7 @@ Prompt::Prompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_tit
     // FIXME: Why textboxes are numeric by default
     input->set_data_type(GUI::Textbox::TEXT);
     input->set_placeholder(std::move(placeholder));
+    input->set_focused();
 
     // FIXME: Also, why buttons are red by default?
     auto button_container = container.add_widget<GUI::Container>();
