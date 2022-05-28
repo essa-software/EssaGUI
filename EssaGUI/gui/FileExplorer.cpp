@@ -170,6 +170,9 @@ sf::Texture const* FileModel::file_icon(size_t row) const {
 
 FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     : ToolWindow(wnd) {
+    static sf::Texture parent_directory_icon = load_texture("../assets/gui/parentDirectory.png");
+    static sf::Texture new_folder_icon = load_texture("../assets/gui/newFolder.png");
+    static sf::Texture new_file_icon = load_texture("../assets/gui/newFile.png");
 
     auto& container = set_main_widget<GUI::Container>();
     container.set_layout<VerticalBoxLayout>();
@@ -181,19 +184,18 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     m_path_textbox = toolbar->add_widget<Textbox>();
     m_path_textbox->set_data_type(Textbox::Type::TEXT);
     m_path_textbox->set_content(m_current_path.string());
-    m_path_textbox->set_size({ { 50.0, Length::Percent }, Length::Auto });
 
     auto parent_directory_button = toolbar->add_widget<TextButton>();
-    parent_directory_button->set_content("Parent");
+    parent_directory_button->set_image(&parent_directory_icon);
     parent_directory_button->set_tooltip_text("Parent");
     parent_directory_button->set_alignment(Align::Center);
-    parent_directory_button->set_background_color(sf::Color::Green);
+    parent_directory_button->set_size({ 30.0_px, Length::Auto });
 
     auto create_directory_button = toolbar->add_widget<TextButton>();
-    create_directory_button->set_content("Create folder");
+    create_directory_button->set_image(&new_folder_icon);
     create_directory_button->set_tooltip_text("Create folder");
     create_directory_button->set_alignment(Align::Center);
-    create_directory_button->set_background_color(sf::Color::Blue);
+    create_directory_button->set_size({ 30.0_px, Length::Auto });
     create_directory_button->on_click = [&]() {
         auto path = GUI::prompt("Folder name: ", "Create folder");
         if (path.has_value()) {
@@ -206,10 +208,10 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     };
 
     auto create_file_button = toolbar->add_widget<TextButton>();
-    create_file_button->set_content("Create file");
+    create_file_button->set_image(&new_file_icon);
     create_file_button->set_tooltip_text("Create file");
     create_file_button->set_alignment(Align::Center);
-    create_file_button->set_background_color(sf::Color::Blue);
+    create_file_button->set_size({ 30.0_px, Length::Auto });
     create_file_button->on_click = [&]() {
         auto file_name = GUI::prompt("File name with extension: ", "Create file");
         if (file_name.has_value()) {
