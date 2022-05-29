@@ -70,7 +70,7 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
             std::chrono::file_clock::to_sys(o.last_write_time()));
 
         m_content.push_back(std::vector<std::string>(4));
-        m_content.back()[0] = o.path().filename();
+        m_content.back()[0] = o.path().filename().string();
         try {
             m_content.back()[1] = (!std::filesystem::is_directory(o))
                 ? Util::unit_display(o.file_size(), Util::Quantity::FileSize).to_string()
@@ -269,7 +269,7 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     auto add_common_location = [&](std::string const& name, std::filesystem::path path) {
         auto button = sidebar->add_widget<GUI::TextButton>();
         button->set_content(name);
-        button->set_tooltip_text(path);
+        button->set_tooltip_text(path.string());
         button->set_size({ Length::Auto, 30.0_px });
         button->on_click = [this, path]() {
             open_path(path);
@@ -308,18 +308,18 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
 
     auto open_folder_container = container.add_widget<GUI::Container>();
     open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    open_folder_container->set_size({Length::Auto, 40.0_px});
+    open_folder_container->set_size({ Length::Auto, 40.0_px });
     auto footer_text = open_folder_container->add_widget<GUI::Textfield>();
     footer_text->set_content("Choose folder to open: ");
     footer_text->set_alignment(GUI::Align::CenterRight);
-    footer_text->set_size({{70.0, Length::Percent}, Length::Auto});
+    footer_text->set_size({ { 70.0, Length::Percent }, Length::Auto });
 
     auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
     open_directory_btn->set_content("Open folder");
     open_directory_btn->set_alignment(Align::Center);
     open_directory_btn->set_background_color(sf::Color::Red);
     open_directory_btn->set_text_color(sf::Color::White);
-    open_directory_btn->on_click = [&](){
+    open_directory_btn->on_click = [&]() {
 
     };
 }

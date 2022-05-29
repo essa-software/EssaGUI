@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
+find_package(GLEW REQUIRED)
 
 add_library(essa-gui
     EssaGUI/gfx/DefaultGUIShader.cpp
@@ -51,7 +52,11 @@ add_library(essa-gui
     EssaGUI/util/UnitDisplay.cpp
 )
 
-target_link_libraries(essa-gui PUBLIC sfml-graphics GL GLEW)
+if(MINGW)
+    target_link_libraries(essa-gui PUBLIC sfml-graphics opengl32 GLEW::GLEW)
+else()
+    target_link_libraries(essa-gui PUBLIC sfml-graphics GL GLEW::GLEW)
+endif()
 
 function(setup_target targetname)
     install(TARGETS ${targetname} EXPORT EssaGUI DESTINATION lib)
@@ -60,6 +65,7 @@ function(setup_target targetname)
     target_compile_options(${targetname} PRIVATE
         -Wnon-virtual-dtor
         -Wno-error=missing-field-initializers       # FIXME: This is buggy (?) for *DrawOptions
+        -Wno-error=format                           # FIXME: We don't use formatting anyway except SimulationClock but this breaks mingw build
     )
 
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
