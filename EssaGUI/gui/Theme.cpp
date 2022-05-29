@@ -38,12 +38,13 @@ std::pair<std::string, sf::Color> read_value(std::string line){
     std::string key = "", color_str = "";
     bool con = 0;
     for(const auto& c : line){
-        if(c == ' ')
+        if(c == ' ' || c == '\t')
             continue;
         else if(c == '='){
             con = 1;
             continue;
-        }
+        }else if(c == '#')
+            break;
         
         if(con)
             color_str += c;
@@ -179,6 +180,9 @@ void Theme::load_ini(const std::string path){
         std::getline(f_in, line);
 
         auto val = read_value(line);
+
+        if(val.first.size() == 0)
+            continue;
 
         auto it = values.find(val.first);
 
