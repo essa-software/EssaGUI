@@ -60,7 +60,8 @@ public:
     };
 
     FileModel* model() { return m_model; }
-    void type(FileExplorerType type) { m_type = type; }
+    FileExplorerType get_type() const { return m_type; }
+    void set_type(FileExplorerType type) { m_type = type; }
     void open_path(std::filesystem::path path);
 
     std::function<void(std::filesystem::path path)> on_submit;

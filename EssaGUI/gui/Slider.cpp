@@ -33,11 +33,6 @@ void Slider::set_value(double val, NotifyUser notify_user) {
         on_change(get_value());
 }
 
-void Slider::set_display_attributes(sf::Color bg_color, sf::Color fg_color) {
-    m_bg_color = bg_color;
-    m_fg_color = fg_color;
-}
-
 void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos text_pos) {
     m_text_size = text_size;
     m_string = string;
@@ -83,17 +78,17 @@ float Slider::calculate_knob_size() const {
 
 void Slider::draw(GUI::SFMLWindow& window) const {
     RectangleDrawOptions slider;
-    slider.fill_color = are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0);
+    slider.fill_color = are_all_parents_enabled() ? get_background_color() : get_background_color() - sf::Color(60, 60, 60, 0);
     window.draw_rectangle({ { 0, size().y / 2 - 2.5f }, { size().x, 5.f } }, slider);
 
     RectangleDrawOptions bound;
-    bound.fill_color = are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0);
+    bound.fill_color = are_all_parents_enabled() ? get_background_color() : get_background_color() - sf::Color(60, 60, 60, 0);
     window.draw_rectangle({ { 0, size().y / 2 - 5 }, sf::Vector2f(2, 10) }, bound);
     window.draw_rectangle({ { size().x - 2, size().y / 2 - 5 }, sf::Vector2f(2, 10) }, bound);
 
     RectangleDrawOptions slider_value;
     auto knob_size_x = calculate_knob_size();
-    slider_value.fill_color = are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(70, 70, 70, 0);
+    slider_value.fill_color = are_all_parents_enabled() ? get_foreground_color() : get_foreground_color() - sf::Color(70, 70, 70, 0);
     window.draw_rectangle(
         { { static_cast<float>((value_clamped_to_min_max() - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2),
               size().y / 2 - 10.f },

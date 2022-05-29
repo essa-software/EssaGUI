@@ -4,6 +4,7 @@
 #include <EssaGUI/gui/Theme.hpp>
 #include <EssaGUI/util/Units.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <cassert>
 #include <string_view>
 
@@ -129,6 +130,18 @@ public:
     virtual void dump(unsigned depth);
 
     void set_background_color(sf::Color const& color) { m_background_color = color; }
+    void set_foreground_color(sf::Color const& color) { m_foreground_color = color; }
+    void set_text_color(sf::Color const& color) { m_text_color = color; }
+
+    sf::Color get_background_color()const{return m_background_color;}
+    sf::Color get_foreground_color()const{return m_foreground_color;}
+    sf::Color get_text_color()const{return m_text_color;}
+
+    void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+        set_background_color(bg_color);
+        set_foreground_color(fg_color);
+        set_text_color(text_color);
+    }
 
 protected:
     explicit Widget(WidgetTreeRoot& wtr)
@@ -164,6 +177,8 @@ private:
     bool m_visible = true;
     bool m_enabled = true;
     sf::Color m_background_color = sf::Color::Transparent;
+    sf::Color m_foreground_color = sf::Color::Transparent;
+    sf::Color m_text_color = sf::Color::Transparent;
 };
 
 }

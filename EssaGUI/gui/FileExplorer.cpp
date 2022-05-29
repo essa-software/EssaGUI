@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
+#include "EssaGUI/gui/Button.hpp"
 #include "ListView.hpp"
 #include "MessageBox.hpp"
 #include "NotifyUser.hpp"
@@ -12,10 +13,13 @@
 #include "ToolWindow.hpp"
 
 #include <EssaGUI/gfx/ResourceLoader.hpp>
+#include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
 
+#include <EssaGUI/util/Units.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <SFML/Graphics/Color.hpp>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -301,6 +305,23 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     };
 
     open_path("../worlds");
+
+    auto open_folder_container = container.add_widget<GUI::Container>();
+    open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+    open_folder_container->set_size({40.0_px, Length::Auto});
+    auto footer_text = open_folder_container->add_widget<GUI::Textfield>();
+    footer_text->set_content("Choose folder to open: ");
+    footer_text->set_alignment(GUI::Align::CenterRight);
+    footer_text->set_size({{70.0, Length::Percent}, Length::Auto});
+
+    // auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
+    // open_directory_btn->set_content("Open folder");
+    // open_directory_btn->set_alignment(Align::Center);
+    // open_directory_btn->set_background_color(sf::Color::Red);
+    // open_directory_btn->set_text_color(sf::Color::White);
+    // open_directory_btn->on_click = [&](){
+
+    // };
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {

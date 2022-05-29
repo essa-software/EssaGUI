@@ -19,12 +19,7 @@ class Slider : public Widget {
     double m_step;
     double m_val;
 
-
     bool m_dragging = false;
-
-    sf::Color m_bg_color = sf::Color(200, 200, 200);
-    sf::Color m_fg_color = sf::Color::White;
-    sf::Color m_text_color = sf::Color::White;
     unsigned m_text_size;
     std::string m_string;
 
@@ -55,7 +50,6 @@ public:
     virtual void handle_event(Event&) override;
     virtual void draw(GUI::SFMLWindow& window) const override;
 
-    void set_display_attributes(sf::Color bg_color, sf::Color fg_color);
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
     void set_range(double min, double max, double step);
 
