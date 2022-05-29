@@ -11,6 +11,7 @@
 #include "Textfield.hpp"
 #include "ToolWindow.hpp"
 
+#include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -139,19 +140,12 @@ std::string FileModel::file_type(std::filesystem::path path) {
     return it->second;
 }
 
-static sf::Texture load_texture(std::string const& path) {
-    sf::Texture tex;
-    if (!tex.loadFromFile(path))
-        exit(1);
-    return tex;
-}
-
 sf::Texture const* FileModel::file_icon(size_t row) const {
-    static sf::Texture directory_icon = load_texture("../assets/gui/directory.png");
-    static sf::Texture regular_file_icon = load_texture("../assets/gui/regularFile.png");
-    static sf::Texture block_device_icon = load_texture("../assets/gui/blockDevice.png");
-    static sf::Texture symlink_icon = load_texture("../assets/gui/symlink.png");
-    static sf::Texture socket_icon = load_texture("../assets/gui/socket.png");
+    static sf::Texture directory_icon = Gfx::require_texture("../assets/gui/directory.png");
+    static sf::Texture regular_file_icon = Gfx::require_texture("../assets/gui/regularFile.png");
+    static sf::Texture block_device_icon = Gfx::require_texture("../assets/gui/blockDevice.png");
+    static sf::Texture symlink_icon = Gfx::require_texture("../assets/gui/symlink.png");
+    static sf::Texture socket_icon = Gfx::require_texture("../assets/gui/socket.png");
 
     auto status = std::filesystem::symlink_status(m_paths[row]);
     switch (status.type()) {
@@ -170,9 +164,9 @@ sf::Texture const* FileModel::file_icon(size_t row) const {
 
 FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     : ToolWindow(wnd) {
-    static sf::Texture parent_directory_icon = load_texture("../assets/gui/parentDirectory.png");
-    static sf::Texture new_folder_icon = load_texture("../assets/gui/newFolder.png");
-    static sf::Texture new_file_icon = load_texture("../assets/gui/newFile.png");
+    static sf::Texture parent_directory_icon = Gfx::require_texture("../assets/gui/parentDirectory.png");
+    static sf::Texture new_folder_icon = Gfx::require_texture("../assets/gui/newFolder.png");
+    static sf::Texture new_file_icon = Gfx::require_texture("../assets/gui/newFile.png");
 
     auto& container = set_main_widget<GUI::Container>();
     container.set_layout<VerticalBoxLayout>().set_spacing(1);

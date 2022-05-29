@@ -10,6 +10,7 @@ find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 add_library(essa-gui
     EssaGUI/gfx/DefaultGUIShader.cpp
     EssaGUI/gfx/ClipViewScope.cpp
+    EssaGUI/gfx/ResourceLoader.cpp
     EssaGUI/gfx/RoundedEdgeRectangleShape.cpp
     EssaGUI/gfx/SFMLWindow.cpp
 
