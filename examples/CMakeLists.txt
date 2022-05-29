@@ -5,5 +5,6 @@ endfunction()
 
 add_example("file-explorer")
 add_example("gfx-test")
+add_example("image-widget")
 add_example("message-box-multiline")
 add_example("scrollable-widget")
