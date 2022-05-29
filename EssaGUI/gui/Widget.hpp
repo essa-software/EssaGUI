@@ -178,7 +178,7 @@ private:
     bool m_enabled = true;
     sf::Color m_background_color = sf::Color::Transparent;
     sf::Color m_foreground_color = sf::Color::Transparent;
-    sf::Color m_text_color = sf::Color::Transparent;
+    sf::Color m_text_color = sf::Color::White;
 };
 
 }

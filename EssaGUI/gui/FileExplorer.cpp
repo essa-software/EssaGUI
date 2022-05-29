@@ -308,20 +308,20 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
 
     auto open_folder_container = container.add_widget<GUI::Container>();
     open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    open_folder_container->set_size({40.0_px, Length::Auto});
+    open_folder_container->set_size({Length::Auto, 40.0_px});
     auto footer_text = open_folder_container->add_widget<GUI::Textfield>();
     footer_text->set_content("Choose folder to open: ");
     footer_text->set_alignment(GUI::Align::CenterRight);
     footer_text->set_size({{70.0, Length::Percent}, Length::Auto});
 
-    // auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
-    // open_directory_btn->set_content("Open folder");
-    // open_directory_btn->set_alignment(Align::Center);
-    // open_directory_btn->set_background_color(sf::Color::Red);
-    // open_directory_btn->set_text_color(sf::Color::White);
-    // open_directory_btn->on_click = [&](){
+    auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
+    open_directory_btn->set_content("Open folder");
+    open_directory_btn->set_alignment(Align::Center);
+    open_directory_btn->set_background_color(sf::Color::Red);
+    open_directory_btn->set_text_color(sf::Color::White);
+    open_directory_btn->on_click = [&](){
 
-    // };
+    };
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {
