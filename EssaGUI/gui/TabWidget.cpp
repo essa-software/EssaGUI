@@ -30,7 +30,7 @@ void TabButton::draw(GUI::SFMLWindow& window) const {
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
     rect.fill_color = bg_color_for_state();
-    window.draw_rectangle(is_active() ? sf::FloatRect { { 0, 4 }, size() } : local_rect(), rect);
+    window.draw_rectangle(is_active() ? sf::FloatRect { { 0, -4 }, size() } : local_rect(), rect);
 
     sf::Vector2f text_position;
     if (is_active())
