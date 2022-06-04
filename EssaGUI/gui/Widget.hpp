@@ -71,7 +71,7 @@ public:
 
     virtual void do_handle_event(Event& event);
     virtual void do_update();
-    virtual void draw(GUI::SFMLWindow& window) const;
+    virtual void draw(GUI::SFMLWindow& window) const = 0;
 
     void set_raw_position(sf::Vector2f p) {
         m_pos = p;

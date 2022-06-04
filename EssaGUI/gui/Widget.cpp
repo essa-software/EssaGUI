@@ -106,19 +106,15 @@ void Widget::handle_event(Event& event) {
         set_needs_relayout();
 }
 
-void Widget::draw(GUI::SFMLWindow& window) const {
-    RectangleDrawOptions background;
-    background.fill_color = m_background_color;
-    window.draw_rectangle(local_rect(), background);
-    // background.setOutlineThickness(-1);
-    // background.setOutlineColor(is_focused() ? sf::Color::Green : sf::Color::Red);
-}
-
 void Widget::do_draw(GUI::SFMLWindow& window) const {
     // std::cout << "do_draw "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
     Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
+    
+    RectangleDrawOptions background;
+    background.fill_color = m_background_color;
+    window.draw_rectangle(local_rect(), background);
+
     this->draw(window);
-    Widget::draw(window);
 }
 
 sf::FloatRect Widget::rect() const {
