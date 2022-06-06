@@ -35,7 +35,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     // to find the nearest one.
     float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font, get_text_options()).x;
     auto cursor = (delta.x - scroll_offset().x) / character_width;
-    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines.back().getSize()) };
+    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].getSize()) };
 }
 
 sf::String TextEditor::get_content() const {
@@ -140,14 +140,8 @@ void TextEditor::handle_event(Event& event) {
                 if (event.event().key.control) {
                     move_cursor_by_word(CursorDirection::Left);
                 }
-                else if (m_cursor == m_selection_start) {
+                else {
                     move_cursor(CursorDirection::Left);
-                }
-                else if (!m_shift_pressed) {
-                    if (m_cursor < m_selection_start)
-                        m_selection_start = m_cursor;
-                    else
-                        m_cursor = m_selection_start;
                 }
                 event.set_handled();
             } break;
@@ -155,16 +149,9 @@ void TextEditor::handle_event(Event& event) {
                 if (event.event().key.control) {
                     move_cursor_by_word(CursorDirection::Right);
                 }
-                else if (m_cursor == m_selection_start) {
+                else {
                     move_cursor(CursorDirection::Right);
                 }
-                else if (!m_shift_pressed) {
-                    if (m_cursor > m_selection_start)
-                        m_selection_start = m_cursor;
-                    else
-                        m_cursor = m_selection_start;
-                }
-
                 event.set_handled();
             } break;
             case sf::Keyboard::A: {
@@ -228,14 +215,29 @@ sf::String TextEditor::selected_text() const {
 }
 
 void TextEditor::erase_selected_text() {
-    // TODO
-    // auto start = std::min(m_cursor, m_selection_start);
-    // m_content.erase(start, std::max(m_cursor, m_selection_start) - start);
-    // m_cursor = start;
-    // m_selection_start = m_cursor;
+    if (m_selection_start != m_cursor) {
+        auto selection_start = std::min(m_selection_start, m_cursor);
+        auto selection_end = std::max(m_selection_start, m_cursor);
+        auto after_selection_line_part = m_lines[selection_end.line].substring(selection_end.column);
+        for (size_t s = selection_start.line; s <= selection_end.line; s++) {
+            float start = s == selection_start.line ? selection_start.column : 0;
+            float end = s == selection_end.line ? selection_end.column : m_lines[s].getSize();
+            m_lines[s].erase(start, end - start + 1);
+        }
+        m_lines.erase(m_lines.begin() + selection_start.line + 1, m_lines.begin() + selection_end.line + 1);
+        m_lines[selection_start.line] += after_selection_line_part;
+    }
+    update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
 }
 
 void TextEditor::move_cursor(CursorDirection direction) {
+    if (m_cursor != m_selection_start && !m_shift_pressed) {
+        if ((direction == CursorDirection::Right) != (m_cursor < m_selection_start))
+            m_selection_start = m_cursor;
+        else
+            m_cursor = m_selection_start;
+        return;
+    }
     switch (direction) {
     case CursorDirection::Left:
         if (m_cursor.column == 0) {
@@ -258,6 +260,7 @@ void TextEditor::move_cursor(CursorDirection direction) {
             m_cursor.column++;
         break;
     }
+
     update_selection_after_set_cursor();
 }
 
@@ -295,10 +298,23 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
 
     auto const cursor_height = std::min(size().y - 6, line_height());
 
-    // RectangleDrawOptions selected_rect;
-    // selected_rect.fill_color = is_focused() ? theme().active_selection : theme().selection;
-    // window.draw_rectangle({ { selection_start_pos, size().y / 2 - cursor_height / 2 }, { selection_end_pos - selection_start_pos, cursor_height } }, selected_rect);
-
+    if (m_selection_start != m_cursor) {
+        RectangleDrawOptions selected_rect;
+        selected_rect.fill_color = is_focused() ? theme().active_selection : theme().selection;
+        auto selection_start = std::min(m_selection_start, m_cursor);
+        auto selection_end = std::max(m_selection_start, m_cursor);
+        for (size_t s = selection_start.line; s <= selection_end.line; s++) {
+            float start = window.find_character_position(s == selection_start.line ? selection_start.column : 0, m_lines[s],
+                                    Application::the().fixed_width_font,
+                                    get_text_options())
+                              .x;
+            float end = window.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].getSize(), m_lines[s],
+                                  Application::the().fixed_width_font,
+                                  get_text_options())
+                            .x;
+            window.draw_rectangle({ { start, line_height() / 2 - cursor_height / 4 + line_height() * s }, { end - start, cursor_height } }, selected_rect);
+        }
+    }
     TextDrawOptions text_options = get_text_options();
     sf::Vector2f position;
     for (auto& line : m_lines) {
