@@ -154,6 +154,22 @@ void TextEditor::handle_event(Event& event) {
                 }
                 event.set_handled();
             } break;
+            case sf::Keyboard::Up: {
+                if (m_cursor.line > 0)
+                    m_cursor.line--;
+                if (m_cursor.column > m_lines[m_cursor.line].getSize())
+                    m_cursor.column = m_lines[m_cursor.line].getSize();
+                update_selection_after_set_cursor();
+                event.set_handled();
+            } break;
+            case sf::Keyboard::Down: {
+                if (m_cursor.line < m_lines.size() - 1)
+                    m_cursor.line++;
+                if (m_cursor.column > m_lines[m_cursor.line].getSize())
+                    m_cursor.column = m_lines[m_cursor.line].getSize();
+                update_selection_after_set_cursor();
+                event.set_handled();
+            } break;
             case sf::Keyboard::A: {
                 if (event.event().key.control) {
                     m_cursor = { .line = m_lines.size() - 1, .column = m_lines[m_lines.size() - 1].getSize() };
