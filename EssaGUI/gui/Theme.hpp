@@ -54,8 +54,12 @@ public:
     BgTextColors list_record2;
 
     BgTextColors prompt;
-
     BgTextColors tooltip;
+
+    sf::Color active_selection;
+    sf::Color selection;
+
+    sf::Color placeholder;
 };
 
 }
