@@ -242,6 +242,7 @@ void TextEditor::erase_selected_text() {
         }
         m_lines.erase(m_lines.begin() + selection_start.line + 1, m_lines.begin() + selection_end.line + 1);
         m_lines[selection_start.line] += after_selection_line_part;
+        m_cursor = selection_start;
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
 }
