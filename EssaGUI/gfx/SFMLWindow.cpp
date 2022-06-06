@@ -308,4 +308,19 @@ sf::Vector2f SFMLWindow::calculate_text_size(sf::String const& text, sf::Font co
     return total_size;
 }
 
+sf::Vector2f SFMLWindow::find_character_position(size_t index, sf::String const& text, sf::Font const& font, TextDrawOptions const& options) {
+    sf::Vector2f current_position;
+    for (size_t s = 0; s < index; s++) {
+        auto codepoint = text[s];
+        if (codepoint == '\n') {
+            current_position.y += font.getLineSpacing(options.font_size);
+            current_position.x = 0;
+            continue;
+        }
+        auto glyph = font.getGlyph(codepoint, options.font_size, false);
+        current_position.x += glyph.advance;
+    }
+    return current_position;
+}
+
 }

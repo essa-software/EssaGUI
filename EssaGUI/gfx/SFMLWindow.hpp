@@ -85,7 +85,9 @@ public:
     void draw_text_aligned_in_rect(sf::String const&, sf::FloatRect rect, sf::Font const&, TextDrawOptions const& = {});
     void draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOptions const& = {});
 
+    // FIXME: Add some class like sf::Text.
     sf::Vector2f calculate_text_size(sf::String const&, sf::Font const&, TextDrawOptions const& = {});
+    sf::Vector2f find_character_position(size_t index, sf::String const&, sf::Font const&, TextDrawOptions const& = {});
 
 private:
     void apply_states();
