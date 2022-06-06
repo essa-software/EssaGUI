@@ -14,10 +14,6 @@ namespace GUI {
 
 class Textbox : public Widget {
     sf::String m_content, m_placeholder;
-    sf::Color m_bg_color = sf::Color(220, 220, 220);
-    sf::Color m_fg_color = sf::Color(120, 120, 120);
-    sf::Color m_text_color = sf::Color(30, 30, 30);
-    sf::Color m_placeholder_color = sf::Color(80, 80, 80);
     unsigned m_limit = 1024;
     bool m_has_decimal = false;
     bool m_dragging = false;
@@ -38,7 +34,6 @@ public:
     explicit Textbox(Container& c)
         : Widget(c) { }
 
-    void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
     virtual void handle_event(Event&) override;
     virtual void draw(GUI::SFMLWindow& window) const override;
     void set_limit(unsigned limit) { m_limit = limit; }

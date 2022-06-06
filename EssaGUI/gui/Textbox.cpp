@@ -14,12 +14,6 @@
 
 namespace GUI {
 
-void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
-    m_bg_color = bg_color;
-    m_fg_color = fg_color;
-    m_text_color = text_color;
-}
-
 unsigned Textbox::m_character_pos_from_mouse(Event& event) {
     if (m_content.getSize() == 0 || (m_content == "0" && m_type == Type::NUMBER))
         return 0;
@@ -304,13 +298,13 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
 sf::Text Textbox::generate_sf_text() const {
     // TODO: Cache the result
     sf::Text text(m_content, Application::the().fixed_width_font, 16);
-    text.setFillColor(m_text_color);
+    text.setFillColor(are_all_parents_enabled() ? theme().active_textbox.text : theme().textbox.text);
     text.setPosition(5, 2 + size().y / 2);
     text.move(m_scroll, 0);
     text.setOrigin(0, 0); // -6 because of SFML not taking descenders into account
 
     if (!is_focused() && m_content.getSize() == 0) {
-        text.setFillColor(m_placeholder_color);
+        text.setFillColor(theme().placeholder);
         text.setString(m_placeholder);
     }
 
@@ -325,10 +319,10 @@ void Textbox::draw(GUI::SFMLWindow& window) const {
     RectangleDrawOptions rect;
     rect.outline_color = sf::Color(80, 80, 80);
     rect.outline_thickness = -2;
-    rect.fill_color = are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0);
+    rect.fill_color = are_all_parents_enabled() ? theme().active_textbox.background : theme().textbox.background;
 
     if (is_focused())
-        rect.outline_color = are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0);
+        rect.outline_color = are_all_parents_enabled() ? theme().active_textbox.foreground : theme().textbox.foreground;
 
     window.draw_rectangle(local_rect(), rect);
 
@@ -338,7 +332,7 @@ void Textbox::draw(GUI::SFMLWindow& window) const {
     auto selection_end_pos = text.findCharacterPos(std::max(m_selection_start, m_cursor)).x;
 
     RectangleDrawOptions selected_rect;
-    selected_rect.fill_color = is_focused() ? sf::Color(160, 160, 255) : sf::Color(160, 160, 160);
+    selected_rect.fill_color = is_focused() ? theme().active_selection : theme().selection;
     window.draw_rectangle({ { selection_start_pos, size().y / 2 - cursor_height / 2 }, { selection_end_pos - selection_start_pos, cursor_height } }, selected_rect);
 
     // TODO: Port this fully to SFMLWindow TextDrawOptions or something like this
