@@ -12,6 +12,7 @@ public:
         : Widget(parent) { }
 
     void set_scroll(float);
+    float scroll() const { return m_scroll; }
 
 protected:
     virtual void handle_event(Event&) override;
