@@ -30,7 +30,7 @@ void TabButton::draw(GUI::SFMLWindow& window) const {
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
     rect.fill_color = bg_color_for_state();
-    window.draw_rectangle(is_active() ? sf::FloatRect { { 0, -4 }, size() } : local_rect(), rect);
+    window.draw_rectangle(is_active() ? sf::FloatRect { { 0, 4 }, size() } : local_rect(), rect);
 
     sf::Vector2f text_position;
     if (is_active())
@@ -77,6 +77,7 @@ TabWidget::TabWidget(Container& c)
     m_tab_select->set_size({ Length::Auto, 30.0_px });
     m_tab_container = add_widget<Container>();
     m_tab_container->set_layout<BasicLayout>();
+    m_tab_container->set_background_color(sf::Color(200, 200, 200, 100));
 }
 
 void TabWidget::switch_to_tab(size_t index) {
