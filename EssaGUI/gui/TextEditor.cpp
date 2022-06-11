@@ -39,8 +39,13 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
 }
 
 sf::String TextEditor::get_content() const {
-    // TODO
-    return "";
+    sf::String content;
+    for (size_t s = 0; s < m_lines.size(); s++) {
+        content += m_lines[s];
+        if (s != m_lines.size() - 1)
+            content += '\n';
+    }
+    return content;
 }
 
 void TextEditor::set_content(sf::String, NotifyUser) {
