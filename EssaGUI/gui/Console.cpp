@@ -3,6 +3,7 @@
 #include "Application.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <sstream>
 
 namespace GUI {
 
@@ -14,6 +15,16 @@ void Console::append_line(LogLine line) {
         double bottom_content = m_lines.size() * LINE_SPACING - scroll_area_height();
         if (bottom_content > 0)
             set_scroll(bottom_content);
+    }
+}
+
+void Console::append_content(LogLine content) {
+    std::istringstream iss { content.text };
+    while (true) {
+        std::string line;
+        if (!std::getline(iss, line))
+            return;
+        append_line({ .color = content.color, .text = line });
     }
 }
 

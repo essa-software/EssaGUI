@@ -17,6 +17,7 @@ public:
     };
 
     void append_line(LogLine);
+    void append_content(LogLine);
     void clear();
 
 private:
