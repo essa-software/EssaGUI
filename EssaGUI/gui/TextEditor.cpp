@@ -67,6 +67,8 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
         set_scroll(scroll() + y_offset);
     else if (y_offset > max_y)
         set_scroll(scroll() + (y_offset - max_y));
+
+    m_cursor_clock.restart();
 }
 
 void TextEditor::handle_event(Event& event) {
@@ -472,7 +474,6 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
     }
 
     if (is_focused()) {
-        // FIXME: Reset timer when writing/selecting etc
         if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
             auto position = calculate_cursor_position();
             RectangleDrawOptions cursor;
