@@ -242,13 +242,18 @@ void TextEditor::erase_selected_text() {
         auto selection_start = std::min(m_selection_start, m_cursor);
         auto selection_end = std::max(m_selection_start, m_cursor);
         auto after_selection_line_part = m_lines[selection_end.line].substring(selection_end.column);
-        for (size_t s = selection_start.line; s <= selection_end.line; s++) {
-            float start = s == selection_start.line ? selection_start.column : 0;
-            float end = s == selection_end.line ? selection_end.column : m_lines[s].getSize();
-            m_lines[s].erase(start, end - start + 1);
+        if (selection_start.line == selection_end.line) {
+            m_lines[selection_start.line].erase(selection_start.column, selection_end.column - selection_start.column);
         }
-        m_lines.erase(m_lines.begin() + selection_start.line + 1, m_lines.begin() + selection_end.line + 1);
-        m_lines[selection_start.line] += after_selection_line_part;
+        else {
+            for (size_t s = selection_start.line; s <= selection_end.line; s++) {
+                float start = s == selection_start.line ? selection_start.column : 0;
+                float end = s == selection_end.line ? selection_end.column : m_lines[s].getSize();
+                m_lines[s].erase(start, end - start + 1);
+            }
+            m_lines.erase(m_lines.begin() + selection_start.line + 1, m_lines.begin() + selection_end.line + 1);
+            m_lines[selection_start.line] += after_selection_line_part;
+        }
         m_cursor = selection_start;
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
