@@ -124,7 +124,7 @@ void TextEditor::handle_event(Event& event) {
                     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
                 }
             }
-            else if (codepoint != '\n') {
+            else if (codepoint >= 0x20) {
                 if (m_cursor != m_selection_start)
                     erase_selected_text();
                 if (m_lines.empty())
