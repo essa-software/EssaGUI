@@ -162,6 +162,13 @@ void TextEditor::handle_event(Event& event) {
                 }
                 break;
             }
+            case sf::Keyboard::X: {
+                if (event.event().key.control) {
+                    sf::Clipboard::setString(selected_text());
+                    erase_selected_text();
+                }
+                break;
+            }
             case sf::Keyboard::C: {
                 if (event.event().key.control) {
                     sf::Clipboard::setString(selected_text());
@@ -170,11 +177,11 @@ void TextEditor::handle_event(Event& event) {
             }
             case sf::Keyboard::V: {
                 if (event.event().key.control) {
+                    erase_selected_text();
                     m_selection_start = m_cursor;
                     auto clipboard_contents = sf::Clipboard::getString();
-                    // TODO
-                    // m_content.insert(m_cursor, clipboard_contents);
-                    // m_cursor += clipboard_contents.getSize();
+                    for (auto codepoint : clipboard_contents)
+                        insert_codepoint(codepoint);
                 }
                 break;
             }
@@ -208,11 +215,20 @@ void TextEditor::handle_event(Event& event) {
 }
 
 sf::String TextEditor::selected_text() const {
-    // TODO
-    return "";
-    // auto start = std::min(m_cursor, m_selection_start);
-    // auto size = std::max(m_cursor, m_selection_start) - start;
-    // return m_content.substring(start, size);
+    auto selection_start = std::min(m_selection_start, m_cursor);
+    auto selection_end = std::max(m_selection_start, m_cursor);
+
+    if (selection_start.line == selection_end.line) {
+        return m_lines[selection_start.line].substring(selection_start.column, selection_end.column - selection_start.column);
+    }
+
+    sf::String text;
+    for (size_t s = selection_start.line; s <= selection_end.line; s++) {
+        float start = s == selection_start.line ? selection_start.column : 0;
+        float end = s == selection_end.line ? selection_end.column : m_lines[s].getSize();
+        text += m_lines[s].substring(start, end - start + 1);
+    }
+    return text;
 }
 
 void TextEditor::erase_selected_text() {
@@ -276,7 +292,7 @@ void TextEditor::move_cursor_by_word(CursorDirection) {
 }
 
 void TextEditor::insert_codepoint(uint32_t codepoint) {
-    if (codepoint == '\r') {
+    if (codepoint == '\r' || codepoint == '\n') {
         if (m_lines.empty())
             m_lines.push_back("");
         else {
