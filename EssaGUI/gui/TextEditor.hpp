@@ -67,6 +67,8 @@ private:
     void move_cursor(CursorDirection);
     void move_cursor_by_word(CursorDirection);
 
+    void insert_codepoint(uint32_t);
+
     // Set text cursor with updating scroll and selection if shift is pressed.
     void update_selection_after_set_cursor(SetCursorSelectionBehavior = SetCursorSelectionBehavior::Extend);
 

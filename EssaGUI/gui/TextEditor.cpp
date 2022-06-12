@@ -110,30 +110,8 @@ void TextEditor::handle_event(Event& event) {
                 if (on_change)
                     on_change(get_content());
             }
-            else if (codepoint == '\r') {
-                if (m_lines.empty())
-                    m_lines.push_back("");
-                else {
-                    auto line = m_lines[m_cursor.line];
-                    auto old_part = line.substring(0, m_cursor.column);
-                    auto new_part = line.substring(m_cursor.column);
-                    m_lines.insert(m_lines.begin() + m_cursor.line + 1, new_part);
-                    m_lines[m_cursor.line] = old_part;
-                    m_cursor.line++;
-                    m_cursor.column = 0;
-                    update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
-                }
-            }
-            else if (codepoint >= 0x20) {
-                if (m_cursor != m_selection_start)
-                    erase_selected_text();
-                if (m_lines.empty())
-                    m_lines.push_back("");
-                m_lines[m_cursor.line].insert(m_cursor.column, codepoint);
-                if (on_change)
-                    on_change(get_content());
-                m_cursor.column++;
-                update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+            else {
+                insert_codepoint(codepoint);
             }
             event.set_handled();
         }
@@ -295,6 +273,35 @@ void TextEditor::move_cursor(CursorDirection direction) {
 
 void TextEditor::move_cursor_by_word(CursorDirection) {
     // TODO
+}
+
+void TextEditor::insert_codepoint(uint32_t codepoint) {
+    if (codepoint == '\r') {
+        if (m_lines.empty())
+            m_lines.push_back("");
+        else {
+            auto line = m_lines[m_cursor.line];
+            auto old_part = line.substring(0, m_cursor.column);
+            auto new_part = line.substring(m_cursor.column);
+            m_lines.insert(m_lines.begin() + m_cursor.line + 1, new_part);
+            m_lines[m_cursor.line] = old_part;
+            m_cursor.line++;
+            m_cursor.column = 0;
+            update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+        }
+    }
+    else if (codepoint >= 0x20) {
+
+        if (m_cursor != m_selection_start)
+            erase_selected_text();
+        if (m_lines.empty())
+            m_lines.push_back("");
+        m_lines[m_cursor.line].insert(m_cursor.column, codepoint);
+        if (on_change)
+            on_change(get_content());
+        m_cursor.column++;
+        update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+    }
 }
 
 sf::Vector2f TextEditor::calculate_cursor_position() const {
