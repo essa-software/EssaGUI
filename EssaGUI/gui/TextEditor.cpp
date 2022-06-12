@@ -1,4 +1,5 @@
 #include "TextEditor.hpp"
+#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "EssaGUI/gui/ScrollableWidget.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
@@ -15,6 +16,8 @@ float TextEditor::line_height() const {
 float TextEditor::content_height() const {
     return m_lines.size() * line_height() + 5;
 }
+
+constexpr float GutterWidth = 50.f;
 
 TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (m_lines.size() == 0)
@@ -34,7 +37,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
     float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font, get_text_options()).x;
-    auto cursor = (delta.x - scroll_offset().x) / character_width;
+    auto cursor = (delta.x - scroll_offset().x - GutterWidth) / character_width;
     return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].getSize()) };
 }
 
@@ -409,15 +412,19 @@ TextDrawOptions TextEditor::get_text_options() const {
 }
 
 void TextEditor::draw(GUI::SFMLWindow& window) const {
-    RectangleDrawOptions rect;
-    rect.outline_color = sf::Color(80, 80, 80);
-    rect.outline_thickness = -2;
-    rect.fill_color = are_all_parents_enabled() ? theme().active_textbox.background : theme().textbox.background;
+    RectangleDrawOptions background_rect;
+    background_rect.outline_color = sf::Color(80, 80, 80);
+    background_rect.outline_thickness = -2;
+    background_rect.fill_color = are_all_parents_enabled() ? theme().active_textbox.background : theme().textbox.background;
 
     if (is_focused())
-        rect.outline_color = are_all_parents_enabled() ? theme().active_textbox.foreground : theme().textbox.foreground;
+        background_rect.outline_color = are_all_parents_enabled() ? theme().active_textbox.foreground : theme().textbox.foreground;
 
-    window.draw_rectangle(local_rect(), rect);
+    window.draw_rectangle(local_rect(), background_rect);
+
+    RectangleDrawOptions gutter_rect;
+    gutter_rect.fill_color = theme().gutter.background;
+    window.draw_rectangle({ {}, sf::Vector2f { GutterWidth - 5, size().y } }, gutter_rect);
 
     auto const cursor_height = std::min(size().y - 6, line_height());
 
@@ -435,14 +442,33 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
                                   Application::the().fixed_width_font,
                                   get_text_options())
                             .x;
-            window.draw_rectangle({ sf::Vector2f { start, line_height() / 2 - cursor_height / 4 + line_height() * s } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
+            window.draw_rectangle({ sf::Vector2f { start + GutterWidth, line_height() / 2 - cursor_height / 4 + line_height() * s } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
-    TextDrawOptions text_options = get_text_options();
-    sf::Vector2f position = scroll_offset();
-    for (auto& line : m_lines) {
-        position.y += line_height();
-        window.draw_text(line, Application::the().fixed_width_font, position, text_options);
+
+    {
+        TextDrawOptions text_options = get_text_options();
+        sf::Vector2f position = scroll_offset();
+        position.x += GutterWidth;
+        for (auto& line : m_lines) {
+            position.y += line_height();
+            window.draw_text(line, Application::the().fixed_width_font, position, text_options);
+        }
+    }
+
+    // Line numbers
+    {
+        TextDrawOptions line_numbers;
+        sf::Vector2f position = scroll_offset();
+        position.y += 5;
+        line_numbers.fill_color = theme().gutter.text;
+        line_numbers.font_size = FontSize;
+        line_numbers.text_align = Align::CenterRight;
+        for (size_t s = 0; s < m_lines.size(); s++) {
+            window.draw_text_aligned_in_rect(std::to_string(s + 1), { position, { GutterWidth - 10, line_height() } },
+                GUI::Application::the().fixed_width_font, line_numbers);
+            position.y += line_height();
+        }
     }
 
     if (is_focused()) {
@@ -451,14 +477,14 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
             auto position = calculate_cursor_position();
             RectangleDrawOptions cursor;
             cursor.fill_color = sf::Color::Black;
-            window.draw_rectangle({ position, sf::Vector2f(2, cursor_height) },
+            window.draw_rectangle({ position + sf::Vector2f(GutterWidth, 0), sf::Vector2f(2, cursor_height) },
                 cursor);
         }
     }
 
     // Border once again so that it covers text
-    rect.fill_color = sf::Color::Transparent;
-    window.draw_rectangle(local_rect(), rect);
+    background_rect.fill_color = sf::Color::Transparent;
+    window.draw_rectangle(local_rect(), background_rect);
 
     ScrollableWidget::draw_scrollbar(window);
 }

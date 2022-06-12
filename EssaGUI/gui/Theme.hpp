@@ -44,6 +44,7 @@ public:
     BgTextColors textbox;
     BgTextColors active_textbox;
 
+    BgTextColors gutter;
     BgTextColors container;
 
     BgTextColors datebox;

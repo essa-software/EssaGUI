@@ -36,6 +36,11 @@ Theme& Theme::default_theme() {
             .foreground = sf::Color(120, 120, 120),
             .text = sf::Color(30, 30, 30),
         };
+        theme.gutter = {
+            .background = sf::Color(200, 200, 200),
+            .foreground = sf::Color(120, 120, 120),
+            .text = sf::Color(30, 30, 30),
+        };
         theme.positive = sf::Color(100, 200, 100);
         theme.negative = sf::Color(200, 100, 100);
         theme.neutral = sf::Color(100, 100, 200);
@@ -154,6 +159,10 @@ void Theme::load_ini(const std::string path) {
         { "textbox_focused.background_color", &active_textbox.background },
         { "textbox_focused.foreground_color", &active_textbox.foreground },
         { "textbox_focused.text_color", &active_textbox.text },
+
+        { "gutter.background_color", &gutter.background },
+        { "gutter.foreground_color", &gutter.foreground },
+        { "gutter.text_color", &gutter.text },
 
         // datebox
         { "datebox.background_color", &datebox.background },
