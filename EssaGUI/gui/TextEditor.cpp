@@ -162,6 +162,8 @@ void TextEditor::handle_event(Event& event) {
             } break;
             case sf::Keyboard::A: {
                 if (event.event().key.control) {
+                    if (m_lines.empty())
+                        break;
                     m_cursor = { .line = m_lines.size() - 1, .column = m_lines[m_lines.size() - 1].getSize() };
                     m_selection_start = {};
                 }
@@ -390,6 +392,9 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         if (on_change)
             on_change(get_content());
         m_cursor.column++;
+    }
+    else {
+        return;
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
 }
