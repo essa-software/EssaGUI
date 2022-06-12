@@ -390,10 +390,8 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
 }
 
 sf::Vector2f TextEditor::calculate_cursor_position() const {
-    if (m_lines.empty())
-        return {};
     auto options = get_text_options();
-    auto position = window().find_character_position(m_cursor.column, m_lines[m_cursor.line], GUI::Application::the().fixed_width_font, options)
+    auto position = window().find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font, options)
         + scroll_offset();
     auto const cursor_height = std::min(size().y - 6, line_height());
     position.y += line_height() / 2 - cursor_height / 4 + line_height() * m_cursor.line;
