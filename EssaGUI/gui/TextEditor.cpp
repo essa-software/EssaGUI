@@ -368,8 +368,12 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
             m_lines[m_cursor.line] = old_part;
             m_cursor.line++;
             m_cursor.column = 0;
-            update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
         }
+    }
+    else if (codepoint == '\t') {
+        do {
+            insert_codepoint(' ');
+        } while (m_cursor.column % 4 != 0);
     }
     else if (codepoint >= 0x20) {
 
@@ -381,8 +385,8 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         if (on_change)
             on_change(get_content());
         m_cursor.column++;
-        update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
     }
+    update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
 }
 
 sf::Vector2f TextEditor::calculate_cursor_position() const {
