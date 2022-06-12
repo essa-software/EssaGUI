@@ -287,8 +287,73 @@ void TextEditor::move_cursor(CursorDirection direction) {
     update_selection_after_set_cursor();
 }
 
-void TextEditor::move_cursor_by_word(CursorDirection) {
-    // TODO
+void TextEditor::move_cursor_by_word(CursorDirection direction) {
+    if (m_lines.size() == 0)
+        return;
+
+    // Trying to mimic vscode behavior in c++ source files.
+    enum class State {
+        Start,
+        PendingPunctuation,
+        PendingCharactersOfType,
+        Done
+    } state
+        = State::Start;
+    Util::CharacterType last_character_type = Util::CharacterType::Unknown;
+
+    if (direction == CursorDirection::Left && m_cursor.column == 0)
+        move_cursor(CursorDirection::Left);
+    else if (direction == CursorDirection::Right && m_cursor.column == m_lines[m_cursor.line].getSize())
+        move_cursor(CursorDirection::Right);
+
+    auto content = m_lines[m_cursor.line];
+
+    auto is_in_range = [&](unsigned offset) {
+        return (direction == CursorDirection::Left && offset > 0) || (direction == CursorDirection::Right && offset < content.getSize());
+    };
+
+    auto new_cursor = m_cursor.column;
+    while (state != State::Done && is_in_range(new_cursor)) {
+        auto next = content[direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1];
+        // std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
+        switch (state) {
+        case State::Start:
+            if (ispunct(next))
+                state = State::PendingCharactersOfType;
+            else if (!isspace(next)) {
+                if (is_in_range(new_cursor - 2) && ispunct(content[direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1]))
+                    state = State::PendingPunctuation;
+                else
+                    state = State::PendingCharactersOfType;
+                new_cursor++;
+            }
+            break;
+        case State::PendingPunctuation:
+            assert(ispunct(next));
+            state = State::PendingCharactersOfType;
+            break;
+        case State::PendingCharactersOfType: {
+            auto next_type = Util::character_type(next);
+            if (next_type != last_character_type && last_character_type != Util::CharacterType::Unknown) {
+                state = State::Done;
+                if (direction == CursorDirection::Left)
+                    new_cursor++;
+            }
+            last_character_type = next_type;
+            break;
+        }
+        default:
+            assert(false);
+            break;
+        }
+        if (direction == CursorDirection::Left)
+            new_cursor--;
+        else if (new_cursor < content.getSize())
+            new_cursor++;
+    }
+
+    m_cursor.column = new_cursor;
+    update_selection_after_set_cursor();
 }
 
 void TextEditor::insert_codepoint(uint32_t codepoint) {
