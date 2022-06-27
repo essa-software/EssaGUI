@@ -16,7 +16,7 @@ struct DrawOptions {
     sf::Color fill_color = sf::Color::White;
     sf::Color outline_color = sf::Color::White;
     sf::Texture const* texture = nullptr;
-    float outline_thickness = 1;
+    float outline_thickness = 0;
 };
 
 struct TextDrawOptions : public DrawOptions {
@@ -78,6 +78,7 @@ public:
     void clear(sf::Color = sf::Color::Black);
 
     void draw_vertices(GLenum mode, std::span<Vertex const>);
+    void draw_outline(std::span<Vector3 const>, Color color, float thickness);
     void draw_indexed_vertices(GLenum mode, std::span<Vertex const>, std::span<unsigned const> indices);
 
     void draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const& = {});

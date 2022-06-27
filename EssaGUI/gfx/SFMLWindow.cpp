@@ -149,18 +149,27 @@ static sf::Vector2f get_rounded_rectangle_vertex(std::size_t index, sf::Vector2f
 void SFMLWindow::draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const& options) {
     if (options.border_radius_bottom_left == 0 && options.border_radius_bottom_right == 0 && options.border_radius_top_left == 0 && options.border_radius_top_right == 0) {
         std::array<Vertex, 4> vertices;
+        std::array<Vector3, 4> outline_positions;
         vertices[0] = Vertex { .position = { bounds.left, bounds.top }, .color = options.fill_color, .tex_coords = {} };
         vertices[1] = Vertex { .position = { bounds.left + bounds.width, bounds.top }, .color = options.fill_color, .tex_coords = { 1, 0 } };
         vertices[2] = Vertex { .position = { bounds.left, bounds.top + bounds.height }, .color = options.fill_color, .tex_coords = { 0, 1 } };
         vertices[3] = Vertex { .position = { bounds.left + bounds.width, bounds.top + bounds.height }, .color = options.fill_color, .tex_coords = { 1, 1 } };
+
+        outline_positions[0] = vertices[0].position;
+        outline_positions[1] = vertices[1].position;
+        outline_positions[2] = vertices[3].position;
+        outline_positions[3] = vertices[2].position;
+
         // TODO: Implement TextureScope
         set_texture(options.texture);
         draw_vertices(GL_TRIANGLE_STRIP, vertices);
         set_texture(nullptr);
+        draw_outline(outline_positions, options.outline_color, options.outline_thickness);
         return;
     }
 
     std::array<Vertex, RoundedRectanglePointCount> vertices;
+    std::array<Vector3, RoundedRectanglePointCount> outline_positions;
     for (size_t s = 0; s < RoundedRectanglePointCount; s++) {
         Vector3 vertex { get_rounded_rectangle_vertex(s, { bounds.width, bounds.height }, options) + sf::Vector2f(bounds.left, bounds.top) };
         vertices[s] = Vertex {
@@ -168,11 +177,13 @@ void SFMLWindow::draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const
             .color = options.fill_color,
             .tex_coords = Vector3 { vertex.x / bounds.width, vertex.y / bounds.height }
         };
+        outline_positions[s] = vertex;
     }
     // TODO: Implement TextureScope
     set_texture(options.texture);
     draw_vertices(GL_TRIANGLE_FAN, vertices);
     set_texture(nullptr);
+    draw_outline(outline_positions, options.outline_color, options.outline_thickness);
 }
 
 void SFMLWindow::draw_text(sf::String const& text, sf::Font const& font, sf::Vector2f position, TextDrawOptions const& options) {
@@ -276,6 +287,7 @@ void SFMLWindow::draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOption
     constexpr int VertexCount = 30;
 
     std::array<Vertex, VertexCount> vertices;
+    std::array<Vector3, VertexCount> outline_positions;
     for (size_t s = 0; s < VertexCount; s++) {
         float angle = 6.28 * s / VertexCount;
         sf::Vector2f vpos { size.x / 2 * std::sin(angle), size.y / 2 * std::cos(angle) };
@@ -283,8 +295,33 @@ void SFMLWindow::draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOption
             .position = Vector3(vpos + center),
             .color = options.fill_color
         };
+        outline_positions[s] = vertices[s].position;
     }
     draw_vertices(GL_TRIANGLE_FAN, vertices);
+    draw_outline(outline_positions, options.outline_color, options.outline_thickness);
+}
+
+void SFMLWindow::draw_outline(std::span<Vector3 const> positions, Color color, float thickness) {
+    if (thickness == 0)
+        return;
+    std::vector<Vertex> vertices;
+    for (size_t i = 0; i < positions.size() + 1; i++) {
+        // See docs/outline.xcf for proof
+        auto A = i == 0 ? positions.back() : positions[i - 1];
+        auto B = positions[(i + 1) % positions.size()];
+        auto C = positions[i % positions.size()]; // fill corner
+        auto BC = C - B;
+        auto AC = C - A;
+        auto cos_edge_angle = BC.dot(AC);
+        auto e = thickness * std::sqrt(1 - cos_edge_angle * cos_edge_angle);
+        auto A2 = e * BC.normalized();
+        auto B2 = e * AC.normalized();
+        auto CD = A2 + B2;
+        auto corner = C + CD;
+        vertices.push_back(Vertex { .position = corner, .color = color });
+        vertices.push_back(Vertex { .position = C, .color = color });
+    }
+    draw_vertices(GL_TRIANGLE_STRIP, vertices);
 }
 
 sf::Vector2f SFMLWindow::calculate_text_size(sf::String const& text, sf::Font const& font, TextDrawOptions const& options) {
