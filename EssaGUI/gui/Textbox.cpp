@@ -66,7 +66,8 @@ bool Textbox::can_insert_codepoint(uint32_t ch) const {
 }
 
 void Textbox::on_content_change() {
-    m_fit_in_range();
+    if (m_type == Type::NUMBER)
+        m_fit_in_range();
 }
 
 }
