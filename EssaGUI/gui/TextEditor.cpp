@@ -479,7 +479,7 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
         TextDrawOptions text_options = get_text_options();
         sf::Vector2f position = scroll_offset();
         position.x += left_margin();
-        bool should_draw_placeholder = is_empty() && !m_placeholder.isEmpty();
+        bool should_draw_placeholder = is_empty();
         if (!m_multiline) {
             position.y += line_height();
             sf::FloatRect align_rect { Margin, 0, size().x, size().y };
