@@ -58,6 +58,8 @@ private:
     void erase_selected_text();
     virtual bool accepts_focus() const override { return true; }
     TextDrawOptions get_text_options() const;
+    virtual bool can_insert_codepoint(uint32_t) const { return true; }
+    virtual void on_content_change() {}
 
     float line_height() const;
     float left_margin() const;

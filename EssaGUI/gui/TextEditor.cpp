@@ -372,6 +372,8 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
 }
 
 void TextEditor::insert_codepoint(uint32_t codepoint) {
+    if (!can_insert_codepoint(codepoint))
+        return;
     if ((codepoint == '\r' || codepoint == '\n')) {
         if (m_multiline) {
             if (m_lines.empty())
@@ -410,6 +412,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         return;
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+    on_content_change();
 }
 
 sf::Vector2f TextEditor::calculate_cursor_position() const {
