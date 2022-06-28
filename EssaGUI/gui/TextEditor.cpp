@@ -1,6 +1,7 @@
 #include "TextEditor.hpp"
 #include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "EssaGUI/gui/ScrollableWidget.hpp"
+#include "EssaGUI/gui/Widget.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/util/CharacterType.hpp>
@@ -13,11 +14,20 @@ float TextEditor::line_height() const {
     return Application::the().fixed_width_font.getLineSpacing(FontSize);
 }
 
+constexpr float GutterWidth = 50.f;
+constexpr float Margin = 5.f;
+
+float TextEditor::left_margin() const {
+    return m_multiline ? GutterWidth + Margin : Margin;
+}
+
 float TextEditor::content_height() const {
     return m_lines.size() * line_height() + 5;
 }
 
-constexpr float GutterWidth = 50.f;
+LengthVector TextEditor::initial_size() const {
+    return m_multiline ? LengthVector {} : LengthVector { Length::Auto, 40.0_px };
+}
 
 TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (m_lines.size() == 0)
@@ -27,7 +37,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (delta.x < 0)
         return {};
 
-    auto line = (delta.y - scroll_offset().y) / line_height();
+    auto line = m_multiline ? (delta.y - scroll_offset().y) / line_height() : 0;
     if (line < 0)
         return {};
     if (line >= m_lines.size())
@@ -37,7 +47,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
     float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font, get_text_options()).x;
-    auto cursor = (delta.x - scroll_offset().x - GutterWidth) / character_width;
+    auto cursor = (delta.x - scroll_offset().x - left_margin()) / character_width;
     return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].getSize()) };
 }
 
@@ -61,7 +71,6 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
 
     // TODO: Handle X scroll
     auto y_offset = m_cursor.line * line_height() + scroll_offset().y;
-    std::cout << y_offset << std::endl;
     auto max_y = size().y - line_height() - 8;
     if (y_offset < 0)
         set_scroll(scroll() + y_offset);
@@ -78,7 +87,6 @@ void TextEditor::handle_event(Event& event) {
         if (is_focused()) {
             auto codepoint = event.event().text.unicode;
             if (codepoint == '\b' && m_lines.size() > 0) {
-                std::cout << m_cursor.line << ":" << m_cursor.column << std::endl;
                 if (m_cursor == m_selection_start) {
                     if (m_cursor.column > 0) {
                         m_cursor.column--;
@@ -364,17 +372,23 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
 }
 
 void TextEditor::insert_codepoint(uint32_t codepoint) {
-    if (codepoint == '\r' || codepoint == '\n') {
-        if (m_lines.empty())
-            m_lines.push_back("");
+    if ((codepoint == '\r' || codepoint == '\n')) {
+        if (m_multiline) {
+            if (m_lines.empty())
+                m_lines.push_back("");
+            else {
+                auto line = m_lines[m_cursor.line];
+                auto old_part = line.substring(0, m_cursor.column);
+                auto new_part = line.substring(m_cursor.column);
+                m_lines.insert(m_lines.begin() + m_cursor.line + 1, new_part);
+                m_lines[m_cursor.line] = old_part;
+                m_cursor.line++;
+                m_cursor.column = 0;
+            }
+        }
         else {
-            auto line = m_lines[m_cursor.line];
-            auto old_part = line.substring(0, m_cursor.column);
-            auto new_part = line.substring(m_cursor.column);
-            m_lines.insert(m_lines.begin() + m_cursor.line + 1, new_part);
-            m_lines[m_cursor.line] = old_part;
-            m_cursor.line++;
-            m_cursor.column = 0;
+            if (on_enter)
+                on_enter(get_content());
         }
     }
     else if (codepoint == '\t') {
@@ -404,7 +418,10 @@ sf::Vector2f TextEditor::calculate_cursor_position() const {
     auto position = window().find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font, options)
         + scroll_offset();
     auto const cursor_height = std::min(size().y - 6, line_height());
-    position.y += line_height() / 2 - cursor_height / 4 + line_height() * m_cursor.line;
+    if (m_multiline)
+        position.y += line_height() / 2 - cursor_height / 4 + line_height() * m_cursor.line;
+    else
+        position.y = size().y / 2 - cursor_height / 2;
     return position;
 }
 
@@ -429,9 +446,11 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
 
     window.draw_rectangle(local_rect(), background_rect);
 
-    RectangleDrawOptions gutter_rect;
-    gutter_rect.fill_color = theme().gutter.background;
-    window.draw_rectangle({ {}, sf::Vector2f { GutterWidth - 5, size().y } }, gutter_rect);
+    if (m_multiline) {
+        RectangleDrawOptions gutter_rect;
+        gutter_rect.fill_color = theme().gutter.background;
+        window.draw_rectangle({ {}, sf::Vector2f { GutterWidth, size().y } }, gutter_rect);
+    }
 
     auto const cursor_height = std::min(size().y - 6, line_height());
 
@@ -449,29 +468,42 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
                                   Application::the().fixed_width_font,
                                   get_text_options())
                             .x;
-            window.draw_rectangle({ sf::Vector2f { start + GutterWidth, line_height() / 2 - cursor_height / 4 + line_height() * s } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
+            float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : size().y / 2 - cursor_height / 2;
+            window.draw_rectangle({ sf::Vector2f { start + left_margin(), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
 
     {
         TextDrawOptions text_options = get_text_options();
         sf::Vector2f position = scroll_offset();
-        position.x += GutterWidth;
-        if (is_empty() && !m_placeholder.isEmpty()) {
+        position.x += left_margin();
+        bool should_draw_placeholder = is_empty() && !m_placeholder.isEmpty();
+        if (!m_multiline) {
             position.y += line_height();
-            text_options.fill_color = theme().placeholder;
-            window.draw_text(m_placeholder, Application::the().fixed_width_font, position, text_options);
+            sf::FloatRect align_rect { Margin, 0, size().x, size().y };
+            text_options.text_align = Align::CenterLeft;
+            if (should_draw_placeholder)
+                text_options.fill_color = theme().placeholder;
+            assert(should_draw_placeholder || m_lines.size() > 0);
+            window.draw_text_aligned_in_rect(should_draw_placeholder ? m_placeholder : m_lines[0], align_rect, Application::the().fixed_width_font, text_options);
         }
         else {
-        for (auto& line : m_lines) {
-            position.y += line_height();
-            window.draw_text(line, Application::the().fixed_width_font, position, text_options);
+            if (should_draw_placeholder) {
+                position.y += line_height();
+                text_options.fill_color = theme().placeholder;
+                window.draw_text(m_placeholder, Application::the().fixed_width_font, position, text_options);
+            }
+            else {
+                for (auto& line : m_lines) {
+                    position.y += line_height();
+                    window.draw_text(line, Application::the().fixed_width_font, position, text_options);
+                }
             }
         }
     }
 
     // Line numbers
-    {
+    if (m_multiline) {
         TextDrawOptions line_numbers;
         sf::Vector2f position = scroll_offset();
         position.y += 5;
@@ -490,7 +522,7 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
             auto position = calculate_cursor_position();
             RectangleDrawOptions cursor;
             cursor.fill_color = sf::Color::Black;
-            window.draw_rectangle({ position + sf::Vector2f(GutterWidth, 0), sf::Vector2f(2, cursor_height) },
+            window.draw_rectangle({ position + sf::Vector2f(left_margin(), 0), sf::Vector2f(2, cursor_height) },
                 cursor);
         }
     }

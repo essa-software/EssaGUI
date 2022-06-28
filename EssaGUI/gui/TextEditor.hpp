@@ -36,6 +36,10 @@ public:
     sf::String get_content() const;
     void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_placeholder(std::string placeholder) { m_placeholder = placeholder; }
+    bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].isEmpty()); }
+
+    bool is_multiline() const { return m_multiline; }
+    void set_multiline(bool multiline) { m_multiline = multiline; }
 
     enum class SetCursorSelectionBehavior {
         Extend,
@@ -45,8 +49,8 @@ public:
 
     sf::String selected_text() const;
 
-    std::function<void(sf::String)> on_change;
-    std::function<void(sf::String)> on_enter;
+    std::function<void(sf::String const&)> on_change;
+    std::function<void(sf::String const&)> on_enter;
 
 private:
     TextPosition m_character_pos_from_mouse(Event& event);
@@ -56,7 +60,9 @@ private:
     TextDrawOptions get_text_options() const;
 
     float line_height() const;
+    float left_margin() const;
     virtual float content_height() const override;
+    virtual LengthVector initial_size() const override;
 
     sf::Clock m_cursor_clock;
 
@@ -78,6 +84,7 @@ private:
     bool m_dragging = false;
     TextPosition m_cursor;
     TextPosition m_selection_start;
+    bool m_multiline = true;
 };
 
 }
