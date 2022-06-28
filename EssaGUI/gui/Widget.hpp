@@ -71,7 +71,7 @@ public:
 
     virtual void do_handle_event(Event& event);
     virtual void do_update();
-    virtual void draw(GUI::SFMLWindow&) const {}
+    virtual void draw(GUI::SFMLWindow&) const { }
 
     void set_raw_position(sf::Vector2f p) {
         m_pos = p;
@@ -133,9 +133,9 @@ public:
     void set_foreground_color(sf::Color const& color) { m_foreground_color = color; }
     void set_text_color(sf::Color const& color) { m_text_color = color; }
 
-    sf::Color get_background_color()const{return m_background_color;}
-    sf::Color get_foreground_color()const{return m_foreground_color;}
-    sf::Color get_text_color()const{return m_text_color;}
+    sf::Color get_background_color() const { return m_background_color; }
+    sf::Color get_foreground_color() const { return m_foreground_color; }
+    sf::Color get_text_color() const { return m_text_color; }
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
         set_background_color(bg_color);
