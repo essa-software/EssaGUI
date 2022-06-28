@@ -1,10 +1,15 @@
 #include "TextEditor.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
-#include "EssaGUI/gui/ScrollableWidget.hpp"
-#include "EssaGUI/gui/Widget.hpp"
 
-#include <EssaGUI/gui/Application.hpp>
+#include "Application.hpp"
+#include "ScrollableWidget.hpp"
+#include "Widget.hpp"
+
+#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaGUI/util/CharacterType.hpp>
+
+#include <sstream>
+#include <string>
 
 namespace GUI {
 
@@ -61,8 +66,21 @@ sf::String TextEditor::get_content() const {
     return content;
 }
 
-void TextEditor::set_content(sf::String, NotifyUser) {
-    // TODO
+void TextEditor::set_content(sf::String content, NotifyUser notify_user) {
+    m_lines.clear();
+    std::istringstream iss { content.toAnsiString() };
+    while (true) {
+        std::string line;
+        if (!std::getline(iss, line))
+            break;
+        m_lines.push_back(std::move(line));
+    }
+
+    if (notify_user == NotifyUser::Yes) {
+        on_content_change();
+        if (on_change)
+            on_change(content);
+    }
 }
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
