@@ -10,7 +10,8 @@ int main() {
 
     auto& container1 = app.set_main_widget<GUI::Container>();
     container1.set_layout<GUI::HorizontalBoxLayout>();
-    auto image_widget = container1.add_widget<GUI::TextEditor>();
+    auto text_editor = container1.add_widget<GUI::TextEditor>();
+    text_editor->set_placeholder("Test placeholder");
 
     app.run();
     return 0;

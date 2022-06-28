@@ -457,9 +457,16 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
         TextDrawOptions text_options = get_text_options();
         sf::Vector2f position = scroll_offset();
         position.x += GutterWidth;
+        if (is_empty() && !m_placeholder.isEmpty()) {
+            position.y += line_height();
+            text_options.fill_color = theme().placeholder;
+            window.draw_text(m_placeholder, Application::the().fixed_width_font, position, text_options);
+        }
+        else {
         for (auto& line : m_lines) {
             position.y += line_height();
             window.draw_text(line, Application::the().fixed_width_font, position, text_options);
+            }
         }
     }
 
