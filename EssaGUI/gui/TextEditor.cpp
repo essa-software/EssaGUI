@@ -387,8 +387,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
             }
         }
         else {
-            if (on_enter)
-                on_enter(get_content());
+            return;
         }
     }
     else if (codepoint == '\t') {
