@@ -41,6 +41,11 @@ Theme& Theme::default_theme() {
             .foreground = sf::Color(120, 120, 120),
             .text = sf::Color(30, 30, 30),
         };
+        theme.slider = {
+            .background = sf::Color(180, 180, 180),
+            .foreground = sf::Color(140, 140, 140),
+            .text = sf::Color(30, 30, 30),
+        };
         theme.positive = sf::Color(100, 200, 100);
         theme.negative = sf::Color(200, 100, 100);
         theme.neutral = sf::Color(100, 100, 200);
