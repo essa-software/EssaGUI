@@ -35,6 +35,7 @@ add_library(essa-gui
     EssaGUI/gui/SettingsMenu.cpp
     EssaGUI/gui/SelectWidget.cpp
     EssaGUI/gui/Slider.cpp
+    EssaGUI/gui/Strings.cpp
     EssaGUI/gui/TabWidget.cpp
     EssaGUI/gui/TextButton.cpp
     EssaGUI/gui/TextEditor.cpp
@@ -46,17 +47,12 @@ add_library(essa-gui
     EssaGUI/gui/ValueSlider.cpp
     EssaGUI/gui/Widget.cpp
     EssaGUI/gui/WidgetTreeRoot.cpp
-
-    # FIXME: There are many things in util that are used in Essa
-    #        but not in GUI. Get rid of them here.
-    EssaGUI/util/SimulationClock.cpp
-    EssaGUI/util/UnitDisplay.cpp
 )
 
 if(MINGW)
-    target_link_libraries(essa-gui PUBLIC sfml-graphics opengl32 GLEW::GLEW)
+    target_link_libraries(essa-gui PUBLIC essautil sfml-graphics opengl32 GLEW::GLEW)
 else()
-    target_link_libraries(essa-gui PUBLIC sfml-graphics GL GLEW::GLEW)
+    target_link_libraries(essa-gui PUBLIC essautil sfml-graphics GL GLEW::GLEW)
 endif()
 
 function(setup_target targetname)
@@ -82,6 +78,7 @@ function(setup_target targetname)
 endfunction()
 
 setup_target(essa-gui)
+target_compile_definitions(essa-gui PUBLIC ESSAUTIL_ENABLE_SFML)
 
 install(FILES cmake/EssaGUIConfig.cmake DESTINATION lib/cmake/EssaGUI)
 install(DIRECTORY EssaGUI/ DESTINATION include/EssaGUI FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")

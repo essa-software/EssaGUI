@@ -18,24 +18,21 @@ namespace GUI {
 class FileModel : public Model {
 public:
     virtual size_t row_count() const override {
-        return m_content.size();
+        return m_files.size();
     }
     virtual size_t column_count() const override {
         return 5;
     }
-    virtual Variant data(size_t row, size_t column) const override {
-        if (column == 0)
-            return file_icon(row);
-        return m_content[row][column - 1];
-    }
+
+    virtual Variant data(size_t row, size_t column) const override;
 
     virtual Column column(size_t column) const override;
 
     std::filesystem::path get_path(size_t row) const {
-        return m_paths[row];
+        return m_files[row].path;
     }
     void add_desired_extension(const std::string ext) {
-        m_extensions.push_back(ext);
+        m_desired_extensions.push_back(ext);
     }
 
     void update_content(
@@ -45,9 +42,14 @@ private:
     static std::string file_type(std::filesystem::path);
     sf::Texture const* file_icon(size_t row) const;
 
-    std::vector<std::vector<std::string>> m_content;
-    std::vector<std::filesystem::path> m_paths;
-    std::vector<std::string> m_extensions;
+    struct File {
+        std::filesystem::path path;
+        uint64_t size;
+        std::filesystem::file_type type;
+    };
+
+    std::vector<File> m_files;
+    std::vector<std::string> m_desired_extensions;
 };
 
 class FileExplorer : public ToolWindow {

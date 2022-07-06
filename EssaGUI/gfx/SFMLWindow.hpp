@@ -4,7 +4,7 @@
 
 #include <EssaGUI/glwrapper/Vertex.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
-#include <EssaGUI/util/Matrix.hpp>
+#include <EssaUtil/Matrix.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>

@@ -3,7 +3,7 @@
 #include "Application.hpp"
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
-#include <EssaGUI/util/CharacterType.hpp>
+#include <EssaUtil/CharacterType.hpp>
 #include <SFML/Graphics.hpp>
 #include <cassert>
 #include <cctype>

@@ -6,7 +6,7 @@
 
 namespace GUI {
 
-using Variant = std::variant<std::string, sf::Texture const*>;
+using Variant = std::variant<sf::String, sf::Texture const*>;
 
 class Model {
 public:
@@ -18,7 +18,7 @@ public:
 
     struct Column {
         float width = 15;
-        std::string name;
+        sf::String name;
     };
 
     virtual Column column(size_t column) const = 0;

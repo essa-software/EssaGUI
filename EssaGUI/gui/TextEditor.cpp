@@ -6,7 +6,7 @@
 
 #include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
-#include <EssaGUI/util/CharacterType.hpp>
+#include <EssaUtil/CharacterType.hpp>
 
 #include <sstream>
 #include <string>

@@ -5,7 +5,7 @@
 #include "StateTextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
-#include <EssaGUI/util/UnitDisplay.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
 
 namespace GUI {
 

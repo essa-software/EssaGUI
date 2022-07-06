@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../util/Vector3.hpp"
+#include <EssaUtil/Vector3.hpp>
 #include "Color.hpp"
 
 struct Vertex {

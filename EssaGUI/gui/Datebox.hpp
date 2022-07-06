@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EssaGUI/util/SimulationClock.hpp>
+#include <EssaUtil/SimulationClock.hpp>
 #include "Container.hpp"
 #include "StateTextButton.hpp"
 #include "TextButton.hpp"

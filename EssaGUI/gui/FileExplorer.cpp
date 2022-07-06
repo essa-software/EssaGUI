@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Container.hpp"
 #include "EssaGUI/gui/Button.hpp"
+#include "EssaGUI/gui/Strings.hpp"
 #include "ListView.hpp"
 #include "MessageBox.hpp"
 #include "NotifyUser.hpp"
@@ -14,9 +15,9 @@
 
 #include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
-#include <EssaGUI/util/UnitDisplay.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
 
-#include <EssaGUI/util/Units.hpp>
+#include <EssaUtil/Units.hpp>
 #include <SFML/Graphics.hpp>
 
 #include <SFML/Graphics/Color.hpp>
@@ -47,69 +48,68 @@ Model::Column FileModel::column(size_t column) const {
     return {};
 }
 
+Variant FileModel::data(size_t row, size_t column) const {
+    auto const& file = m_files[row];
+
+    switch (column) {
+    case 0:
+        return file_icon(row);
+    case 1:
+        return file.path.filename().string();
+    case 2: {
+        try {
+            return file.type != std::filesystem::file_type::directory
+                ? Util::unit_display(file.size, Util::Quantity::FileSize).to_string()
+                : "";
+        } catch (...) {
+            return "...";
+        }
+    }
+    case 4: {
+        return file.type == std::filesystem::file_type::directory ? "Directory" : file_type(file.path);
+    }
+    case 3:
+        std::time_t cftime = std::chrono::system_clock::to_time_t(
+            std::chrono::file_clock::to_sys(std::filesystem::last_write_time(file.path)));
+        std::string string = std::asctime(std::localtime(&cftime));
+        string.pop_back(); // trailing \n
+        return string;
+    }
+    return "";
+}
+
 void FileModel::update_content(std::filesystem::path path, std::function<bool(std::filesystem::path)> condition) {
-    m_content.clear();
-    m_paths.clear();
+    m_files.clear();
 
     for (const auto& o : std::filesystem::directory_iterator(path)) {
         if (!std::filesystem::exists(o) || !condition(o.path().filename()))
             continue;
-        bool con = 1;
 
-        for (const auto& e : m_extensions) {
+        bool has_desired_extension = m_desired_extensions.empty();
+        for (const auto& e : m_desired_extensions) {
             if (o.path().extension() == e)
-                con = 0;
+                has_desired_extension = true;
         }
 
-        if (m_extensions.size() != 0 && con && !std::filesystem::is_directory(o))
+        if (!has_desired_extension && !std::filesystem::is_directory(o))
             continue;
 
-        m_paths.push_back(o.path());
-
-        std::time_t cftime = std::chrono::system_clock::to_time_t(
-            std::chrono::file_clock::to_sys(o.last_write_time()));
-
-        m_content.push_back(std::vector<std::string>(4));
-        m_content.back()[0] = o.path().filename().string();
-        try {
-            m_content.back()[1] = (!std::filesystem::is_directory(o))
-                ? Util::unit_display(o.file_size(), Util::Quantity::FileSize).to_string()
-                : "";
-        } catch (...) {
-            m_content.back()[1] = "???";
-        }
-        m_content.back()[2] = std::string(std::asctime(std::localtime(&cftime)));
-        m_content.back()[2].pop_back(); // trailing \n
-        m_content.back()[3] = o.is_directory() ? "Directory" : file_type(o);
+        m_files.push_back(File {
+            .path = o.path(),
+            .size = o.is_directory() ? 0 : o.file_size(),
+            .type = o.status().type() });
 
         // for(const auto& e : m_content.back())
         //     std::cout << e << "\t";
         // std::cout << "\n";
     }
 
-    std::sort(m_content.begin(), m_content.end(), [](const std::vector<std::string>& a, const std::vector<std::string>& b) {
-        if (a[1] == b[1])
-            return a[0] < b[0];
-        else {
-            if (a[1].size() == 0)
-                return true;
-            else if (b[1].size() == 0)
-                return false;
-            return a[0] < b[0];
-        }
-    });
-
-    std::sort(m_paths.begin(), m_paths.end(), [](const std::filesystem::path& a, const std::filesystem::path& b) {
-        if (std::filesystem::is_directory(a) == std::filesystem::is_directory(b))
-            return a < b;
-        else {
-            if (std::filesystem::is_directory(a))
-                return true;
-            else if (std::filesystem::is_directory(b))
-                return false;
-        }
-
-        return a < b;
+    std::sort(m_files.begin(), m_files.end(), [](File const& a, File const& b) {
+        if (a.type == std::filesystem::file_type::directory && b.type != std::filesystem::file_type::directory)
+            return true;
+        if (b.type == std::filesystem::file_type::directory && a.type != std::filesystem::file_type::directory)
+            return false;
+        return a.path.filename() < b.path.filename();
     });
 }
 
@@ -151,8 +151,7 @@ sf::Texture const* FileModel::file_icon(size_t row) const {
     static sf::Texture symlink_icon = Gfx::require_texture("../assets/gui/symlink.png");
     static sf::Texture socket_icon = Gfx::require_texture("../assets/gui/socket.png");
 
-    auto status = std::filesystem::symlink_status(m_paths[row]);
-    switch (status.type()) {
+    switch (m_files[row].type) {
     case std::filesystem::file_type::directory:
         return &directory_icon;
     case std::filesystem::file_type::block:

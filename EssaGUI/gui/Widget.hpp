@@ -2,7 +2,7 @@
 
 #include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/Theme.hpp>
-#include <EssaGUI/util/Units.hpp>
+#include <EssaUtil/Units.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <cassert>

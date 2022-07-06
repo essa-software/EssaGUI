@@ -1,6 +1,6 @@
 #include "DefaultGUIShader.hpp"
 
-#include <EssaGUI/util/DelayedInit.hpp>
+#include <EssaUtil/DelayedInit.hpp>
 #include <iostream>
 
 namespace Gfx {

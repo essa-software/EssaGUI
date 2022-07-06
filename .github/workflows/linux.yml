@@ -15,10 +15,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Dependency install
       run: sudo apt install libsfml-dev libglew-dev ninja-build
+    - name: EssaUtil install
+      run: |
+        git clone https://github.com/essa-software/util
+        cd util
+        ./install.sh
     - name: Build & install EssaGUI
       run: |
-        mkdir build
-        cd build
-        cmake .. -GNinja
-        ninja
+        ./install.sh
     # TODO: Add some tests.
