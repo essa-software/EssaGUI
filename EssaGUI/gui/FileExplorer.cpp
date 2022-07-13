@@ -1,9 +1,8 @@
 #include "FileExplorer.hpp"
 
 #include "Application.hpp"
+#include "Button.hpp"
 #include "Container.hpp"
-#include "EssaGUI/gui/Button.hpp"
-#include "EssaGUI/gui/Strings.hpp"
 #include "ListView.hpp"
 #include "MessageBox.hpp"
 #include "NotifyUser.hpp"
