@@ -21,9 +21,9 @@ SettingsMenu::SettingsMenu(Container& c)
     m_settings_container->set_layout<BasicLayout>();
 }
 
-SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, std::string tooltip, Expandable expandable) {
+SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, Util::UString tooltip, Expandable expandable) {
     auto button = m_buttons_container->add_widget<ImageButton>(image);
-    button->set_tooltip_text(tooltip);
+    button->set_tooltip_text(std::move(tooltip));
     if (expandable == Expandable::Yes) {
         button->set_toggleable(true);
         button->on_change = [this, button](bool state) {

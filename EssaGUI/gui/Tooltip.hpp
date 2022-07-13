@@ -10,11 +10,11 @@ namespace GUI {
 class Widget;
 
 struct Tooltip {
-    std::string text;
+    Util::UString text;
     Widget* owner = nullptr;
     sf::Vector2f position;
 
-    Tooltip(std::string t, Widget* o, sf::Vector2f p)
+    Tooltip(Util::UString t, Widget* o, sf::Vector2f p)
         : text(std::move(t))
         , owner(o)
         , position(p) { }

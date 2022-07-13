@@ -11,8 +11,8 @@ class TextButton : public Button {
 public:
     explicit TextButton(Container& c);
 
-    void set_content(sf::String content) { m_content = std::move(content); }
-    void set_active_content(sf::String content) { m_active_content = std::move(content); }
+    void set_content(Util::UString content) { m_content = std::move(content); }
+    void set_active_content(Util::UString content) { m_active_content = std::move(content); }
 
     void set_image(sf::Texture* image) { m_image = image; }
 
@@ -22,16 +22,16 @@ public:
     Align get_alignment() const { return m_alignment; };
     void set_alignment(Align alignment) { m_alignment = alignment; };
 
-    sf::String content() const { return m_content; }
-    sf::String active_content() const { return m_content; }
+    Util::UString content() const { return m_content; }
+    Util::UString active_content() const { return m_content; }
 
 private:
     virtual void draw(GUI::SFMLWindow& window) const override;
 
     virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
 
-    sf::String m_content;
-    sf::String m_active_content;
+    Util::UString m_content;
+    Util::UString m_active_content;
     unsigned m_font_size = 20;
     Align m_alignment = Align::Center;
     sf::Texture* m_image = nullptr;

@@ -78,7 +78,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
 
                 std::visit(
                     overloaded {
-                        [&](std::string const& data) {
+                        [&](Util::UString const& data) {
                             TextDrawOptions text;
                             text.font_size = 15;
                             text.text_align = Align::CenterLeft;

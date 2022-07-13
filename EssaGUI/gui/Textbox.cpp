@@ -37,7 +37,8 @@ void Textbox::m_fit_in_range() {
         return;
 
     try {
-        double val = std::stod(get_content().toAnsiString());
+        // TODO: Implement this in UString
+        double val = std::stod(get_content().encode());
         std::ostringstream oss;
         oss << std::fixed;
         if (val < m_min_value)
@@ -46,14 +47,14 @@ void Textbox::m_fit_in_range() {
             oss << m_max_value;
         else
             return;
-        set_content(m_fix_content(oss.str()));
+        set_content(Util::UString { m_fix_content(oss.str()) });
     } catch (...) {
         return;
     }
 }
 
 bool Textbox::can_insert_codepoint(uint32_t ch) const {
-    if (get_content().getSize() >= m_limit)
+    if (get_content().size() >= m_limit)
         return false;
 
     switch (m_type) {

@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-Prompt::Prompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder)
+Prompt::Prompt(GUI::SFMLWindow& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
     : ToolWindow(wnd, "Prompt") {
     set_title(std::move(window_title));
     set_size({ 500, 100 });
@@ -56,7 +56,7 @@ Prompt::Prompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_tit
     }
 };
 
-std::optional<sf::String> prompt(sf::String help_text, sf::String window_title, sf::String placeholder) {
+std::optional<Util::UString> prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
     auto& prompt = GUI::Application::the().open_overlay<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
     prompt.run();
     return prompt.result();

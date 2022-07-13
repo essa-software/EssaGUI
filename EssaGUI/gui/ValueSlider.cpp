@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-static std::string serialize_value(double value, double step) {
+static Util::UString serialize_value(double value, double step) {
     std::ostringstream oss;
     oss << std::fixed;
     if (step < 1)
@@ -16,7 +16,7 @@ static std::string serialize_value(double value, double step) {
     else
         oss << std::setprecision(0);
     oss << value;
-    return oss.str();
+    return Util::UString { oss.str() };
 }
 
 ValueSlider::ValueSlider(Container& parent, double min, double max, double step)
@@ -35,12 +35,12 @@ ValueSlider::ValueSlider(Container& parent, double min, double max, double step)
     m_textbox = add_widget<Textbox>();
     m_textbox->set_data_type(Textbox::NUMBER);
     m_textbox->set_content(serialize_value(m_slider->get_value(), m_slider->step()));
-    m_textbox->on_change = [this](std::string const& value) {
-        if (value.empty())
+    m_textbox->on_change = [this](Util::UString const& value) {
+        if (value.is_empty())
             m_slider->set_value(0, NotifyUser::No);
         try {
             // Notify user so that they get on_change().
-            auto value_as_number = std::stod(value);
+            auto value_as_number = std::stod(value.encode());
             m_slider->set_value(value_as_number, NotifyUser::No);
             if (on_change)
                 on_change(value_as_number);
@@ -58,7 +58,7 @@ double ValueSlider::value() const {
 
 void ValueSlider::set_value(double value) {
     m_slider->set_value(value);
-    m_textbox->set_content(std::to_string(value));
+    m_textbox->set_content(Util::UString { std::to_string(value) });
 }
 
 }

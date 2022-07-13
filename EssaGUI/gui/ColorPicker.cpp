@@ -25,7 +25,7 @@ ColorPicker::ColorPicker(Container& c)
     auto& sliders_container_layout = sliders_container->set_layout<VerticalBoxLayout>();
     sliders_container_layout.set_spacing(10);
     {
-        auto create_color_slider = [&](std::string component) {
+        auto create_color_slider = [&](Util::UString component) {
             auto container = sliders_container->add_widget<Container>();
             auto& layout = container->set_layout<HorizontalBoxLayout>();
             layout.set_spacing(5);
@@ -36,7 +36,7 @@ ColorPicker::ColorPicker(Container& c)
             auto value_textfield = container->add_widget<Textfield>();
             value_textfield->set_size({ 40.0_px, Length::Auto });
             slider->on_change = [this, value_textfield](double slider_value) {
-                value_textfield->set_content(std::to_string((int)slider_value));
+                value_textfield->set_content(Util::UString { std::to_string((int)slider_value) });
                 m_color_picker_display->set_color(value());
                 if (on_change)
                     on_change(value());

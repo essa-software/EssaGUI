@@ -8,12 +8,10 @@
 #include "Textfield.hpp"
 #include "ToolWindow.hpp"
 
-namespace GUI
-{
+namespace GUI {
 
-FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder)
-    : ToolWindow(wnd, "Prompt")
-{
+FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
+    : ToolWindow(wnd, "Prompt") {
 
     set_title(std::move(window_title));
     set_size({ 500, 100 });
@@ -41,8 +39,7 @@ FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String wi
     auto file_btn = input_container->add_widget<TextButton>();
     file_btn->set_content("Browse file");
 
-    file_btn->on_click = [this, input]()
-    {
+    file_btn->on_click = [this, input]() {
         auto& file_explorer_wnd = GUI::Application::the().open_overlay<FileExplorer>();
         file_explorer_wnd.set_size({ 1000, 600 });
         file_explorer_wnd.center_on_screen();
@@ -50,9 +47,8 @@ FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String wi
         for (const auto& ext : m_extensions)
             file_explorer_wnd.model()->add_desired_extension(ext);
 
-        file_explorer_wnd.on_submit = [input](std::filesystem::path path)
-        {
-            input->set_content(path.string());
+        file_explorer_wnd.on_submit = [input](std::filesystem::path path) {
+            input->set_content(Util::UString { path.string() });
         };
 
         file_explorer_wnd.run();
@@ -66,24 +62,21 @@ FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String wi
         auto cancel_button = button_container->add_widget<TextButton>();
         cancel_button->set_alignment(Align::Center);
         cancel_button->set_content("Cancel");
-        cancel_button->on_click = [&]()
-        {
+        cancel_button->on_click = [&]() {
             close();
         };
 
         auto ok_button = button_container->add_widget<TextButton>();
         ok_button->set_alignment(Align::Center);
         ok_button->set_content("OK");
-        ok_button->on_click = [&, input]()
-        {
+        ok_button->on_click = [&, input]() {
             m_result = input->get_content();
             close();
         };
     }
 };
 
-FilePrompt* file_prompt(sf::String help_text, sf::String window_title, sf::String placeholder)
-{
+FilePrompt* file_prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
     auto& prompt = Application::the().open_overlay<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
 
     prompt.run();

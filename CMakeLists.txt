@@ -35,7 +35,6 @@ add_library(essa-gui
     EssaGUI/gui/SettingsMenu.cpp
     EssaGUI/gui/SelectWidget.cpp
     EssaGUI/gui/Slider.cpp
-    EssaGUI/gui/Strings.cpp
     EssaGUI/gui/TabWidget.cpp
     EssaGUI/gui/TextButton.cpp
     EssaGUI/gui/TextEditor.cpp

@@ -9,18 +9,18 @@ namespace GUI {
 
 class FilePrompt : public ToolWindow {
 public:
-    explicit FilePrompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder);
+    explicit FilePrompt(GUI::SFMLWindow& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
-    std::optional<sf::String> result() const { return m_result; }
+    std::optional<Util::UString> result() const { return m_result; }
 
-    void add_desired_extension(std::string ext){m_extensions.push_back(ext);}
+    void add_desired_extension(std::string ext) { m_extensions.push_back(ext); }
 
 private:
-    std::optional<sf::String> m_result;
+    std::optional<Util::UString> m_result;
 
     std::vector<std::string> m_extensions;
 };
 
-FilePrompt* file_prompt(sf::String help_text, sf::String window_title = "Prompt", sf::String placeholder = "");
+FilePrompt* file_prompt(Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
 
 }

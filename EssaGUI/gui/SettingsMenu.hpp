@@ -25,7 +25,7 @@ public:
         No
     };
 
-    MenuEntry& add_entry(sf::Image const& image, std::string tooltip, Expandable = Expandable::Yes);
+    MenuEntry& add_entry(sf::Image const& image, Util::UString tooltip, Expandable = Expandable::Yes);
 
 private:
     virtual bool isolated_focus() const override { return true; }

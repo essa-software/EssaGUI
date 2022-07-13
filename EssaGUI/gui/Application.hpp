@@ -10,11 +10,9 @@
 #include <iostream>
 #include <list>
 
-namespace GUI
-{
+namespace GUI {
 
-class Application : public WidgetTreeRoot
-{
+class Application : public WidgetTreeRoot {
 public:
     explicit Application(GUI::SFMLWindow&);
 
@@ -30,31 +28,27 @@ public:
     sf::Font bold_font;
     sf::Font fixed_width_font;
 
-    enum class NotificationLevel
-    {
+    enum class NotificationLevel {
         Error
     };
-    void spawn_notification(std::string message, NotificationLevel);
+    void spawn_notification(Util::UString message, NotificationLevel);
 
     template<class T = Overlay, class... Args>
     requires(std::is_base_of_v<Overlay, T>)
-        T& open_overlay(Args&&... args)
-    {
+        T& open_overlay(Args&&... args) {
         return static_cast<T&>(open_overlay_impl(std::make_unique<T>(window(), std::forward<Args>(args)...)));
     }
 
-    struct OpenOrFocusResult
-    {
+    struct OpenOrFocusResult {
         ToolWindow* window {};
         bool opened {};
     };
     // FIXME: Generalize it like normal open_overlay
-    OpenOrFocusResult open_or_focus_tool_window(sf::String title, std::string id);
+    OpenOrFocusResult open_or_focus_tool_window(Util::UString title, std::string id);
     Overlay* focused_overlay() const { return m_focused_overlay; }
 
     template<class Callback>
-    void for_each_overlay(Callback&& callback)
-    {
+    void for_each_overlay(Callback&& callback) {
         for (auto& wnd : m_overlays)
             callback(*wnd);
     }
@@ -74,10 +68,9 @@ private:
     virtual void handle_events() override;
     virtual void update() override;
 
-    struct Notification
-    {
+    struct Notification {
         int remaining_ticks = 120;
-        std::string message;
+        Util::UString message;
         NotificationLevel level {};
     };
 

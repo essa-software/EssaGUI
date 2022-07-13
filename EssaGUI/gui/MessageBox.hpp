@@ -15,7 +15,7 @@ public:
         Ok
     };
 
-    explicit MessageBox(GUI::SFMLWindow& wnd, sf::String message, sf::String title, Buttons buttons);
+    explicit MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UString title, Buttons buttons);
 
     enum class ButtonRole {
         None,
@@ -36,6 +36,6 @@ private:
     Button* m_default_button = nullptr;
 };
 
-MessageBox::ButtonRole message_box(sf::String message, sf::String title, MessageBox::Buttons buttons);
+MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons);
 
 }

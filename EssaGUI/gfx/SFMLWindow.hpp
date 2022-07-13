@@ -1,5 +1,6 @@
 #pragma once
 
+#include <EssaUtil/UString.hpp>
 #include <GL/glew.h>
 
 #include <EssaGUI/glwrapper/Vertex.hpp>
@@ -37,7 +38,7 @@ struct RectangleDrawOptions : public DrawOptions {
 
 class SFMLWindow : public sf::Window {
 public:
-    SFMLWindow(sf::VideoMode, sf::String title, unsigned style = sf::Style::Default, sf::ContextSettings = sf::ContextSettings {});
+    SFMLWindow(sf::VideoMode, Util::UString title, unsigned style = sf::Style::Default, sf::ContextSettings = sf::ContextSettings {});
     virtual ~SFMLWindow();
 
     // TODO: Support arbitrary view matrix
@@ -82,13 +83,13 @@ public:
     void draw_indexed_vertices(GLenum mode, std::span<Vertex const>, std::span<unsigned const> indices);
 
     void draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const& = {});
-    void draw_text(sf::String const&, sf::Font const&, sf::Vector2f position, TextDrawOptions const& = {});
-    void draw_text_aligned_in_rect(sf::String const&, sf::FloatRect rect, sf::Font const&, TextDrawOptions const& = {});
+    void draw_text(Util::UString const&, sf::Font const&, sf::Vector2f position, TextDrawOptions const& = {});
+    void draw_text_aligned_in_rect(Util::UString const&, sf::FloatRect rect, sf::Font const&, TextDrawOptions const& = {});
     void draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOptions const& = {});
 
     // FIXME: Add some class like sf::Text.
-    sf::Vector2f calculate_text_size(sf::String const&, sf::Font const&, TextDrawOptions const& = {});
-    sf::Vector2f find_character_position(size_t index, sf::String const&, sf::Font const&, TextDrawOptions const& = {});
+    sf::Vector2f calculate_text_size(Util::UString const&, sf::Font const&, TextDrawOptions const& = {});
+    sf::Vector2f find_character_position(size_t index, Util::UString const&, sf::Font const&, TextDrawOptions const& = {});
 
 private:
     void apply_states();

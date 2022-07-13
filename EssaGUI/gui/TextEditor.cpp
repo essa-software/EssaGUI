@@ -46,34 +46,40 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (line < 0)
         return {};
     if (line >= m_lines.size())
-        return { .line = std::max<size_t>(1, m_lines.size()) - 1, .column = std::max<size_t>(1, m_lines.back().getSize() + 1) - 1 };
+        return { .line = std::max<size_t>(1, m_lines.size()) - 1, .column = std::max<size_t>(1, m_lines.back().size() + 1) - 1 };
 
     // We can just check the offset of 1st character because we use
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
     float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font, get_text_options()).x;
     auto cursor = (delta.x - scroll_offset().x - left_margin()) / character_width;
-    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].getSize()) };
+    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
 }
 
-sf::String TextEditor::get_content() const {
-    sf::String content;
+Util::UString TextEditor::get_content() const {
+    // TODO: Implement UStringBuilder
+    Util::UString content;
     for (size_t s = 0; s < m_lines.size(); s++) {
-        content += m_lines[s];
+        content = content + m_lines[s];
         if (s != m_lines.size() - 1)
-            content += '\n';
+            content = content + '\n';
     }
     return content;
 }
 
-void TextEditor::set_content(sf::String content, NotifyUser notify_user) {
+void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
     m_lines.clear();
-    std::istringstream iss { content.toAnsiString() };
+    size_t index = 0;
     while (true) {
-        std::string line;
-        if (!std::getline(iss, line))
+        auto next_newline = content.find("\n", index);
+        if (!next_newline.has_value()) {
+            next_newline = content.size();
+        }
+
+        m_lines.push_back(content.substring(index, *next_newline - index));
+        if (next_newline == content.size())
             break;
-        m_lines.push_back(std::move(line));
+        index = *next_newline + 1;
     }
 
     if (notify_user == NotifyUser::Yes) {
@@ -108,13 +114,13 @@ void TextEditor::handle_event(Event& event) {
                 if (m_cursor == m_selection_start) {
                     if (m_cursor.column > 0) {
                         m_cursor.column--;
-                        m_lines[m_cursor.line].erase(m_cursor.column);
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
                     }
                     else if (m_cursor.line != 0) {
                         m_cursor.line--;
-                        size_t old_size = m_lines[m_cursor.line].getSize();
+                        size_t old_size = m_lines[m_cursor.line].size();
                         if (m_cursor.line < m_lines.size())
-                            m_lines[m_cursor.line] += m_lines[m_cursor.line + 1];
+                            m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
                         m_lines.erase(m_lines.begin() + m_cursor.line + 1);
                         m_cursor.column = old_size;
                     }
@@ -128,10 +134,10 @@ void TextEditor::handle_event(Event& event) {
             }
             else if (codepoint == 0x7f && m_lines.size() > 0) {
                 if (m_cursor == m_selection_start) {
-                    if (m_cursor.column < m_lines[m_cursor.line].getSize())
-                        m_lines[m_cursor.line].erase(m_cursor.column);
+                    if (m_cursor.column < m_lines[m_cursor.line].size())
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
                     else if (m_cursor.line < m_lines.size() - 1) {
-                        m_lines[m_cursor.line] += m_lines[m_cursor.line + 1];
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
                         m_lines.erase(m_lines.begin() + m_cursor.line + 1);
                     }
                 }
@@ -173,16 +179,16 @@ void TextEditor::handle_event(Event& event) {
             case sf::Keyboard::Up: {
                 if (m_cursor.line > 0)
                     m_cursor.line--;
-                if (m_cursor.column > m_lines[m_cursor.line].getSize())
-                    m_cursor.column = m_lines[m_cursor.line].getSize();
+                if (m_cursor.column > m_lines[m_cursor.line].size())
+                    m_cursor.column = m_lines[m_cursor.line].size();
                 update_selection_after_set_cursor();
                 event.set_handled();
             } break;
             case sf::Keyboard::Down: {
                 if (m_cursor.line < m_lines.size() - 1)
                     m_cursor.line++;
-                if (m_cursor.column > m_lines[m_cursor.line].getSize())
-                    m_cursor.column = m_lines[m_cursor.line].getSize();
+                if (m_cursor.column > m_lines[m_cursor.line].size())
+                    m_cursor.column = m_lines[m_cursor.line].size();
                 update_selection_after_set_cursor();
                 event.set_handled();
             } break;
@@ -190,21 +196,23 @@ void TextEditor::handle_event(Event& event) {
                 if (event.event().key.control) {
                     if (m_lines.empty())
                         break;
-                    m_cursor = { .line = m_lines.size() - 1, .column = m_lines[m_lines.size() - 1].getSize() };
+                    m_cursor = { .line = m_lines.size() - 1, .column = m_lines[m_lines.size() - 1].size() };
                     m_selection_start = {};
                 }
                 break;
             }
             case sf::Keyboard::X: {
                 if (event.event().key.control) {
-                    sf::Clipboard::setString(selected_text());
+                    auto selected_text = this->selected_text();
+                    sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
                     erase_selected_text();
                 }
                 break;
             }
             case sf::Keyboard::C: {
                 if (event.event().key.control) {
-                    sf::Clipboard::setString(selected_text());
+                    auto selected_text = this->selected_text();
+                    sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
                 }
                 break;
             }
@@ -247,7 +255,7 @@ void TextEditor::handle_event(Event& event) {
     }
 }
 
-sf::String TextEditor::selected_text() const {
+Util::UString TextEditor::selected_text() const {
     auto selection_start = std::min(m_selection_start, m_cursor);
     auto selection_end = std::max(m_selection_start, m_cursor);
 
@@ -255,11 +263,11 @@ sf::String TextEditor::selected_text() const {
         return m_lines[selection_start.line].substring(selection_start.column, selection_end.column - selection_start.column);
     }
 
-    sf::String text;
+    Util::UString text;
     for (size_t s = selection_start.line; s <= selection_end.line; s++) {
         float start = s == selection_start.line ? selection_start.column : 0;
-        float end = s == selection_end.line ? selection_end.column : m_lines[s].getSize();
-        text += m_lines[s].substring(start, end - start + 1);
+        float end = s == selection_end.line ? selection_end.column : m_lines[s].size();
+        text = text + m_lines[s].substring(start, end - start + 1);
     }
     return text;
 }
@@ -270,16 +278,16 @@ void TextEditor::erase_selected_text() {
         auto selection_end = std::max(m_selection_start, m_cursor);
         auto after_selection_line_part = m_lines[selection_end.line].substring(selection_end.column);
         if (selection_start.line == selection_end.line) {
-            m_lines[selection_start.line].erase(selection_start.column, selection_end.column - selection_start.column);
+            m_lines[selection_start.line] = m_lines[selection_start.line].erase(selection_start.column, selection_end.column - selection_start.column);
         }
         else {
             for (size_t s = selection_start.line; s <= selection_end.line; s++) {
                 float start = s == selection_start.line ? selection_start.column : 0;
-                float end = s == selection_end.line ? selection_end.column : m_lines[s].getSize();
-                m_lines[s].erase(start, end - start + 1);
+                float end = s == selection_end.line ? selection_end.column : m_lines[s].size();
+                m_lines[s] = m_lines[s].erase(start, end - start + 1);
             }
             m_lines.erase(m_lines.begin() + selection_start.line + 1, m_lines.begin() + selection_end.line + 1);
-            m_lines[selection_start.line] += after_selection_line_part;
+            m_lines[selection_start.line] = m_lines[selection_start.line] + after_selection_line_part;
         }
         m_cursor = selection_start;
     }
@@ -300,13 +308,13 @@ void TextEditor::move_cursor(CursorDirection direction) {
             if (m_cursor.line == 0)
                 break;
             m_cursor.line--;
-            m_cursor.column = m_lines[m_cursor.line].getSize();
+            m_cursor.column = m_lines[m_cursor.line].size();
         }
         else
             m_cursor.column--;
         break;
     case CursorDirection::Right:
-        if (m_cursor.column == m_lines[m_cursor.line].getSize()) {
+        if (m_cursor.column == m_lines[m_cursor.line].size()) {
             if (m_cursor.line == m_lines.size() - 1)
                 break;
             m_cursor.line++;
@@ -336,25 +344,25 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
 
     if (direction == CursorDirection::Left && m_cursor.column == 0)
         move_cursor(CursorDirection::Left);
-    else if (direction == CursorDirection::Right && m_cursor.column == m_lines[m_cursor.line].getSize())
+    else if (direction == CursorDirection::Right && m_cursor.column == m_lines[m_cursor.line].size())
         move_cursor(CursorDirection::Right);
 
     auto content = m_lines[m_cursor.line];
 
     auto is_in_range = [&](unsigned offset) {
-        return (direction == CursorDirection::Left && offset > 0) || (direction == CursorDirection::Right && offset < content.getSize());
+        return (direction == CursorDirection::Left && offset > 0) || (direction == CursorDirection::Right && offset < content.size());
     };
 
     auto new_cursor = m_cursor.column;
     while (state != State::Done && is_in_range(new_cursor)) {
-        auto next = content[direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1];
+        auto next = content.at(direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1);
         // std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
         switch (state) {
         case State::Start:
             if (ispunct(next))
                 state = State::PendingCharactersOfType;
             else if (!isspace(next)) {
-                if (is_in_range(new_cursor - 2) && ispunct(content[direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1]))
+                if (is_in_range(new_cursor - 2) && ispunct(content.at(direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1)))
                     state = State::PendingPunctuation;
                 else
                     state = State::PendingCharactersOfType;
@@ -381,7 +389,7 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
         }
         if (direction == CursorDirection::Left)
             new_cursor--;
-        else if (new_cursor < content.getSize())
+        else if (new_cursor < content.size())
             new_cursor++;
     }
 
@@ -421,7 +429,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
             erase_selected_text();
         if (m_lines.empty())
             m_lines.push_back("");
-        m_lines[m_cursor.line].insert(m_cursor.column, codepoint);
+        m_lines[m_cursor.line] = m_lines[m_cursor.line].insert(Util::UString { codepoint }, m_cursor.column);
         if (on_change)
             on_change(get_content());
         m_cursor.column++;
@@ -484,7 +492,7 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
                                     Application::the().fixed_width_font,
                                     get_text_options())
                               .x;
-            float end = window.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].getSize(), m_lines[s],
+            float end = window.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size(), m_lines[s],
                                   Application::the().fixed_width_font,
                                   get_text_options())
                             .x;
@@ -531,7 +539,7 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
         line_numbers.font_size = FontSize;
         line_numbers.text_align = Align::CenterRight;
         for (size_t s = 0; s < m_lines.size(); s++) {
-            window.draw_text_aligned_in_rect(std::to_string(s + 1), { position, { GutterWidth - 10, line_height() } },
+            window.draw_text_aligned_in_rect(Util::UString { std::to_string(s + 1) }, { position, { GutterWidth - 10, line_height() } },
                 GUI::Application::the().fixed_width_font, line_numbers);
             position.y += line_height();
         }

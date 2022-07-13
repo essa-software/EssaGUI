@@ -19,7 +19,7 @@ void TextButton::draw(GUI::SFMLWindow& window) const {
     if (m_image) {
         RectangleDrawOptions image;
         image.texture = m_image;
-        if (m_content.isEmpty()) {
+        if (m_content.is_empty()) {
             window.draw_rectangle({ size() / 2.f - sf::Vector2f(m_image->getSize()) / 2.f, sf::Vector2f(m_image->getSize()) }, image);
             return;
         }

@@ -12,7 +12,7 @@ class TabSelectWidget : public Container {
 public:
     explicit TabSelectWidget(Container& c);
 
-    void add_button(std::string caption, size_t tab_index);
+    void add_button(Util::UString caption, size_t tab_index);
     void switch_to_tab(size_t index);
 
 private:
@@ -24,7 +24,7 @@ public:
     explicit TabWidget(Container& c);
 
     template<class... Args>
-    Container& add_tab(std::string caption, Args&&... args) {
+    Container& add_tab(Util::UString caption, Args&&... args) {
         auto tab = m_tab_container->add_widget<Container>(std::forward<Args>(args)...);
         setup_tab(caption, tab);
         return *tab;
@@ -37,7 +37,7 @@ public:
 
 private:
     unsigned m_index = 0;
-    void setup_tab(std::string caption, Container* tab);
+    void setup_tab(Util::UString caption, Container* tab);
 
     TabSelectWidget* m_tab_select {};
     Container* m_tab_container {};

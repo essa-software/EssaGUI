@@ -29,7 +29,7 @@ std::pair<std::string, typename StateTextButton<T>::State> StateTextButton<T>::g
 }
 
 template<typename T>
-void StateTextButton<T>::add_state(sf::String content, T state, sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+void StateTextButton<T>::add_state(Util::UString content, T state, sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_states.push_back({ content, { bg_color, fg_color, text_color, state } });
 }
 

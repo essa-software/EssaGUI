@@ -18,7 +18,7 @@ class StateTextButton : public Widget {
 public:
     explicit StateTextButton(Container& c);
 
-    void add_state(sf::String content, T state, sf::Color bg_color, sf::Color fg_color = sf::Color::Blue, sf::Color text_color = sf::Color::White);
+    void add_state(Util::UString content, T state, sf::Color bg_color, sf::Color fg_color = sf::Color::Blue, sf::Color text_color = sf::Color::White);
 
     unsigned get_font_size() const { return m_font_size; }
     void set_font_size(unsigned font_size) { m_font_size = font_size; }

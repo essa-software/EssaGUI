@@ -8,14 +8,14 @@ namespace GUI {
 
 class Prompt : public ToolWindow {
 public:
-    explicit Prompt(GUI::SFMLWindow& wnd, sf::String help_text, sf::String window_title, sf::String placeholder);
+    explicit Prompt(GUI::SFMLWindow& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
-    std::optional<sf::String> result() const { return m_result; }
+    std::optional<Util::UString> result() const { return m_result; }
 
 private:
-    std::optional<sf::String> m_result;
+    std::optional<Util::UString> m_result;
 };
 
-std::optional<sf::String> prompt(sf::String help_text, sf::String window_title = "Prompt", sf::String placeholder = "");
+std::optional<Util::UString> prompt(Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
 
 }

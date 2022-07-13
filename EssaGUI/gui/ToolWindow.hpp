@@ -19,8 +19,8 @@ public:
     virtual sf::Vector2f size() const override { return m_size; }
     void set_size(sf::Vector2f size) { m_size = size; }
 
-    void set_title(sf::String string) { m_title = std::move(string); }
-    sf::String title() const { return m_title; }
+    void set_title(Util::UString string) { m_title = std::move(string); }
+    Util::UString title() const { return m_title; }
 
     virtual sf::FloatRect full_rect() const override { return { position() - sf::Vector2f(0, TitleBarSize), size() + sf::Vector2f(0, TitleBarSize) }; }
     sf::FloatRect titlebar_rect() const { return { position() - sf::Vector2f(0, TitleBarSize), { size().x, TitleBarSize } }; }
@@ -45,7 +45,7 @@ private:
     };
     Resize m_resize_mode = Resize::DEFAULT;
 
-    sf::String m_title;
+    Util::UString m_title;
     sf::Vector2f m_position;
     sf::Vector2f m_size;
     bool m_dragging = false;

@@ -47,7 +47,7 @@ TabSelectWidget::TabSelectWidget(Container& c)
     set_layout<HorizontalBoxLayout>();
 }
 
-void TabSelectWidget::add_button(std::string caption, size_t tab_index) {
+void TabSelectWidget::add_button(Util::UString caption, size_t tab_index) {
     auto button = add_widget<TabButton>();
     button->set_active_content(caption);
     button->set_content(std::move(caption));
@@ -92,7 +92,7 @@ void TabWidget::switch_to_tab(size_t index) {
     m_tab_select->switch_to_tab(index);
 }
 
-void TabWidget::setup_tab(std::string caption, Container* tab) {
+void TabWidget::setup_tab(Util::UString caption, Container* tab) {
     tab->set_background_color(TabButton::BgColor);
     tab->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     tab->set_visible(m_tabs.size() == 0);

@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-MessageBox::MessageBox(GUI::SFMLWindow& wnd, sf::String message, sf::String title, Buttons buttons)
+MessageBox::MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UString title, Buttons buttons)
     : ToolWindow(wnd, "MessageBox") {
     set_title(std::move(title));
 
@@ -33,7 +33,7 @@ MessageBox::MessageBox(GUI::SFMLWindow& wnd, sf::String message, sf::String titl
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
     button_container->set_size({ Length::Auto, 30.0_px });
 
-    auto add_button = [this, &button_container](ButtonRole button_role, sf::String label, sf::Color bg_color) {
+    auto add_button = [this, &button_container](ButtonRole button_role, Util::UString label, sf::Color bg_color) {
         auto button = button_container->add_widget<GUI::TextButton>();
         button->set_alignment(GUI::Align::Center);
         button->set_content(std::move(label));
@@ -60,7 +60,7 @@ void MessageBox::handle_event(sf::Event event) {
         m_default_button->on_click();
 }
 
-MessageBox::ButtonRole message_box(sf::String message, sf::String title, MessageBox::Buttons buttons) {
+MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
     auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
     return msgbox.exec();
 }

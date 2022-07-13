@@ -11,8 +11,8 @@ class ValueSlider : public Container {
 public:
     ValueSlider(Container& parent, double min, double max, double step = 1);
 
-    void set_name(std::string name) { m_name_textfield->set_content(std::move(name)); }
-    void set_unit(std::string unit) { m_unit_textfield->set_content(std::move(unit)); }
+    void set_name(Util::UString name) { m_name_textfield->set_content(std::move(name)); }
+    void set_unit(Util::UString unit) { m_unit_textfield->set_content(std::move(unit)); }
 
     double value() const;
     void set_value(double value);

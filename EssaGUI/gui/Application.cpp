@@ -1,13 +1,12 @@
 #include "Application.hpp"
 
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "ToolWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/SFMLWindow.hpp>
 
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -134,7 +133,7 @@ void Application::draw_notification(Notification const& notification, float y) c
     window().draw_text(notification.message, font, { window().getSize().x - text_bounds.x - 20, y + 20 });
 }
 
-void Application::spawn_notification(std::string message, NotificationLevel level) {
+void Application::spawn_notification(Util::UString message, NotificationLevel level) {
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
@@ -147,7 +146,7 @@ Overlay& Application::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
     return *overlay_ptr;
 }
 
-Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String title, std::string id) {
+Application::OpenOrFocusResult Application::open_or_focus_tool_window(Util::UString title, std::string id) {
     for (auto it = m_overlays.begin(); it != m_overlays.end(); it++) {
         auto window = it->get();
         if (window->id() == id && dynamic_cast<ToolWindow*>(window)) {

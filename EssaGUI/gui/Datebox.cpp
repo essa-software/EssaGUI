@@ -11,7 +11,7 @@
 #include <sstream>
 #include <string>
 
-const std::string month_names[] = {
+Util::UString const month_names[] = {
     "January", "February", "March",
     "April", "May", "June",
     "July", "August", "September",
@@ -28,9 +28,11 @@ Datebox::Datebox(Container& parent)
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     main_container->set_size({ Length::Auto, 30.0_px });
     m_date_textfield = main_container->add_widget<Textfield>();
+
+    // TODO: Make Dates support UString natively
     std::ostringstream str;
     str << m_date;
-    m_date_textfield->set_content(str.str());
+    m_date_textfield->set_content(Util::UString { str.str() });
 
     m_toggle_container_button = main_container->add_widget<TextButton>();
     m_toggle_container_button->set_size({ 50.0_px, Length::Auto });
@@ -209,27 +211,29 @@ void Datebox::m_create_container() {
         m_update_calendar();
     };
 
-    hours->on_change = [&](std::string str) {
+    hours->on_change = [&](Util::UString const& str) {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, std::stoi(str), local_tm.tm_min, local_tm.tm_sec);
+        // TODO: Implement std::stoi as UString function
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, std::stoi(str.encode()), local_tm.tm_min, local_tm.tm_sec);
         m_update_calendar();
     };
 
-    minutes->on_change = [&](std::string str) {
+    minutes->on_change = [&](Util::UString const& str) {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, std::stoi(str), local_tm.tm_sec);
+        // TODO: Implement std::stoi as UString function
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, std::stoi(str.encode()), local_tm.tm_sec);
         m_update_calendar();
     };
 
-    seconds->on_change = [&](std::string str) {
+    seconds->on_change = [&](Util::UString const& str) {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, std::stoi(str));
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, std::stoi(str.encode()));
         m_update_calendar();
     };
 }
@@ -241,16 +245,16 @@ void Datebox::m_update_calendar() {
     mktime(&local_tm);
 
     if (local_tm.tm_year < 0)
-        m_century_textfield->set_content(std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100)) + " - " + std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100) + 99));
+        m_century_textfield->set_content(Util::UString { std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100)) + " - " + std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100) + 99) });
     else
-        m_century_textfield->set_content(std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100)) + " - " + std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100) + 99));
-    m_year_textfield->set_content(std::to_string(1900 + local_tm.tm_year));
+        m_century_textfield->set_content(Util::UString { std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100)) + " - " + std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100) + 99) });
+    m_year_textfield->set_content(Util::UString { std::to_string(1900 + local_tm.tm_year) });
     m_month_textfield->set_content(month_names[local_tm.tm_mon]);
 
     int current_month_day = -(local_tm.tm_wday == 0 ? 6 : local_tm.tm_wday - 1);
     std::ostringstream str;
     str << m_date;
-    m_date_textfield->set_content(str.str());
+    m_date_textfield->set_content(Util::UString { str.str() });
 
     for (unsigned j = 0; j < m_calendar_contents.size(); j++) {
         current_month_day++;
@@ -278,8 +282,8 @@ void Datebox::m_update_calendar() {
             m_calendar_rows[5]->set_visible(true);
         }
 
-        m_calendar_contents[j].first->set_content(std::to_string(temp_tm.tm_mday));
-        m_calendar_contents[j].first->set_active_content(std::to_string(temp_tm.tm_mday));
+        m_calendar_contents[j].first->set_content(Util::UString { std::to_string(temp_tm.tm_mday) });
+        m_calendar_contents[j].first->set_active_content(Util::UString { std::to_string(temp_tm.tm_mday) });
 
         // TODO: Add that to theme
         auto& colors = m_calendar_contents[j].first->override_button_colors();

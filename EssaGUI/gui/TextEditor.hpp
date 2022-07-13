@@ -33,10 +33,10 @@ public:
     virtual void handle_event(Event&) override;
     virtual void draw(GUI::SFMLWindow& window) const override;
 
-    sf::String get_content() const;
-    void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
-    void set_placeholder(std::string placeholder) { m_placeholder = placeholder; }
-    bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].isEmpty()); }
+    Util::UString get_content() const;
+    void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);
+    void set_placeholder(Util::UString placeholder) { m_placeholder = std::move(placeholder); }
+    bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].is_empty()); }
 
     bool is_multiline() const { return m_multiline; }
     void set_multiline(bool multiline) { m_multiline = multiline; }
@@ -47,10 +47,10 @@ public:
         DontTouch
     };
 
-    sf::String selected_text() const;
+    Util::UString selected_text() const;
 
-    std::function<void(sf::String const&)> on_change;
-    std::function<void(sf::String const&)> on_enter;
+    std::function<void(Util::UString const&)> on_change;
+    std::function<void(Util::UString const&)> on_enter;
 
 private:
     TextPosition m_character_pos_from_mouse(Event& event);
@@ -81,8 +81,8 @@ private:
     void update_selection_after_set_cursor(SetCursorSelectionBehavior = SetCursorSelectionBehavior::Extend);
 
     bool m_shift_pressed = false;
-    std::vector<sf::String> m_lines;
-    sf::String m_placeholder;
+    std::vector<Util::UString> m_lines;
+    Util::UString m_placeholder;
     bool m_dragging = false;
     TextPosition m_cursor;
     TextPosition m_selection_start;

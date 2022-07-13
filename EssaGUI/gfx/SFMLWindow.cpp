@@ -9,8 +9,8 @@ namespace GUI {
 
 static bool s_glewInitialized = false;
 
-SFMLWindow::SFMLWindow(sf::VideoMode vm, sf::String title, unsigned style, sf::ContextSettings cs)
-    : Window(vm, std::move(title), style, cs) {
+SFMLWindow::SFMLWindow(sf::VideoMode vm, Util::UString title, unsigned style, sf::ContextSettings cs)
+    : Window(vm, sf::String::fromUtf32(title.begin(), title.end()), style, cs) {
 
     if (!s_glewInitialized) {
         s_glewInitialized = true;
@@ -186,7 +186,7 @@ void SFMLWindow::draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const
     draw_outline(outline_positions, options.outline_color, options.outline_thickness);
 }
 
-void SFMLWindow::draw_text(sf::String const& text, sf::Font const& font, sf::Vector2f position, TextDrawOptions const& options) {
+void SFMLWindow::draw_text(Util::UString const& text, sf::Font const& font, sf::Vector2f position, TextDrawOptions const& options) {
     sf::Vector2f current_pos = position;
     std::vector<Vertex> vertices;
 
@@ -249,7 +249,7 @@ void SFMLWindow::draw_text(sf::String const& text, sf::Font const& font, sf::Vec
     // draw_rectangle({ position, { 1, -size.y } }, debug_rect);
 }
 
-void SFMLWindow::draw_text_aligned_in_rect(sf::String const& text, sf::FloatRect rect, sf::Font const& font, TextDrawOptions const& options) {
+void SFMLWindow::draw_text_aligned_in_rect(Util::UString const& text, sf::FloatRect rect, sf::Font const& font, TextDrawOptions const& options) {
     auto text_size = calculate_text_size(text, font, options);
     // std::cout << text_size.x << "," << text_size.y << std::endl;
 
@@ -324,7 +324,7 @@ void SFMLWindow::draw_outline(std::span<Vector3 const> positions, Color color, f
     draw_vertices(GL_TRIANGLE_STRIP, vertices);
 }
 
-sf::Vector2f SFMLWindow::calculate_text_size(sf::String const& text, sf::Font const& font, TextDrawOptions const& options) {
+sf::Vector2f SFMLWindow::calculate_text_size(Util::UString const& text, sf::Font const& font, TextDrawOptions const& options) {
     sf::Vector2f total_size;
     total_size.y = font.getGlyph('x', options.font_size, false).bounds.height;
     float line_size_x = 0;
@@ -345,10 +345,10 @@ sf::Vector2f SFMLWindow::calculate_text_size(sf::String const& text, sf::Font co
     return total_size;
 }
 
-sf::Vector2f SFMLWindow::find_character_position(size_t index, sf::String const& text, sf::Font const& font, TextDrawOptions const& options) {
+sf::Vector2f SFMLWindow::find_character_position(size_t index, Util::UString const& text, sf::Font const& font, TextDrawOptions const& options) {
     sf::Vector2f current_position;
     for (size_t s = 0; s < index; s++) {
-        auto codepoint = text[s];
+        auto codepoint = text.at(s);
         if (codepoint == '\n') {
             current_position.y += font.getLineSpacing(options.font_size);
             current_position.x = 0;

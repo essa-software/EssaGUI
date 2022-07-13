@@ -1,12 +1,13 @@
 #pragma once
 
+#include <EssaUtil/UString.hpp>
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <variant>
 
 namespace GUI {
 
-using Variant = std::variant<sf::String, sf::Texture const*>;
+using Variant = std::variant<Util::UString, sf::Texture const*>;
 
 class Model {
 public:
@@ -18,7 +19,7 @@ public:
 
     struct Column {
         float width = 15;
-        sf::String name;
+        Util::UString name;
     };
 
     virtual Column column(size_t column) const = 0;

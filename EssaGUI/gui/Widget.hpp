@@ -120,7 +120,7 @@ public:
     GUI::SFMLWindow& window() const;
     Container* parent() const { return m_parent; }
 
-    void set_tooltip_text(std::string t) { m_tooltip_text = std::move(t); }
+    void set_tooltip_text(Util::UString t) { m_tooltip_text = std::move(t); }
 
     std::string_view id() const { return m_id; }
     std::string_view class_name() const { return m_class_name; }
@@ -171,8 +171,9 @@ private:
     LengthVector m_expected_pos, m_input_size;
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
-    std::string m_tooltip_text;
-    std::string_view m_id, m_class_name;
+    Util::UString m_tooltip_text;
+    std::string_view m_id;
+    std::string_view m_class_name;
     bool m_hover = false;
     bool m_visible = true;
     bool m_enabled = true;

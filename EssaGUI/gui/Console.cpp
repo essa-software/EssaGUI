@@ -19,12 +19,17 @@ void Console::append_line(LogLine line) {
 }
 
 void Console::append_content(LogLine content) {
-    std::istringstream iss { content.text };
+    size_t index = 0;
     while (true) {
-        std::string line;
-        if (!std::getline(iss, line))
-            return;
-        append_line({ .color = content.color, .text = line });
+        auto next_newline = content.text.find("\n", index);
+        if (!next_newline.has_value()) {
+            next_newline = content.text.size();
+        }
+
+        append_line({ .color = content.color, .text = content.text.substring(index, *next_newline - index) });
+        if (next_newline == content.text.size())
+            break;
+        index = *next_newline + 1;
     }
 }
 

@@ -13,7 +13,7 @@ public:
 
     struct LogLine {
         sf::Color color;
-        std::string text;
+        Util::UString text;
     };
 
     void append_line(LogLine);

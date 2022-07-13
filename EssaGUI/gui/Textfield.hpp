@@ -7,7 +7,7 @@
 namespace GUI {
 
 class Textfield : public Widget {
-    sf::String m_content;
+    Util::UString m_content;
     unsigned m_font_size = 15;
     Align m_alignment = Align::CenterLeft;
 
@@ -17,8 +17,8 @@ public:
 
     virtual void draw(GUI::SFMLWindow& window) const override;
 
-    sf::String get_content() const { return m_content; }
-    Textfield& set_content(sf::String content) {
+    Util::UString get_content() const { return m_content; }
+    Textfield& set_content(Util::UString content) {
         m_content = std::move(content);
         return *this;
     }

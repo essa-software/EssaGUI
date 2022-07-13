@@ -55,7 +55,7 @@ Variant FileModel::data(size_t row, size_t column) const {
     case 0:
         return file_icon(row);
     case 1:
-        return file.path.filename().string();
+        return Util::UString { file.path.filename().string() };
     case 2: {
         try {
             return file.type != std::filesystem::file_type::directory
@@ -66,14 +66,14 @@ Variant FileModel::data(size_t row, size_t column) const {
         }
     }
     case 4: {
-        return file.type == std::filesystem::file_type::directory ? "Directory" : file_type(file.path);
+        return Util::UString { file.type == std::filesystem::file_type::directory ? "Directory" : file_type(file.path) };
     }
     case 3:
         std::time_t cftime = std::chrono::system_clock::to_time_t(
             std::chrono::file_clock::to_sys(std::filesystem::last_write_time(file.path)));
         std::string string = std::asctime(std::localtime(&cftime));
         string.pop_back(); // trailing \n
-        return string;
+        return Util::UString { string };
     }
     return "";
 }
@@ -180,7 +180,7 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
 
     m_path_textbox = toolbar->add_widget<Textbox>();
     m_path_textbox->set_data_type(Textbox::Type::TEXT);
-    m_path_textbox->set_content(m_current_path.string());
+    m_path_textbox->set_content(Util::UString { m_current_path.string() });
 
     auto parent_directory_button = toolbar->add_widget<TextButton>();
     parent_directory_button->set_image(&parent_directory_icon);
@@ -199,11 +199,11 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
             try {
                 // C++ Why mutable paths?!!!
                 auto new_path = m_current_path;
-                new_path.append(path->toAnsiString());
+                new_path.append(path->encode());
                 std::filesystem::create_directory(new_path);
                 m_model->update_content(m_current_path);
             } catch (std::filesystem::filesystem_error& error) {
-                GUI::message_box(error.what(), "Error", GUI::MessageBox::Buttons::Ok);
+                GUI::message_box(Util::UString { error.what() }, "Error", GUI::MessageBox::Buttons::Ok);
             }
         };
     };
@@ -218,7 +218,7 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
         if (file_name.has_value()) {
             // C++ Why mutable paths?!!!
             auto new_path = m_current_path;
-            new_path.append(file_name->toAnsiString());
+            new_path.append(file_name->encode());
             std::ofstream f_out(new_path);
             m_model->update_content(m_current_path);
         };
@@ -228,8 +228,9 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     find->set_placeholder("Find file or directory");
     find->set_size({ { 25.0, Length::Percent }, Length::Auto });
     find->set_data_type(Textbox::Type::TEXT);
-    find->on_change = [&](std::string content) {
-        m_model->update_content(m_current_path, [&](std::filesystem::path path) {
+    find->on_change = [&](Util::UString const& content) {
+        // FIXME: The encode() hack
+        m_model->update_content(m_current_path, [content = content.encode()](std::filesystem::path path) {
             // TODO: Support fuzzy search
             auto str = path.string();
             auto size = content.size();
@@ -254,6 +255,7 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
                 }
                 return false;
             }
+            return false;
         });
     };
 
@@ -265,10 +267,10 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     sidebar->set_layout<GUI::VerticalBoxLayout>();
     sidebar->set_background_color({ 120, 120, 120, 100 });
 
-    auto add_common_location = [&](std::string const& name, std::filesystem::path path) {
+    auto add_common_location = [&](Util::UString const& name, std::filesystem::path path) {
         auto button = sidebar->add_widget<GUI::TextButton>();
         button->set_content(name);
-        button->set_tooltip_text(path.string());
+        button->set_tooltip_text(Util::UString { path.string() });
         button->set_size({ Length::Auto, 30.0_px });
         button->on_click = [this, path]() {
             open_path(path);
@@ -295,8 +297,8 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
         }
     };
 
-    m_path_textbox->on_enter = [&](std::string path) {
-        open_path(path);
+    m_path_textbox->on_enter = [&](Util::UString const& path) {
+        open_path(path.encode());
     };
 
     parent_directory_button->on_click = [&]() {
@@ -334,11 +336,11 @@ void FileExplorer::open_path(std::filesystem::path path) {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
         m_model->update_content(m_current_path);
-        GUI::message_box(error.path1().string() + ": " + error.code().message(), "Error!", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box(Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!", GUI::MessageBox::Buttons::Ok);
         return;
     }
     m_current_path = path;
-    m_path_textbox->set_content(path.string(), NotifyUser::No);
+    m_path_textbox->set_content(Util::UString { path.string() }, NotifyUser::No);
     m_list->set_scroll(0);
 }
 

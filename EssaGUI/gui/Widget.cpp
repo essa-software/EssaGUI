@@ -27,7 +27,7 @@ bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const {
 }
 
 void Widget::update() {
-    if (!m_tooltip_text.empty()) {
+    if (!m_tooltip_text.is_empty()) {
         // std::cout << this << ": " << m_tooltip_counter << std::endl;
         if (m_tooltip_counter > 0)
             m_tooltip_counter--;

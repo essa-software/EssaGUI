@@ -18,15 +18,15 @@ class SelectWidget : public Widget {
     Textfield* m_textfield;
 
     std::shared_ptr<ArrowButton> m_expand_button;
-    std::map<std::string, T> m_contents;
+    std::map<Util::UString, T> m_contents;
     unsigned m_index;
     bool expanded = false;
 
 public:
     explicit SelectWidget(Container& c);
 
-    void add_entry(std::string label, T value);
-    void set_label(std::string label) { m_label->set_content(label); }
+    void add_entry(Util::UString label, T value);
+    void set_label(Util::UString label) { m_label->set_content(label); }
 };
 
 }
