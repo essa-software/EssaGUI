@@ -14,7 +14,7 @@ public:
     TabButton(Container& c)
         : TextButton(c) { }
 
-    static sf::Color const BgColor;
+    static Util::Color const BgColor;
 
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
@@ -22,7 +22,7 @@ private:
     virtual void draw(GUI::SFMLWindow&) const override;
 };
 
-sf::Color const TabButton::BgColor { 120, 120, 120, 100 };
+Util::Color const TabButton::BgColor { 120, 120, 120, 100 };
 
 void TabButton::draw(GUI::SFMLWindow& window) const {
     RectangleDrawOptions rect;
@@ -30,11 +30,11 @@ void TabButton::draw(GUI::SFMLWindow& window) const {
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
     rect.fill_color = bg_color_for_state();
-    window.draw_rectangle(!is_active() ? sf::FloatRect { { 0, 4 }, size() } : local_rect(), rect);
+    window.draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, size() } : local_rect(), rect);
 
-    sf::Vector2f text_position;
+    Util::Vector2f text_position;
     if (!is_active())
-        text_position.y = 4;
+        text_position.y() = 4;
     TextDrawOptions text;
     text.fill_color = text_color_for_state();
     text.font_size = 15;
@@ -77,7 +77,7 @@ TabWidget::TabWidget(Container& c)
     m_tab_select->set_size({ Length::Auto, 30.0_px });
     m_tab_container = add_widget<Container>();
     m_tab_container->set_layout<BasicLayout>();
-    m_tab_container->set_background_color(sf::Color(200, 200, 200, 100));
+    m_tab_container->set_background_color(Util::Color { 200, 200, 200, 100 });
 }
 
 void TabWidget::switch_to_tab(size_t index) {

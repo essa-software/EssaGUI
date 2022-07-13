@@ -13,17 +13,17 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 }
 
 void WidgetTreeRoot::draw() {
-    sf::View gui_view { sf::FloatRect(position(), size()) };
+    sf::View gui_view { sf::FloatRect(position().x(), position().y(), size().x(), size().y()) };
     m_window.set_view(gui_view);
 
     if (!m_main_widget)
         return;
     if (m_needs_relayout) {
         // std::cout << m_id << "\n"
-        m_main_widget->set_size({ { size().x, Length::Unit::Px }, { size().y, Length::Unit::Px } });
+        m_main_widget->set_size({ { size().x(), Length::Unit::Px }, { size().y(), Length::Unit::Px } });
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
-        // m_main_widget->dump(0);
+        m_main_widget->dump(0);
         m_needs_relayout = false;
     }
     m_main_widget->do_draw(m_window);
@@ -59,14 +59,14 @@ void WidgetTreeRoot::tick() {
     Application::the().remove_closed_overlays();
 }
 
-sf::Event WidgetTreeRoot::transform_event(sf::Vector2f offset, sf::Event event) const {
+sf::Event WidgetTreeRoot::transform_event(Util::Vector2f offset, sf::Event event) const {
     if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
-        event.mouseButton.x -= offset.x;
-        event.mouseButton.y -= offset.y;
+        event.mouseButton.x -= offset.x();
+        event.mouseButton.y -= offset.y();
     }
     else if (event.type == sf::Event::MouseMoved) {
-        event.mouseMove.x -= offset.x;
-        event.mouseMove.y -= offset.y;
+        event.mouseMove.x -= offset.x();
+        event.mouseMove.y -= offset.y();
     }
 
     return event;

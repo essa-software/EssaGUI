@@ -53,13 +53,13 @@ public:
             m_main_widget->do_update();
     }
 
-    virtual sf::Vector2f position() const = 0;
-    virtual sf::Vector2f size() const = 0;
-    sf::FloatRect rect() const { return { position(), size() }; }
+    virtual Util::Vector2f position() const = 0;
+    virtual Util::Vector2f size() const = 0;
+    Util::Rectf rect() const { return { position(), size() }; }
 
     // The rect that the WidgetTreeRoot should consume events from. For
     // ToolWindows, it is content + titlebar.
-    virtual sf::FloatRect full_rect() const { return rect(); }
+    virtual Util::Rectf full_rect() const { return rect(); }
 
 protected:
     virtual void tick() override;
@@ -67,7 +67,7 @@ protected:
     Theme const& theme() const;
 
     bool pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event);
-    sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
+    sf::Event transform_event(Util::Vector2f offset, sf::Event event) const;
 
 private:
     GUI::SFMLWindow& m_window;

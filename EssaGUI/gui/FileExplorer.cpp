@@ -317,11 +317,8 @@ FileExplorer::FileExplorer(GUI::SFMLWindow& wnd)
     auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
     open_directory_btn->set_content("Open folder");
     open_directory_btn->set_alignment(Align::Center);
-    open_directory_btn->set_background_color(sf::Color::Red);
-    open_directory_btn->set_text_color(sf::Color::White);
-    open_directory_btn->on_click = [&]() {
-
-    };
+    open_directory_btn->set_background_color(Util::Colors::red);
+    open_directory_btn->set_text_color(Util::Colors::white);
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {

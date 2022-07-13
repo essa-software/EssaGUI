@@ -43,7 +43,7 @@ public:
         return m_event.type == sf::Event::MouseMoved || m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased;
     }
 
-    sf::Vector2f mouse_position() const {
+    Util::Vector2i mouse_position() const {
         assert(is_mouse_related());
         if (m_event.type == sf::Event::MouseMoved)
             return { static_cast<float>(m_event.mouseMove.x), static_cast<float>(m_event.mouseMove.y) };
@@ -73,10 +73,10 @@ public:
     virtual void do_update();
     virtual void draw(GUI::SFMLWindow&) const { }
 
-    void set_raw_position(sf::Vector2f p) {
+    void set_raw_position(Util::Vector2f p) {
         m_pos = p;
     }
-    void set_raw_size(sf::Vector2f s) {
+    void set_raw_size(Util::Vector2f s) {
         m_size = s;
     }
 
@@ -90,10 +90,10 @@ public:
         set_needs_relayout();
     }
 
-    sf::Vector2f position() const { return m_pos; }
-    sf::Vector2f size() const { return m_size; }
-    sf::FloatRect rect() const;
-    sf::FloatRect local_rect() const { return { {}, m_size }; }
+    Util::Vector2f position() const { return m_pos; }
+    Util::Vector2f size() const { return m_size; }
+    Util::Rectf rect() const;
+    Util::Rectf local_rect() const { return { {}, m_size }; }
     LengthVector input_position() const { return m_expected_pos; }
     LengthVector input_size() const { return m_input_size; }
 
@@ -129,15 +129,15 @@ public:
 
     virtual void dump(unsigned depth);
 
-    void set_background_color(sf::Color const& color) { m_background_color = color; }
-    void set_foreground_color(sf::Color const& color) { m_foreground_color = color; }
-    void set_text_color(sf::Color const& color) { m_text_color = color; }
+    void set_background_color(Util::Color const& color) { m_background_color = color; }
+    void set_foreground_color(Util::Color const& color) { m_foreground_color = color; }
+    void set_text_color(Util::Color const& color) { m_text_color = color; }
 
-    sf::Color get_background_color() const { return m_background_color; }
-    sf::Color get_foreground_color() const { return m_foreground_color; }
-    sf::Color get_text_color() const { return m_text_color; }
+    Util::Color get_background_color() const { return m_background_color; }
+    Util::Color get_foreground_color() const { return m_foreground_color; }
+    Util::Color get_text_color() const { return m_text_color; }
 
-    void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+    void set_display_attributes(Util::Color bg_color, Util::Color fg_color, Util::Color text_color) {
         set_background_color(bg_color);
         set_foreground_color(fg_color);
         set_text_color(text_color);
@@ -152,7 +152,7 @@ protected:
     Theme const& theme() const;
 
     virtual void relayout() { }
-    virtual bool is_mouse_over(sf::Vector2i) const;
+    virtual bool is_mouse_over(Util::Vector2i) const;
     virtual void update();
     virtual void handle_event(Event&);
     virtual bool accepts_focus() const { return false; }
@@ -167,7 +167,7 @@ private:
 
     Container* m_parent = nullptr;
     WidgetTreeRoot& m_widget_tree_root;
-    sf::Vector2f m_pos, m_size;
+    Util::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
@@ -177,9 +177,9 @@ private:
     bool m_hover = false;
     bool m_visible = true;
     bool m_enabled = true;
-    sf::Color m_background_color = sf::Color::Transparent;
-    sf::Color m_foreground_color = sf::Color::Transparent;
-    sf::Color m_text_color = sf::Color::White;
+    Util::Color m_background_color = Util::Colors::transparent;
+    Util::Color m_foreground_color = Util::Colors::transparent;
+    Util::Color m_text_color = Util::Colors::white;
 };
 
 }

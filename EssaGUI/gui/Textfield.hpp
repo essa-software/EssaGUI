@@ -29,7 +29,7 @@ public:
     Align get_alignment() const { return m_alignment; };
     void set_alignment(Align alignment) { m_alignment = alignment; };
 
-    sf::Vector2f calculate_text_size() const;
+    Util::Vector2f calculate_text_size() const;
 };
 
 }

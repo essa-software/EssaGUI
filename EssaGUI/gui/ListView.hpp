@@ -30,7 +30,7 @@ public:
 
 private:
     virtual float content_height() const override;
-    sf::Vector2f cell_size(size_t row, size_t column) const;
+    Util::Vector2f cell_size(size_t row, size_t column) const;
 
     std::unique_ptr<Model> m_model;
 };

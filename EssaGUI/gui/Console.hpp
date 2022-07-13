@@ -12,7 +12,7 @@ public:
         : ScrollableWidget(c) { }
 
     struct LogLine {
-        sf::Color color;
+        Util::Color color;
         Util::UString text;
     };
 

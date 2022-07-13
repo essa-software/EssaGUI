@@ -42,9 +42,9 @@ public:
     }
 
 protected:
-    sf::Color color_for_state(sf::Color) const;
-    sf::Color bg_color_for_state() const;
-    sf::Color text_color_for_state() const;
+    Util::Color color_for_state(Util::Color) const;
+    Util::Color bg_color_for_state() const;
+    Util::Color text_color_for_state() const;
 
     virtual Theme::ButtonColors default_button_colors() const = 0;
 

@@ -22,8 +22,8 @@ Widget::~Widget() {
         m_widget_tree_root.set_focused_widget(nullptr);
 }
 
-bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const {
-    return sf::Rect<float>(m_pos, m_size).contains(mouse_pos.x, mouse_pos.y);
+bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
+    return Util::Rectf { m_pos, m_size }.contains(mouse_pos);
 }
 
 void Widget::update() {
@@ -79,7 +79,7 @@ bool Widget::are_all_parents_enabled() const {
 
 void Widget::handle_event(Event& event) {
     if (event.type() == sf::Event::MouseMoved) {
-        sf::Vector2i mouse_pos { event.event().mouseMove.x, event.event().mouseMove.y };
+        Util::Vector2i mouse_pos { event.event().mouseMove.x, event.event().mouseMove.y };
         bool previous_hover = m_hover;
         m_hover = is_mouse_over(mouse_pos);
         if (previous_hover != m_hover) {
@@ -91,7 +91,7 @@ void Widget::handle_event(Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
-        sf::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
+        Util::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
         m_hover = is_mouse_over(mouse_pos);
         if (m_hover && accepts_focus()) {
             set_focused();
@@ -99,7 +99,7 @@ void Widget::handle_event(Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
-        sf::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
+        Util::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
         m_hover = is_mouse_over(mouse_pos);
     }
     else if (event.type() == sf::Event::Resized)
@@ -109,7 +109,7 @@ void Widget::handle_event(Event& event) {
 void Widget::do_draw(GUI::SFMLWindow& window) const {
     // std::cout << "do_draw "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
     Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
-    
+
     RectangleDrawOptions background;
     background.fill_color = m_background_color;
     window.draw_rectangle(local_rect(), background);
@@ -117,7 +117,7 @@ void Widget::do_draw(GUI::SFMLWindow& window) const {
     this->draw(window);
 }
 
-sf::FloatRect Widget::rect() const {
+Util::Rectf Widget::rect() const {
     return { position() + m_widget_tree_root.position(), size() };
 }
 
@@ -146,7 +146,7 @@ void Widget::dump(unsigned depth) {
     std::cout << typeid(*this).name() << " @" << this;
     if (!m_id.empty())
         std::cout << " #" << m_id;
-    std::cout << ": pos=" << m_pos.x << "," << m_pos.y << " size=" << m_size.x << "," << m_size.y;
+    std::cout << ": pos=" << m_pos.x() << "," << m_pos.y() << " size=" << m_size.x() << "," << m_size.y();
     std::cout << std::endl;
 }
 

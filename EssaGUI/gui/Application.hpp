@@ -56,8 +56,8 @@ public:
     TooltipOverlay& add_tooltip(Tooltip t);
     void remove_closed_overlays();
 
-    virtual sf::Vector2f position() const override { return {}; }
-    virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
+    virtual Util::Vector2f position() const override { return {}; }
+    virtual Util::Vector2f size() const override { return Util::Vector2f { window().getSize().x, window().getSize().y }; }
 
     void set_theme(Theme const& theme) { m_theme = &theme; }
     Theme const& theme() const { return *m_theme; }
@@ -75,7 +75,7 @@ private:
     };
 
     void draw_notification(Notification const&, float y) const;
-    sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
+    sf::Event transform_event(Util::Vector2f offset, sf::Event event) const;
     Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
 
     using OverlayList = std::list<std::unique_ptr<Overlay>>;
@@ -83,7 +83,7 @@ private:
     void focus_window(OverlayList::iterator);
 
     OverlayList m_overlays;
-    sf::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
+    Util::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
     Theme const* m_theme = &Theme::default_theme();

@@ -24,7 +24,7 @@ MessageBox::MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UStrin
 
     {
         auto text_size = prompt_text->calculate_text_size();
-        sf::Vector2f total_size { 40 + text_size.x, 110 + text_size.y };
+        Util::Vector2f total_size { 40 + text_size.x(), 110 + text_size.y() };
         set_size(total_size);
         center_on_screen();
     }
@@ -33,7 +33,7 @@ MessageBox::MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UStrin
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
     button_container->set_size({ Length::Auto, 30.0_px });
 
-    auto add_button = [this, &button_container](ButtonRole button_role, Util::UString label, sf::Color bg_color) {
+    auto add_button = [this, &button_container](ButtonRole button_role, Util::UString label, Util::Color bg_color) {
         auto button = button_container->add_widget<GUI::TextButton>();
         button->set_alignment(GUI::Align::Center);
         button->set_content(std::move(label));

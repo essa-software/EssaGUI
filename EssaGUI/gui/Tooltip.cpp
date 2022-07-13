@@ -9,15 +9,15 @@ namespace GUI {
 void TooltipOverlay::draw() {
     TextDrawOptions text;
     text.font_size = 15;
-    text.fill_color = sf::Color::Black;
+    text.fill_color = Util::Colors::black;
     text.text_align = Align::CenterLeft;
 
     auto bounds = window().calculate_text_size(m_tooltip.text, Application::the().font, text);
 
-    auto x_pos = std::min(window().getSize().x - (bounds.x + 10), position().x - 5);
+    auto x_pos = std::min(window().getSize().x - (bounds.x() + 10), position().x() - 5);
     window().draw_rectangle({
-        { x_pos, position().y - 10 },
-        { bounds.x + 10, bounds.y + 10 },
+        { x_pos, position().y() - 10 },
+        { bounds.x() + 10, bounds.y() + 10 },
     });
 
     // FIXME: Text size is calculated 2x

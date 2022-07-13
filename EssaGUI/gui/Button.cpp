@@ -19,23 +19,23 @@ void Button::handle_event(Event& event) {
     }
 }
 
-sf::Color Button::text_color_for_state() const {
+Util::Color Button::text_color_for_state() const {
     auto colors = m_button_colors_override.value_or(default_button_colors());
     return color_for_state(m_toggleable
             ? (m_active ? colors.active.text : colors.inactive.text)
             : colors.untoggleable.text);
 }
 
-sf::Color Button::bg_color_for_state() const {
+Util::Color Button::bg_color_for_state() const {
     auto colors = m_button_colors_override.value_or(default_button_colors());
     return color_for_state(m_toggleable
             ? (m_active ? colors.active.background : colors.inactive.background)
             : colors.untoggleable.background);
 }
 
-sf::Color Button::color_for_state(sf::Color color) const {
+Util::Color Button::color_for_state(Util::Color color) const {
     if (is_hover())
-        color += sf::Color { 20, 20, 20, 0 };
+        color = color + Util::Color { 20, 20, 20, 0 };
     return color;
 }
 

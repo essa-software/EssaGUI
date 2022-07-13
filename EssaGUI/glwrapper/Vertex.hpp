@@ -1,10 +1,12 @@
 #pragma once
 
-#include <EssaUtil/Vector3.hpp>
-#include "Color.hpp"
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Vector.hpp>
 
+// TODO: Remove this when EssaGUI gets ported to LLGL
 struct Vertex {
-    Vector3 position;
-    Color color;
-    Vector3 tex_coords {};
+    Util::Vector3f position;
+    Util::Colorf color {};
+    Util::Vector2f tex_coord {};
+    Util::Vector3f normal {};
 };

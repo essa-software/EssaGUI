@@ -1,7 +1,9 @@
 #include "Theme.hpp"
+#include <EssaUtil/Color.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 #include <utility>
 #include <vector>
@@ -12,52 +14,52 @@ Theme& Theme::default_theme() {
     static Theme th = []() {
         Theme theme;
         theme.text_button = {
-            .untoggleable = { .background = sf::Color { 120, 120, 120 }, .text = sf::Color::White },
-            .active = { .background = sf::Color { 80, 200, 80 }, .text = sf::Color::White },
-            .inactive = { .background = sf::Color { 200, 80, 90 }, .text = sf::Color::White },
+            .untoggleable = { .background = Util::Color { 120, 120, 120 }, .text = Util::Colors::white },
+            .active = { .background = Util::Color { 80, 200, 80 }, .text = Util::Colors::white },
+            .inactive = { .background = Util::Color { 200, 80, 90 }, .text = Util::Colors::white },
         };
         theme.image_button = {
-            .untoggleable = { .background = sf::Color { 92, 89, 89 }, .text = sf::Color::White },
-            .active = { .background = sf::Color { 0, 80, 255 }, .text = sf::Color::White },
-            .inactive = { .background = sf::Color { 92, 89, 89 }, .text = sf::Color::White },
+            .untoggleable = { .background = Util::Color { 92, 89, 89 }, .text = Util::Colors::white },
+            .active = { .background = Util::Color { 0, 80, 255 }, .text = Util::Colors::white },
+            .inactive = { .background = Util::Color { 92, 89, 89 }, .text = Util::Colors::white },
         };
         theme.tab_button = {
             .untoggleable = {},
-            .active = { .background = sf::Color { 200, 200, 200, 100 }, .text = sf::Color::White },
-            .inactive = { .background = sf::Color { 120, 120, 120, 100 }, .text = sf::Color { 180, 180, 180 } }
+            .active = { .background = Util::Color { 200, 200, 200, 100 }, .text = Util::Colors::white },
+            .inactive = { .background = Util::Color { 120, 120, 120, 100 }, .text = Util::Color { 180, 180, 180 } }
         };
         theme.textbox = {
-            .background = sf::Color(220, 220, 220),
-            .foreground = sf::Color(120, 120, 120),
-            .text = sf::Color(30, 30, 30),
+            .background = Util::Color { 220, 220, 220 },
+            .foreground = Util::Color { 120, 120, 120 },
+            .text = Util::Color { 30, 30, 30 },
         };
         theme.active_textbox = {
-            .background = sf::Color(220, 220, 220),
-            .foreground = sf::Color(120, 120, 120),
-            .text = sf::Color(30, 30, 30),
+            .background = Util::Color { 220, 220, 220 },
+            .foreground = Util::Color { 120, 120, 120 },
+            .text = Util::Color { 30, 30, 30 },
         };
         theme.gutter = {
-            .background = sf::Color(200, 200, 200),
-            .foreground = sf::Color(120, 120, 120),
-            .text = sf::Color(30, 30, 30),
+            .background = Util::Color { 200, 200, 200 },
+            .foreground = Util::Color { 120, 120, 120 },
+            .text = Util::Color { 30, 30, 30 },
         };
         theme.slider = {
-            .background = sf::Color(180, 180, 180),
-            .foreground = sf::Color(140, 140, 140),
-            .text = sf::Color(30, 30, 30),
+            .background = Util::Color { 180, 180, 180 },
+            .foreground = Util::Color { 140, 140, 140 },
+            .text = Util::Color { 30, 30, 30 },
         };
-        theme.positive = sf::Color(100, 200, 100);
-        theme.negative = sf::Color(200, 100, 100);
-        theme.neutral = sf::Color(100, 100, 200);
-        theme.active_selection = sf::Color(160, 160, 255);
-        theme.selection = sf::Color(160, 160, 160);
-        theme.placeholder = sf::Color(160, 160, 160);
+        theme.positive = Util::Color { 100, 200, 100 };
+        theme.negative = Util::Color { 200, 100, 100 };
+        theme.neutral = Util::Color { 100, 100, 200 };
+        theme.active_selection = Util::Color { 160, 160, 255 };
+        theme.selection = Util::Color { 160, 160, 160 };
+        theme.placeholder = Util::Color { 160, 160, 160 };
         return theme;
     }();
     return th;
 }
 
-std::pair<std::string, sf::Color> read_value(std::string line) {
+std::pair<std::string, Util::Color> read_value(std::string line) {
     std::string key = "", color_str = "";
     bool in_value = 0;
     for (const auto& c : line) {
@@ -76,7 +78,7 @@ std::pair<std::string, sf::Color> read_value(std::string line) {
             key += c;
     }
 
-    sf::Color color;
+    Util::Color color;
     uint8_t color_arr[4] { 0 };
     size_t i = 0;
 
@@ -100,8 +102,8 @@ std::pair<std::string, sf::Color> read_value(std::string line) {
     return std::make_pair(key, color);
 }
 
-void Theme::load_ini(const std::string path) {
-    const std::map<std::string, sf::Color*> values = {
+void Theme::load_ini(std::string const& path) {
+    const std::map<std::string, Util::Color*> values = {
         // text button
         { "text_button.untoggleable.background_color", &text_button.untoggleable.background },
         { "text_button.untoggleable.foreground_color", &text_button.untoggleable.foreground },

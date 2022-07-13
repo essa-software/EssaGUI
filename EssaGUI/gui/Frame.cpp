@@ -8,7 +8,7 @@ namespace GUI {
 void Frame::draw(GUI::SFMLWindow& window) const {
     RectangleDrawOptions rect;
     rect.set_border_radius(BorderRadius);
-    rect.fill_color = sf::Color(50, 50, 50, 150);
+    rect.fill_color = Util::Color(50, 50, 50, 150);
     window.draw_rectangle(local_rect(), rect);
 }
 

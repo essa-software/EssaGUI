@@ -12,11 +12,11 @@ public:
         Intersect   // current = old ∩ new
     };
 
-    ClipViewScope(GUI::SFMLWindow& target, sf::FloatRect rect, Mode);
+    ClipViewScope(GUI::SFMLWindow& target, Util::Rectf rect, Mode);
     ~ClipViewScope();
 
 private:
-    sf::View create_clip_view(sf::FloatRect const&) const;
+    sf::View create_clip_view(Util::Rectf const&) const;
 
     GUI::SFMLWindow& m_target;
     sf::View m_old_view;

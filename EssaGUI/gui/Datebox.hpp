@@ -31,7 +31,7 @@ class Datebox : public Container
 public:
     explicit Datebox(Container& parent);
 
-    void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
+    void set_display_attributes(Util::Color bg_color, Util::Color fg_color, Util::Color text_color);
 };
 
 }

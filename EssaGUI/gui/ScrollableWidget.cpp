@@ -23,7 +23,7 @@ void ScrollableWidget::handle_event(Event& event) {
     }
 }
 
-sf::Vector2f ScrollableWidget::scroll_offset() const {
+Util::Vector2f ScrollableWidget::scroll_offset() const {
     return { 0, -m_scroll };
 }
 
@@ -37,13 +37,13 @@ void ScrollableWidget::draw_scrollbar(GUI::SFMLWindow& window) const {
     float content_size = this->content_height();
     if (content_size > scroll_area_size) {
         RectangleDrawOptions scrollbar;
-        scrollbar.fill_color = sf::Color { 200, 200, 200 };
-        window.draw_rectangle({ { size().x - 5, m_scroll * scroll_area_size / content_size + 2 }, { 3, scroll_area_size / content_size * scroll_area_size - 4 } }, scrollbar);
+        scrollbar.fill_color = Util::Color { 200, 200, 200 };
+        window.draw_rectangle({ { size().x() - 5, m_scroll * scroll_area_size / content_size + 2 }, { 3, scroll_area_size / content_size * scroll_area_size - 4 } }, scrollbar);
     }
 }
 
 float ScrollableWidget::scroll_area_height() const {
-    return size().y;
+    return size().y();
 }
 
 }

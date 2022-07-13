@@ -18,7 +18,7 @@ void Textfield::draw(GUI::SFMLWindow& window) const {
     window.draw_text_aligned_in_rect(m_content, local_rect(), Application::the().font, text);
 }
 
-sf::Vector2f Textfield::calculate_text_size() const {
+Util::Vector2f Textfield::calculate_text_size() const {
     // FIXME: Kept for backwards compatibility with ESSA.
     return window().calculate_text_size(m_content, Application::the().font, TextDrawOptions { .font_size = m_font_size });
 }

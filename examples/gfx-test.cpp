@@ -16,7 +16,7 @@ int main() {
             if(e.type == sf::Event::Closed)
                 return 0;
         }
-        wnd.clear(sf::Color(100, 100, 100));
+        wnd.clear(Util::Color(100, 100, 100));
         wnd.draw_text("/home/sppmacd #T3$%abcdefghijklmnopqurtsdhstrhstyjstr6", font, {50, 200}, {.font_size = 100});
         wnd.display();
     }

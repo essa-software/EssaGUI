@@ -21,20 +21,27 @@ void Layout::set_multipliers(std::initializer_list<float> list) {
 }
 
 void BoxLayout::run() {
-    // std::cout << "BOXLAYOUT " << m_container.size().x << "," << m_container.size().y << " spacing=" << m_spacing << std::endl;
+    // std::cout << "BOXLAYOUT " << m_container.size().x() << "," << m_container.size().y() << " spacing=" << m_spacing << std::endl;
     auto vec2f_main_coord_by_orientation = [this](auto vec) -> auto{
-        if (m_orientation == Orientation::Horizontal)
-            return vec.x;
-        return vec.y;
+        if constexpr (requires() { vec.x(); }) {
+            if (m_orientation == Orientation::Horizontal)
+                return vec.x();
+            return vec.y();
+        }
+        else {
+            if (m_orientation == Orientation::Horizontal)
+                return vec.x;
+            return vec.y;
+        }
     };
     auto vec2f_cross_coord_by_orientation = [this](auto vec) -> auto{
         if (m_orientation == Orientation::Vertical)
-            return vec.x;
-        return vec.y;
+            return vec.x();
+        return vec.y();
     };
-    auto convert_vector_by_orientation = [this](sf::Vector2f vec) {
+    auto convert_vector_by_orientation = [this](Util::Vector2f vec) {
         if (m_orientation == Orientation::Vertical)
-            return sf::Vector2f { vec.y, vec.x };
+            return Util::Vector2f { vec.y(), vec.x() };
         return vec;
     };
 
@@ -110,8 +117,8 @@ void BoxLayout::run() {
 
     /*for(auto& w : widgets())
     {
-        std::cout << w->input_size().x << "," << w->input_size().y << " @ " << w->input_position().x << "," << w->input_position().y << " ----> ";
-        std::cout << w->size().x << "," << w->size().y << " @ " << w->position().x << "," << w->position().y << std::endl;
+        std::cout << w->input_size().x() << "," << w->input_size().y() << " @ " << w->input_position().x() << "," << w->input_position().y() << " ----> ";
+        std::cout << w->size().x() << "," << w->size().y() << " @ " << w->position().x() << "," << w->position().y() << std::endl;
     }*/
 }
 
@@ -143,10 +150,10 @@ void BasicLayout::run() {
 
     for (auto& w : widgets()) {
         auto input_position = w->input_position();
-        w->set_raw_size({ resolve_size(m_container.size().x, w->input_size().x), resolve_size(m_container.size().y, w->input_size().y) });
-        auto x = resolve_position(m_container.size().x, w->size().x, input_position.x);
-        auto y = resolve_position(m_container.size().y, w->size().y, input_position.y);
-        w->set_raw_position({ x + m_container.position().x, y + m_container.position().y });
+        w->set_raw_size({ resolve_size(m_container.size().x(), w->input_size().x), resolve_size(m_container.size().y(), w->input_size().y) });
+        auto x = resolve_position(m_container.size().x(), w->size().x(), input_position.x);
+        auto y = resolve_position(m_container.size().y(), w->size().y(), input_position.y);
+        w->set_raw_position({ x + m_container.position().x(), y + m_container.position().y() });
     }
 }
 
@@ -269,7 +276,7 @@ void Container::relayout() {
         if (w->m_input_size == LengthVector {}) {
             w->m_input_size = w->initial_size();
             // std::cout << w << " " << typeid(*w).name() << " set initial size to "
-            //           << w->m_input_size.x.value() << "," << w->m_input_size.y.value() << std::endl;
+            //           << w->m_input_size.x().value() << "," << w->m_input_size.y().value() << std::endl;
         }
     }
     if (!m_layout) {

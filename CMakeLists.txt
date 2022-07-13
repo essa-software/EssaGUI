@@ -12,7 +12,6 @@ add_library(essa-gui
     EssaGUI/gfx/DefaultGUIShader.cpp
     EssaGUI/gfx/ClipViewScope.cpp
     EssaGUI/gfx/ResourceLoader.cpp
-    EssaGUI/gfx/RoundedEdgeRectangleShape.cpp
     EssaGUI/gfx/SFMLWindow.cpp
 
     EssaGUI/gui/Application.cpp

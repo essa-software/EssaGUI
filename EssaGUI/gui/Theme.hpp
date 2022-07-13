@@ -1,7 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <EssaUtil/Color.hpp>
 #include <optional>
+#include <string>
 
 namespace GUI {
 
@@ -15,12 +16,12 @@ public:
 
     static Theme& default_theme();
 
-    void load_ini(const std::string path);
+    void load_ini(std::string const& path);
 
     struct BgTextColors {
-        sf::Color background {};
-        sf::Color foreground {};
-        sf::Color text {};
+        Util::Color background {};
+        Util::Color foreground {};
+        Util::Color text {};
     };
 
     struct ButtonColors {
@@ -33,9 +34,9 @@ public:
     ButtonColors image_button;
     ButtonColors tab_button;
 
-    sf::Color positive; // "green" / the "good" thing like applying changes
-    sf::Color negative; // "red" / the "bad" thing like removing objects
-    sf::Color neutral;  // "blue"
+    Util::Color positive; // "green" / the "good" thing like applying changes
+    Util::Color negative; // "red" / the "bad" thing like removing objects
+    Util::Color neutral;  // "blue"
 
     BgTextColors slider;
 
@@ -57,10 +58,10 @@ public:
     BgTextColors prompt;
     BgTextColors tooltip;
 
-    sf::Color active_selection;
-    sf::Color selection;
+    Util::Color active_selection;
+    Util::Color selection;
 
-    sf::Color placeholder;
+    Util::Color placeholder;
 };
 
 }

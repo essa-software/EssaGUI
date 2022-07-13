@@ -57,7 +57,7 @@ UnitSlider::UnitSlider(Container& parent, Util::Quantity q, double min, double m
     unsigned i = 0;
 
     for(const auto& u : Util::s_units.find(m_unit)->second){
-        m_unit_button->add_state(u.string, i, sf::Color::Green);
+        m_unit_button->add_state(u.string, i, Util::Color::Green);
         std::cout << u.string << " " << i << "\n";
         i++;
     }

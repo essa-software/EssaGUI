@@ -6,6 +6,7 @@
 #include "WidgetTreeRoot.hpp"
 
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/glwrapper/Vertex.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <cassert>
 #include <cmath>
@@ -27,16 +28,16 @@ void ToolWindow::handle_event(sf::Event event) {
 
     Event gui_event { event };
     if (gui_event.is_mouse_related()) {
-        sf::Vector2f mouse_position = gui_event.mouse_position();
-        mouse_position += position();
+        auto mouse_position = gui_event.mouse_position();
+        mouse_position += Util::Vector2i { position() };
 
         if (event.type == sf::Event::MouseMoved) {
-            bool bottom = mouse_position.y > position().y + size().y - ResizeRadius;
-            bool is_in_window_x_range = mouse_position.x > position().x - ResizeRadius && mouse_position.x < position().x + size().x + ResizeRadius;
-            bool is_in_window_y_range = mouse_position.y > position().y + TitleBarSize - ResizeRadius && mouse_position.y < position().y + size().y + ResizeRadius;
+            bool bottom = mouse_position.y() > position().y() + size().y() - ResizeRadius;
+            bool is_in_window_x_range = mouse_position.x() > position().x() - ResizeRadius && mouse_position.x() < position().x() + size().x() + ResizeRadius;
+            bool is_in_window_y_range = mouse_position.y() > position().y() + TitleBarSize - ResizeRadius && mouse_position.y() < position().y() + size().y() + ResizeRadius;
 
             sf::Cursor cursor;
-            if (std::fabs(mouse_position.x - position().x) < ResizeRadius && is_in_window_y_range) {
+            if (std::fabs(mouse_position.x() - position().x()) < ResizeRadius && is_in_window_y_range) {
                 if (bottom && is_in_window_x_range) {
                     m_resize_mode = Resize::LEFTBOTTOM;
                     // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
@@ -47,7 +48,7 @@ void ToolWindow::handle_event(sf::Event event) {
                     cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
                 }
             }
-            else if (std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius && is_in_window_y_range) {
+            else if (std::fabs(mouse_position.x() - position().x() - size().x()) < ResizeRadius && is_in_window_y_range) {
                 if (bottom && is_in_window_x_range) {
                     m_resize_mode = Resize::RIGHTBOTTOM;
                     // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
@@ -69,9 +70,9 @@ void ToolWindow::handle_event(sf::Event event) {
             window().setMouseCursor(cursor);
         }
 
-        float titlebar_button_position_x = position().x + size().x - TitleBarSize;
+        float titlebar_button_position_x = position().x() + size().x() - TitleBarSize;
         for (auto& button : m_titlebar_buttons) {
-            sf::FloatRect rect { { titlebar_button_position_x, position().y - TitleBarSize }, { TitleBarSize, TitleBarSize } };
+            Util::Rectf rect { { titlebar_button_position_x, position().y() - TitleBarSize }, { TitleBarSize, TitleBarSize } };
 
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (rect.contains(mouse_position)) {
@@ -103,22 +104,22 @@ void ToolWindow::handle_event(sf::Event event) {
             }
         }
         else if (event.type == sf::Event::MouseMoved) {
-            sf::Vector2f mouse_position { static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) };
-            mouse_position += position();
+            Util::Vector2i mouse_position { static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) };
+            mouse_position += Util::Vector2i { position() };
 
             if (m_dragging) {
                 auto delta = mouse_position - m_drag_position;
-                m_position += delta;
+                m_position += Util::Vector2f { delta };
                 m_drag_position = mouse_position;
 
-                if (m_position.y < TitleBarSize)
-                    m_position.y = TitleBarSize;
-                if (m_position.y > window().getSize().y)
-                    m_position.y = window().getSize().y;
-                if (m_position.x < -size().x + TitleBarSize)
-                    m_position.x = -size().x + TitleBarSize;
-                if (m_position.x > window().getSize().x - TitleBarSize)
-                    m_position.x = window().getSize().x - TitleBarSize;
+                if (m_position.y() < TitleBarSize)
+                    m_position.y() = TitleBarSize;
+                if (m_position.y() > window().getSize().y)
+                    m_position.y() = window().getSize().y;
+                if (m_position.x() < -size().x() + TitleBarSize)
+                    m_position.x() = -size().x() + TitleBarSize;
+                if (m_position.x() > window().getSize().x - TitleBarSize)
+                    m_position.x() = window().getSize().x - TitleBarSize;
 
                 return;
             }
@@ -170,53 +171,53 @@ void ToolWindow::handle_events() {
 }
 
 void ToolWindow::draw() {
-    sf::Vector2f position { std::round(this->position().x), std::round(this->position().y) };
-    sf::Vector2f size { std::round(this->size().x), std::round(this->size().y) };
+    Util::Vector2f position { std::round(this->position().x()), std::round(this->position().y()) };
+    Util::Vector2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
     RectangleDrawOptions background;
-    background.fill_color = sf::Color(50, 50, 50, 180);
+    background.fill_color = { 50, 50, 50, 128 };
     window().draw_rectangle({ position, size }, background);
 
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
-    auto color = Application::the().focused_overlay() == this ? sf::Color(160, 160, 160, 150) : sf::Color(127, 127, 127, 150);
+    auto color = Application::the().focused_overlay() == this ? Util::Color { 160, 160, 160, 150 } : Util::Color { 127, 127, 127, 150 };
 
     RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = 5;
     rs_titlebar.border_radius_top_right = 5;
     rs_titlebar.fill_color = color;
-    window().draw_rectangle({ position - sf::Vector2f(1, TitleBarSize), { size.x + 2, TitleBarSize } }, rs_titlebar);
+    window().draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
 
-    window().draw_text(title(), Application::the().bold_font, { position + sf::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = 15 });
+    window().draw_text(title(), Application::the().bold_font, { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = 15 });
 
-    float titlebar_button_position_x = position.x + size.x - TitleBarSize + 1;
+    float titlebar_button_position_x = position.x() + size.x() - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {
         // FIXME: For now, there is only a close button. If this becomes not
         //        a case anymore, find a better place for this rendering code.
         //        (And make it more generic)
         RectangleDrawOptions tbb_background;
         tbb_background.border_radius_top_right = 5;
-        tbb_background.fill_color = button.hovered ? sf::Color(240, 80, 80, 100) : sf::Color(200, 50, 50, 100);
-        window().draw_rectangle({ { titlebar_button_position_x, position.y - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
+        tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
+        window().draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
 
-        sf::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y - TitleBarSize / 2.f) - 1 };
+        Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };
 
         std::array<Vertex, 4> varr;
-        sf::Color const CloseButtonColor { 200, 200, 200 };
-        varr[0] = Vertex { .position = Vector3 { button_center - sf::Vector2f(5, 5) }, .color = CloseButtonColor };
-        varr[1] = Vertex { .position = Vector3 { button_center + sf::Vector2f(5, 5) }, .color = CloseButtonColor };
-        varr[2] = Vertex { .position = Vector3 { button_center - sf::Vector2f(-5, 5) }, .color = CloseButtonColor };
-        varr[3] = Vertex { .position = Vector3 { button_center + sf::Vector2f(-5, 5) }, .color = CloseButtonColor };
+        Util::Color const CloseButtonColor { 200, 200, 200 };
+        varr[0] = Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
+        varr[1] = Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
+        varr[2] = Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
+        varr[3] = Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
         window().draw_vertices(GL_LINES, varr);
 
         titlebar_button_position_x -= TitleBarSize;
     }
 
     std::array<Vertex, 4> varr_border;
-    varr_border[0] = Vertex { .position = Vector3 { position }, .color = color };
-    varr_border[1] = Vertex { .position = Vector3 { position + sf::Vector2f(0, size.y + 1) }, .color = color };
-    varr_border[2] = Vertex { .position = Vector3 { position + sf::Vector2f(size.x + 1, size.y + 1) }, .color = color };
-    varr_border[3] = Vertex { .position = Vector3 { position + sf::Vector2f(size.x + 1, 0) }, .color = color };
+    varr_border[0] = Vertex { .position = Util::Vector3f { position, 0 }, .color = color };
+    varr_border[1] = Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = color };
+    varr_border[2] = Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = color };
+    varr_border[3] = Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = color };
     window().draw_vertices(GL_LINE_STRIP, varr_border);
     {
         Gfx::ClipViewScope scope(window(), rect(), Gfx::ClipViewScope::Mode::Override);

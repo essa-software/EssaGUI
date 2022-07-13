@@ -11,7 +11,7 @@ constexpr float LINE_SPACING = 20;
 
 void Console::append_line(LogLine line) {
     m_lines.push_back(line);
-    if (size().y != 0) {
+    if (size().y() != 0) {
         double bottom_content = m_lines.size() * LINE_SPACING - scroll_area_height();
         if (bottom_content > 0)
             set_scroll(bottom_content);
@@ -43,7 +43,7 @@ void Console::draw(GUI::SFMLWindow& window) const {
         TextDrawOptions options;
         options.fill_color = line.color;
         options.font_size = 15;
-        window.draw_text(line.text, Application::the().fixed_width_font, sf::Vector2f { 5, s * LINE_SPACING + 19 } + scroll_offset(), options);
+        window.draw_text(line.text, Application::the().fixed_width_font, Util::Vector2f { 5, s * LINE_SPACING + 19 } + scroll_offset(), options);
         s++;
     }
 

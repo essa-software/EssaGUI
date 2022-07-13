@@ -9,7 +9,7 @@ namespace GUI {
 void ColorPickerDisplay::draw(GUI::SFMLWindow& window) const {
     RectangleDrawOptions options;
     options.fill_color = m_color;
-    window.draw_rectangle({ { 5, 5 }, { size() - sf::Vector2f { 10, 10 } } }, options);
+    window.draw_rectangle({ { 5, 5 }, { size() - Util::Vector2f { 10, 10 } } }, options);
 }
 
 ColorPicker::ColorPicker(Container& c)
@@ -20,7 +20,7 @@ ColorPicker::ColorPicker(Container& c)
     auto sliders_container = add_widget<Container>();
     m_color_picker_display = add_widget<ColorPickerDisplay>();
     m_color_picker_display->set_size({ 100.0_px, Length::Auto });
-    m_color_picker_display->set_color(sf::Color(127, 127, 127));
+    m_color_picker_display->set_color(Util::Color(127, 127, 127));
 
     auto& sliders_container_layout = sliders_container->set_layout<VerticalBoxLayout>();
     sliders_container_layout.set_spacing(10);
@@ -51,15 +51,15 @@ ColorPicker::ColorPicker(Container& c)
     }
 }
 
-sf::Color ColorPicker::value() const {
-    return sf::Color {
+Util::Color ColorPicker::value() const {
+    return Util::Color {
         static_cast<uint8_t>(m_r_slider->get_value()),
         static_cast<uint8_t>(m_g_slider->get_value()),
         static_cast<uint8_t>(m_b_slider->get_value())
     };
 }
 
-void ColorPicker::set_value(sf::Color color) {
+void ColorPicker::set_value(Util::Color color) {
     m_r_slider->set_value(color.r);
     m_g_slider->set_value(color.g);
     m_b_slider->set_value(color.b);

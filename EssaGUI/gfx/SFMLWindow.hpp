@@ -1,10 +1,12 @@
 #pragma once
 
+#include <EssaGUI/glwrapper/Vertex.hpp>
+#include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
 #include <GL/glew.h>
 
-#include <EssaGUI/glwrapper/Vertex.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
+#include <EssaUtil/Color.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
@@ -14,8 +16,8 @@
 namespace GUI {
 
 struct DrawOptions {
-    sf::Color fill_color = sf::Color::White;
-    sf::Color outline_color = sf::Color::White;
+    Util::Color fill_color = Util::Colors::white;
+    Util::Color outline_color = Util::Colors::white;
     sf::Texture const* texture = nullptr;
     float outline_thickness = 0;
 };
@@ -57,12 +59,12 @@ public:
     // 0 - position, 1 - color, 2 - tex coord
     void set_shader(sf::Shader* shader) { m_shader = shader; }
 
-    void set_model_matrix(Matrix4x4d matrix) { m_model_matrix = matrix; }
-    Matrix4x4d model_matrix() const { return m_model_matrix; }
+    void set_model_matrix(Util::Matrix4x4d matrix) { m_model_matrix = matrix; }
+    Util::Matrix4x4d model_matrix() const { return m_model_matrix; }
 
     class ModelScope {
     public:
-        ModelScope(SFMLWindow& wnd, Matrix4x4d mat)
+        ModelScope(SFMLWindow& wnd, Util::Matrix4x4d mat)
             : m_window(wnd)
             , m_old_matrix(wnd.model_matrix()) {
             wnd.set_model_matrix(mat);
@@ -73,30 +75,30 @@ public:
 
     private:
         SFMLWindow& m_window;
-        Matrix4x4d m_old_matrix;
+        Util::Matrix4x4d m_old_matrix;
     };
 
-    void clear(sf::Color = sf::Color::Black);
+    void clear(Util::Color = Util::Colors::black);
 
     void draw_vertices(GLenum mode, std::span<Vertex const>);
-    void draw_outline(std::span<Vector3 const>, Color color, float thickness);
+    void draw_outline(std::span<Util::Vector3f const>, Util::Color color, float thickness);
     void draw_indexed_vertices(GLenum mode, std::span<Vertex const>, std::span<unsigned const> indices);
 
-    void draw_rectangle(sf::FloatRect bounds, RectangleDrawOptions const& = {});
-    void draw_text(Util::UString const&, sf::Font const&, sf::Vector2f position, TextDrawOptions const& = {});
-    void draw_text_aligned_in_rect(Util::UString const&, sf::FloatRect rect, sf::Font const&, TextDrawOptions const& = {});
-    void draw_ellipse(sf::Vector2f center, sf::Vector2f size, DrawOptions const& = {});
+    void draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
+    void draw_text(Util::UString const&, sf::Font const&, Util::Vector2f position, TextDrawOptions const& = {});
+    void draw_text_aligned_in_rect(Util::UString const&, Util::Rectf rect, sf::Font const&, TextDrawOptions const& = {});
+    void draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& = {});
 
     // FIXME: Add some class like sf::Text.
-    sf::Vector2f calculate_text_size(Util::UString const&, sf::Font const&, TextDrawOptions const& = {});
-    sf::Vector2f find_character_position(size_t index, Util::UString const&, sf::Font const&, TextDrawOptions const& = {});
+    Util::Vector2f calculate_text_size(Util::UString const&, sf::Font const&, TextDrawOptions const& = {});
+    Util::Vector2f find_character_position(size_t index, Util::UString const&, sf::Font const&, TextDrawOptions const& = {});
 
 private:
     void apply_states();
     void ensure_vao_vbo();
 
     sf::View m_view;
-    Matrix4x4d m_model_matrix = Matrix4x4d::identity();
+    Util::Matrix4x4d m_model_matrix = Util::Matrix4x4d::identity();
     sf::Texture const* m_texture = nullptr;
     sf::Shader* m_shader = nullptr;
     unsigned m_temporary_vao = 0;

@@ -23,10 +23,10 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     size_t rows = m_model->row_count();
     size_t columns = m_model->column_count();
 
-    size_t first_row = -scroll_offset().y / RowHeight;
+    size_t first_row = -scroll_offset().y() / RowHeight;
     if (first_row > 0)
         first_row--;
-    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y + scroll_area_height()) / RowHeight);
+    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_height()) / RowHeight);
     if (last_row < rows - 1)
         last_row++;
 
@@ -38,10 +38,10 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     // Background
     if (rows > 0) {
         for (size_t r = first_row; r < last_row; r++) {
-            sf::Color bg_color = r % 2 == 0 ? sf::Color { 100, 100, 100, 128 } : sf::Color { 80, 80, 80, 128 };
+            Util::Color bg_color = r % 2 == 0 ? Util::Color { 100, 100, 100, 128 } : Util::Color { 80, 80, 80, 128 };
             RectangleDrawOptions rs;
             rs.fill_color = bg_color;
-            wnd.draw_rectangle({ sf::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x, RowHeight } }, rs);
+            wnd.draw_rectangle({ Util::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x(), RowHeight } }, rs);
         }
     }
 
@@ -49,14 +49,14 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     {
         RectangleDrawOptions rs;
         rs.fill_color = { 200, 200, 200, 128 };
-        wnd.draw_rectangle({ scroll_offset(), { size().x, RowHeight } }, rs);
+        wnd.draw_rectangle({ scroll_offset(), { size().x(), RowHeight } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
             auto column = m_model->column(c);
             TextDrawOptions text;
             text.font_size = 16;
-            wnd.draw_text(column.name, Application::the().bold_font, sf::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
+            wnd.draw_text(column.name, Application::the().bold_font, Util::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
             x_pos += column.width;
         }
     }
@@ -68,7 +68,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = m_model->data(r, c);
-                sf::Vector2f cell_position { current_x_pos, (r + 1) * RowHeight };
+                Util::Vector2f cell_position { current_x_pos, (r + 1) * RowHeight };
                 cell_position += scroll_offset();
                 auto cell_size = this->cell_size(r, c);
 
@@ -82,12 +82,12 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
                             TextDrawOptions text;
                             text.font_size = 15;
                             text.text_align = Align::CenterLeft;
-                            wnd.draw_text_aligned_in_rect(data, { cell_position + sf::Vector2f(5, 0), cell_size }, Application::the().bold_font, text);
+                            wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font, text);
                         },
                         [&](sf::Texture const* data) {
                             RectangleDrawOptions rect;
                             rect.texture = data;
-                            wnd.draw_rectangle({ { cell_position.x + cell_size.x / 2 - 8, cell_position.y + cell_size.y / 2 - 8 }, { 16, 16 } }, rect);
+                            wnd.draw_rectangle({ { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } }, rect);
                         } },
                     data);
             }
@@ -99,7 +99,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
     ScrollableWidget::draw_scrollbar(wnd);
 }
 
-sf::Vector2f ListView::cell_size(size_t, size_t column) const {
+Util::Vector2f ListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, RowHeight };
 }
 
@@ -108,15 +108,15 @@ void ListView::handle_event(Event& event) {
 
     size_t rows = m_model->row_count();
     if (event.type() == sf::Event::MouseButtonPressed) {
-        sf::Vector2i mouse_pos(event.mouse_position());
+        auto mouse_pos = event.mouse_position();
 
         if (is_mouse_over(mouse_pos)) {
             for (size_t r = 0; r < rows; r++) {
-                sf::Vector2f cell_position { position().x, position().y + RowHeight * (r + 1) };
+                Util::Vector2f cell_position { position().x(), position().y() + RowHeight * (r + 1) };
                 cell_position += scroll_offset();
-                sf::FloatRect rect(cell_position, { size().x, RowHeight });
+                Util::Rectf rect(cell_position, { size().x(), RowHeight });
 
-                if (rect.contains(sf::Vector2f { mouse_pos })) {
+                if (rect.contains(mouse_pos)) {
                     if (on_click)
                         on_click(r);
                     return;

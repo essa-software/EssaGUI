@@ -18,7 +18,7 @@ protected:
     virtual void handle_event(Event&) override;
 
     float scroll_area_height() const;
-    sf::Vector2f scroll_offset() const;
+    Util::Vector2f scroll_offset() const;
     void draw_scrollbar(GUI::SFMLWindow&) const;
 
 private:

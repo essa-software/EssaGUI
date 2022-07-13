@@ -54,7 +54,7 @@ public:
 
 private:
     TextPosition m_character_pos_from_mouse(Event& event);
-    sf::Vector2f calculate_cursor_position() const;
+    Util::Vector2f calculate_cursor_position() const;
     void erase_selected_text();
     virtual bool accepts_focus() const override { return true; }
     TextDrawOptions get_text_options() const;

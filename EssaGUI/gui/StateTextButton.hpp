@@ -12,13 +12,13 @@ namespace GUI {
 template <typename T>
 class StateTextButton : public Widget {
     struct State{
-        sf::Color bg_color, fg_color, text_color;
+        Util::Color bg_color, fg_color, text_color;
         T state;
     };
 public:
     explicit StateTextButton(Container& c);
 
-    void add_state(Util::UString content, T state, sf::Color bg_color, sf::Color fg_color = sf::Color::Blue, sf::Color text_color = sf::Color::White);
+    void add_state(Util::UString content, T state, Util::Color bg_color, Util::Color fg_color = Util::Colors::blue, Util::Color text_color = Util::Colors::white);
 
     unsigned get_font_size() const { return m_font_size; }
     void set_font_size(unsigned font_size) { m_font_size = font_size; }
@@ -32,9 +32,9 @@ public:
 
     std::function<void(T)> on_change;
 
-    void set_bg_color(sf::Color color);
-    void set_fg_color(sf::Color color);
-    void set_text_color(sf::Color color);
+    void set_bg_color(Util::Color color);
+    void set_fg_color(Util::Color color);
+    void set_text_color(Util::Color color);
 
     void set_index(unsigned index);
 

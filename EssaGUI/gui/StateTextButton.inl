@@ -29,7 +29,7 @@ std::pair<Util::UString, typename StateTextButton<T>::State> StateTextButton<T>:
 }
 
 template<typename T>
-void StateTextButton<T>::add_state(Util::UString content, T state, sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+void StateTextButton<T>::add_state(Util::UString content, T state, Util::Color bg_color, Util::Color fg_color, Util::Color text_color) {
     m_states.push_back({ content, { bg_color, fg_color, text_color, state } });
 }
 
@@ -77,19 +77,19 @@ T StateTextButton<T>::state() const {
 }
 
 template<typename T>
-void StateTextButton<T>::set_bg_color(sf::Color color) {
+void StateTextButton<T>::set_bg_color(Util::Color color) {
     for (auto& state : m_states)
         state.second.bg_color = color;
 }
 
 template<typename T>
-void StateTextButton<T>::set_fg_color(sf::Color color) {
+void StateTextButton<T>::set_fg_color(Util::Color color) {
     for (auto& state : m_states)
         state.second.fg_color = color;
 }
 
 template<typename T>
-void StateTextButton<T>::set_text_color(sf::Color color) {
+void StateTextButton<T>::set_text_color(Util::Color color) {
     for (auto& state : m_states)
         state.second.text_color = color;
 }

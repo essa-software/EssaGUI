@@ -15,7 +15,7 @@ void ImageButton::draw(GUI::SFMLWindow& window) const {
     DrawOptions cs_bg;
     cs_bg.fill_color = bg_color_for_state();
     if (is_focused()) {
-        cs_bg.outline_color = sf::Color(200, 200, 200);
+        cs_bg.outline_color = Util::Color(200, 200, 200);
         cs_bg.outline_thickness = -0.05;
     }
     window.draw_ellipse(size() / 2.f, size(), cs_bg);

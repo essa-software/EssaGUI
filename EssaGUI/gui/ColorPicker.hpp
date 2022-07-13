@@ -10,10 +10,10 @@ public:
     explicit ColorPickerDisplay(Container& c)
         : Widget(c) { }
 
-    void set_color(sf::Color color) { m_color = color; }
+    void set_color(Util::Color color) { m_color = color; }
 
 private:
-    sf::Color m_color;
+    Util::Color m_color;
 
     virtual void draw(GUI::SFMLWindow& window) const override;
 };
@@ -22,10 +22,10 @@ class ColorPicker : public Container {
 public:
     explicit ColorPicker(Container& c);
 
-    sf::Color value() const;
-    void set_value(sf::Color color);
+    Util::Color value() const;
+    void set_value(Util::Color color);
 
-    std::function<void(sf::Color)> on_change;
+    std::function<void(Util::Color)> on_change;
 
 private:
     Slider* m_r_slider = nullptr;

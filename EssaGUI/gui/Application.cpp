@@ -28,14 +28,14 @@ Application::Application(GUI::SFMLWindow& wnd)
     fixed_width_font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf");
 }
 
-sf::Event Application::transform_event(sf::Vector2f offset, sf::Event event) const {
+sf::Event Application::transform_event(Util::Vector2f offset, sf::Event event) const {
     if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
-        event.mouseButton.x -= offset.x;
-        event.mouseButton.y -= offset.y;
+        event.mouseButton.x -= offset.x();
+        event.mouseButton.y -= offset.y();
     }
     else if (event.type == sf::Event::MouseMoved) {
-        event.mouseMove.x -= offset.x;
-        event.mouseMove.y -= offset.y;
+        event.mouseMove.x -= offset.x();
+        event.mouseMove.y -= offset.y();
     }
 
     return event;
@@ -60,7 +60,7 @@ void Application::handle_event(sf::Event event) {
     // Focus window if mouse button pressed
     if (event.type == sf::Event::MouseButtonPressed) {
         m_focused_overlay = nullptr;
-        sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
+        Util::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
         decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
@@ -119,7 +119,7 @@ void Application::draw_notification(Notification const& notification, float y) c
     TextDrawOptions text;
     text.font_size = 15;
     auto text_bounds = window().calculate_text_size(notification.message, font, text);
-    sf::Vector2f text_position { window().getSize().x - text_bounds.x - 20, y + 20 };
+    Util::Vector2f text_position { window().getSize().x - text_bounds.x() - 20, y + 20 };
 
     RectangleDrawOptions rs;
     rs.set_border_radius(10);
@@ -129,8 +129,8 @@ void Application::draw_notification(Notification const& notification, float y) c
         break;
     }
 
-    window().draw_rectangle({ { text_position.x - 10 + text_position.x, text_position.y - 15 + text_position.y }, { text_bounds.x + 20, text_bounds.y + 30 } });
-    window().draw_text(notification.message, font, { window().getSize().x - text_bounds.x - 20, y + 20 });
+    window().draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
+    window().draw_text(notification.message, font, { window().getSize().x - text_bounds.x() - 20, y + 20 });
 }
 
 void Application::spawn_notification(Util::UString message, NotificationLevel level) {
@@ -139,8 +139,8 @@ void Application::spawn_notification(Util::UString message, NotificationLevel le
 
 Overlay& Application::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
     auto overlay_ptr = overlay.get();
-    m_next_overlay_position += sf::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
-    if (m_next_overlay_position.x > size().x - ToolWindow::TitleBarSize || m_next_overlay_position.y > size().y - ToolWindow::TitleBarSize)
+    m_next_overlay_position += Util::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
+    if (m_next_overlay_position.x() > size().x() - ToolWindow::TitleBarSize || m_next_overlay_position.y() > size().y() - ToolWindow::TitleBarSize)
         m_next_overlay_position = { 10, 10 };
     m_overlays.push_back(std::move(overlay));
     return *overlay_ptr;
