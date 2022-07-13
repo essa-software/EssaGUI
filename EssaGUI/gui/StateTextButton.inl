@@ -2,12 +2,12 @@
 #ifndef STATE_TEXT_BUTTON_HPP
 // These ifndefs are just so that clangd doesn't complain that much
 #    define STATE_TEXT_BUTTON_INL
-#    include "EssaGUI/gfx/SFMLWindow.hpp"
 #    include "StateTextButton.hpp"
 #endif
 
 #include "Widget.hpp"
-#include <SFML/Window/Event.hpp>
+#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <SFML/Window.hpp>
 
 namespace GUI {
 
@@ -17,7 +17,7 @@ StateTextButton<T>::StateTextButton(Container& c)
 }
 
 template<typename T>
-std::pair<std::string, typename StateTextButton<T>::State> StateTextButton<T>::get_element_from_index(unsigned index) const {
+std::pair<Util::UString, typename StateTextButton<T>::State> StateTextButton<T>::get_element_from_index(unsigned index) const {
     unsigned i = 0;
 
     for (const auto& p : m_states) {

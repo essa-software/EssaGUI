@@ -26,7 +26,7 @@ public:
     Align get_alignment() const { return m_alignment; };
     void set_alignment(Align alignment) { m_alignment = alignment; };
 
-    std::pair<std::string, State> get_element_from_index(unsigned index) const;
+    std::pair<Util::UString, State> get_element_from_index(unsigned index) const;
 
     T state() const;
 
@@ -42,7 +42,7 @@ private:
     virtual void draw(GUI::SFMLWindow& window) const override;
     virtual void handle_event(Event& event) override;
 
-    std::vector<std::pair<std::string, State>> m_states;
+    std::vector<std::pair<Util::UString, State>> m_states;
 
     unsigned m_font_size = 20, m_index = 0;
     Align m_alignment = Align::CenterLeft;
