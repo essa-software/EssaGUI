@@ -3,7 +3,7 @@
 #include "EventLoop.hpp"
 #include "Widget.hpp"
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <list>
 #include <memory>
 
@@ -11,7 +11,7 @@ namespace GUI {
 
 class WidgetTreeRoot : public EventLoop {
 public:
-    explicit WidgetTreeRoot(GUI::SFMLWindow& wnd)
+    explicit WidgetTreeRoot(GUI::Window& wnd)
         : m_window(wnd) {
     }
 
@@ -20,7 +20,7 @@ public:
 
     virtual ~WidgetTreeRoot() = default;
 
-    GUI::SFMLWindow& window() const { return m_window; }
+    GUI::Window& window() const { return m_window; }
     Widget* focused_widget() const { return m_focused_widget; }
     void set_focused_widget(Widget* w);
 
@@ -46,7 +46,7 @@ public:
     void set_id(std::string id) { m_id = id; }
 
     virtual void draw();
-    virtual void handle_event(sf::Event);
+    virtual void handle_event(llgl::Event);
     virtual void handle_events() { }
     virtual void update() {
         if (m_main_widget)
@@ -66,11 +66,11 @@ protected:
 
     Theme const& theme() const;
 
-    bool pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event);
-    sf::Event transform_event(Util::Vector2f offset, sf::Event event) const;
+    bool pass_event_to_window_if_needed(WidgetTreeRoot& wtr, llgl::Event event);
+    llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
 
 private:
-    GUI::SFMLWindow& m_window;
+    GUI::Window& m_window;
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;

@@ -2,7 +2,6 @@
 
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
-#include <SFML/Graphics.hpp>
 #include <functional>
 #include <optional>
 
@@ -16,7 +15,7 @@ public:
     std::function<void()> on_click;
 
     virtual void handle_event(Event&) override;
-    virtual void draw(GUI::SFMLWindow& window) const override = 0;
+    virtual void draw(GUI::Window& window) const override = 0;
 
     bool is_active() const { return m_active; }
 

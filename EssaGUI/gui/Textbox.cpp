@@ -4,7 +4,6 @@
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
 #include <EssaUtil/CharacterType.hpp>
-#include <SFML/Graphics.hpp>
 #include <cassert>
 #include <cctype>
 #include <cmath>

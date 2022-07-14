@@ -10,7 +10,7 @@
 
 namespace GUI {
 
-FilePrompt::FilePrompt(GUI::SFMLWindow& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
+FilePrompt::FilePrompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
     : ToolWindow(wnd, "Prompt") {
 
     set_title(std::move(window_title));

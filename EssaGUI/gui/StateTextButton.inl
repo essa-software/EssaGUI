@@ -6,8 +6,7 @@
 #endif
 
 #include "Widget.hpp"
-#include <EssaGUI/gfx/SFMLWindow.hpp>
-#include <SFML/Window.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
@@ -44,7 +43,7 @@ void StateTextButton<T>::set_index(unsigned int index) {
 
 template<typename T>
 void StateTextButton<T>::handle_event(Event& event) {
-    if (event.type() == sf::Event::MouseButtonPressed) {
+    if (event.type() == llgl::Event::Type::MouseButtonPress) {
         if (is_hover()) {
             m_index++;
             if (m_index >= m_states.size())
@@ -56,7 +55,7 @@ void StateTextButton<T>::handle_event(Event& event) {
 }
 
 template<typename T>
-void StateTextButton<T>::draw(GUI::SFMLWindow& window) const {
+void StateTextButton<T>::draw(GUI::Window& window) const {
     GUI::RectangleDrawOptions bg;
     bg.fill_color = get_element_from_index(m_index).second.bg_color;
     bg.outline_color = get_element_from_index(m_index).second.fg_color;

@@ -1,10 +1,8 @@
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FileExplorer.hpp>
-#include <SFML/Graphics.hpp>
 
 int main() {
-    GUI::SFMLWindow wnd { sf::VideoMode(1000, 1000), "File explorer", sf::Style::Default,
-        sf::ContextSettings { 0, 0, 0, 3, 2 } };
+    GUI::Window wnd { { 1000, 1000 }, "File explorer" };
 
     GUI::Application app(wnd);
 

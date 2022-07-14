@@ -21,7 +21,7 @@ public:
     void clear();
 
 private:
-    virtual void draw(GUI::SFMLWindow&) const override;
+    virtual void draw(GUI::Window&) const override;
     virtual bool accepts_focus() const override { return true; }
     virtual float content_height() const override;
 

@@ -4,7 +4,7 @@
 #include "ScrollableWidget.hpp"
 #include "Widget.hpp"
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaUtil/CharacterType.hpp>
 
@@ -16,7 +16,7 @@ namespace GUI {
 constexpr int FontSize = 15;
 
 float TextEditor::line_height() const {
-    return Application::the().fixed_width_font.getLineSpacing(FontSize);
+    return Application::the().fixed_width_font.line_height(FontSize);
 }
 
 constexpr float GutterWidth = 50.f;
@@ -51,7 +51,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     // We can just check the offset of 1st character because we use
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
-    float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font, get_text_options()).x();
+    float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font, get_text_options());
     auto cursor = (delta.x() - scroll_offset().x() - left_margin()) / character_width;
     return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
 }
@@ -69,18 +69,10 @@ Util::UString TextEditor::get_content() const {
 
 void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
     m_lines.clear();
-    size_t index = 0;
-    while (true) {
-        auto next_newline = content.find("\n", index);
-        if (!next_newline.has_value()) {
-            next_newline = content.size();
-        }
 
-        m_lines.push_back(content.substring(index, *next_newline - index));
-        if (next_newline == content.size())
-            break;
-        index = *next_newline + 1;
-    }
+    content.for_each_line([&](std::span<uint32_t const> span) {
+        m_lines.push_back(Util::UString { span });
+    });
 
     if (notify_user == NotifyUser::Yes) {
         on_content_change();
@@ -101,65 +93,28 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
     else if (y_offset > max_y)
         set_scroll(scroll() + (y_offset - max_y));
 
-    m_cursor_clock.restart();
+    // TODO
+    // m_cursor_clock.restart();
 }
 
 void TextEditor::handle_event(Event& event) {
     ScrollableWidget::handle_event(event);
 
-    if (event.type() == sf::Event::TextEntered) {
+    // TODO: TextEntered
+    if (event.type() == llgl::Event::Type::TextInput) {
         if (is_focused()) {
-            auto codepoint = event.event().text.unicode;
-            if (codepoint == '\b' && m_lines.size() > 0) {
-                if (m_cursor == m_selection_start) {
-                    if (m_cursor.column > 0) {
-                        m_cursor.column--;
-                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
-                    }
-                    else if (m_cursor.line != 0) {
-                        m_cursor.line--;
-                        size_t old_size = m_lines[m_cursor.line].size();
-                        if (m_cursor.line < m_lines.size())
-                            m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
-                        m_lines.erase(m_lines.begin() + m_cursor.line + 1);
-                        m_cursor.column = old_size;
-                    }
-                    update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
-                }
-                else {
-                    erase_selected_text();
-                }
-                if (on_change)
-                    on_change(get_content());
-            }
-            else if (codepoint == 0x7f && m_lines.size() > 0) {
-                if (m_cursor == m_selection_start) {
-                    if (m_cursor.column < m_lines[m_cursor.line].size())
-                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
-                    else if (m_cursor.line < m_lines.size() - 1) {
-                        m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
-                        m_lines.erase(m_lines.begin() + m_cursor.line + 1);
-                    }
-                }
-                else {
-                    erase_selected_text();
-                }
-                if (on_change)
-                    on_change(get_content());
-            }
-            else {
-                insert_codepoint(codepoint);
-            }
+            auto codepoint = event.event().text_input.codepoint;
+            insert_codepoint(codepoint);
             event.set_handled();
         }
     }
-    else if (event.type() == sf::Event::KeyPressed) {
+    else if (event.type() == llgl::Event::Type::KeyPress) {
         m_shift_pressed = event.event().key.shift;
         if (is_focused()) {
             // FIXME: Focus check should be handled at Widget level.
-            switch (event.event().key.code) {
-            case sf::Keyboard::Left: {
-                if (event.event().key.control) {
+            switch (event.event().key.keycode) {
+            case llgl::KeyCode::Left: {
+                if (event.event().key.ctrl) {
                     move_cursor_by_word(CursorDirection::Left);
                 }
                 else {
@@ -167,8 +122,8 @@ void TextEditor::handle_event(Event& event) {
                 }
                 event.set_handled();
             } break;
-            case sf::Keyboard::Right: {
-                if (event.event().key.control) {
+            case llgl::KeyCode::Right: {
+                if (event.event().key.ctrl) {
                     move_cursor_by_word(CursorDirection::Right);
                 }
                 else {
@@ -176,7 +131,7 @@ void TextEditor::handle_event(Event& event) {
                 }
                 event.set_handled();
             } break;
-            case sf::Keyboard::Up: {
+            case llgl::KeyCode::Up: {
                 if (m_cursor.line > 0)
                     m_cursor.line--;
                 if (m_cursor.column > m_lines[m_cursor.line].size())
@@ -184,7 +139,7 @@ void TextEditor::handle_event(Event& event) {
                 update_selection_after_set_cursor();
                 event.set_handled();
             } break;
-            case sf::Keyboard::Down: {
+            case llgl::KeyCode::Down: {
                 if (m_cursor.line < m_lines.size() - 1)
                     m_cursor.line++;
                 if (m_cursor.column > m_lines[m_cursor.line].size())
@@ -192,8 +147,8 @@ void TextEditor::handle_event(Event& event) {
                 update_selection_after_set_cursor();
                 event.set_handled();
             } break;
-            case sf::Keyboard::A: {
-                if (event.event().key.control) {
+            case llgl::KeyCode::A: {
+                if (event.event().key.ctrl) {
                     if (m_lines.empty())
                         break;
                     m_cursor = { .line = m_lines.size() - 1, .column = m_lines[m_lines.size() - 1].size() };
@@ -201,53 +156,97 @@ void TextEditor::handle_event(Event& event) {
                 }
                 break;
             }
-            case sf::Keyboard::X: {
-                if (event.event().key.control) {
+            case llgl::KeyCode::X: {
+                if (event.event().key.ctrl) {
                     auto selected_text = this->selected_text();
-                    sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
+                    // TODO
+                    // sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
                     erase_selected_text();
                 }
                 break;
             }
-            case sf::Keyboard::C: {
-                if (event.event().key.control) {
+            case llgl::KeyCode::C: {
+                if (event.event().key.ctrl) {
                     auto selected_text = this->selected_text();
-                    sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
+                    // TODO
+                    // sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
                 }
                 break;
             }
-            case sf::Keyboard::V: {
-                if (event.event().key.control) {
+            case llgl::KeyCode::V: {
+                if (event.event().key.ctrl) {
                     erase_selected_text();
                     m_selection_start = m_cursor;
-                    auto clipboard_contents = sf::Clipboard::getString();
-                    for (auto codepoint : clipboard_contents)
-                        insert_codepoint(codepoint);
+                    // auto clipboard_contents = sf::Clipboard::getString();
+                    // for (auto codepoint : clipboard_contents)
+                    //     insert_codepoint(codepoint);
                 }
                 break;
             }
-            case sf::Keyboard::Enter: {
+            case llgl::KeyCode::Enter: {
                 // TODO: Handle multiline case
                 if (on_enter)
                     on_enter(get_content());
                 break;
+            }
+            case llgl::KeyCode::Backspace: {
+                if (m_lines.size() > 0) {
+                    if (m_cursor == m_selection_start) {
+                        if (m_cursor.column > 0) {
+                            m_cursor.column--;
+                            m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                        }
+                        else if (m_cursor.line != 0) {
+                            m_cursor.line--;
+                            size_t old_size = m_lines[m_cursor.line].size();
+                            if (m_cursor.line < m_lines.size())
+                                m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
+                            m_lines.erase(m_lines.begin() + m_cursor.line + 1);
+                            m_cursor.column = old_size;
+                        }
+                        update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+                    }
+                    else {
+                        erase_selected_text();
+                    }
+                    if (on_change)
+                        on_change(get_content());
+                }
+                break;
+            }
+            case llgl::KeyCode::Delete: {
+                if (m_lines.size() > 0) {
+                    if (m_cursor == m_selection_start) {
+                        if (m_cursor.column < m_lines[m_cursor.line].size())
+                            m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                        else if (m_cursor.line < m_lines.size() - 1) {
+                            m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
+                            m_lines.erase(m_lines.begin() + m_cursor.line + 1);
+                        }
+                    }
+                    else {
+                        erase_selected_text();
+                    }
+                    if (on_change)
+                        on_change(get_content());
+                }
             }
             default:
                 break;
             }
         }
     }
-    else if (event.type() == sf::Event::MouseButtonPressed) {
+    else if (event.type() == llgl::Event::Type::MouseButtonPress) {
         if (is_hover()) {
             m_cursor = m_character_pos_from_mouse(event);
             update_selection_after_set_cursor();
             m_dragging = true;
         }
     }
-    else if (event.type() == sf::Event::MouseButtonReleased) {
+    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
         m_dragging = false;
     }
-    else if (event.type() == sf::Event::MouseMoved) {
+    else if (event.type() == llgl::Event::Type::MouseMove) {
         if (m_dragging) {
             m_cursor = m_character_pos_from_mouse(event);
             update_selection_after_set_cursor(SetCursorSelectionBehavior::DontTouch);
@@ -443,8 +442,8 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
 
 Util::Vector2f TextEditor::calculate_cursor_position() const {
     auto options = get_text_options();
-    auto position = window().find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font, options)
-        + scroll_offset();
+    auto character_position = window().find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font, options);
+    auto position = Util::Vector2f { character_position, 0 } + scroll_offset();
     auto const cursor_height = std::min(size().y() - 6, line_height());
     if (m_multiline)
         position.y() += line_height() / 2 - cursor_height / 4 + line_height() * m_cursor.line;
@@ -463,7 +462,7 @@ TextDrawOptions TextEditor::get_text_options() const {
     return options;
 }
 
-void TextEditor::draw(GUI::SFMLWindow& window) const {
+void TextEditor::draw(GUI::Window& window) const {
     RectangleDrawOptions background_rect;
     background_rect.outline_color = Util::Color { 80, 80, 80 };
     background_rect.outline_thickness = -2;
@@ -489,13 +488,11 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
         auto selection_end = std::max(m_selection_start, m_cursor);
         for (size_t s = selection_start.line; s <= selection_end.line; s++) {
             float start = window.find_character_position(s == selection_start.line ? selection_start.column : 0, m_lines[s],
-                                    Application::the().fixed_width_font,
-                                    get_text_options())
-                              .x();
+                Application::the().fixed_width_font,
+                get_text_options());
             float end = window.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size(), m_lines[s],
-                                  Application::the().fixed_width_font,
-                                  get_text_options())
-                            .x();
+                Application::the().fixed_width_font,
+                get_text_options());
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : size().y() / 2 - cursor_height / 2;
             window.draw_rectangle({ Util::Vector2f { start + left_margin(), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
@@ -546,13 +543,13 @@ void TextEditor::draw(GUI::SFMLWindow& window) const {
     }
 
     if (is_focused()) {
-        if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
-            auto position = calculate_cursor_position();
-            RectangleDrawOptions cursor;
-            cursor.fill_color = Util::Colors::black;
-            window.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
-                cursor);
-        }
+        // if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
+        auto position = calculate_cursor_position();
+        RectangleDrawOptions cursor;
+        cursor.fill_color = Util::Colors::black;
+        window.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
+            cursor);
+        // }
     }
 
     // Border once again so that it covers text

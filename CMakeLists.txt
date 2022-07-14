@@ -5,14 +5,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
-find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(LLGL REQUIRED)
 
 add_library(essa-gui
     EssaGUI/gfx/DefaultGUIShader.cpp
     EssaGUI/gfx/ClipViewScope.cpp
     EssaGUI/gfx/ResourceLoader.cpp
-    EssaGUI/gfx/SFMLWindow.cpp
+    EssaGUI/gfx/Window.cpp
 
     EssaGUI/gui/Application.cpp
     EssaGUI/gui/ArrowButton.cpp
@@ -48,9 +48,9 @@ add_library(essa-gui
 )
 
 if(MINGW)
-    target_link_libraries(essa-gui PUBLIC essautil sfml-graphics opengl32 GLEW::GLEW)
+    target_link_libraries(essa-gui PUBLIC essautil opengl32 GLEW::GLEW)
 else()
-    target_link_libraries(essa-gui PUBLIC essautil sfml-graphics GL GLEW::GLEW)
+    target_link_libraries(essa-gui PUBLIC essautil GL GLEW::GLEW LLGL::Renderer LLGL::Resources)
 endif()
 
 function(setup_target targetname)

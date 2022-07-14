@@ -8,7 +8,7 @@ namespace GUI {
 
 class Overlay : public WidgetTreeRoot {
 public:
-    Overlay(GUI::SFMLWindow& wnd, std::string id)
+    Overlay(GUI::Window& wnd, std::string id)
         : WidgetTreeRoot(wnd)
         , m_id(std::move(id)) { }
 

@@ -2,27 +2,22 @@
 
 namespace Gfx {
 
-ClipViewScope::ClipViewScope(GUI::SFMLWindow& target, Util::Rectf rect, Mode mode)
+ClipViewScope::ClipViewScope(GUI::Window& target, Util::Rectf rect, Mode mode)
     : m_target(target)
     , m_old_view(target.view()) {
 
-    auto old_viewport = m_old_view.getViewport();
-    auto clip_rect = [&]() -> sf::FloatRect {
-        auto rect_sf = sf::FloatRect { rect.left, rect.top, rect.width, rect.height };
+    auto old_viewport = m_old_view.viewport();
+    auto clip_rect = [&]() {
         switch (mode) {
         case Mode::Override:
-            return rect_sf;
         case Mode::Intersect: {
-            // TODO: Port to Util when it gets intersects()
-            sf::FloatRect old_clip_rect {
-                old_viewport.left * target.getSize().x,
-                old_viewport.top * target.getSize().y,
-                old_viewport.width * target.getSize().x,
-                old_viewport.height * target.getSize().y,
+            Util::Recti old_clip_rect {
+                old_viewport.left,
+                old_viewport.top,
+                old_viewport.width,
+                old_viewport.height,
             };
-            sf::FloatRect new_clip_rect;
-            old_clip_rect.intersects(rect_sf, new_clip_rect);
-            return new_clip_rect;
+            return old_clip_rect.intersection(rect);
         }
         }
         __builtin_unreachable();
@@ -31,10 +26,17 @@ ClipViewScope::ClipViewScope(GUI::SFMLWindow& target, Util::Rectf rect, Mode mod
     if (mode == Mode::Intersect) {
         auto x = rect.left;
         auto y = rect.top;
-        auto vx = clip_view.getViewport().left;
-        auto vy = clip_view.getViewport().top;
-        Util::Vector2f offset_position { vx * target.getSize().x - x, vy * target.getSize().y - y };
-        clip_view.move({ offset_position.x(), offset_position.y() });
+        auto vx = clip_view.viewport().left;
+        auto vy = clip_view.viewport().top;
+        Util::Vector2f offset_position { vx - x, vy - y };
+
+        // TODO: Add some kind of move()
+        auto ortho = clip_view.ortho_args();
+        ortho.left += offset_position.x();
+        ortho.right += offset_position.x();
+        ortho.top += offset_position.y();
+        ortho.bottom += offset_position.y();
+        clip_view.set_ortho(ortho);
     }
     m_target.set_view(clip_view);
 }
@@ -43,14 +45,12 @@ ClipViewScope::~ClipViewScope() {
     m_target.set_view(m_old_view);
 }
 
-sf::View ClipViewScope::create_clip_view(Util::Rectf const& rect) const {
+llgl::View ClipViewScope::create_clip_view(Util::Rectf const& rect) const {
 
-    sf::View clip_view { { 0, 0, rect.width, rect.height } };
-    auto window_size = m_target.getSize();
-    clip_view.setViewport(sf::FloatRect {
-        rect.left / window_size.x, rect.top / window_size.y,
-        rect.width / window_size.x, rect.height / window_size.y });
-    return clip_view;
+    llgl::View view;
+    view.set_ortho({ { 0, 0, rect.width, rect.height } });
+    view.set_viewport(Util::Recti { rect });
+    return view;
 }
 
 }

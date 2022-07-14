@@ -2,7 +2,7 @@
 
 #include "ToolWindow.hpp"
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
@@ -15,7 +15,7 @@ public:
         Ok
     };
 
-    explicit MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UString title, Buttons buttons);
+    explicit MessageBox(GUI::Window& wnd, Util::UString message, Util::UString title, Buttons buttons);
 
     enum class ButtonRole {
         None,
@@ -30,7 +30,7 @@ public:
     }
 
 private:
-    virtual void handle_event(sf::Event) override;
+    virtual void handle_event(llgl::Event) override;
 
     ButtonRole m_clicked_button = ButtonRole::None;
     Button* m_default_button = nullptr;

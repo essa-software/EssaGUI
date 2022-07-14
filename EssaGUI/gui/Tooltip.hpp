@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SFML/System.hpp>
 #include <string>
 
 #include "Overlay.hpp"
@@ -22,7 +21,7 @@ struct Tooltip {
 
 class TooltipOverlay : public Overlay {
 public:
-    TooltipOverlay(GUI::SFMLWindow& wnd, Tooltip tooltip, std::string id = "TooltipOverlay")
+    TooltipOverlay(GUI::Window& wnd, Tooltip tooltip, std::string id = "TooltipOverlay")
         : Overlay(wnd, std::move(id))
         , m_tooltip(std::move(tooltip)) { }
 

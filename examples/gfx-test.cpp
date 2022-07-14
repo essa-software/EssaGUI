@@ -1,23 +1,18 @@
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FileExplorer.hpp>
-#include <SFML/Graphics.hpp>
+#include <LLGL/Resources/TTFFont.hpp>
 
 int main() {
-    GUI::SFMLWindow wnd { sf::VideoMode(1000, 1000), "File explorer", sf::Style::Default,
-        sf::ContextSettings { 0, 0, 0, 3, 2 } };
-    
-    sf::Font font;
-    if(!font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf"))
-        return 1;
+    GUI::Window wnd { { 1000, 1000 }, "Gfx test" };
 
-    while(true) {
-        sf::Event e;
-        while(wnd.pollEvent(e)) {
-            if(e.type == sf::Event::Closed)
-                return 0;
+    llgl::TTFFont font = llgl::TTFFont::open_from_file("../assets/fonts/SourceCodePro-Regular.otf");
+
+    while (true) {
+        llgl::Event e;
+        while (wnd.poll_event(e)) {
         }
-        wnd.clear(Util::Color(100, 100, 100));
-        wnd.draw_text("/home/sppmacd #T3$%abcdefghijklmnopqurtsdhstrhstyjstr6", font, {50, 200}, {.font_size = 100});
+        wnd.clear(Util::Color { 100, 100, 100 });
+        wnd.draw_text("/home/sppmacd #T3$%abcdefghijklmnopqurtsdhstrhstyjstr6", font, { 50, 200 }, { .font_size = 100 });
         wnd.display();
     }
 

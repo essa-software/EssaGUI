@@ -1,12 +1,12 @@
 #include "ColorPicker.hpp"
 
 #include "Container.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "Textfield.hpp"
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
-void ColorPickerDisplay::draw(GUI::SFMLWindow& window) const {
+void ColorPickerDisplay::draw(GUI::Window& window) const {
     RectangleDrawOptions options;
     options.fill_color = m_color;
     window.draw_rectangle({ { 5, 5 }, { size() - Util::Vector2f { 10, 10 } } }, options);
@@ -20,7 +20,7 @@ ColorPicker::ColorPicker(Container& c)
     auto sliders_container = add_widget<Container>();
     m_color_picker_display = add_widget<ColorPickerDisplay>();
     m_color_picker_display->set_size({ 100.0_px, Length::Auto });
-    m_color_picker_display->set_color(Util::Color(127, 127, 127));
+    m_color_picker_display->set_color(Util::Color { 127, 127, 127 });
 
     auto& sliders_container_layout = sliders_container->set_layout<VerticalBoxLayout>();
     sliders_container_layout.set_spacing(10);

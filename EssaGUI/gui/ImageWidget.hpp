@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Widget.hpp"
-#include <SFML/Graphics.hpp>
 
 namespace GUI {
 
@@ -10,14 +9,14 @@ public:
     explicit ImageWidget(Container& c)
         : Widget(c) { }
 
-    void set_image(sf::Texture const* image) {
+    void set_image(llgl::opengl::Texture const* image) {
         m_image = image;
     }
 
 private:
-    virtual void draw(GUI::SFMLWindow& window) const override;
+    virtual void draw(GUI::Window& window) const override;
 
-    sf::Texture const* m_image = nullptr;
+    llgl::opengl::Texture const* m_image = nullptr;
 };
 
 }

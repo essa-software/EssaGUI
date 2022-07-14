@@ -6,16 +6,16 @@ namespace GUI {
 
 class ImageButton : public Button {
 public:
-    ImageButton(Container&, sf::Image);
+    ImageButton(Container&, llgl::opengl::Texture image);
 
-    virtual void draw(GUI::SFMLWindow& window) const override;
+    virtual void draw(GUI::Window& window) const override;
 
 private:
     virtual LengthVector initial_size() const override;
 
     virtual Theme::ButtonColors default_button_colors() const override { return theme().image_button; }
 
-    sf::Texture m_texture;
+    llgl::opengl::Texture m_texture;
 };
 
 }

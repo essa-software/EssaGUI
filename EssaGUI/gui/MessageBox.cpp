@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-MessageBox::MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UString title, Buttons buttons)
+MessageBox::MessageBox(GUI::Window& wnd, Util::UString message, Util::UString title, Buttons buttons)
     : ToolWindow(wnd, "MessageBox") {
     set_title(std::move(title));
 
@@ -23,7 +23,9 @@ MessageBox::MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UStrin
     prompt_text->set_alignment(GUI::Align::Center);
 
     {
-        auto text_size = prompt_text->calculate_text_size();
+        TextDrawOptions text_options;
+        text_options.font_size = prompt_text->get_font_size();
+        auto text_size = window().calculate_text_size(prompt_text->get_content(), GUI::Application::the().font, text_options);
         Util::Vector2f total_size { 40 + text_size.x(), 110 + text_size.y() };
         set_size(total_size);
         center_on_screen();
@@ -54,9 +56,9 @@ MessageBox::MessageBox(GUI::SFMLWindow& wnd, Util::UString message, Util::UStrin
     }
 }
 
-void MessageBox::handle_event(sf::Event event) {
+void MessageBox::handle_event(llgl::Event event) {
     ToolWindow::handle_event(event);
-    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter && m_default_button)
+    if (event.type == llgl::Event::Type::KeyPress && event.key.keycode == llgl::KeyCode::Enter && m_default_button)
         m_default_button->on_click();
 }
 

@@ -1,20 +1,19 @@
 #include "ToolWindow.hpp"
 
 #include "Application.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
+#include <EssaGUI/gfx/Window.hpp>
 
 #include <EssaGUI/gfx/ClipViewScope.hpp>
-#include <EssaGUI/glwrapper/Vertex.hpp>
-#include <SFML/Window/Cursor.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 
 namespace GUI {
 
-ToolWindow::ToolWindow(GUI::SFMLWindow& wnd, std::string id)
+ToolWindow::ToolWindow(GUI::Window& wnd, std::string id)
     : Overlay(wnd, std::move(id)) {
     m_titlebar_buttons.push_back(TitlebarButton {
         .on_click = [this]() {
@@ -22,7 +21,7 @@ ToolWindow::ToolWindow(GUI::SFMLWindow& wnd, std::string id)
         } });
 }
 
-void ToolWindow::handle_event(sf::Event event) {
+void ToolWindow::handle_event(llgl::Event event) {
     if (m_first_tick)
         return;
 
@@ -31,70 +30,72 @@ void ToolWindow::handle_event(sf::Event event) {
         auto mouse_position = gui_event.mouse_position();
         mouse_position += Util::Vector2i { position() };
 
-        if (event.type == sf::Event::MouseMoved) {
-            bool bottom = mouse_position.y() > position().y() + size().y() - ResizeRadius;
-            bool is_in_window_x_range = mouse_position.x() > position().x() - ResizeRadius && mouse_position.x() < position().x() + size().x() + ResizeRadius;
-            bool is_in_window_y_range = mouse_position.y() > position().y() + TitleBarSize - ResizeRadius && mouse_position.y() < position().y() + size().y() + ResizeRadius;
+        if (event.type == llgl::Event::Type::MouseMove) {
+            // TODO
+            // bool bottom = mouse_position.y() > position().y() + size().y() - ResizeRadius;
+            // bool is_in_window_x_range = mouse_position.x() > position().x() - ResizeRadius && mouse_position.x() < position().x() + size().x() + ResizeRadius;
+            // bool is_in_window_y_range = mouse_position.y() > position().y() + TitleBarSize - ResizeRadius && mouse_position.y() < position().y() + size().y() + ResizeRadius;
 
-            sf::Cursor cursor;
-            if (std::fabs(mouse_position.x() - position().x()) < ResizeRadius && is_in_window_y_range) {
-                if (bottom && is_in_window_x_range) {
-                    m_resize_mode = Resize::LEFTBOTTOM;
-                    // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
-                    cursor.loadFromSystem(sf::Cursor::SizeAll);
-                }
-                else {
-                    m_resize_mode = Resize::LEFT;
-                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-                }
-            }
-            else if (std::fabs(mouse_position.x() - position().x() - size().x()) < ResizeRadius && is_in_window_y_range) {
-                if (bottom && is_in_window_x_range) {
-                    m_resize_mode = Resize::RIGHTBOTTOM;
-                    // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
-                    cursor.loadFromSystem(sf::Cursor::SizeAll);
-                }
-                else {
-                    m_resize_mode = Resize::RIGHT;
-                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-                }
-            }
-            else if (bottom && is_in_window_y_range && is_in_window_x_range) {
-                m_resize_mode = Resize::BOTTOM;
-                cursor.loadFromSystem(sf::Cursor::SizeVertical);
-            }
-            else {
-                m_resize_mode = Resize::DEFAULT;
-                cursor.loadFromSystem(sf::Cursor::Arrow);
-            }
-            window().setMouseCursor(cursor);
+            // sf::Cursor cursor;
+            // if (std::fabs(mouse_position.x() - position().x()) < ResizeRadius && is_in_window_y_range) {
+            //     if (bottom && is_in_window_x_range) {
+            //         m_resize_mode = Resize::LEFTBOTTOM;
+            //         // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
+            //         cursor.loadFromSystem(sf::Cursor::SizeAll);
+            //     }
+            //     else {
+            //         m_resize_mode = Resize::LEFT;
+            //         cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+            //     }
+            // }
+            // else if (std::fabs(mouse_position.x() - position().x() - size().x()) < ResizeRadius && is_in_window_y_range) {
+            //     if (bottom && is_in_window_x_range) {
+            //         m_resize_mode = Resize::RIGHTBOTTOM;
+            //         // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
+            //         cursor.loadFromSystem(sf::Cursor::SizeAll);
+            //     }
+            //     else {
+            //         m_resize_mode = Resize::RIGHT;
+            //         cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+            //     }
+            // }
+            // else if (bottom && is_in_window_y_range && is_in_window_x_range) {
+            //     m_resize_mode = Resize::BOTTOM;
+            //     cursor.loadFromSystem(sf::Cursor::SizeVertical);
+            // }
+            // else {
+            //     m_resize_mode = Resize::DEFAULT;
+            //     cursor.loadFromSystem(sf::Cursor::Arrow);
+            // }
+            std::cout << "TODO: set mouse cursor" << std::endl;
+            // window().setMouseCursor(cursor);
         }
 
         float titlebar_button_position_x = position().x() + size().x() - TitleBarSize;
         for (auto& button : m_titlebar_buttons) {
             Util::Rectf rect { { titlebar_button_position_x, position().y() - TitleBarSize }, { TitleBarSize, TitleBarSize } };
 
-            if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.type == llgl::Event::Type::MouseButtonPress) {
                 if (rect.contains(mouse_position)) {
                     button.mousedown = true;
                     button.hovered = true;
                 }
             }
-            else if (event.type == sf::Event::MouseButtonReleased) {
+            else if (event.type == llgl::Event::Type::MouseButtonRelease) {
                 button.mousedown = true;
                 if (rect.contains(mouse_position)) {
                     assert(button.on_click);
                     button.on_click();
                 }
             }
-            else if (event.type == sf::Event::MouseMoved) {
+            else if (event.type == llgl::Event::Type::MouseMove) {
                 button.hovered = rect.contains(mouse_position);
             }
 
             titlebar_button_position_x -= TitleBarSize;
         }
 
-        if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.type == llgl::Event::Type::MouseButtonPress) {
             if (m_resize_mode != Resize::DEFAULT)
                 m_resizing = true;
             else if (titlebar_rect().contains(mouse_position)) {
@@ -103,8 +104,8 @@ void ToolWindow::handle_event(sf::Event event) {
                 return;
             }
         }
-        else if (event.type == sf::Event::MouseMoved) {
-            Util::Vector2i mouse_position { event.mouseMove.x, event.mouseMove.y };
+        else if (event.type == llgl::Event::Type::MouseMove) {
+            Util::Vector2i mouse_position = event.mouse_move.position;
             mouse_position += Util::Vector2i { position() };
 
             if (m_dragging) {
@@ -114,17 +115,17 @@ void ToolWindow::handle_event(sf::Event event) {
 
                 if (m_position.y() < TitleBarSize)
                     m_position.y() = TitleBarSize;
-                if (m_position.y() > window().getSize().y)
-                    m_position.y() = window().getSize().y;
+                if (m_position.y() > window().size().y())
+                    m_position.y() = window().size().y();
                 if (m_position.x() < -size().x() + TitleBarSize)
                     m_position.x() = -size().x() + TitleBarSize;
-                if (m_position.x() > window().getSize().x - TitleBarSize)
-                    m_position.x() = window().getSize().x - TitleBarSize;
+                if (m_position.x() > window().size().x() - TitleBarSize)
+                    m_position.x() = window().size().x() - TitleBarSize;
 
                 return;
             }
             else if (m_resizing) {
-                sf::Cursor cursor;
+                //sf::Cursor cursor;
                 switch (m_resize_mode) {
                 case Resize::LEFT:
 
@@ -147,7 +148,7 @@ void ToolWindow::handle_event(sf::Event event) {
                 }
             }
         }
-        else if (event.type == sf::Event::MouseButtonReleased) {
+        else if (event.type == llgl::Event::Type::MouseButtonRelease) {
             m_dragging = false;
             m_resizing = false;
         }
@@ -162,10 +163,10 @@ void ToolWindow::handle_events() {
     // windows.
     // FIXME: Support moving other ToolWindows even
     //        if other modal window is open.
-    sf::Event event;
-    while (window().pollEvent(event)) {
+    llgl::Event event;
+    while (window().poll_event(event)) {
         handle_event(transform_event(position(), event));
-        if (event.type == sf::Event::Resized || event.type == sf::Event::Closed)
+        if (event.type == llgl::Event::Type::Resize)
             Application::the().handle_event(event);
     }
 }
@@ -202,23 +203,23 @@ void ToolWindow::draw() {
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };
 
-        std::array<Vertex, 4> varr;
+        std::array<llgl::Vertex, 4> varr;
         Util::Color const CloseButtonColor { 200, 200, 200 };
-        varr[0] = Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
-        varr[1] = Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
-        varr[2] = Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
-        varr[3] = Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
-        window().draw_vertices(GL_LINES, varr);
+        varr[0] = llgl::Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
+        varr[1] = llgl::Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
+        varr[2] = llgl::Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
+        varr[3] = llgl::Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
+        window().draw_vertices(llgl::opengl::PrimitiveType::Lines, varr);
 
         titlebar_button_position_x -= TitleBarSize;
     }
 
-    std::array<Vertex, 4> varr_border;
-    varr_border[0] = Vertex { .position = Util::Vector3f { position, 0 }, .color = color };
-    varr_border[1] = Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = color };
-    varr_border[2] = Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = color };
-    varr_border[3] = Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = color };
-    window().draw_vertices(GL_LINE_STRIP, varr_border);
+    std::array<llgl::Vertex, 4> varr_border;
+    varr_border[0] = llgl::Vertex { .position = Util::Vector3f { position, 0 }, .color = color };
+    varr_border[1] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = color };
+    varr_border[2] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = color };
+    varr_border[3] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = color };
+    window().draw_vertices(llgl::opengl::PrimitiveType::LineStrip, varr_border);
     {
         Gfx::ClipViewScope scope(window(), rect(), Gfx::ClipViewScope::Mode::Override);
         WidgetTreeRoot::draw();

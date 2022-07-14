@@ -1,13 +1,13 @@
 #pragma once
 
 #include <EssaUtil/UString.hpp>
-#include <SFML/Graphics.hpp>
+#include <LLGL/OpenGL/Texture.hpp>
 #include <string>
 #include <variant>
 
 namespace GUI {
 
-using Variant = std::variant<Util::UString, sf::Texture const*>;
+using Variant = std::variant<Util::UString, llgl::opengl::Texture const*>;
 
 class Model {
 public:

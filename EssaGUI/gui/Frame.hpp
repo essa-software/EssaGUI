@@ -12,7 +12,7 @@ public:
     static constexpr float BorderRadius = 20;
 
 private:
-    virtual void draw(GUI::SFMLWindow&) const override;
+    virtual void draw(GUI::Window&) const override;
     virtual float intrinsic_padding() const override { return BorderRadius; }
     virtual bool isolated_focus() const override { return true; }
 };

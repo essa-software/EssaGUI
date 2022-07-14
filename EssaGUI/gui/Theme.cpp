@@ -1,6 +1,5 @@
 #include "Theme.hpp"
 #include <EssaUtil/Color.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <fstream>
 #include <iostream>
 #include <map>

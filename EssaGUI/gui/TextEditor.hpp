@@ -1,8 +1,8 @@
 #pragma once
 
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "NotifyUser.hpp"
 #include "ScrollableWidget.hpp"
+#include <EssaGUI/gfx/Window.hpp>
 
 #include <functional>
 
@@ -31,7 +31,7 @@ public:
         : ScrollableWidget(parent) { }
 
     virtual void handle_event(Event&) override;
-    virtual void draw(GUI::SFMLWindow& window) const override;
+    virtual void draw(GUI::Window& window) const override;
 
     Util::UString get_content() const;
     void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);
@@ -59,14 +59,14 @@ private:
     virtual bool accepts_focus() const override { return true; }
     TextDrawOptions get_text_options() const;
     virtual bool can_insert_codepoint(uint32_t) const { return true; }
-    virtual void on_content_change() {}
+    virtual void on_content_change() { }
 
     float line_height() const;
     float left_margin() const;
     virtual float content_height() const override;
     virtual LengthVector initial_size() const override;
 
-    sf::Clock m_cursor_clock;
+    // sf::Clock m_cursor_clock;
 
     enum class CursorDirection {
         Left,

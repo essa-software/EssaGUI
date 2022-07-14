@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Button.hpp"
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/System/Vector2.hpp>
 
 namespace GUI {
 
@@ -32,7 +30,7 @@ private:
     Util::Color m_arrow_color = Util::Color { 200, 200, 200 };
     ArrowType m_arrow_type = ArrowType::TOPARROW;
     double m_arrow_size = 8;
-    virtual void draw(GUI::SFMLWindow&) const override;
+    virtual void draw(GUI::Window&) const override;
 };
 
 }

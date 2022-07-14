@@ -3,7 +3,7 @@
 #include "Application.hpp"
 #include "Container.hpp"
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -19,12 +19,12 @@ public:
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
 
-    virtual void draw(GUI::SFMLWindow&) const override;
+    virtual void draw(GUI::Window&) const override;
 };
 
 Util::Color const TabButton::BgColor { 120, 120, 120, 100 };
 
-void TabButton::draw(GUI::SFMLWindow& window) const {
+void TabButton::draw(GUI::Window& window) const {
     RectangleDrawOptions rect;
     rect.set_border_radius(10);
     rect.border_radius_bottom_left = 0;

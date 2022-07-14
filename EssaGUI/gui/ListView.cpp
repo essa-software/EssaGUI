@@ -1,12 +1,9 @@
 #include "ListView.hpp"
 
 #include "Application.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
+#include <EssaGUI/gfx/Window.hpp>
 #include "EssaGUI/gui/ScrollableWidget.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
 #include <variant>
 
 namespace GUI {
@@ -17,7 +14,7 @@ constexpr float RowHeight = 30;
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
-void ListView::draw(GUI::SFMLWindow& wnd) const {
+void ListView::draw(GUI::Window& wnd) const {
     assert(m_model);
 
     size_t rows = m_model->row_count();
@@ -84,7 +81,7 @@ void ListView::draw(GUI::SFMLWindow& wnd) const {
                             text.text_align = Align::CenterLeft;
                             wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font, text);
                         },
-                        [&](sf::Texture const* data) {
+                        [&](llgl::opengl::Texture const* data) {
                             RectangleDrawOptions rect;
                             rect.texture = data;
                             wnd.draw_rectangle({ { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } }, rect);
@@ -107,7 +104,7 @@ void ListView::handle_event(Event& event) {
     ScrollableWidget::handle_event(event);
 
     size_t rows = m_model->row_count();
-    if (event.type() == sf::Event::MouseButtonPressed) {
+    if (event.type() == llgl::Event::Type::MouseButtonPress) {
         auto mouse_pos = event.mouse_position();
 
         if (is_mouse_over(mouse_pos)) {

@@ -3,12 +3,6 @@
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
 #include <functional>
 #include <string>
 
@@ -48,7 +42,7 @@ public:
     void set_wraparound(bool wp) { m_wraparound = wp; }
 
     virtual void handle_event(Event&) override;
-    virtual void draw(GUI::SFMLWindow& window) const override;
+    virtual void draw(GUI::Window& window) const override;
 
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
     void set_range(double min, double max, double step);

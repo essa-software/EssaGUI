@@ -1,19 +1,13 @@
 #include "Button.hpp"
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
+
 #include <iostream>
 
 namespace GUI {
 
 void Button::handle_event(Event& event) {
-    if (event.event().type == sf::Event::MouseButtonPressed && is_hover())
+    if (event.event().type == llgl::Event::Type::MouseButtonPress && is_hover())
         m_pressed_on_button = true;
-    else if (event.event().type == sf::Event::MouseButtonReleased && is_hover() && m_pressed_on_button) {
+    else if (event.event().type == llgl::Event::Type::MouseButtonRelease && is_hover() && m_pressed_on_button) {
         click();
         m_pressed_on_button = false;
     }

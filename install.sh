@@ -7,7 +7,13 @@ cd build
 rm -rf util
 git clone https://github.com/essa-software/util
 cd util
-CMAKE_OPTIONS=-DESSAUTIL_ENABLE_SFML=1 ./install.sh
+./install.sh || exit 1
+cd ..
+
+rm -rf llgl
+git clone https://github.com/sppmacd/llgl
+cd llgl
+./install.sh || exit 1
 cd ..
 
 cmake .. -GNinja

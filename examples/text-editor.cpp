@@ -2,11 +2,9 @@
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/TextEditor.hpp>
 #include <EssaGUI/gui/Textbox.hpp>
-#include <SFML/Graphics.hpp>
 
 int main() {
-    GUI::SFMLWindow wnd { sf::VideoMode(200, 200), "TextEditor", sf::Style::Default,
-        sf::ContextSettings { 0, 0, 0, 3, 2 } };
+    GUI::Window wnd { { 500, 500 }, "TextEditor" };
 
     GUI::Application app(wnd);
 

@@ -2,7 +2,6 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "Tooltip.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
 
@@ -78,8 +77,8 @@ bool Widget::are_all_parents_enabled() const {
 }
 
 void Widget::handle_event(Event& event) {
-    if (event.type() == sf::Event::MouseMoved) {
-        Util::Vector2i mouse_pos { event.event().mouseMove.x, event.event().mouseMove.y };
+    if (event.type() == llgl::Event::Type::MouseMove) {
+        Util::Vector2i mouse_pos = event.event().mouse_move.position;
         bool previous_hover = m_hover;
         m_hover = is_mouse_over(mouse_pos);
         if (previous_hover != m_hover) {
@@ -90,23 +89,23 @@ void Widget::handle_event(Event& event) {
             event.set_seen();
         }
     }
-    else if (event.type() == sf::Event::MouseButtonPressed) {
-        Util::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
+    else if (event.type() == llgl::Event::Type::MouseButtonPress) {
+        Util::Vector2i mouse_pos = event.event().mouse_button.position;
         m_hover = is_mouse_over(mouse_pos);
         if (m_hover && accepts_focus()) {
             set_focused();
             event.set_handled();
         }
     }
-    else if (event.type() == sf::Event::MouseButtonReleased) {
-        Util::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
+    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
+        Util::Vector2i mouse_pos = event.event().mouse_button.position;
         m_hover = is_mouse_over(mouse_pos);
     }
-    else if (event.type() == sf::Event::Resized)
+    else if (event.type() == llgl::Event::Type::Resize)
         set_needs_relayout();
 }
 
-void Widget::do_draw(GUI::SFMLWindow& window) const {
+void Widget::do_draw(GUI::Window& window) const {
     // std::cout << "do_draw "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
     Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
 
@@ -131,7 +130,7 @@ void Widget::set_needs_relayout() {
     m_widget_tree_root.set_needs_relayout();
 }
 
-GUI::SFMLWindow& Widget::window() const {
+GUI::Window& Widget::window() const {
     return m_widget_tree_root.window();
 }
 

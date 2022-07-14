@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Container.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "Widget.hpp"
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
@@ -19,7 +19,7 @@ protected:
 
     float scroll_area_height() const;
     Util::Vector2f scroll_offset() const;
-    void draw_scrollbar(GUI::SFMLWindow&) const;
+    void draw_scrollbar(GUI::Window&) const;
 
 private:
     virtual float content_height() const = 0;

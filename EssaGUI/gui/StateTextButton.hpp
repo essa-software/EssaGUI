@@ -2,8 +2,6 @@
 #include "TextAlign.hpp"
 #include "Widget.hpp"
 #include "Application.hpp"
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <vector>
 #include <functional>
 
@@ -39,7 +37,7 @@ public:
     void set_index(unsigned index);
 
 private:
-    virtual void draw(GUI::SFMLWindow& window) const override;
+    virtual void draw(GUI::Window& window) const override;
     virtual void handle_event(Event& event) override;
 
     std::vector<std::pair<Util::UString, State>> m_states;

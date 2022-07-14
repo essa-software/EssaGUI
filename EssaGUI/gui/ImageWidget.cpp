@@ -1,15 +1,16 @@
 #include "ImageWidget.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
+
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
-void ImageWidget::draw(GUI::SFMLWindow& window) const {
+void ImageWidget::draw(GUI::Window& window) const {
     assert(m_image);
 
     // TODO: Move this logic to SFMLWindow (e.g draw_best_fit_image)
-    auto image_size = m_image->getSize();
+    auto image_size = m_image->size();
     float aspect = size().x() / size().y();
-    float image_aspect = static_cast<float>(image_size.x) / image_size.y;
+    float image_aspect = static_cast<float>(image_size.x()) / image_size.y();
     Util::Vector2f rect_size;
     if (aspect > image_aspect)
         rect_size = { size().y() * image_aspect, size().y() };

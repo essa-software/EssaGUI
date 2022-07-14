@@ -3,9 +3,6 @@
 #include "NotifyUser.hpp"
 #include "TextEditor.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
 #include <functional>
 #include <limits>
 #include <string>

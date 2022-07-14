@@ -1,10 +1,8 @@
 #pragma once
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>
 #include <EssaUtil/Units.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <cassert>
 #include <string_view>
 
@@ -25,11 +23,11 @@ constexpr bool operator==(LengthVector const& a, LengthVector const& b) {
 
 class Event {
 public:
-    Event(sf::Event const& event)
+    Event(llgl::Event const& event)
         : m_event(event) {
     }
 
-    sf::Event event() const { return m_event; }
+    llgl::Event event() const { return m_event; }
 
     // FIXME: idk the names
     bool is_handled() const { return m_handled; }
@@ -37,23 +35,23 @@ public:
     bool is_seen() const { return m_seen; }
     void set_seen() { m_seen = true; }
 
-    sf::Event::EventType type() const { return m_event.type; }
+    llgl::Event::Type type() const { return m_event.type; }
 
     bool is_mouse_related() const {
-        return m_event.type == sf::Event::MouseMoved || m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased;
+        return m_event.type == llgl::Event::Type::MouseMove || m_event.type == llgl::Event::Type::MouseButtonPress || m_event.type == llgl::Event::Type::MouseButtonRelease;
     }
 
     Util::Vector2i mouse_position() const {
         assert(is_mouse_related());
-        if (m_event.type == sf::Event::MouseMoved)
-            return { m_event.mouseMove.x, m_event.mouseMove.y };
-        if (m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased)
-            return { m_event.mouseButton.x, m_event.mouseButton.y };
+        if (m_event.type == llgl::Event::Type::MouseMove)
+            return m_event.mouse_move.position;
+        if (m_event.type == llgl::Event::Type::MouseButtonPress || m_event.type == llgl::Event::Type::MouseButtonRelease)
+            return m_event.mouse_button.position;
         __builtin_unreachable();
     }
 
 private:
-    sf::Event m_event;
+    llgl::Event m_event;
     bool m_handled = false;
     bool m_seen = false;
 };
@@ -71,7 +69,7 @@ public:
 
     virtual void do_handle_event(Event& event);
     virtual void do_update();
-    virtual void draw(GUI::SFMLWindow&) const { }
+    virtual void draw(GUI::Window&) const { }
 
     void set_raw_position(Util::Vector2f p) {
         m_pos = p;
@@ -99,7 +97,7 @@ public:
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
-    virtual void do_draw(GUI::SFMLWindow&) const;
+    virtual void do_draw(GUI::Window&) const;
 
     void set_visible(bool visible) {
         if (m_visible != visible) {
@@ -117,7 +115,7 @@ public:
     void set_focused();
     bool is_focused() const;
 
-    GUI::SFMLWindow& window() const;
+    GUI::Window& window() const;
     Container* parent() const { return m_parent; }
 
     void set_tooltip_text(Util::UString t) { m_tooltip_text = std::move(t); }

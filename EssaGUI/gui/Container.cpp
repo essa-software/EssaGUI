@@ -165,7 +165,7 @@ void Container::do_relayout() {
     }
 }
 
-void Container::do_draw(GUI::SFMLWindow& window) const {
+void Container::do_draw(GUI::Window& window) const {
     Widget::do_draw(window);
     for (auto const& w : m_widgets) {
         if (w->is_visible())
@@ -189,7 +189,7 @@ void Container::do_handle_event(Event& event) {
 }
 
 void Container::handle_event(Event& event) {
-    if (event.type() == sf::Event::KeyPressed && event.event().key.code == sf::Keyboard::Tab) {
+    if (event.type() == llgl::Event::Type::KeyPress && event.event().key.keycode == llgl::KeyCode::Tab) {
         if (focus_next_widget(false))
             event.set_handled();
     }

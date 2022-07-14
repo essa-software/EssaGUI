@@ -2,7 +2,7 @@
 
 #include "Application.hpp"
 #include "Button.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
@@ -10,7 +10,7 @@ TextButton::TextButton(Container& c)
     : Button(c) {
 }
 
-void TextButton::draw(GUI::SFMLWindow& window) const {
+void TextButton::draw(GUI::Window& window) const {
     RectangleDrawOptions rect;
     rect.fill_color = bg_color_for_state();
     window.draw_rectangle(local_rect(), rect);
@@ -20,16 +20,16 @@ void TextButton::draw(GUI::SFMLWindow& window) const {
         RectangleDrawOptions image;
         image.texture = m_image;
         if (m_content.is_empty()) {
-            window.draw_rectangle({ size() / 2.f - Util::Vector2f(m_image->getSize().x, m_image->getSize().y) / 2.f,
-                                      Util::Vector2f(m_image->getSize().x, m_image->getSize().y) },
+            window.draw_rectangle({ size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
+                                      Util::Vector2f { m_image->size() } },
                 image);
             return;
         }
         else {
-            text_offset = 5 + m_image->getSize().x;
+            text_offset = 5 + m_image->size().x();
             window.draw_rectangle(
-                { { 5, size().y() / 2 - m_image->getSize().y / 2.f },
-                    { static_cast<float>(m_image->getSize().x), static_cast<float>(m_image->getSize().y) } },
+                { { 5, size().y() / 2 - m_image->size().y() / 2.f },
+                    { static_cast<float>(m_image->size().x()), static_cast<float>(m_image->size().y()) } },
                 image);
         }
     }

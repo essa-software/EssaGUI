@@ -6,7 +6,6 @@
 #include "ToolWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -40,7 +39,7 @@ public:
 
 private:
     static std::string file_type(std::filesystem::path);
-    sf::Texture const* file_icon(size_t row) const;
+    llgl::opengl::Texture const* file_icon(size_t row) const;
 
     struct File {
         std::filesystem::path path;
@@ -54,7 +53,7 @@ private:
 
 class FileExplorer : public ToolWindow {
 public:
-    explicit FileExplorer(GUI::SFMLWindow& wnd);
+    explicit FileExplorer(GUI::Window& wnd);
 
     enum class FileExplorerType {
         FILE,

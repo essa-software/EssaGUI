@@ -6,7 +6,7 @@
 #include "Tooltip.hpp"
 #include "WidgetTreeRoot.hpp"
 
-#include <SFML/Graphics/View.hpp>
+#include <LLGL/Resources/TTFFont.hpp>
 #include <iostream>
 #include <list>
 
@@ -14,19 +14,19 @@ namespace GUI {
 
 class Application : public WidgetTreeRoot {
 public:
-    explicit Application(GUI::SFMLWindow&);
+    explicit Application(GUI::Window&);
 
     static Application& the();
 
     // TODO: Find a way for this to be private
     virtual void draw() override;
 
-    virtual void handle_event(sf::Event) override;
+    virtual void handle_event(llgl::Event) override;
 
     // TODO: Move it to some specialized class
-    sf::Font font;
-    sf::Font bold_font;
-    sf::Font fixed_width_font;
+    llgl::TTFFont font;
+    llgl::TTFFont bold_font;
+    llgl::TTFFont fixed_width_font;
 
     enum class NotificationLevel {
         Error
@@ -57,7 +57,7 @@ public:
     void remove_closed_overlays();
 
     virtual Util::Vector2f position() const override { return {}; }
-    virtual Util::Vector2f size() const override { return Util::Vector2f { static_cast<float>(window().getSize().x), static_cast<float>(window().getSize().y) }; }
+    virtual Util::Vector2f size() const override { return Util::Vector2f { window().size() }; }
 
     void set_theme(Theme const& theme) { m_theme = &theme; }
     Theme const& theme() const { return *m_theme; }
@@ -74,8 +74,8 @@ private:
         NotificationLevel level {};
     };
 
-    void draw_notification(Notification const&, float y) const;
-    sf::Event transform_event(Util::Vector2f offset, sf::Event event) const;
+    void draw_notification(Notification const&, float y);
+    llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
     Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
 
     using OverlayList = std::list<std::unique_ptr<Overlay>>;

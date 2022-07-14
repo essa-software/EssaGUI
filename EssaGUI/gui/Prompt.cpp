@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-Prompt::Prompt(GUI::SFMLWindow& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
+Prompt::Prompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
     : ToolWindow(wnd, "Prompt") {
     set_title(std::move(window_title));
     set_size({ 500, 100 });

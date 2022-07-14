@@ -1,17 +1,18 @@
 #include "ScrollableWidget.hpp"
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 
 namespace GUI {
 
 void ScrollableWidget::handle_event(Event& event) {
     switch (event.type()) {
-    case sf::Event::MouseWheelScrolled: {
-        if (!is_hover() || event.event().mouseWheelScroll.wheel != sf::Mouse::VerticalWheel)
+    case llgl::Event::Type::MouseScroll: {
+        if (!is_hover()) {
+            // TODO: Check wheel
             break;
+        }
         event.set_handled();
         if (content_height() < scroll_area_height())
             break;
-        m_scroll -= event.event().mouseWheelScroll.delta * 60;
+        m_scroll -= event.event().mouse_scroll.delta * 60;
         if (m_scroll < 0)
             m_scroll = 0;
         double bottom_content = content_height() - scroll_area_height();
@@ -31,7 +32,7 @@ void ScrollableWidget::set_scroll(float scroll) {
     m_scroll = scroll;
 }
 
-void ScrollableWidget::draw_scrollbar(GUI::SFMLWindow& window) const {
+void ScrollableWidget::draw_scrollbar(GUI::Window& window) const {
     // "Scrollbar"
     float scroll_area_size = this->scroll_area_height();
     float content_size = this->content_height();

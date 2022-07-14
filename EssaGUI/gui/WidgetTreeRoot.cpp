@@ -13,7 +13,9 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 }
 
 void WidgetTreeRoot::draw() {
-    sf::View gui_view { sf::FloatRect(position().x(), position().y(), size().x(), size().y()) };
+    llgl::View gui_view;
+    gui_view.set_viewport(Util::Recti { rect() });
+    gui_view.set_ortho({ Util::Rectd { 0, 0, size().x(), size().y() } });
     m_window.set_view(gui_view);
 
     if (!m_main_widget)
@@ -23,13 +25,12 @@ void WidgetTreeRoot::draw() {
         m_main_widget->set_size({ { size().x(), Length::Unit::Px }, { size().y(), Length::Unit::Px } });
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
-        m_main_widget->dump(0);
         m_needs_relayout = false;
     }
     m_main_widget->do_draw(m_window);
 }
 
-void WidgetTreeRoot::handle_event(sf::Event event) {
+void WidgetTreeRoot::handle_event(llgl::Event event) {
     if (!m_main_widget)
         return;
     Event gui_event(event);
@@ -59,24 +60,24 @@ void WidgetTreeRoot::tick() {
     Application::the().remove_closed_overlays();
 }
 
-sf::Event WidgetTreeRoot::transform_event(Util::Vector2f offset, sf::Event event) const {
-    if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
-        event.mouseButton.x -= offset.x();
-        event.mouseButton.y -= offset.y();
+llgl::Event WidgetTreeRoot::transform_event(Util::Vector2f offset, llgl::Event event) const {
+    if (event.type == llgl::Event::Type::MouseButtonPress || event.type == llgl::Event::Type::MouseButtonRelease) {
+        event.mouse_button.position.x -= offset.x();
+        event.mouse_button.position.y -= offset.y();
     }
-    else if (event.type == sf::Event::MouseMoved) {
-        event.mouseMove.x -= offset.x();
-        event.mouseMove.y -= offset.y();
+    else if (event.type == llgl::Event::Type::MouseMove) {
+        event.mouse_move.position.x -= offset.x();
+        event.mouse_move.position.y -= offset.y();
     }
 
     return event;
 }
 
-bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event) {
+bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, llgl::Event event) {
     wtr.handle_event(transform_event(wtr.position(), event));
-    bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
-        && !wtr.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
-    return !(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window);
+    bool scroll_outside_window = event.type == llgl::Event::Type::MouseScroll
+        && !wtr.full_rect().contains({ static_cast<float>(event.mouse_scroll.position.x), static_cast<float>(event.mouse_scroll.position.y) });
+    return !(event.type == llgl::Event::Type::MouseMove || event.type == llgl::Event::Type::MouseButtonRelease || scroll_outside_window);
 }
 
 Theme const& WidgetTreeRoot::theme() const {

@@ -4,9 +4,8 @@
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 
-#include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -19,23 +18,23 @@ Application& Application::the() {
     return *s_the;
 }
 
-Application::Application(GUI::SFMLWindow& wnd)
-    : WidgetTreeRoot(wnd) {
+Application::Application(GUI::Window& wnd)
+    : WidgetTreeRoot(wnd)
+    , font { llgl::TTFFont::open_from_file("../assets/fonts/Xolonium-pn4D.ttf") }
+    , bold_font { llgl::TTFFont::open_from_file("../assets/fonts/XoloniumBold-xKZO.ttf") }
+    , fixed_width_font { llgl::TTFFont::open_from_file("../assets/fonts/SourceCodePro-Regular.otf") } {
     assert(!s_the);
     s_the = this;
-    font.loadFromFile("../assets/fonts/Xolonium-pn4D.ttf");
-    bold_font.loadFromFile("../assets/fonts/XoloniumBold-xKZO.ttf");
-    fixed_width_font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf");
 }
 
-sf::Event Application::transform_event(Util::Vector2f offset, sf::Event event) const {
-    if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
-        event.mouseButton.x -= offset.x();
-        event.mouseButton.y -= offset.y();
+llgl::Event Application::transform_event(Util::Vector2f offset, llgl::Event event) const {
+    if (event.type == llgl::Event::Type::MouseButtonPress || event.type == llgl::Event::Type::MouseButtonRelease) {
+        event.mouse_button.position.x -= offset.x();
+        event.mouse_button.position.y -= offset.y();
     }
-    else if (event.type == sf::Event::MouseMoved) {
-        event.mouseMove.x -= offset.x();
-        event.mouseMove.y -= offset.y();
+    else if (event.type == llgl::Event::Type::MouseMove) {
+        event.mouse_move.position.x -= offset.x();
+        event.mouse_move.position.y -= offset.y();
     }
 
     return event;
@@ -50,17 +49,13 @@ void Application::focus_window(OverlayList::iterator new_focused_it) {
     m_overlays.push_back(std::move(ptr));
 }
 
-void Application::handle_event(sf::Event event) {
-    if (event.type == sf::Event::Closed) {
-        // TODO: Allow user to override it.
-        quit();
-        return;
-    }
+void Application::handle_event(llgl::Event event) {
+    // TODO: Allow user to override closed event
 
     // Focus window if mouse button pressed
-    if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.type == llgl::Event::Type::MouseButtonPress) {
         m_focused_overlay = nullptr;
-        Util::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
+        Util::Vector2i position { event.mouse_button.position };
         decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
@@ -76,9 +71,9 @@ void Application::handle_event(sf::Event event) {
     // Pass events to focused tool window
     if (m_focused_overlay) {
         m_focused_overlay->handle_event(transform_event(m_focused_overlay->position(), event));
-        bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
-            && !m_focused_overlay->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
-        if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window))
+        bool scroll_outside_window = event.type == llgl::Event::Type::MouseScroll
+            && !m_focused_overlay->full_rect().contains(Util::Vector2i { event.mouse_scroll.position });
+        if (!(event.type == llgl::Event::Type::MouseMove || event.type == llgl::Event::Type::MouseButtonRelease || scroll_outside_window))
             return;
     }
 
@@ -87,13 +82,13 @@ void Application::handle_event(sf::Event event) {
     // Pass mouse moves to all tool windows + capture all scrolls
     for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
         auto& overlay = **it;
-        if (event.type == sf::Event::MouseMoved) {
+        if (event.type == llgl::Event::Type::MouseMove) {
             overlay.handle_event(transform_event(overlay.position(), event));
             break;
         }
 
-        bool scroll_on_window = event.type == sf::Event::MouseWheelScrolled
-            && overlay.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+        bool scroll_on_window = event.type == llgl::Event::Type::MouseScroll
+            && overlay.full_rect().contains(Util::Vector2i { event.mouse_scroll.position });
 
         if (scroll_on_window)
             should_pass_event_to_main_window = false;
@@ -104,8 +99,8 @@ void Application::handle_event(sf::Event event) {
 }
 
 void Application::handle_events() {
-    sf::Event event;
-    while (window().pollEvent(event))
+    llgl::Event event;
+    while (window().poll_event(event))
         handle_event(event);
 }
 
@@ -115,11 +110,11 @@ void Application::draw() {
         overlay->draw();
 }
 
-void Application::draw_notification(Notification const& notification, float y) const {
+void Application::draw_notification(Notification const& notification, float y) {
     TextDrawOptions text;
     text.font_size = 15;
     auto text_bounds = window().calculate_text_size(notification.message, font, text);
-    Util::Vector2f text_position { window().getSize().x - text_bounds.x() - 20, y + 20 };
+    Util::Vector2f text_position { window().size().x() - text_bounds.x() - 20, y + 20 };
 
     RectangleDrawOptions rs;
     rs.set_border_radius(10);
@@ -130,7 +125,7 @@ void Application::draw_notification(Notification const& notification, float y) c
     }
 
     window().draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
-    window().draw_text(notification.message, font, { window().getSize().x - text_bounds.x() - 20, y + 20 });
+    window().draw_text(notification.message, font, { window().size().x() - text_bounds.x() - 20, y + 20 });
 }
 
 void Application::spawn_notification(Util::UString message, NotificationLevel level) {

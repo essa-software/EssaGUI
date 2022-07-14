@@ -5,7 +5,6 @@
 #include "StateTextButton.hpp"
 #include "TextButton.hpp"
 #include "Textfield.hpp"
-#include <SFML/Graphics/Color.hpp>
 #include <memory>
 #include <vector>
 

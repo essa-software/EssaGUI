@@ -1,10 +1,10 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <LLGL/OpenGL/Texture.hpp>
 #include <string>
 
 namespace Gfx {
 
-sf::Texture require_texture(std::string const& path);
+llgl::opengl::Texture require_texture(std::string const& path);
 
 }

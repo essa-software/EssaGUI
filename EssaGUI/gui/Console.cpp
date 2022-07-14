@@ -2,7 +2,6 @@
 
 #include "Application.hpp"
 
-#include <SFML/Graphics.hpp>
 #include <sstream>
 
 namespace GUI {
@@ -19,25 +18,16 @@ void Console::append_line(LogLine line) {
 }
 
 void Console::append_content(LogLine content) {
-    size_t index = 0;
-    while (true) {
-        auto next_newline = content.text.find("\n", index);
-        if (!next_newline.has_value()) {
-            next_newline = content.text.size();
-        }
-
-        append_line({ .color = content.color, .text = content.text.substring(index, *next_newline - index) });
-        if (next_newline == content.text.size())
-            break;
-        index = *next_newline + 1;
-    }
+    content.text.for_each_line([&](std::span<uint32_t const> span) {
+        append_line({ .color = content.color, .text = Util::UString { span } });
+    });
 }
 
 void Console::clear() {
     m_lines.clear();
 }
 
-void Console::draw(GUI::SFMLWindow& window) const {
+void Console::draw(GUI::Window& window) const {
     size_t s = 0;
     for (auto& line : m_lines) {
         TextDrawOptions options;

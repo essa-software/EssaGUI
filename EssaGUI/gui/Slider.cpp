@@ -1,8 +1,7 @@
 #include "Slider.hpp"
 
-#include "EssaGUI/gfx/SFMLWindow.hpp"
 #include "NotifyUser.hpp"
-#include <SFML/Graphics.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -40,18 +39,19 @@ void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos
 }
 
 void Slider::handle_event(Event& event) {
-    if (event.type() == sf::Event::MouseButtonPressed) {
-        if (is_mouse_over({ event.event().mouseButton.x, event.event().mouseButton.y })) {
+    if (event.type() == llgl::Event::Type::MouseButtonPress) {
+        if (is_mouse_over(event.event().mouse_button.position)) {
             m_dragging = true;
             event.set_handled();
         }
     }
-    else if (event.type() == sf::Event::MouseButtonReleased) {
+    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
         m_dragging = false;
     }
-    else if (event.type() == sf::Event::MouseMoved) {
+    else if (event.type() == llgl::Event::Type::MouseMove) {
         if (m_dragging) {
-            auto mouse_pos_relative_to_slider = Util::Vector2f({ static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) }) - position();
+            // TODO: Support converting UninitializedVector to any Vector directly
+            auto mouse_pos_relative_to_slider = Util::Vector2f { Util::Vector2i { event.event().mouse_move.position } } - position();
             m_val = (mouse_pos_relative_to_slider.x() / size().x()) * (m_max_val - m_min_val) + m_min_val;
 
             if (m_wraparound) {
@@ -76,7 +76,7 @@ float Slider::calculate_knob_size() const {
     return std::max(4.0, size().x() / (m_max_val - m_min_val) * m_step);
 }
 
-void Slider::draw(GUI::SFMLWindow& window) const {
+void Slider::draw(GUI::Window& window) const {
     RectangleDrawOptions slider;
     slider.fill_color = are_all_parents_enabled() ? theme().slider.background : theme().slider.background - Util::Color { 60, 60, 60, 0 };
     window.draw_rectangle({ { 0, size().y() / 2 - 2.5f }, { size().x(), 5.f } }, slider);
