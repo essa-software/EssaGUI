@@ -104,7 +104,7 @@ void ToolWindow::handle_event(sf::Event event) {
             }
         }
         else if (event.type == sf::Event::MouseMoved) {
-            Util::Vector2i mouse_position { static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) };
+            Util::Vector2i mouse_position { event.mouseMove.x, event.mouseMove.y };
             mouse_position += Util::Vector2i { position() };
 
             if (m_dragging) {

@@ -46,9 +46,9 @@ public:
     Util::Vector2i mouse_position() const {
         assert(is_mouse_related());
         if (m_event.type == sf::Event::MouseMoved)
-            return { static_cast<float>(m_event.mouseMove.x), static_cast<float>(m_event.mouseMove.y) };
+            return { m_event.mouseMove.x, m_event.mouseMove.y };
         if (m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased)
-            return { static_cast<float>(m_event.mouseButton.x), static_cast<float>(m_event.mouseButton.y) };
+            return { m_event.mouseButton.x, m_event.mouseButton.y };
         __builtin_unreachable();
     }
 

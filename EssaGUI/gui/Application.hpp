@@ -57,7 +57,7 @@ public:
     void remove_closed_overlays();
 
     virtual Util::Vector2f position() const override { return {}; }
-    virtual Util::Vector2f size() const override { return Util::Vector2f { window().getSize().x, window().getSize().y }; }
+    virtual Util::Vector2f size() const override { return Util::Vector2f { static_cast<float>(window().getSize().x), static_cast<float>(window().getSize().y) }; }
 
     void set_theme(Theme const& theme) { m_theme = &theme; }
     Theme const& theme() const { return *m_theme; }
