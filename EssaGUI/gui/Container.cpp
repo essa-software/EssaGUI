@@ -84,6 +84,8 @@ void BoxLayout::run() {
 
     // 3. Set autosized widgets' size + arrange widgets
     float autosized_widget_size = (available_size_for_autosized_widgets - (m_spacing * (autosized_widget_count - 1))) / autosized_widget_count;
+    if (autosized_widget_size < 0)
+        autosized_widget_size = 0;
     size_t index = 0;
     switch (m_content_alignment) {
     case ContentAlignment::BoxStart: {
