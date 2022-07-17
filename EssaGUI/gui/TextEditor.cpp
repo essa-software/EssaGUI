@@ -143,6 +143,8 @@ void TextEditor::handle_event(Event& event) {
                 event.set_handled();
             } break;
             case llgl::KeyCode::Up: {
+                if (!m_multiline)
+                    break;
                 if (m_cursor.line > 0)
                     m_cursor.line--;
                 if (m_cursor.column > m_lines[m_cursor.line].size())
@@ -151,6 +153,8 @@ void TextEditor::handle_event(Event& event) {
                 event.set_handled();
             } break;
             case llgl::KeyCode::Down: {
+                if (!m_multiline)
+                    break;
                 if (m_cursor.line < m_lines.size() - 1)
                     m_cursor.line++;
                 if (m_cursor.column > m_lines[m_cursor.line].size())
