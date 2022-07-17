@@ -102,7 +102,7 @@ public:
         : Widget(parent) { }
 
     template<class T, class... Args>
-    requires(std::is_base_of_v<Widget, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
+    requires(std::is_base_of_v<Widget, T>&& requires(Container& c, Args&&... args) { T(c, std::forward<Args>(args)...); })
         T* add_widget(Args&&... args) {
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         m_widgets.push_back(widget);
