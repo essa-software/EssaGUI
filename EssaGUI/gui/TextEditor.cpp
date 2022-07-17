@@ -79,6 +79,17 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
         if (on_change)
             on_change(content);
     }
+
+    if (m_lines.size() > 0) {
+        if (m_cursor.line >= m_lines.size())
+            m_cursor.line = m_lines.size() - 1;
+        if (m_cursor.column > m_lines[m_cursor.line].size())
+            m_cursor.column = m_lines[m_cursor.line].size();
+    }
+    else {
+        m_cursor = {};
+    }
+    update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
 }
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
