@@ -47,6 +47,11 @@ Theme& Theme::default_theme() {
             .foreground = Util::Color { 140, 140, 140 },
             .text = Util::Color { 30, 30, 30 },
         };
+        theme.tooltip = {
+            .background = Util::Color { 100, 100, 100 },
+            .foreground = Util::Color { 244, 244, 244 },
+            .text = Util::Color { 244, 244, 244 },
+        };
         theme.positive = Util::Color { 100, 200, 100 };
         theme.negative = Util::Color { 200, 100, 100 };
         theme.neutral = Util::Color { 100, 100, 200 };
