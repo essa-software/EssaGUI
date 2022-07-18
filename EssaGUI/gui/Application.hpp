@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Container.hpp"
+#include "ContextMenu.hpp"
 #include "Theme.hpp"
 #include "ToolWindow.hpp"
 #include "Tooltip.hpp"
@@ -45,6 +46,12 @@ public:
     };
     // FIXME: Generalize it like normal open_overlay
     OpenOrFocusResult open_or_focus_tool_window(Util::UString title, std::string id);
+
+    // NOTE: The opened context menu is modal, meaning that this
+    //       function won't return until user chooses an action
+    //       or dismisses the menu.
+    void open_context_menu(ContextMenu);
+
     Overlay* focused_overlay() const { return m_focused_overlay; }
 
     template<class Callback>

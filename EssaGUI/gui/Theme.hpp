@@ -58,6 +58,8 @@ public:
     BgTextColors prompt;
     BgTextColors tooltip;
 
+    BgTextColors menu;
+
     Util::Color active_selection;
     Util::Color selection;
 

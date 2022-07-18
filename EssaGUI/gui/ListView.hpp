@@ -1,8 +1,10 @@
 #pragma once
 
-#include "ScrollableWidget.hpp"
+#include "ContextMenu.hpp"
 #include "Model.hpp"
+#include "ScrollableWidget.hpp"
 
+#include <EssaUtil/Vector.hpp>
 #include <functional>
 #include <memory>
 
@@ -27,6 +29,9 @@ public:
     virtual void handle_event(Event&) override;
 
     std::function<void(unsigned)> on_click;
+    std::function<std::optional<ContextMenu>(unsigned)> on_context_menu_request;
+
+    Util::Vector2f row_position(unsigned) const;
 
 private:
     virtual float content_height() const override;
