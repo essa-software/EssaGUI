@@ -67,7 +67,7 @@ void ToolWindow::handle_event(llgl::Event event) {
             //     m_resize_mode = Resize::DEFAULT;
             //     cursor.loadFromSystem(sf::Cursor::Arrow);
             // }
-            std::cout << "TODO: set mouse cursor" << std::endl;
+            // std::cout << "TODO: set mouse cursor" << std::endl;
             // window().setMouseCursor(cursor);
         }
 
@@ -125,7 +125,7 @@ void ToolWindow::handle_event(llgl::Event event) {
                 return;
             }
             else if (m_resizing) {
-                //sf::Cursor cursor;
+                // sf::Cursor cursor;
                 switch (m_resize_mode) {
                 case Resize::LEFT:
 
@@ -159,7 +159,7 @@ void ToolWindow::handle_event(llgl::Event event) {
 void ToolWindow::handle_events() {
     // This event handler just takes all the events
     // (except global events) and passes the to the
-    // underlying  main_widget. This is used for modal
+    // underlying main_widget. This is used for modal
     // windows.
     // FIXME: Support moving other ToolWindows even
     //        if other modal window is open.
