@@ -200,8 +200,18 @@ void TextEditor::handle_event(Event& event) {
             }
             case llgl::KeyCode::Enter: {
                 // TODO: Handle multiline case
-                if (on_enter)
-                    on_enter(get_content());
+                if (m_multiline) {
+                    if (event.event().key.ctrl && on_enter) {
+                        on_enter(get_content());
+                    }
+                    else {
+                        insert_codepoint('\n');
+                    }
+                }
+                else {
+                    if (on_enter)
+                        on_enter(get_content());
+                }
                 break;
             }
             case llgl::KeyCode::Backspace: {

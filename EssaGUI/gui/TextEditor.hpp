@@ -50,6 +50,9 @@ public:
     Util::UString selected_text() const;
 
     std::function<void(Util::UString const&)> on_change;
+
+    // The callback that is run when pressing Enter, or Ctrl + Enter
+    // for multiline textboxes.
     std::function<void(Util::UString const&)> on_enter;
 
 private:
