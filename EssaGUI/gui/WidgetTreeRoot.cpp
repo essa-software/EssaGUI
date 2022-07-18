@@ -1,6 +1,7 @@
 #include "WidgetTreeRoot.hpp"
 
 #include "Application.hpp"
+#include "EssaGUI/gfx/ClipViewScope.hpp"
 #include "Widget.hpp"
 
 #include <cassert>
@@ -14,8 +15,8 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 
 void WidgetTreeRoot::draw() {
     llgl::View gui_view;
-    gui_view.set_viewport(Util::Recti { rect() });
-    gui_view.set_ortho({ Util::Rectd { 0, 0, size().x(), size().y() } });
+    gui_view.set_viewport(window().rect());
+    gui_view.set_ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } });
     m_window.set_view(gui_view);
 
     if (!m_main_widget)
@@ -83,5 +84,4 @@ bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, llgl::E
 Theme const& WidgetTreeRoot::theme() const {
     return Application::the().theme();
 }
-
 }
