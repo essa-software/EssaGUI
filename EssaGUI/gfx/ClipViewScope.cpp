@@ -10,6 +10,7 @@ ClipViewScope::ClipViewScope(GUI::Window& target, Util::Rectf rect, Mode mode)
     auto clip_rect = [&]() {
         switch (mode) {
         case Mode::Override:
+            return rect;
         case Mode::Intersect: {
             Util::Recti old_clip_rect {
                 old_viewport.left,
