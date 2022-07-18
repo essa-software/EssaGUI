@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include "ContextMenu.hpp"
 #include "ToolWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
@@ -152,6 +153,11 @@ Application::OpenOrFocusResult Application::open_or_focus_tool_window(Util::UStr
     OpenOrFocusResult result = { .window = static_cast<ToolWindow*>(&open_overlay<ToolWindow>(std::move(id))), .opened = true };
     result.window->set_title(std::move(title));
     return result;
+}
+
+void Application::open_context_menu(ContextMenu context_menu) {
+    auto& menu = open_overlay<ContextMenuOverlay>(context_menu);
+    menu.run();
 }
 
 void Application::focus_overlay(Overlay& overlay) {

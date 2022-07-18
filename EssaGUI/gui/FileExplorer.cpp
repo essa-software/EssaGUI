@@ -295,6 +295,20 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
         }
     };
 
+    m_list->on_context_menu_request = [&](unsigned row) -> std::optional<ContextMenu> {
+        std::cout << "ContextMenu" << std::endl;
+        return ContextMenu {
+            .actions {
+                {
+                    "Open",
+                    [this, row]() {
+                        m_list->on_click(row);
+                    },
+                },
+            }
+        };
+    };
+
     m_path_textbox->on_enter = [&](Util::UString const& path) {
         open_path(path.encode());
     };

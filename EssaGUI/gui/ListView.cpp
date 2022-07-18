@@ -1,9 +1,11 @@
 #include "ListView.hpp"
 
 #include "Application.hpp"
-#include <EssaGUI/gfx/Window.hpp>
+#include "EssaGUI/gui/ContextMenu.hpp"
 #include "EssaGUI/gui/ScrollableWidget.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/Window.hpp>
+#include <LLGL/Window/Mouse.hpp>
 #include <variant>
 
 namespace GUI {
@@ -96,6 +98,10 @@ void ListView::draw(GUI::Window& wnd) const {
     ScrollableWidget::draw_scrollbar(wnd);
 }
 
+Util::Vector2f ListView::row_position(unsigned row) const {
+    return Util::Vector2f { position().x(), position().y() + RowHeight * (row + 1) } + scroll_offset();
+}
+
 Util::Vector2f ListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, RowHeight };
 }
@@ -108,14 +114,21 @@ void ListView::handle_event(Event& event) {
         auto mouse_pos = event.mouse_position();
 
         if (is_mouse_over(mouse_pos)) {
-            for (size_t r = 0; r < rows; r++) {
-                Util::Vector2f cell_position { position().x(), position().y() + RowHeight * (r + 1) };
-                cell_position += scroll_offset();
+            for (size_t row = 0; row < rows; row++) {
+                Util::Vector2f cell_position = row_position(row);
                 Util::Rectf rect(cell_position, { size().x(), RowHeight });
 
                 if (rect.contains(mouse_pos)) {
-                    if (on_click)
-                        on_click(r);
+                    if (event.event().mouse_button.button == llgl::MouseButton::Left && on_click) {
+                        on_click(row);
+                    }
+                    else if (event.event().mouse_button.button == llgl::MouseButton::Right && on_context_menu_request) {
+                        if (auto context_menu = on_context_menu_request(row)) {
+                            if (context_menu->position == Util::Vector2f {})
+                                context_menu->position = Util::Vector2f { mouse_pos } + widget_tree_root().position();
+                            GUI::Application::the().open_context_menu(*context_menu);
+                        }
+                    }
                     return;
                 }
             }

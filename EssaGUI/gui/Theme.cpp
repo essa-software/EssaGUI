@@ -52,6 +52,11 @@ Theme& Theme::default_theme() {
             .foreground = Util::Color { 244, 244, 244 },
             .text = Util::Color { 244, 244, 244 },
         };
+        theme.menu = {
+            .background = Util::Color { 119, 119, 119 },
+            .foreground = Util::Color { 178, 178, 178 },
+            .text = Util::Color { 244, 244, 244 },
+        };
         theme.positive = Util::Color { 100, 200, 100 };
         theme.negative = Util::Color { 200, 100, 100 };
         theme.neutral = Util::Color { 100, 100, 200 };
@@ -206,6 +211,11 @@ void Theme::load_ini(std::string const& path) {
         { "tooltip.background_color", &tooltip.background },
         { "tooltip.foreground_color", &tooltip.foreground },
         { "tooltip.text_color", &tooltip.text },
+
+        // Menu
+        { "menu.background_color", &menu.background },
+        { "menu.foreground_color", &menu.foreground },
+        { "menu.text_color", &menu.text },
 
         // Selection etc.
         { "active_selection", &active_selection },

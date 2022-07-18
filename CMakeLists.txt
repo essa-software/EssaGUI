@@ -20,6 +20,7 @@ add_library(essa-gui
     EssaGUI/gui/ColorPicker.cpp
     EssaGUI/gui/Console.cpp
     EssaGUI/gui/Container.cpp
+    EssaGUI/gui/ContextMenu.cpp
     EssaGUI/gui/Datebox.cpp
     EssaGUI/gui/EventLoop.cpp
     EssaGUI/gui/FileExplorer.cpp
