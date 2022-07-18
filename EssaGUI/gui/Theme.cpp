@@ -55,7 +55,7 @@ Theme& Theme::default_theme() {
         theme.positive = Util::Color { 100, 200, 100 };
         theme.negative = Util::Color { 200, 100, 100 };
         theme.neutral = Util::Color { 100, 100, 200 };
-        theme.active_selection = Util::Color { 160, 160, 255 };
+        theme.active_selection = Util::Color { 146, 180, 219 };
         theme.selection = Util::Color { 160, 160, 160 };
         theme.placeholder = Util::Color { 160, 160, 160 };
         return theme;
