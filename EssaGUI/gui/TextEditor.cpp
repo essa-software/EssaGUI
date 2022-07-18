@@ -369,7 +369,11 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
 
     auto new_cursor = m_cursor.column;
     while (state != State::Done && is_in_range(new_cursor)) {
-        auto next = content.at(direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1);
+        auto next = [&]() -> uint32_t {
+            if (direction == CursorDirection::Right && new_cursor + 1 == content.size())
+                return 0;
+            return content.at(direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1);
+        }();
         // std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
         switch (state) {
         case State::Start:
