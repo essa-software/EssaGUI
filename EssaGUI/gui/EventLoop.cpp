@@ -1,13 +1,16 @@
 #include "EventLoop.hpp"
 
+#include <EssaUtil/Clock.hpp>
+
+using namespace std::chrono_literals;
+
 namespace GUI {
 
 void EventLoop::run() {
-    // sf::Clock fps_clock;
+    Util::Clock clock;
     while (m_running) {
         tick();
-        // TODO: Clock
-        // m_fps = 1.f / fps_clock.restart().asSeconds();
+        m_tps = 1.f / (clock.restart() / 1.0s);
     }
 }
 

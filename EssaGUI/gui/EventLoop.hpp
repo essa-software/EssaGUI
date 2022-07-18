@@ -9,6 +9,7 @@ public:
 
     void run();
     void quit() { m_running = false; }
+    float tps() const { return m_tps; }
 
     bool is_running() const { return m_running; }
 
@@ -16,7 +17,7 @@ private:
     virtual void tick() = 0;
 
     bool m_running = true;
-    float m_fps = 0;
+    float m_tps = 0;
 };
 
 }
