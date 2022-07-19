@@ -92,10 +92,18 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
         if (!has_desired_extension && !std::filesystem::is_directory(o))
             continue;
 
+        auto size = [&]() -> uintmax_t {
+            try {
+                return o.is_directory() ? 0 : o.file_size();
+            } catch (...) {
+                return 0;
+            }
+        }();
+
         m_files.push_back(File {
             .path = o.path(),
-            .size = o.is_directory() ? 0 : o.file_size(),
-            .type = o.status().type() });
+            .size = size,
+            .type = o.status().type(),
 
         // for(const auto& e : m_content.back())
         //     std::cout << e << "\t";
