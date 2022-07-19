@@ -64,7 +64,7 @@ Variant FileModel::data(size_t row, size_t column) const {
         }
     }
     case 4: {
-        return Util::UString { file.type == std::filesystem::file_type::directory ? "Directory" : file_type(file.path) };
+        return Util::UString { file_type(file) };
     }
     case 3:
         std::time_t cftime = std::chrono::system_clock::to_time_t(
@@ -104,6 +104,8 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
             .path = o.path(),
             .size = size,
             .type = o.status().type(),
+            .is_executable = o.status().type() == std::filesystem::file_type::regular && static_cast<bool>(o.status().permissions() & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)),
+        });
 
         // for(const auto& e : m_content.back())
         //     std::cout << e << "\t";
@@ -119,9 +121,12 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
     });
 }
 
-std::string FileModel::file_type(std::filesystem::path path) {
+std::string FileModel::file_type(File const& file) {
+    if (file.is_executable)
+        return "Executable file";
+
     // Some special-cases
-    if (path.filename() == "CMakeLists.txt")
+    if (file.path.filename() == "CMakeLists.txt")
         return "CMake project";
 
     std::map<std::string, std::string> extension_to_name {
@@ -139,10 +144,18 @@ std::string FileModel::file_type(std::filesystem::path path) {
         { ".exe", "Executable file" },
     };
 
-    auto extension = path.extension().string();
-    if (extension.empty() && path.filename().string()[0] == '.') {
-        // This may be a case for files like .gitignore
-        extension = path.filename().string();
+    if (file.type == std::filesystem::file_type::directory)
+        return "Directory";
+
+    auto extension = file.path.extension().string();
+    if (extension.empty()) {
+        if (file.path.filename().string()[0] == '.') {
+            // This may be a case for files like .gitignore
+            extension = file.path.filename().string();
+        }
+        else {
+            return "File";
+        }
     }
     auto it = extension_to_name.find(extension);
     if (it == extension_to_name.end())

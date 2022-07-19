@@ -38,14 +38,15 @@ public:
         std::filesystem::path path, std::function<bool(std::filesystem::path)> condition = [](std::filesystem::path) { return true; });
 
 private:
-    static std::string file_type(std::filesystem::path);
-    llgl::opengl::Texture const* file_icon(size_t row) const;
-
     struct File {
         std::filesystem::path path;
         uint64_t size;
         std::filesystem::file_type type;
+        bool is_executable;
     };
+
+    static std::string file_type(File const& file);
+    llgl::opengl::Texture const* file_icon(size_t row) const;
 
     std::vector<File> m_files;
     std::vector<std::string> m_desired_extensions;
