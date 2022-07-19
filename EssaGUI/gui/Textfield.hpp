@@ -6,10 +6,6 @@
 namespace GUI {
 
 class Textfield : public Widget {
-    Util::UString m_content;
-    int m_font_size = 15;
-    Align m_alignment = Align::CenterLeft;
-
 public:
     explicit Textfield(Container& c)
         : Widget(c) { }
@@ -27,6 +23,17 @@ public:
 
     Align get_alignment() const { return m_alignment; }
     void set_alignment(Align alignment) { m_alignment = alignment; }
+
+    float padding() const { return m_padding; }
+    void set_padding(float p) { m_padding = p; }
+
+    Util::Rectf text_rect() const;
+
+private:
+    Util::UString m_content;
+    int m_font_size = 15;
+    Align m_alignment = Align::CenterLeft;
+    float m_padding = 5;
 };
 
 }
