@@ -169,6 +169,7 @@ llgl::opengl::Texture const* FileModel::file_icon(size_t row) const {
     static llgl::opengl::Texture block_device_icon = Gfx::require_texture("../assets/gui/blockDevice.png");
     static llgl::opengl::Texture symlink_icon = Gfx::require_texture("../assets/gui/symlink.png");
     static llgl::opengl::Texture socket_icon = Gfx::require_texture("../assets/gui/socket.png");
+    static llgl::opengl::Texture executable_file_icon = Gfx::require_texture("../assets/gui/executableFile.png");
 
     switch (m_files[row].type) {
     case std::filesystem::file_type::directory:
@@ -180,6 +181,8 @@ llgl::opengl::Texture const* FileModel::file_icon(size_t row) const {
     case std::filesystem::file_type::socket:
         return &socket_icon;
     default:
+        if (m_files[row].is_executable)
+            return &executable_file_icon;
         return &regular_file_icon;
     }
 }
