@@ -137,4 +137,5 @@ void ListView::handle_event(Event& event) {
 float ListView::content_height() const {
     return (m_model->row_count() + 1) * RowHeight;
 }
+
 }

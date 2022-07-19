@@ -296,8 +296,8 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     };
 
     m_list->on_context_menu_request = [&](unsigned row) -> std::optional<ContextMenu> {
-        std::cout << "ContextMenu" << std::endl;
         ContextMenu context_menu;
+        context_menu.set_title({ m_model->get_path(row).filename().string() });
         context_menu.add_action("Open", [this, row]() {
             m_list->on_click(row);
         });
