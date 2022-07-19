@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/gfx/Window.hpp"
 #include "Overlay.hpp"
 
 namespace GUI {
@@ -12,7 +13,7 @@ public:
     explicit MenuWidget(Container& parent)
         : Widget(parent) { }
 
-    std::function<void(Util::UString const&)> on_action;
+    std::function<void(size_t)> on_action;
 
     void add_action(Util::UString);
     Util::Vector2f wanted_size() const;
@@ -27,6 +28,9 @@ private:
 
 class ContextMenu {
 public:
+    void set_title(Util::UString title) { m_title = std::move(title); }
+    Util::UString title() const { return m_title; }
+
     void add_action(Util::UString label, std::function<void()> callback) {
         m_actions.push_back({ label, callback });
     }
@@ -34,6 +38,7 @@ public:
     std::vector<std::pair<Util::UString, std::function<void()>>> const& actions() const { return m_actions; }
 
 private:
+    Util::UString m_title;
     std::vector<std::pair<Util::UString, std::function<void()>>> m_actions;
 };
 
@@ -42,17 +47,15 @@ public:
     ContextMenuOverlay(GUI::Window& wnd, ContextMenu, Util::Vector2f position);
 
     virtual Util::Vector2f position() const override { return m_position; }
-    virtual Util::Vector2f size() const override {
-        return m_menu_widget->wanted_size();
-    }
+    virtual Util::Vector2f size() const override;
 
 private:
-    void add_action(Util::UString label, std::function<void()> callback);
     virtual void handle_event(llgl::Event) override;
     virtual void handle_events() override;
+    virtual void draw() override;
 
     MenuWidget* m_menu_widget = nullptr;
-    std::map<Util::UString, std::function<void()>> m_actions;
+    ContextMenu m_context_menu;
     Util::Vector2f m_position;
 };
 
