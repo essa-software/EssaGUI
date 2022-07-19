@@ -53,7 +53,7 @@ Theme& Theme::default_theme() {
             .text = Util::Color { 244, 244, 244 },
         };
         theme.menu = {
-            .background = Util::Color { 119, 119, 119 },
+            .background = Util::Color { 80, 80, 80 },
             .foreground = Util::Color { 178, 178, 178 },
             .text = Util::Color { 244, 244, 244 },
         };
