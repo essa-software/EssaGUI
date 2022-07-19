@@ -25,14 +25,21 @@ private:
     virtual void handle_event(Event& event) override;
 };
 
-struct ContextMenu {
-    Util::Vector2f position;
-    std::vector<std::pair<Util::UString, std::function<void()>>> actions;
+class ContextMenu {
+public:
+    void add_action(Util::UString label, std::function<void()> callback) {
+        m_actions.push_back({ label, callback });
+    }
+
+    std::vector<std::pair<Util::UString, std::function<void()>>> const& actions() const { return m_actions; }
+
+private:
+    std::vector<std::pair<Util::UString, std::function<void()>>> m_actions;
 };
 
 class ContextMenuOverlay : public Overlay {
 public:
-    ContextMenuOverlay(GUI::Window& wnd, ContextMenu);
+    ContextMenuOverlay(GUI::Window& wnd, ContextMenu, Util::Vector2f position);
 
     virtual Util::Vector2f position() const override { return m_position; }
     virtual Util::Vector2f size() const override {

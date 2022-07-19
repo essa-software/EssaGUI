@@ -61,11 +61,11 @@ void MenuWidget::handle_event(Event& event) {
     }
 }
 
-ContextMenuOverlay::ContextMenuOverlay(GUI::Window& wnd, ContextMenu context_menu)
+ContextMenuOverlay::ContextMenuOverlay(GUI::Window& wnd, ContextMenu context_menu, Util::Vector2f position)
     : Overlay(wnd, "ContextMenu")
-    , m_position(context_menu.position) {
+    , m_position(position) {
     m_menu_widget = &set_main_widget<MenuWidget>();
-    for (auto const& action : context_menu.actions) {
+    for (auto const& action : context_menu.actions()) {
         add_action(action.first, std::move(action.second));
         m_menu_widget->add_action(std::move(action.first));
     }

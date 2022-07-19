@@ -155,8 +155,8 @@ Application::OpenOrFocusResult Application::open_or_focus_tool_window(Util::UStr
     return result;
 }
 
-void Application::open_context_menu(ContextMenu context_menu) {
-    auto& menu = open_overlay<ContextMenuOverlay>(context_menu);
+void Application::open_context_menu(ContextMenu context_menu, Util::Vector2f position) {
+    auto& menu = open_overlay<ContextMenuOverlay>(context_menu, position);
     menu.run();
 }
 

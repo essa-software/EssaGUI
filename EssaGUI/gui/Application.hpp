@@ -50,7 +50,7 @@ public:
     // NOTE: The opened context menu is modal, meaning that this
     //       function won't return until user chooses an action
     //       or dismisses the menu.
-    void open_context_menu(ContextMenu);
+    void open_context_menu(ContextMenu, Util::Vector2f position);
 
     Overlay* focused_overlay() const { return m_focused_overlay; }
 
