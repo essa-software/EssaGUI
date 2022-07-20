@@ -9,8 +9,8 @@ public:
     explicit ImageWidget(Container& c)
         : Widget(c) { }
 
-    void set_image(llgl::opengl::Texture const* image) {
-        m_image = image;
+    void set_image(llgl::opengl::Texture const& image) {
+        m_image = &image;
     }
 
 private:

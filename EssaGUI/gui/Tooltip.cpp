@@ -12,7 +12,7 @@ void TooltipOverlay::draw() {
     text.fill_color = theme().tooltip.text;
     text.text_align = Align::CenterLeft;
 
-    auto bounds = window().calculate_text_size(m_tooltip.text, Application::the().font, text);
+    auto bounds = window().calculate_text_size(m_tooltip.text, Application::the().font(), text);
 
     RectangleDrawOptions background;
     background.fill_color = theme().tooltip.background;
@@ -27,7 +27,7 @@ void TooltipOverlay::draw() {
         background);
 
     // FIXME: Text size is calculated 2x
-    window().draw_text_aligned_in_rect(m_tooltip.text, rect(), Application::the().font, text);
+    window().draw_text_aligned_in_rect(m_tooltip.text, rect(), Application::the().font(), text);
 }
 
 }

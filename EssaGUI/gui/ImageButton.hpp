@@ -6,7 +6,7 @@ namespace GUI {
 
 class ImageButton : public Button {
 public:
-    ImageButton(Container&, llgl::opengl::Texture image);
+    ImageButton(Container&, llgl::opengl::Texture const& image);
 
     virtual void draw(GUI::Window& window) const override;
 
@@ -15,7 +15,7 @@ private:
 
     virtual Theme::ButtonColors default_button_colors() const override { return theme().image_button; }
 
-    llgl::opengl::Texture m_texture;
+    llgl::opengl::Texture const& m_texture;
 };
 
 }

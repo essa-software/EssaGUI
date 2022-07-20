@@ -42,7 +42,7 @@ void MenuWidget::draw(Window& window) const {
             hovered_background.fill_color = theme().selection;
             window.draw_rectangle(background_rect, hovered_background);
         }
-        window.draw_text_aligned_in_rect(action, text_align_rect, Application::the().font, text);
+        window.draw_text_aligned_in_rect(action, text_align_rect, Application::the().font(), text);
         index++;
     }
 }

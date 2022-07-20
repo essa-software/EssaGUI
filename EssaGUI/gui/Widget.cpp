@@ -138,6 +138,10 @@ Theme const& Widget::theme() const {
     return Application::the().theme();
 }
 
+Gfx::ResourceManager const& Widget::resource_manager() const {
+    return Application::the().resource_manager();
+}
+
 void Widget::dump(unsigned depth) {
     for (unsigned i = 0; i < depth; i++)
         std::cout << "-   ";

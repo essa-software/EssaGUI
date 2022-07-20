@@ -1,5 +1,6 @@
 #pragma once
 
+#include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>
 #include <EssaUtil/Units.hpp>
@@ -148,6 +149,7 @@ protected:
 
     WidgetTreeRoot& widget_tree_root() const { return m_widget_tree_root; }
     Theme const& theme() const;
+    Gfx::ResourceManager const& resource_manager() const;
 
     virtual void relayout() { }
     virtual bool is_mouse_over(Util::Vector2i) const;

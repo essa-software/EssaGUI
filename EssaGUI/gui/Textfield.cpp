@@ -14,7 +14,7 @@ void Textfield::draw(GUI::Window& window) const {
     text.fill_color = get_text_color();
     text.font_size = m_font_size;
     text.text_align = m_alignment;
-    window.draw_text_aligned_in_rect(m_content, text_rect(), Application::the().font, text);
+    window.draw_text_aligned_in_rect(m_content, text_rect(), Application::the().font(), text);
 }
 
 Util::Rectf Textfield::text_rect() const {

@@ -84,4 +84,9 @@ bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, llgl::E
 Theme const& WidgetTreeRoot::theme() const {
     return Application::the().theme();
 }
+
+Gfx::ResourceManager const& WidgetTreeRoot::resource_manager() const {
+    return Application::the().resource_manager();
+}
+
 }

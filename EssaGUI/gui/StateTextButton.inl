@@ -67,7 +67,7 @@ void StateTextButton<T>::draw(GUI::Window& window) const {
         .text_align = m_alignment,
     };
     text_options.fill_color = get_element_from_index(m_index).second.text_color;
-    window.draw_text_aligned_in_rect(get_element_from_index(m_index).first, local_rect(), Application::the().font, text_options);
+    window.draw_text_aligned_in_rect(get_element_from_index(m_index).first, local_rect(), Application::the().font(), text_options);
 }
 
 template<typename T>

@@ -6,10 +6,9 @@
 
 namespace GUI {
 
-ImageButton::ImageButton(Container& c, llgl::opengl::Texture image)
+ImageButton::ImageButton(Container& c, llgl::opengl::Texture const& image)
     : Button(c)
     , m_texture(std::move(image)) {
-    m_texture.set_filtering(llgl::opengl::Texture::Filtering::Linear);
 }
 
 void ImageButton::draw(GUI::Window& window) const {

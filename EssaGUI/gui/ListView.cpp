@@ -55,7 +55,7 @@ void ListView::draw(GUI::Window& wnd) const {
             auto column = m_model->column(c);
             TextDrawOptions text;
             text.font_size = 16;
-            wnd.draw_text(column.name, Application::the().bold_font, Util::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
+            wnd.draw_text(column.name, Application::the().bold_font(), Util::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
             x_pos += column.width;
         }
     }
@@ -81,7 +81,7 @@ void ListView::draw(GUI::Window& wnd) const {
                             TextDrawOptions text;
                             text.font_size = 15;
                             text.text_align = Align::CenterLeft;
-                            wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font, text);
+                            wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font(), text);
                         },
                         [&](llgl::opengl::Texture const* data) {
                             RectangleDrawOptions rect;

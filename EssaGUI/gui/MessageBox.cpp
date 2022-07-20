@@ -25,7 +25,7 @@ MessageBox::MessageBox(GUI::Window& wnd, Util::UString message, Util::UString ti
     {
         TextDrawOptions text_options;
         text_options.font_size = prompt_text->get_font_size();
-        auto text_size = window().calculate_text_size(prompt_text->get_content(), GUI::Application::the().font, text_options);
+        auto text_size = window().calculate_text_size(prompt_text->get_content(), GUI::Application::the().font(), text_options);
         Util::Vector2f total_size { 40 + text_size.x(), 110 + text_size.y() };
         set_size(total_size);
         center_on_screen();

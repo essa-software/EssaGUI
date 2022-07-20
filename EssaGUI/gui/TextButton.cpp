@@ -44,9 +44,9 @@ void TextButton::draw(GUI::Window& window) const {
     text_rect.width -= text_offset;
 
     if (is_active())
-        window.draw_text_aligned_in_rect(m_active_content, local_rect(), Application::the().font, text);
+        window.draw_text_aligned_in_rect(m_active_content, local_rect(), Application::the().font(), text);
     else
-        window.draw_text_aligned_in_rect(m_content, local_rect(), Application::the().font, text);
+        window.draw_text_aligned_in_rect(m_content, local_rect(), Application::the().font(), text);
 }
 
 }

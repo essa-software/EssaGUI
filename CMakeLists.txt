@@ -11,7 +11,7 @@ find_package(LLGL REQUIRED)
 add_library(essa-gui
     EssaGUI/gfx/DefaultGUIShader.cpp
     EssaGUI/gfx/ClipViewScope.cpp
-    EssaGUI/gfx/ResourceLoader.cpp
+    EssaGUI/gfx/ResourceManager.cpp
     EssaGUI/gfx/Window.cpp
 
     EssaGUI/gui/Application.cpp
@@ -66,6 +66,7 @@ target_compile_definitions(essa-gui PUBLIC ESSAUTIL_ENABLE_SFML)
 
 install(FILES cmake/EssaGUIConfig.cmake DESTINATION lib/cmake/EssaGUI)
 install(DIRECTORY EssaGUI/ DESTINATION include/EssaGUI FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
+install(DIRECTORY assets DESTINATION share/EssaGUI)
 install(EXPORT EssaGUI DESTINATION lib/cmake/EssaGUI)
 
 add_subdirectory(examples)
