@@ -46,6 +46,8 @@ add_library(essa-gui
     EssaGUI/gui/ValueSlider.cpp
     EssaGUI/gui/Widget.cpp
     EssaGUI/gui/WidgetTreeRoot.cpp
+    
+    EssaGUI/util/ConfigFile.cpp
 )
 
 if(MINGW)
