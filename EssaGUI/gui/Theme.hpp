@@ -1,6 +1,7 @@
 #pragma once
 
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/Error.hpp>
 #include <optional>
 #include <string>
 
@@ -16,7 +17,7 @@ public:
 
     static Theme& default_theme();
 
-    void load_ini(std::string const& path);
+    Util::OsErrorOr<void> load_ini(std::string const& path);
 
     struct BgTextColors {
         Util::Color background {};
