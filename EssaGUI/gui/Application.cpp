@@ -1,6 +1,7 @@
 #include "Application.hpp"
 
 #include "ContextMenu.hpp"
+#include "EssaGUI/gfx/ResourceManager.hpp"
 #include "ToolWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
@@ -20,10 +21,7 @@ Application& Application::the() {
 }
 
 Application::Application(GUI::Window& wnd)
-    : WidgetTreeRoot(wnd)
-    , font { llgl::TTFFont::open_from_file("../assets/fonts/Xolonium-pn4D.ttf") }
-    , bold_font { llgl::TTFFont::open_from_file("../assets/fonts/XoloniumBold-xKZO.ttf") }
-    , fixed_width_font { llgl::TTFFont::open_from_file("../assets/fonts/SourceCodePro-Regular.otf") } {
+    : WidgetTreeRoot(wnd) {
     assert(!s_the);
     s_the = this;
 }
@@ -114,7 +112,7 @@ void Application::draw() {
 void Application::draw_notification(Notification const& notification, float y) {
     TextDrawOptions text;
     text.font_size = 15;
-    auto text_bounds = window().calculate_text_size(notification.message, font, text);
+    auto text_bounds = window().calculate_text_size(notification.message, font(), text);
     Util::Vector2f text_position { window().size().x() - text_bounds.x() - 20, y + 20 };
 
     RectangleDrawOptions rs;
@@ -126,7 +124,7 @@ void Application::draw_notification(Notification const& notification, float y) {
     }
 
     window().draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
-    window().draw_text(notification.message, font, { window().size().x() - text_bounds.x() - 20, y + 20 });
+    window().draw_text(notification.message, font(), { window().size().x() - text_bounds.x() - 20, y + 20 });
 }
 
 void Application::spawn_notification(Util::UString message, NotificationLevel level) {
@@ -194,6 +192,14 @@ TooltipOverlay& Application::add_tooltip(Tooltip t) {
     auto& container = overlay.set_main_widget<Container>();
     container.set_layout<HorizontalBoxLayout>();
     return overlay;
+}
+
+Theme const& Application::theme() const {
+    if (!m_cached_theme) {
+        m_cached_theme = Theme {};
+        m_cached_theme->load_ini(m_resource_manager.require_lookup_resource("Theme.ini", Gfx::ResourceManager::ResourceType::Generic)).release_value();
+    }
+    return *m_cached_theme;
 }
 
 }

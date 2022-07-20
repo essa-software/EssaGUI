@@ -2,6 +2,7 @@
 
 #include "Container.hpp"
 #include "ContextMenu.hpp"
+#include "EssaGUI/gfx/ResourceManager.hpp"
 #include "Theme.hpp"
 #include "ToolWindow.hpp"
 #include "Tooltip.hpp"
@@ -24,10 +25,12 @@ public:
 
     virtual void handle_event(llgl::Event) override;
 
-    // TODO: Move it to some specialized class
-    llgl::TTFFont font;
-    llgl::TTFFont bold_font;
-    llgl::TTFFont fixed_width_font;
+    Gfx::ResourceManager const& resource_manager() const { return m_resource_manager; }
+
+    llgl::TTFFont& font() const { return m_resource_manager.font(); }
+    llgl::TTFFont& bold_font() const { return m_resource_manager.bold_font(); }
+    llgl::TTFFont& fixed_width_font() const { return m_resource_manager.fixed_width_font(); }
+    Theme const& theme() const;
 
     enum class NotificationLevel {
         Error
@@ -66,9 +69,6 @@ public:
     virtual Util::Vector2f position() const override { return {}; }
     virtual Util::Vector2f size() const override { return Util::Vector2f { window().size() }; }
 
-    void set_theme(Theme const& theme) { m_theme = &theme; }
-    Theme const& theme() const { return *m_theme; }
-
     void focus_overlay(Overlay&);
 
 private:
@@ -93,7 +93,8 @@ private:
     Util::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
-    Theme const* m_theme = &Theme::default_theme();
+    Gfx::ResourceManager m_resource_manager;
+    mutable std::optional<Theme> m_cached_theme;
 };
 
 }

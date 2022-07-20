@@ -39,7 +39,7 @@ void TabButton::draw(GUI::Window& window) const {
     text.fill_color = text_color_for_state();
     text.font_size = 15;
     text.text_align = Align::Center;
-    window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font, text);
+    window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font(), text);
 }
 
 TabSelectWidget::TabSelectWidget(Container& c)

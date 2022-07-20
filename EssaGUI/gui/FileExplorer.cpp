@@ -12,7 +12,6 @@
 #include "Textfield.hpp"
 #include "ToolWindow.hpp"
 
-#include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 
@@ -164,12 +163,12 @@ std::string FileModel::file_type(File const& file) {
 }
 
 llgl::opengl::Texture const* FileModel::file_icon(size_t row) const {
-    static llgl::opengl::Texture directory_icon = Gfx::require_texture("../assets/gui/directory.png");
-    static llgl::opengl::Texture regular_file_icon = Gfx::require_texture("../assets/gui/regularFile.png");
-    static llgl::opengl::Texture block_device_icon = Gfx::require_texture("../assets/gui/blockDevice.png");
-    static llgl::opengl::Texture symlink_icon = Gfx::require_texture("../assets/gui/symlink.png");
-    static llgl::opengl::Texture socket_icon = Gfx::require_texture("../assets/gui/socket.png");
-    static llgl::opengl::Texture executable_file_icon = Gfx::require_texture("../assets/gui/executableFile.png");
+    static llgl::opengl::Texture& directory_icon = GUI::Application::the().resource_manager().require_texture("gui/directory.png");
+    static llgl::opengl::Texture& regular_file_icon = GUI::Application::the().resource_manager().require_texture("gui/regularFile.png");
+    static llgl::opengl::Texture& block_device_icon = GUI::Application::the().resource_manager().require_texture("gui/blockDevice.png");
+    static llgl::opengl::Texture& symlink_icon = GUI::Application::the().resource_manager().require_texture("gui/symlink.png");
+    static llgl::opengl::Texture& socket_icon = GUI::Application::the().resource_manager().require_texture("gui/socket.png");
+    static llgl::opengl::Texture& executable_file_icon = GUI::Application::the().resource_manager().require_texture("gui/executableFile.png");
 
     switch (m_files[row].type) {
     case std::filesystem::file_type::directory:
@@ -189,9 +188,9 @@ llgl::opengl::Texture const* FileModel::file_icon(size_t row) const {
 
 FileExplorer::FileExplorer(GUI::Window& wnd)
     : ToolWindow(wnd) {
-    static llgl::opengl::Texture parent_directory_icon = Gfx::require_texture("../assets/gui/parentDirectory.png");
-    static llgl::opengl::Texture new_folder_icon = Gfx::require_texture("../assets/gui/newFolder.png");
-    static llgl::opengl::Texture new_file_icon = Gfx::require_texture("../assets/gui/newFile.png");
+    static llgl::opengl::Texture& parent_directory_icon = resource_manager().require_texture("gui/parentDirectory.png");
+    static llgl::opengl::Texture& new_folder_icon = resource_manager().require_texture("gui/newFolder.png");
+    static llgl::opengl::Texture& new_file_icon = resource_manager().require_texture("gui/newFile.png");
 
     auto& container = set_main_widget<GUI::Container>();
     container.set_layout<VerticalBoxLayout>().set_spacing(1);

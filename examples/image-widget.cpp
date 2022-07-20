@@ -1,4 +1,3 @@
-#include "EssaGUI/gfx/ResourceLoader.hpp"
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Console.hpp>
 #include <EssaGUI/gui/Container.hpp>
@@ -14,8 +13,7 @@ int main() {
     container1.set_layout<GUI::HorizontalBoxLayout>();
     auto image_widget = container1.add_widget<GUI::ImageWidget>();
 
-    llgl::opengl::Texture texture = Gfx::require_texture("../assets/gui/directory.png");
-    image_widget->set_image(&texture);
+    image_widget->set_image(app.resource_manager().require_texture("gui/directory.png"));
 
     app.run();
     return 0;

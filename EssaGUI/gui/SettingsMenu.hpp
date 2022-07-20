@@ -25,7 +25,7 @@ public:
         No
     };
 
-    MenuEntry& add_entry(llgl::opengl::Texture image, Util::UString tooltip, Expandable = Expandable::Yes);
+    MenuEntry& add_entry(llgl::opengl::Texture const& image, Util::UString tooltip, Expandable = Expandable::Yes);
 
 private:
     virtual bool isolated_focus() const override { return true; }
