@@ -221,18 +221,22 @@ bool Container::focus_next_widget(bool called_from_child) {
     // if (!called_from_child)
     //     std::cout << "======================RUNNING TAB FOCUS======================" << std::endl;
     auto index = index_opt.value();
+
+    if (m_widgets[index]->steals_focus())
+        return false;
+
     do {
         index++;
         // dump(0);
         // std::cout << "focus_next_widget " << called_from_child << ": " << index << " " << m_widgets.size() << std::endl;
         if (index == m_widgets.size()) {
-            if (m_parent && !isolated_focus())
+            if (m_parent && !steals_focus())
                 m_parent->focus_next_widget(true);
             else
                 focus_first_child_or_self();
             break;
         }
-        else if (m_widgets[index]->is_visible() && m_widgets[index]->accepts_focus()) {
+        else if (m_widgets[index]->is_visible() && m_widgets[index]->accepts_focus() && !m_widgets[index]->steals_focus()) {
             // std::cout << "Focusing first_child_or_self: " << index << std::endl;
             m_widgets[index]->focus_first_child_or_self();
             break;
@@ -248,7 +252,7 @@ void Container::focus_first_child_or_self() {
     }
 
     for (auto& widget : m_widgets) {
-        if (widget->is_visible() && widget->accepts_focus()) {
+        if (widget->is_visible() && widget->accepts_focus() && !widget->steals_focus()) {
             widget->focus_first_child_or_self();
             break;
         }
@@ -256,7 +260,7 @@ void Container::focus_first_child_or_self() {
 }
 
 bool Container::accepts_focus() const {
-    if (isolated_focus())
+    if (steals_focus())
         return false;
     for (auto& widget : m_widgets) {
         if (widget->is_visible() && widget->accepts_focus())
