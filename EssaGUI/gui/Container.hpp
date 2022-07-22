@@ -194,13 +194,6 @@ protected:
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;
 
-    // Isolated focus - so that the widget cannot be focused from outside
-    // and the focus cannot "escape" the widget using Tab. Used for settings
-    // windows and settings menu so that you can "circulate" all settings
-    // using Tab.
-    // FIXME: Allow user to set it for any container.
-    virtual bool isolated_focus() const { return false; }
-
     std::optional<size_t> focused_widget_index(bool recursive) const;
     // Returns true if the focus changed (one of children was focused)
     bool focus_next_widget(bool called_from_child);

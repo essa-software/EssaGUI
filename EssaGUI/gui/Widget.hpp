@@ -156,6 +156,15 @@ protected:
     virtual void update();
     virtual void handle_event(Event&);
     virtual bool accepts_focus() const { return false; }
+
+    // "Steals focus" - so that the widget cannot be focused from outside
+    // and the focus cannot "escape" the widget using Tab. Used for settings
+    // windows and settings menu so that you can "circulate" all settings
+    // using Tab. Also used for multiline TextEditor so that you can use
+    // Tab to indent text.
+    // FIXME: Allow user to set it for any widget.
+    virtual bool steals_focus() const { return false; }
+
     virtual void focus_first_child_or_self();
 
     void set_needs_relayout();

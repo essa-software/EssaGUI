@@ -28,7 +28,7 @@ public:
     MenuEntry& add_entry(llgl::opengl::Texture const& image, Util::UString tooltip, Expandable = Expandable::Yes);
 
 private:
-    virtual bool isolated_focus() const override { return true; }
+    virtual bool steals_focus() const override { return true; }
 
     std::vector<std::unique_ptr<MenuEntry>> m_entries;
     Container* m_buttons_container {};
