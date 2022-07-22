@@ -65,6 +65,7 @@ public:
     Util::Color selection;
 
     Util::Color placeholder;
+    Util::Color sidebar;
 };
 
 }

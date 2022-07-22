@@ -176,17 +176,17 @@ void ToolWindow::draw() {
     Util::Vector2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
     RectangleDrawOptions background;
-    background.fill_color = { 50, 50, 50, 128 };
+    background.fill_color = { 50, 50, 50, 220 };
     window().draw_rectangle({ position, size }, background);
 
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
-    auto color = Application::the().focused_overlay() == this ? Util::Color { 160, 160, 160, 150 } : Util::Color { 127, 127, 127, 150 };
+    auto titlebar_color = Application::the().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
 
     RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = 5;
     rs_titlebar.border_radius_top_right = 5;
-    rs_titlebar.fill_color = color;
+    rs_titlebar.fill_color = titlebar_color;
     window().draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
 
     window().draw_text(title(), Application::the().bold_font(), { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = 15 });
@@ -215,10 +215,10 @@ void ToolWindow::draw() {
     }
 
     std::array<llgl::Vertex, 4> varr_border;
-    varr_border[0] = llgl::Vertex { .position = Util::Vector3f { position, 0 }, .color = color };
-    varr_border[1] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = color };
-    varr_border[2] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = color };
-    varr_border[3] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = color };
+    varr_border[0] = llgl::Vertex { .position = Util::Vector3f { position, 0 }, .color = titlebar_color };
+    varr_border[1] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = titlebar_color };
+    varr_border[2] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = titlebar_color };
+    varr_border[3] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = titlebar_color };
     window().draw_vertices(llgl::opengl::PrimitiveType::LineStrip, varr_border);
     {
         Gfx::ClipViewScope scope(window(), rect(), Gfx::ClipViewScope::Mode::Override);
