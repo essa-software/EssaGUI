@@ -47,7 +47,7 @@ void ListView::draw(GUI::Window& wnd) const {
     // Column names
     {
         RectangleDrawOptions rs;
-        rs.fill_color = { 200, 200, 200, 128 };
+        rs.fill_color = theme().text_button.untoggleable.background;
         wnd.draw_rectangle({ scroll_offset(), { size().x(), RowHeight } }, rs);
 
         float x_pos = 0;

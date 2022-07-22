@@ -286,7 +286,7 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     auto sidebar = main_container->add_widget<Container>();
     sidebar->set_size({ { 20.0, Length::Percent }, Length::Auto });
     sidebar->set_layout<GUI::VerticalBoxLayout>();
-    sidebar->set_background_color({ 120, 120, 120, 100 });
+    sidebar->set_background_color(theme().sidebar);
 
     auto add_common_location = [&](Util::UString const& name, std::filesystem::path path) {
         auto button = sidebar->add_widget<GUI::TextButton>();
@@ -340,6 +340,7 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     auto open_folder_container = container.add_widget<GUI::Container>();
     open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     open_folder_container->set_size({ Length::Auto, 40.0_px });
+    open_folder_container->set_background_color(theme().sidebar);
     auto footer_text = open_folder_container->add_widget<GUI::Textfield>();
     footer_text->set_content("Choose folder to open: ");
     footer_text->set_alignment(GUI::Align::CenterRight);

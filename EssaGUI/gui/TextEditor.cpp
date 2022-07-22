@@ -499,7 +499,7 @@ TextDrawOptions TextEditor::get_text_options() const {
 void TextEditor::draw(GUI::Window& window) const {
     RectangleDrawOptions background_rect;
     background_rect.outline_color = Util::Color { 80, 80, 80 };
-    background_rect.outline_thickness = -2;
+    background_rect.outline_thickness = -1;
     background_rect.fill_color = are_all_parents_enabled() ? theme().active_textbox.background : theme().textbox.background;
 
     if (is_focused())
@@ -580,7 +580,7 @@ void TextEditor::draw(GUI::Window& window) const {
         // if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
         auto position = calculate_cursor_position();
         RectangleDrawOptions cursor;
-        cursor.fill_color = Util::Colors::black;
+        cursor.fill_color = theme().active_textbox.text;
         window.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
             cursor);
         // }

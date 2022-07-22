@@ -136,6 +136,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         { "active_selection", &active_selection },
         { "selection", &selection },
         { "placeholder", &placeholder },
+        { "sidebar", &sidebar },
     };
 
     auto theme_ini_file = TRY(Util::ConfigFile::open_ini(path));
