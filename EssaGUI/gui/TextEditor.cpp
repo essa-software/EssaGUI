@@ -214,6 +214,12 @@ void TextEditor::handle_event(Event& event) {
                 }
                 break;
             }
+            case llgl::KeyCode::Tab: {
+                do {
+                    insert_codepoint(' ');
+                } while (m_cursor.column % 4 != 0);
+                break;
+            }
             case llgl::KeyCode::Backspace: {
                 if (m_lines.size() > 0) {
                     if (m_cursor == m_selection_start) {
@@ -445,11 +451,6 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         else {
             return;
         }
-    }
-    else if (codepoint == '\t') {
-        do {
-            insert_codepoint(' ');
-        } while (m_cursor.column % 4 != 0);
     }
     else if (codepoint >= 0x20) {
 
