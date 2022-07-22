@@ -215,6 +215,10 @@ void TextEditor::handle_event(Event& event) {
                 break;
             }
             case llgl::KeyCode::Tab: {
+                if (!m_multiline)
+                    break;
+                if (!can_insert_codepoint(' '))
+                    break;
                 do {
                     insert_codepoint(' ');
                 } while (m_cursor.column % 4 != 0);
