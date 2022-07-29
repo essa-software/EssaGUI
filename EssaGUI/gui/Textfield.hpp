@@ -2,6 +2,7 @@
 
 #include "TextAlign.hpp"
 #include "Widget.hpp"
+#include <EssaUtil/Units.hpp>
 
 namespace GUI {
 
@@ -30,6 +31,8 @@ public:
     Util::Rectf text_rect() const;
 
 private:
+    virtual LengthVector initial_size() const override;
+
     Util::UString m_content;
     int m_font_size = 15;
     Align m_alignment = Align::CenterLeft;
