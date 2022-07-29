@@ -26,4 +26,13 @@ Util::Rectf Textfield::text_rect() const {
     return rect;
 }
 
+LengthVector Textfield::initial_size() const {
+    TextDrawOptions text;
+    text.fill_color = get_text_color();
+    text.font_size = m_font_size;
+    text.text_align = m_alignment;
+    auto size = window().calculate_text_size(m_content, Application::the().font(), text);
+    return { { static_cast<float>(size.x() + m_padding * 2), Length::Px }, { static_cast<float>(size.y() + m_padding * 2), Length::Px } };
+}
+
 }
