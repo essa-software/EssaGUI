@@ -279,11 +279,11 @@ void Container::relayout() {
     if (m_widgets.empty())
         return;
     for (auto& w : m_widgets) {
-        if (w->m_input_size == LengthVector {}) {
-            w->m_input_size = w->initial_size();
-            // std::cout << w << " " << typeid(*w).name() << " set initial size to "
-            //           << w->m_input_size.x().value() << "," << w->m_input_size.y().value() << std::endl;
-        }
+        auto initial_size = w->initial_size();
+        if (w->m_input_size.x == Length::Auto)
+            w->m_input_size.x = initial_size.x;
+        if (w->m_input_size.y == Length::Auto)
+            w->m_input_size.y = initial_size.y;
     }
     if (!m_layout) {
         std::cout << "Not trying to relayout widget without layout!" << std::endl;
