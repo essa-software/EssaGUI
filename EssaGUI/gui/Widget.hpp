@@ -177,7 +177,8 @@ private:
     Container* m_parent = nullptr;
     WidgetTreeRoot& m_widget_tree_root;
     Util::Vector2f m_pos, m_size;
-    LengthVector m_expected_pos, m_input_size;
+    LengthVector m_expected_pos;
+    LengthVector m_input_size { Length::Initial, Length::Initial };
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
     Util::UString m_tooltip_text;
