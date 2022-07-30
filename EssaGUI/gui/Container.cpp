@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 
+#include <EssaUtil/Config.hpp>
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -66,6 +67,8 @@ void BoxLayout::run() {
         case Length::Auto:
             size = 0;
             break;
+        case Length::Initial:
+            ESSA_UNREACHABLE;
         }
         w->set_raw_size(convert_vector_by_orientation({ size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
     }
@@ -280,9 +283,9 @@ void Container::relayout() {
         return;
     for (auto& w : m_widgets) {
         auto initial_size = w->initial_size();
-        if (w->m_input_size.x == Length::Auto)
+        if (w->m_input_size.x == Length::Initial)
             w->m_input_size.x = initial_size.x;
-        if (w->m_input_size.y == Length::Auto)
+        if (w->m_input_size.y == Length::Initial)
             w->m_input_size.y = initial_size.y;
     }
     if (!m_layout) {
