@@ -14,15 +14,11 @@ public:
     TabButton(Container& c)
         : TextButton(c) { }
 
-    static Util::Color const BgColor;
-
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
 
     virtual void draw(GUI::Window&) const override;
 };
-
-Util::Color const TabButton::BgColor { 120, 120, 120, 100 };
 
 void TabButton::draw(GUI::Window& window) const {
     RectangleDrawOptions rect;
@@ -34,7 +30,7 @@ void TabButton::draw(GUI::Window& window) const {
 
     Util::Vector2f text_position;
     if (!is_active())
-        text_position.y() = 4;
+        text_position.y() = 2;
     TextDrawOptions text;
     text.fill_color = text_color_for_state();
     text.font_size = 15;
@@ -77,7 +73,6 @@ TabWidget::TabWidget(Container& c)
     m_tab_select->set_size({ Length::Auto, 30.0_px });
     m_tab_container = add_widget<Container>();
     m_tab_container->set_layout<BasicLayout>();
-    m_tab_container->set_background_color(Util::Color { 200, 200, 200, 100 });
 }
 
 void TabWidget::switch_to_tab(size_t index) {
@@ -93,7 +88,7 @@ void TabWidget::switch_to_tab(size_t index) {
 }
 
 void TabWidget::setup_tab(Util::UString caption, Container* tab) {
-    tab->set_background_color(TabButton::BgColor);
+    tab->set_background_color(theme().tab_button.active.background);
     tab->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     tab->set_visible(m_tabs.size() == 0);
     m_tab_select->add_button(std::move(caption), m_tabs.size());
