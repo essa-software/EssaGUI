@@ -29,6 +29,7 @@ add_library(essa-gui
     EssaGUI/gui/Frame.cpp
     EssaGUI/gui/ImageButton.cpp
     EssaGUI/gui/ImageWidget.cpp
+    EssaGUI/gui/Listbox.cpp
     EssaGUI/gui/ListView.cpp
     EssaGUI/gui/MessageBox.cpp
     EssaGUI/gui/Progressbar.cpp
