@@ -15,7 +15,7 @@ namespace GUI {
 
 // FIXME: WTF this cast
 Window::Window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings)
-    : llgl::Window { size, title, settings } {
+    : llgl::Window { size, std::u8string { reinterpret_cast<char8_t const*>(title.encode().c_str()) }, settings } {
     llgl::opengl::enable_debug_output();
 }
 
@@ -132,7 +132,6 @@ void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Uti
         auto line_position = position;
         line_position.y() -= font.ascent(options.font_size);
         line_position.y() += line_y;
-        line_y += font.line_height(options.font_size);
 
         auto image = font.render_text(Util::UString { span }, options.font_size);
         if (!image)
@@ -147,6 +146,8 @@ void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Uti
         text_rect.fill_color = options.fill_color;
 
         draw_rectangle({ line_position, Util::Vector2f { texture.size() } }, text_rect);
+
+        line_y += font.line_height(options.font_size);
     });
 }
 
