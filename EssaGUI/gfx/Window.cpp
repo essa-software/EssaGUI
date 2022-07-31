@@ -132,6 +132,7 @@ void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Uti
         auto line_position = position;
         line_position.y() -= font.ascent(options.font_size);
         line_position.y() += line_y;
+        line_y += font.line_height(options.font_size);
 
         auto image = font.render_text(Util::UString { span }, options.font_size);
         if (!image)
@@ -146,8 +147,6 @@ void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Uti
         text_rect.fill_color = options.fill_color;
 
         draw_rectangle({ line_position, Util::Vector2f { texture.size() } }, text_rect);
-
-        line_y += font.line_height(options.font_size);
     });
 }
 
