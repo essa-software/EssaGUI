@@ -17,6 +17,7 @@ add_library(essa-gui
     EssaGUI/gui/Application.cpp
     EssaGUI/gui/ArrowButton.cpp
     EssaGUI/gui/Button.cpp
+    EssaGUI/gui/Checkbox.cpp
     EssaGUI/gui/ColorPicker.cpp
     EssaGUI/gui/Console.cpp
     EssaGUI/gui/Container.cpp

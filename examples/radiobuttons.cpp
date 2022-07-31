@@ -12,7 +12,7 @@
 #include <string>
 
 int main() {
-    GUI::Window wnd { { 500, 500 }, "TextEditor" };
+    GUI::Window wnd { { 500, 500 }, "Radiobuttons" };
 
     GUI::Application app(wnd);
 

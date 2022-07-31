@@ -3,6 +3,7 @@ function(add_example targetname)
     target_link_libraries(${targetname} essa-gui)
 endfunction()
 
+add_example("checkboxes")
 add_example("file-explorer")
 add_example("gfx-test")
 add_example("image-widget")
