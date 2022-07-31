@@ -22,6 +22,10 @@ public:
 
     std::function<void(size_t)> on_change;
 
+    void set_row_height(Length height) { m_row_height = height; }
+
+    Length get_row_height() const { return m_row_height; }
+
 private:
     size_t m_index = 0;
     Length m_row_height = 15.0_px;
