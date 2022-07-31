@@ -49,7 +49,7 @@ void WidgetTreeRoot::tick() {
     if (!Application::the().is_running())
         quit();
 
-    // ...but redraw the entire Application!
+    // ...but Redraw the entire Application!
     window().clear();
     Application::the().draw();
     window().display();

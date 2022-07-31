@@ -14,14 +14,14 @@ int main() {
     auto& container1 = wnd1.set_main_widget<GUI::Container>();
     container1.set_layout<GUI::HorizontalBoxLayout>();
     auto console = container1.add_widget<GUI::Console>();
-    console->append_line({ .color = Util::Colors::red, .text = "test1" });
-    console->append_line({ .color = Util::Colors::yellow, .text = "test2" });
-    console->append_line({ .color = Util::Colors::green, .text = "test3" });
-    console->append_line({ .color = Util::Colors::blue, .text = "test4" });
-    console->append_line({ .color = Util::Colors::red, .text = "test5" });
-    console->append_line({ .color = Util::Colors::yellow, .text = "test6" });
-    console->append_line({ .color = Util::Colors::green, .text = "test7" });
-    console->append_line({ .color = Util::Colors::blue, .text = "test8" });
+    console->append_line({ .color = Util::Colors::Red, .text = "test1" });
+    console->append_line({ .color = Util::Colors::Yellow, .text = "test2" });
+    console->append_line({ .color = Util::Colors::Green, .text = "test3" });
+    console->append_line({ .color = Util::Colors::Blue, .text = "test4" });
+    console->append_line({ .color = Util::Colors::Red, .text = "test5" });
+    console->append_line({ .color = Util::Colors::Yellow, .text = "test6" });
+    console->append_line({ .color = Util::Colors::Green, .text = "test7" });
+    console->append_line({ .color = Util::Colors::Blue, .text = "test8" });
 
     app.run();
     return 0;

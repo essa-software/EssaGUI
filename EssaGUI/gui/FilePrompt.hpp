@@ -13,7 +13,7 @@ public:
 
     std::optional<Util::UString> result() const { return m_result; }
 
-    void add_desired_extension(std::string ext) { m_extensions.push_back(ext); }
+    void add_desiRed_extension(std::string ext) { m_extensions.push_back(ext); }
 
 private:
     std::optional<Util::UString> m_result;

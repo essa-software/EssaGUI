@@ -41,11 +41,11 @@ void RadioButton::draw(GUI::Window &window)const{
 
 Theme::ButtonColors RadioButton::default_button_colors() const{
     Theme::ButtonColors colors;
-    colors.active.background = Util::Colors::black;
+    colors.active.background = Util::Colors::Black;
     colors.active.foreground = Util::Color(100, 100, 100);
     colors.active.text = Util::Color(50, 50, 50);
 
-    colors.inactive.background = Util::Colors::black;
+    colors.inactive.background = Util::Colors::Black;
     colors.inactive.foreground = Util::Color(100, 100, 100);
     colors.inactive.text = Util::Color(50, 50, 50);
 

@@ -82,13 +82,13 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
         if (!std::filesystem::exists(o) || !condition(o.path().filename()))
             continue;
 
-        bool has_desired_extension = m_desired_extensions.empty();
-        for (const auto& e : m_desired_extensions) {
+        bool has_desiRed_extension = m_desiRed_extensions.empty();
+        for (const auto& e : m_desiRed_extensions) {
             if (o.path().extension() == e)
-                has_desired_extension = true;
+                has_desiRed_extension = true;
         }
 
-        if (!has_desired_extension && !std::filesystem::is_directory(o))
+        if (!has_desiRed_extension && !std::filesystem::is_directory(o))
             continue;
 
         auto size = [&]() -> uintmax_t {
@@ -349,8 +349,8 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
     open_directory_btn->set_content("Open folder");
     open_directory_btn->set_alignment(Align::Center);
-    open_directory_btn->set_background_color(Util::Colors::red);
-    open_directory_btn->set_text_color(Util::Colors::white);
+    open_directory_btn->set_background_color(Util::Colors::Red);
+    open_directory_btn->set_text_color(Util::Colors::White);
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {

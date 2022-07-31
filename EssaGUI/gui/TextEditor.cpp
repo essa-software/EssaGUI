@@ -111,7 +111,7 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
 void TextEditor::handle_event(Event& event) {
     ScrollableWidget::handle_event(event);
 
-    // TODO: TextEntered
+    // TODO: TextEnteRed
     if (event.type() == llgl::Event::Type::TextInput) {
         if (is_focused()) {
             auto codepoint = event.event().text_input.codepoint;
@@ -587,7 +587,7 @@ void TextEditor::draw(GUI::Window& window) const {
     }
 
     // Border once again so that it covers text
-    background_rect.fill_color = Util::Colors::transparent;
+    background_rect.fill_color = Util::Colors::Transparent;
     window.draw_rectangle(local_rect(), background_rect);
 
     ScrollableWidget::draw_scrollbar(window);

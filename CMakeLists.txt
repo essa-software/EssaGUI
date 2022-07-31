@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_requiRed(VERSION 3.19)
 project(EssaGUI)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_CXX_STANDARD_REQUIRed true)
 
 find_package(GLEW REQUIRED)
 find_package(LLGL REQUIRED)

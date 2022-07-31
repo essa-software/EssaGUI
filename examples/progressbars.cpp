@@ -22,7 +22,7 @@ int main() {
     GUI::Application app(wnd);
 
     auto& container1 = app.set_main_widget<GUI::Container>();
-    container1.set_background_color(Util::Colors::white);
+    container1.set_background_color(Util::Colors::White);
     container1.set_layout<GUI::VerticalBoxLayout>();
 
     std::vector<std::thread> thread_vec;
@@ -31,9 +31,9 @@ int main() {
         auto prog1 = con.add_widget<GUI::Progressbar>(0, 100);
         prog1->set_content(content);
         prog1->set_size({ Length::Auto, 30.0_px });
-        prog1->set_background_color(Util::Colors::white);
-        prog1->set_foreground_color(Util::Colors::black);
-        prog1->set_text_color(Util::Colors::black);
+        prog1->set_background_color(Util::Colors::White);
+        prog1->set_foreground_color(Util::Colors::Black);
+        prog1->set_text_color(Util::Colors::Black);
         prog1->set_progressbar_color(color);
         prog1->set_labelling(label);
         // prog1->set_step(1);
@@ -52,11 +52,11 @@ int main() {
         thread_vec.push_back(std::thread(busy_progressbar, prog1, timestep));
     };
 
-    create_progressbar(Util::Colors::green, 100, container1, "Processbar1", GUI::Progressbar::Labelling::PERCENTAGE);
-    create_progressbar(Util::Colors::blue, 200, container1, "Processbar2", GUI::Progressbar::Labelling::VALUE);
-    create_progressbar(Util::Colors::red, 50, container1, "Processbar3", GUI::Progressbar::Labelling::NONE);
-    create_progressbar(Util::Colors::yellow, 150, container1, "Processbar4", GUI::Progressbar::Labelling::PERCENTAGE);
-    create_progressbar(Util::Colors::cyan, 300, container1, "Processbar5", GUI::Progressbar::Labelling::NONE);
+    create_progressbar(Util::Colors::Green, 100, container1, "Processbar1", GUI::Progressbar::Labelling::PERCENTAGE);
+    create_progressbar(Util::Colors::Blue, 200, container1, "Processbar2", GUI::Progressbar::Labelling::VALUE);
+    create_progressbar(Util::Colors::Red, 50, container1, "Processbar3", GUI::Progressbar::Labelling::NONE);
+    create_progressbar(Util::Colors::Yellow, 150, container1, "Processbar4", GUI::Progressbar::Labelling::PERCENTAGE);
+    create_progressbar(Util::Colors::Cyan, 300, container1, "Processbar5", GUI::Progressbar::Labelling::NONE);
 
     app.run();
 

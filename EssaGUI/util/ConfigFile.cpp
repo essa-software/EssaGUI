@@ -7,8 +7,8 @@ ConfigFile::ConfigFile(std::ifstream input) {
 }
 
 std::optional<Util::Color> ConfigFile::parse_color(std::string const& value) const {
-    if (value == "white")
-        return Util::Colors::white;
+    if (value == "White")
+        return Util::Colors::White;
 
     Util::Color color;
     uint8_t color_arr[4] { 0 };

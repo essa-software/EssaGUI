@@ -30,8 +30,8 @@ public:
     std::filesystem::path get_path(size_t row) const {
         return m_files[row].path;
     }
-    void add_desired_extension(const std::string ext) {
-        m_desired_extensions.push_back(ext);
+    void add_desiRed_extension(const std::string ext) {
+        m_desiRed_extensions.push_back(ext);
     }
 
     void update_content(
@@ -49,7 +49,7 @@ private:
     llgl::opengl::Texture const* file_icon(size_t row) const;
 
     std::vector<File> m_files;
-    std::vector<std::string> m_desired_extensions;
+    std::vector<std::string> m_desiRed_extensions;
 };
 
 class FileExplorer : public ToolWindow {

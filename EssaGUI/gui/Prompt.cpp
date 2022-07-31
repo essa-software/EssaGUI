@@ -34,7 +34,7 @@ Prompt::Prompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_t
     input->set_placeholder(std::move(placeholder));
     input->set_focused();
 
-    // FIXME: Also, why buttons are red by default?
+    // FIXME: Also, why buttons are Red by default?
     auto button_container = container.add_widget<GUI::Container>();
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
     button_container->set_size({ Length::Auto, 30.0_px });

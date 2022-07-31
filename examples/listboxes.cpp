@@ -19,7 +19,7 @@ int main() {
     GUI::Application app(wnd);
 
     auto& container1 = app.set_main_widget<GUI::Container>();
-    container1.set_background_color(Util::Colors::white);
+    container1.set_background_color(Util::Colors::White);
     container1.set_layout<GUI::HorizontalBoxLayout>();
 
     auto listbox1 = container1.add_widget<GUI::Listbox>();
@@ -30,9 +30,9 @@ int main() {
     listbox1->set_row_height(15.0_px);
     listbox1->allow_multichoose(false);
     listbox1->sorted_list(true);
-    listbox1->set_background_color(Util::Colors::white);
-    listbox1->set_foreground_color(Util::Colors::blue);
-    listbox1->set_text_color(Util::Colors::black);
+    listbox1->set_background_color(Util::Colors::White);
+    listbox1->set_foreground_color(Util::Colors::Blue);
+    listbox1->set_text_color(Util::Colors::Black);
     listbox1->on_change = [](size_t index, bool state){
         std::cout << "Element " << index << " is now " << (state ? "enabled" : "disabled") << std::endl;
     };
@@ -45,9 +45,9 @@ int main() {
     listbox2->set_row_height(15.0_px);
     listbox2->allow_multichoose(true);
     listbox2->sorted_list(false);
-    listbox2->set_background_color(Util::Colors::white);
-    listbox2->set_foreground_color(Util::Colors::green);
-    listbox2->set_text_color(Util::Colors::black);
+    listbox2->set_background_color(Util::Colors::White);
+    listbox2->set_foreground_color(Util::Colors::Green);
+    listbox2->set_text_color(Util::Colors::Black);
 
     app.run();
     return 0;

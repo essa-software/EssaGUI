@@ -145,7 +145,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         auto color = theme_ini_file.get_color(keys.first);
         if (!color) {
             std::cout << "Theme: Missing value for " << keys.first << std::endl;
-            *keys.second = Util::Colors::magenta; // So that you easily see the bug
+            *keys.second = Util::Colors::Magenta; // So that you easily see the bug
         }
         else {
             *keys.second = *color;

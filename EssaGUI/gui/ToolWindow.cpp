@@ -78,7 +78,7 @@ void ToolWindow::handle_event(llgl::Event event) {
             if (event.type == llgl::Event::Type::MouseButtonPress) {
                 if (rect.contains(mouse_position)) {
                     button.mousedown = true;
-                    button.hovered = true;
+                    button.hoveRed = true;
                 }
             }
             else if (event.type == llgl::Event::Type::MouseButtonRelease) {
@@ -89,7 +89,7 @@ void ToolWindow::handle_event(llgl::Event event) {
                 }
             }
             else if (event.type == llgl::Event::Type::MouseMove) {
-                button.hovered = rect.contains(mouse_position);
+                button.hoveRed = rect.contains(mouse_position);
             }
 
             titlebar_button_position_x -= TitleBarSize;
@@ -198,7 +198,7 @@ void ToolWindow::draw() {
         //        (And make it more generic)
         RectangleDrawOptions tbb_background;
         tbb_background.border_radius_top_right = 5;
-        tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
+        tbb_background.fill_color = button.hoveRed ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
         window().draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };

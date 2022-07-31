@@ -187,9 +187,9 @@ private:
     bool m_hover = false;
     bool m_visible = true;
     bool m_enabled = true;
-    Util::Color m_background_color = Util::Colors::transparent;
-    Util::Color m_foreground_color = Util::Colors::transparent;
-    Util::Color m_text_color = Util::Colors::white;
+    Util::Color m_background_color = Util::Colors::Transparent;
+    Util::Color m_foreground_color = Util::Colors::Transparent;
+    Util::Color m_text_color = Util::Colors::White;
 };
 
 }

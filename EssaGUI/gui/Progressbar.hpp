@@ -57,7 +57,7 @@ public:
 
 private:
     size_t m_min = 0, m_max = 1;
-    Util::Color m_processbar_color = Util::Colors::green;
+    Util::Color m_processbar_color = Util::Colors::Green;
     size_t m_value = 0, m_step = 1;
     Util::UString m_content = "";
 

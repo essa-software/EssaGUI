@@ -20,8 +20,8 @@
 namespace GUI {
 
 struct DrawOptions {
-    Util::Color fill_color = Util::Colors::white;
-    Util::Color outline_color = Util::Colors::white;
+    Util::Color fill_color = Util::Colors::White;
+    Util::Color outline_color = Util::Colors::White;
     llgl::opengl::Texture const* texture = nullptr;
     float outline_thickness = 0;
 };
@@ -84,7 +84,7 @@ public:
         Util::Matrix4x4f m_old_matrix;
     };
 
-    void clear(Util::Color = Util::Colors::black);
+    void clear(Util::Color = Util::Colors::Black);
 
     void draw_vertices(llgl::opengl::PrimitiveType mode, std::span<llgl::Vertex const>);
     void draw_outline(std::span<Util::Vector3f const>, Util::Color color, float thickness);

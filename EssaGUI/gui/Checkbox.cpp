@@ -74,15 +74,15 @@ void Checkbox::draw(GUI::Window &window) const{
 
 Theme::ButtonColors Checkbox::default_button_colors() const{
     Theme::ButtonColors colors;
-    colors.active.background = Util::Colors::white;
-    colors.active.foreground = Util::Colors::black;
-    colors.active.text = Util::Colors::black;
+    colors.active.background = Util::Colors::White;
+    colors.active.foreground = Util::Colors::Black;
+    colors.active.text = Util::Colors::Black;
 
-    colors.inactive.background = Util::Colors::white;
-    colors.inactive.foreground = Util::Colors::black;
-    colors.inactive.text = Util::Colors::black;
+    colors.inactive.background = Util::Colors::White;
+    colors.inactive.foreground = Util::Colors::Black;
+    colors.inactive.text = Util::Colors::Black;
 
-    colors.untoggleable.background = Util::Colors::white;
+    colors.untoggleable.background = Util::Colors::White;
     colors.untoggleable.foreground = Util::Color(50, 50, 50);
     colors.untoggleable.text = Util::Color(50, 50, 50);
 
