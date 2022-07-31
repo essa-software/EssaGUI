@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 find_package(GLEW REQUIRED)
-find_package(LLGL REQUIRED)
+find_package(EssaUtil REQUIRED)
+
+add_subdirectory(LLGL)
 
 add_library(essa-gui
     EssaGUI/gfx/DefaultGUIShader.cpp
