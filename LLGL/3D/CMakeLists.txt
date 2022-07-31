@@ -6,4 +6,4 @@ set(SOURCES
     Sphere.cpp
 )
 add_llgl_library(3D 3d)
-target_link_libraries(3D Renderer)
+target_link_libraries(LLGL-3D LLGL-Renderer)

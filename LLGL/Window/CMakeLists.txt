@@ -5,4 +5,4 @@ set(SOURCES
     Window.cpp
 )
 add_llgl_library(Window window)
-target_link_libraries(Window essautil SDL2 Renderer)
+target_link_libraries(LLGL-Window essautil SDL2 LLGL-Renderer)

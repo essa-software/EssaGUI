@@ -10,7 +10,7 @@ find_package(EssaUtil REQUIRED)
 
 add_subdirectory(LLGL)
 
-add_library(essa-gui
+add_library(EssaGUI
     EssaGUI/gfx/DefaultGUIShader.cpp
     EssaGUI/gfx/ClipViewScope.cpp
     EssaGUI/gfx/ResourceManager.cpp
@@ -58,9 +58,9 @@ add_library(essa-gui
 )
 
 if(MINGW)
-    target_link_libraries(essa-gui PUBLIC essautil opengl32 GLEW::GLEW)
+    target_link_libraries(EssaGUI PUBLIC essautil opengl32 GLEW::GLEW)
 else()
-    target_link_libraries(essa-gui PUBLIC essautil GL GLEW::GLEW LLGL::Renderer LLGL::Resources)
+    target_link_libraries(EssaGUI PUBLIC essautil GL GLEW::GLEW EssaGUI::LLGL-Renderer EssaGUI::LLGL-Resources)
 endif()
 
 function(setup_target targetname)
@@ -68,13 +68,13 @@ function(setup_target targetname)
     essautil_setup_target(${targetname})
 endfunction()
 
-setup_target(essa-gui)
-target_compile_definitions(essa-gui PUBLIC ESSAUTIL_ENABLE_SFML)
+setup_target(EssaGUI)
+target_compile_definitions(EssaGUI PUBLIC ESSAUTIL_ENABLE_SFML)
 
 install(FILES cmake/EssaGUIConfig.cmake DESTINATION lib/cmake/EssaGUI)
 install(DIRECTORY EssaGUI/ DESTINATION include/EssaGUI FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(DIRECTORY LLGL/ DESTINATION include/LLGL FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(DIRECTORY assets DESTINATION share/EssaGUI)
-install(EXPORT EssaGUI DESTINATION lib/cmake/EssaGUI)
+install(EXPORT EssaGUI DESTINATION lib/cmake/EssaGUI NAMESPACE EssaGUI::)
 
 add_subdirectory(examples)
