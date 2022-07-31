@@ -4,6 +4,7 @@
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/Core/Vertex.hpp>
+#include <array>
 #include <cstddef>
 #include <span>
 #include <vector>
@@ -20,35 +21,46 @@ void Checkbox::draw(GUI::Window &window) const{
     window.draw_rectangle(box, box_opt);
 
     if(is_active()){
-        std::array<llgl::Vertex, 6>  vertex_arr;
-        llgl::Vertex vert;
-        vert.color = get_background_color();
+        switch (m_style) {
+            case Style::CROSS:{
+                std::array<llgl::Vertex, 2> vertex_arr;
+                llgl::Vertex vert;
+                vert.color = get_foreground_color();
 
-        vert.position = Util::Vector3f(box.left + box.width * .1f, box.top + box.height * .3f, 0);
-        vertex_arr[0] = vert;
+                vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .2f, 0);
+                vertex_arr[0] = vert;
 
-        vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .2f, 0);
-        vertex_arr[1] = vert;
+                vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .8f, 0);
+                vertex_arr[1] = vert;
 
-        vert.position = Util::Vector3f(box.left + box.width * .5f, box.top + box.height * .5f, 0);
-        vertex_arr[2] = vert;
+                window.draw_vertices(llgl::opengl::PrimitiveType::Lines, vertex_arr);
 
-        vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .1f, 0);
-        vertex_arr[3] = vert;
+                vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .8f, 0);
+                vertex_arr[0] = vert;
 
-        vert.position = Util::Vector3f(box.left + box.width * .9f, box.top + box.height * .2f, 0);
-        vertex_arr[4] = vert;
+                vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .2f, 0);
+                vertex_arr[1] = vert;
 
-        vert.position = Util::Vector3f(box.left + box.width * .5f, box.top + box.height * .7f, 0);
-        vertex_arr[5] = vert;
+                window.draw_vertices(llgl::opengl::PrimitiveType::Lines, vertex_arr);
+            break;}
+            case Style::MARK:{
+                std::array<llgl::Vertex, 3>  vertex_arr;
+                llgl::Vertex vert;
+                vert.color = get_foreground_color();
 
-        std::cout << "=========== VERTICES ===========\n";
+                vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .4f, 0);
+                vertex_arr[0] = vert;
 
-        for(const auto v : vertex_arr){
-            std::cout << v.position << "\n";
+                vert.position = Util::Vector3f(box.left + box.width * .5f, box.top + box.height * .7f, 0);
+                vertex_arr[1] = vert;
+
+                vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .2f, 0);
+                vertex_arr[2] = vert;
+                
+                window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, vertex_arr);
+
+            break;}
         }
-
-        window.draw_vertices(llgl::opengl::PrimitiveType::TriangleStrip, vertex_arr);
     }
 
     Util::Rectf text_rect(position().x() + size().y() + 5, 0, local_rect().left - size().y() - 5, local_rect().height);

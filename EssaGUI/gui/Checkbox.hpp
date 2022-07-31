@@ -15,8 +15,18 @@ public:
 
     virtual Theme::ButtonColors default_button_colors() const override;
 
+    enum class Style {
+        CROSS,
+        MARK
+    };
+
+    Style get_style() const { return m_style; }
+    void set_style(const Style& style) { m_style = style; }
+
 private:
     Util::UString m_caption = "";
+
+    Style m_style = Style::CROSS;
 };
 
 }

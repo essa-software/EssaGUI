@@ -34,6 +34,21 @@ int main() {
         else
             std::cout << "UNCHECKED\n";
     };
+    
+    auto check2 = container1.add_widget<GUI::Checkbox>();
+    check2->set_caption("Sample checkbox");
+    check2->set_size({Length::Auto, 15.0_px});
+    check2->set_background_color(Util::Colors::white);
+    check2->set_foreground_color(Util::Colors::black);
+    check2->set_text_color(Util::Colors::black);
+    check2->set_style(GUI::Checkbox::Style::MARK);
+
+    check2->on_change = [](bool state){
+        if(state)
+            std::cout << "CHECKED\n";
+        else
+            std::cout << "UNCHECKED\n";
+    };
 
     app.run();
     return 0;
