@@ -32,6 +32,7 @@ add_library(essa-gui
     EssaGUI/gui/MessageBox.cpp
     EssaGUI/gui/Prompt.cpp
     EssaGUI/gui/RadioButton.cpp
+    EssaGUI/gui/RadioGroup.cpp
     EssaGUI/gui/ScrollableWidget.cpp
     EssaGUI/gui/SettingsMenu.cpp
     EssaGUI/gui/SelectWidget.cpp
