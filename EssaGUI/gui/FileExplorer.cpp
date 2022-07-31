@@ -82,13 +82,13 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
         if (!std::filesystem::exists(o) || !condition(o.path().filename()))
             continue;
 
-        bool has_desiRed_extension = m_desiRed_extensions.empty();
-        for (const auto& e : m_desiRed_extensions) {
+        bool has_desired_extension = m_desired_extensions.empty();
+        for (const auto& e : m_desired_extensions) {
             if (o.path().extension() == e)
-                has_desiRed_extension = true;
+                has_desired_extension = true;
         }
 
-        if (!has_desiRed_extension && !std::filesystem::is_directory(o))
+        if (!has_desired_extension && !std::filesystem::is_directory(o))
             continue;
 
         auto size = [&]() -> uintmax_t {

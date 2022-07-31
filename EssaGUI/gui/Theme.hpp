@@ -36,7 +36,7 @@ public:
     ButtonColors tab_button;
 
     Util::Color positive; // "Green" / the "good" thing like applying changes
-    Util::Color negative; // "Red" / the "bad" thing like removing objects
+    Util::Color negative; // "red" / the "bad" thing like removing objects
     Util::Color neutral;  // "Blue"
 
     BgTextColors slider;

@@ -111,7 +111,7 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
 void TextEditor::handle_event(Event& event) {
     ScrollableWidget::handle_event(event);
 
-    // TODO: TextEnteRed
+    // TODO: TextEntered
     if (event.type() == llgl::Event::Type::TextInput) {
         if (is_focused()) {
             auto codepoint = event.event().text_input.codepoint;

@@ -45,7 +45,7 @@ FilePrompt::FilePrompt(GUI::Window& wnd, Util::UString help_text, Util::UString 
         file_explorer_wnd.center_on_screen();
 
         for (const auto& ext : m_extensions)
-            file_explorer_wnd.model()->add_desiRed_extension(ext);
+            file_explorer_wnd.model()->add_desired_extension(ext);
 
         file_explorer_wnd.on_submit = [input](std::filesystem::path path) {
             input->set_content(Util::UString { path.string() });
@@ -54,7 +54,7 @@ FilePrompt::FilePrompt(GUI::Window& wnd, Util::UString help_text, Util::UString 
         file_explorer_wnd.run();
     };
 
-    // FIXME: Also, why buttons are Red by default?
+    // FIXME: Also, why buttons are red by default?
     auto button_container = container.add_widget<Container>();
     button_container->set_layout<HorizontalBoxLayout>().set_spacing(20);
     button_container->set_size({ Length::Auto, 30.0_px });

@@ -16,14 +16,14 @@ int main() {
     auto number_text_box = container1.add_widget<GUI::Textbox>();
     number_text_box->set_placeholder("Enter number");
     number_text_box->on_enter = [](Util::UString const& content) {
-        GUI::message_box("You enteRed number: " + content, "Message", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box("You entered number: " + content, "Message", GUI::MessageBox::Buttons::Ok);
     };
 
     auto text_box = container1.add_widget<GUI::Textbox>();
     text_box->set_placeholder("Enter text");
     text_box->set_data_type(GUI::Textbox::Type::TEXT);
     text_box->on_enter = [](Util::UString const& content) {
-        GUI::message_box("You enteRed text: " + content, "Message", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box("You entered text: " + content, "Message", GUI::MessageBox::Buttons::Ok);
     };
 
     app.run();

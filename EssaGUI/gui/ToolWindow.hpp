@@ -55,7 +55,7 @@ private:
 
     struct TitlebarButton {
         std::function<void()> on_click;
-        bool hoveRed = false;
+        bool hovered = false;
         bool mousedown = false;
     };
     std::vector<TitlebarButton> m_titlebar_buttons;
