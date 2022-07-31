@@ -31,6 +31,7 @@ add_library(essa-gui
     EssaGUI/gui/ImageWidget.cpp
     EssaGUI/gui/ListView.cpp
     EssaGUI/gui/MessageBox.cpp
+    EssaGUI/gui/Progressbar.cpp
     EssaGUI/gui/Prompt.cpp
     EssaGUI/gui/RadioButton.cpp
     EssaGUI/gui/RadioGroup.cpp
