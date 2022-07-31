@@ -16,8 +16,6 @@ public:
         set_layout<VerticalBoxLayout>();
     }
 
-    virtual void do_update();
-
     void add(Util::UString const& label);
     void remove(Util::UString const& label);
 
@@ -28,7 +26,16 @@ public:
 
     bool sorted_list() const { return m_sort_list; }
 
-    void allow_multichoose(bool con) { m_allow_multichoose = con; }
+    void allow_multichoose(bool con) {
+        m_allow_multichoose = con;
+        if (!m_allow_multichoose) { 
+            for(size_t i = 1; i < m_index_vector.size(); i++){
+                m_list_buttons[i]->set_active(false, NotifyUser::No);
+            }
+
+            m_list_buttons.resize(1);
+        }
+    }
     bool allow_multichoose() const { return m_allow_multichoose; }
 
     void set_row_height(Length const& height);
@@ -36,9 +43,8 @@ public:
 
     std::function<void(size_t, bool)> on_change;
 
-    std::vector<size_t> indexes() const { return m_allow_multichoose ? m_index_vector : std::vector<size_t>(1, m_index); }
+    std::vector<size_t> indexes() const { return m_index_vector; }
     void set_index(size_t index) {
-        m_index = index;
         m_index_vector.clear();
         m_index_vector.push_back(index);
     }
@@ -50,7 +56,6 @@ private:
     bool m_allow_multichoose = false;
     Length m_row_height = 15.0_px;
 
-    size_t m_index;
     std::vector<size_t> m_index_vector;
 
     std::vector<TextButton*> m_list_buttons;

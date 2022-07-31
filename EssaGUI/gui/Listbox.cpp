@@ -8,38 +8,6 @@
 
 namespace GUI {
 
-void Listbox::do_update() {
-    m_index_vector.clear();
-
-    size_t i = 0, temp = m_index;
-
-    for (const auto& btn : m_list_buttons) {
-        if (btn->is_active()) {
-            if (!m_allow_multichoose) {
-                btn->set_active_without_action(false);
-                btn->set_background_color(get_background_color());
-                btn->set_text_color(get_text_color());
-            }
-            else {
-                btn->set_active_without_action(true);
-                btn->set_background_color(get_foreground_color());
-                btn->set_text_color(get_background_color());
-            }
-
-            if (m_index != i)
-                temp = i;
-
-            m_index_vector.push_back(i);
-        }
-        i++;
-    }
-
-    m_index = temp;
-
-    if (m_index < m_list_buttons.size())
-        m_list_buttons[m_index]->set_active(true);
-}
-
 void Listbox::sort_vector() {
     if (m_sort_list) {
         std::vector<Util::UString> vec;
@@ -48,11 +16,11 @@ void Listbox::sort_vector() {
             vec.push_back(btn->content());
         }
 
-        std::stable_sort(vec.begin(), vec.end(), [](Util::UString  const& lhs, Util::UString const& rhs) {
+        std::stable_sort(vec.begin(), vec.end(), [](Util::UString const& lhs, Util::UString const& rhs) {
             return lhs < rhs;
         });
 
-        for(size_t i = 0; i < m_list_buttons.size(); i++){
+        for (size_t i = 0; i < m_list_buttons.size(); i++) {
             m_list_buttons[i]->set_content(vec[i]);
         }
     }
@@ -68,9 +36,35 @@ void Listbox::add(const Util::UString& label) {
     btn->set_size({ Length::Auto, m_row_height });
     btn->set_toggleable(true);
 
+    if (!m_allow_multichoose && m_index_vector.size() == 0) {
+        btn->set_active(true);
+        m_index_vector.push_back(0);
+    }
+
     m_list_buttons.push_back(btn);
 
     btn->on_change = [this, i = m_list_buttons.size() - 1](bool state) {
+        if (m_allow_multichoose) {
+            size_t index = 0;
+            m_index_vector.clear();
+
+            for (const auto& btn : m_list_buttons) {
+                if (btn->is_active()) {
+                    m_index_vector.push_back(index);
+                }
+                index++;
+            }
+        }
+        else {
+            if(i == m_index_vector.front()){
+                return;
+            }
+
+            m_list_buttons[m_index_vector.front()]->set_active(false, NotifyUser::No);
+            m_list_buttons[i]->set_active(true, NotifyUser::No);
+            m_index_vector.front() = i;
+        }
+
         if (on_change)
             on_change(i, state);
     };
