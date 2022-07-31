@@ -2,7 +2,7 @@
 
 A GUI framework written in C++. It was initially a component of [ESSA](https://github.com/essa-software/essa). Currently is developed along with [EssaDB](https://github.com/essa-software/EssaDB).
 
-**EssaGUI** uses SFML for system events and OpenGL 3.2 for rendering. EssaGUI apps run a simple window manager in the main (system) window. You can open dialogs and other windows here.
+**EssaGUI** uses [LLGL](https://github.com/sppmacd/llgl) and OpenGL 3.2 as rendering backends. EssaGUI apps run a simple window manager in the main (system) window. You can open dialogs and other windows here.
 
 ## Features
 
@@ -12,6 +12,8 @@ A GUI framework written in C++. It was initially a component of [ESSA](https://g
 * Theming
 
 ## Build
+
+You need to install [LLGL](https://github.com/sppmacd/llgl) according to its build instructions.
 
 From the project root directory:
 ```sh
