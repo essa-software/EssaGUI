@@ -29,7 +29,7 @@ int main() {
         std::cout << "Selected index: " << index << "\n";
     };
 
-    radiogrp->set_row_height(20.0_px);
+    radiogrp->set_row_height(15.0_px);
 
     app.run();
     return 0;

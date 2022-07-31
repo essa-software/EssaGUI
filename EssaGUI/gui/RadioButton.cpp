@@ -8,9 +8,11 @@
 namespace GUI{
 
 void RadioButton::draw(GUI::Window &window)const{
-    Util::Vector2f circle_pos = position();
-    Util::Vector2f circle_size(size().y() - 2, size().y() - 2);
-    circle_pos += circle_size / 2;
+    Util::Vector2f circle_size(size().y(), size().y());
+    Util::Vector2f circle_pos = circle_size / 2;
+
+    circle_size -= Util::Vector2f(2, 2);
+
     DrawOptions circle_opt;
     circle_opt.outline_color = get_background_color();
     circle_opt.outline_thickness = 2; 
