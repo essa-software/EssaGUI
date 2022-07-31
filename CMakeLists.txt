@@ -73,6 +73,7 @@ target_compile_definitions(essa-gui PUBLIC ESSAUTIL_ENABLE_SFML)
 
 install(FILES cmake/EssaGUIConfig.cmake DESTINATION lib/cmake/EssaGUI)
 install(DIRECTORY EssaGUI/ DESTINATION include/EssaGUI FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
+install(DIRECTORY LLGL/ DESTINATION include/LLGL FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(DIRECTORY assets DESTINATION share/EssaGUI)
 install(EXPORT EssaGUI DESTINATION lib/cmake/EssaGUI)
 
