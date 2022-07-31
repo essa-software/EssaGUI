@@ -15,7 +15,7 @@ namespace GUI {
 
 // FIXME: WTF this cast
 Window::Window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings)
-    : llgl::Window { size, std::u8string { reinterpret_cast<char8_t const*>(title.encode().c_str()) }, settings } {
+    : llgl::Window { size, title, settings } {
     llgl::opengl::enable_debug_output();
 }
 
