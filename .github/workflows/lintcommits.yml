@@ -10,7 +10,6 @@ on: [pull_request_target]
 jobs:
   lint_commits:
     runs-on: ubuntu-22.04
-    if: always() && github.repository == 'essa-software/EssaGUI'
 
     steps:
       - name: Lint PR commits
