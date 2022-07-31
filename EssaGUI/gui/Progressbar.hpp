@@ -1,8 +1,11 @@
 #pragma once
 
-#include "EssaGUI/gui/Widget.hpp"
+#include "Widget.hpp"
+
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/UString.hpp>
+#include <functional>
+
 namespace GUI {
 
 class Progressbar : public Widget {
@@ -50,7 +53,7 @@ public:
 
     std::function<void()> on_finish;
 
-    bool finished() const {return m_value >= m_max;}
+    bool finished() const { return m_value >= m_max; }
 
 private:
     size_t m_min = 0, m_max = 1;
