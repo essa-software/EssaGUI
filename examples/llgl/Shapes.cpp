@@ -6,8 +6,7 @@
 #include <LLGL/Renderer/Transform.hpp>
 #include <LLGL/Window/Window.hpp>
 
-int main()
-{
+int main() {
     llgl::Window window { { 500, 500 }, "Primitive Shapes", { 3, 2 } };
 
     llgl::opengl::enable(llgl::opengl::Feature::DepthTest);
@@ -26,11 +25,7 @@ int main()
         }
 
         window.renderer().clear();
-
-        llgl::Projection view;
-        view.set_viewport(window.rect());
-        view.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
-        window.renderer().apply_projection(view);
+        window.renderer().apply_projection(llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()));
 
         llgl::Transform view_transform = llgl::Transform {}.translate({ 0, -1.5, -5 });
 

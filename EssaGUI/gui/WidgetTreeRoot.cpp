@@ -14,10 +14,7 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 }
 
 void WidgetTreeRoot::draw() {
-    llgl::Projection gui_projection;
-    gui_projection.set_viewport(window().rect());
-    gui_projection.set_ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } });
-    m_window.set_projection(gui_projection);
+    m_window.set_projection(llgl::Projection::ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } }, window().rect()));
 
     if (!m_main_widget)
         return;
@@ -88,5 +85,4 @@ Theme const& WidgetTreeRoot::theme() const {
 Gfx::ResourceManager const& WidgetTreeRoot::resource_manager() const {
     return Application::the().resource_manager();
 }
-
 }

@@ -4,6 +4,7 @@
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <LLGL/OpenGL/Error.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <cstdint>
@@ -15,7 +16,8 @@ namespace GUI {
 
 // FIXME: WTF this cast
 Window::Window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings)
-    : llgl::Window { size, title, settings } {
+    : llgl::Window { size, title, settings }
+    , m_projection { llgl::Projection::ortho({ Util::Rectd { {}, Util::Vector2d { size } } }, { 0, 0, size.x(), size.y() }) } {
     llgl::opengl::enable_debug_output();
 }
 

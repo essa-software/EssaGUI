@@ -133,16 +133,12 @@ int main() {
 
         renderer.clear(Util::Colors::Black);
 
-        llgl::Projection projection;
-        projection.set_viewport(window.rect());
         blur_shader.set_framebuffer_size(Util::Vector2f { window.size() });
 
         {
             // Draw the first (non-blurred) pass
             pass1.clear(Util::Color { 0, 0, 0 });
-
-            projection.set_ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } });
-            pass1.apply_projection(projection);
+            pass1.apply_projection(llgl::Projection::ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } }, window.rect()));
 
             auto oscilloscope_position = next_oscilloscope_position();
 
@@ -179,10 +175,7 @@ int main() {
         }
 
         // Draw the result to backbuffer
-        llgl::Projection no_transform_projection;
-        no_transform_projection.set_viewport(window.rect());
-        no_transform_projection.set_ortho({ { -1, -1, 2, 2 } });
-        renderer.apply_projection(no_transform_projection);
+        renderer.apply_projection({ {}, window.rect() });
         renderer.draw_vao(fullscreen_vao, llgl::opengl::PrimitiveType::TriangleStrip, { .shader = &basic_shader, .texture = &accum.texture() });
         window.display();
     }

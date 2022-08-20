@@ -47,10 +47,7 @@ int main() {
         }
         llgl::opengl::clear(llgl::opengl::ClearMask::Color | llgl::opengl::ClearMask::Depth);
 
-        llgl::Projection view;
-        view.set_viewport(window.rect());
-        view.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
-        window.renderer().apply_projection(view);
+        window.renderer().apply_projection(llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()));
         window.renderer().render_object(batch_renderer, {});
         window.display();
     }

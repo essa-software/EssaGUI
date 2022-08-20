@@ -77,10 +77,7 @@ int main() {
         }
         llgl::opengl::clear(llgl::opengl::ClearMask::Color | llgl::opengl::ClearMask::Depth);
 
-        llgl::Projection projection;
-        projection.set_viewport(window.rect());
-        projection.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
-        window.renderer().apply_projection(projection);
+        window.renderer().apply_projection(llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()));
         model_transform = model_transform.rotate_x(0.05);
 
         if (a_pressed)

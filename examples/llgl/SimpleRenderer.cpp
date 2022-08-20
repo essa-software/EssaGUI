@@ -25,10 +25,7 @@ int main() {
         window.renderer().clear(Util::Color { 255, 128, 128 });
         llgl::opengl::enable(llgl::opengl::Feature::ScissorTest);
 
-        llgl::Projection projection;
-        projection.set_viewport(window.rect());
-        projection.set_ortho(Util::Rectd { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) });
-        window.renderer().apply_projection(projection);
+        window.renderer().apply_projection(llgl::Projection::ortho({ Util::Rectd { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } }, window.rect()));
 
         llgl::opengl::set_scissor({ 0, 0, 200, 200 });
         window.renderer().draw_vao(vao, llgl::opengl::PrimitiveType::Triangles, { .shader = &shader });

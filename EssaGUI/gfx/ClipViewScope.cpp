@@ -23,22 +23,16 @@ ClipViewScope::ClipViewScope(GUI::Window& target, Util::Rectf rect, Mode mode)
         }
         __builtin_unreachable();
     }();
-    auto clip_view = create_clip_view({ clip_rect.left, clip_rect.top, clip_rect.width, clip_rect.height });
+
     if (mode == Mode::Intersect) {
-        auto x = rect.left;
-        auto y = rect.top;
-        auto vx = clip_view.viewport().left;
-        auto vy = clip_view.viewport().top;
-        Util::Vector2f offset_position { vx - x, vy - y };
+        Util::Vector2f offset_position { clip_rect.left - rect.left, clip_rect.top - rect.top };
 
         // TODO: Add some kind of move()
-        auto ortho = clip_view.ortho_args();
-        ortho.left += offset_position.x();
-        ortho.right += offset_position.x();
-        ortho.top += offset_position.y();
-        ortho.bottom += offset_position.y();
-        clip_view.set_ortho(ortho);
+        clip_rect.left += offset_position.x();
+        clip_rect.top += offset_position.y();
     }
+
+    auto clip_view = create_clip_view({ clip_rect.left, clip_rect.top, clip_rect.width, clip_rect.height });
     m_target.set_projection(clip_view);
 }
 
@@ -47,10 +41,7 @@ ClipViewScope::~ClipViewScope() {
 }
 
 llgl::Projection ClipViewScope::create_clip_view(Util::Rectf const& rect) const {
-    llgl::Projection view;
-    view.set_ortho({ { 0, 0, rect.width, rect.height } });
-    view.set_viewport(Util::Recti { rect });
-    return view;
+    return llgl::Projection::ortho({ { 0, 0, rect.width, rect.height } }, Util::Recti { rect });
 }
 
 }

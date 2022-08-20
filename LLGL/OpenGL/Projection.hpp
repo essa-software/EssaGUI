@@ -8,30 +8,21 @@ namespace llgl {
 
 class Projection {
 public:
-    enum class Type {
-        Ortho,
-        Perspective
-    };
+    static Projection ortho(opengl::OrthoArgs, Util::Recti viewport);
+    static Projection perspective(opengl::PerspectiveArgs, Util::Recti viewport);
 
-    void set_viewport(Util::Recti viewport) { m_viewport = viewport; }
-    void set_ortho(opengl::OrthoArgs ortho) { m_type = Type::Ortho, m_data.ortho = ortho; }
-    void set_perspective(opengl::PerspectiveArgs persp) { m_type = Type::Perspective, m_data.perspective = persp; }
+    Projection() = default;
 
-    Type type() const { return m_type; }
+    Projection(Util::Matrix4x4f matrix, Util::Recti viewport)
+        : m_matrix(matrix)
+        , m_viewport(viewport) { }
+
     Util::Recti viewport() const { return m_viewport; }
-    opengl::OrthoArgs ortho_args() const { return m_data.ortho; }
-    opengl::PerspectiveArgs perspective_args() const { return m_data.perspective; }
-
-    Util::Matrix4x4f matrix() const;
+    Util::Matrix4x4f matrix() const { return m_matrix; }
 
 private:
-    Type m_type;
+    Util::Matrix4x4f m_matrix;
     Util::Recti m_viewport;
-
-    union {
-        opengl::OrthoArgs ortho;
-        opengl::PerspectiveArgs perspective;
-    } m_data;
 };
 
 }
