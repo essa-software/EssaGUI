@@ -53,6 +53,7 @@ add_library(EssaGUI
     EssaGUI/gui/ValueSlider.cpp
     EssaGUI/gui/Widget.cpp
     EssaGUI/gui/WidgetTreeRoot.cpp
+    EssaGUI/gui/WorldView.cpp
 
     EssaGUI/gui/sprites/RectangleShape.cpp
     EssaGUI/gui/sprites/Sprite.cpp
