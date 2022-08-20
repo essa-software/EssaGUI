@@ -1,6 +1,0 @@
-add_llgl_test(CoreRenderer)
-target_link_libraries(llgl-testCoreRenderer PUBLIC Renderer)
-add_llgl_test(SimpleRenderer)
-target_link_libraries(llgl-testSimpleRenderer PUBLIC Renderer)
-add_llgl_test(Oscilloscope)
-target_link_libraries(llgl-testOscilloscope PUBLIC Renderer)
