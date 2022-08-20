@@ -9,88 +9,48 @@ namespace Gfx {
 
 ResourceManager::ResourceManager()
     : m_config {
-        (find_resource_roots(), Util::ConfigFile::open_ini(require_lookup_resource("Config.ini", ResourceType::Generic)).release_value())
+        (find_resource_roots(), Util::ConfigFile::open_ini(require_lookup_resource("", "Config.ini")).release_value())
     } { }
 
-std::optional<std::string> ResourceManager::lookup_resource(std::string const& path, ResourceType resource_type) const {
-    auto base_directory = [resource_type]() {
-        switch (resource_type) {
-        case ResourceType::Texture:
-            return "textures";
-        case ResourceType::Font:
-            return "fonts";
-        case ResourceType::Data:
-            return "data";
-        case ResourceType::Generic:
-            return "";
-        }
-        __builtin_unreachable();
-    }();
-
+std::optional<std::string> ResourceManager::lookup_resource(std::string_view base, std::string const& path) const {
     for (auto const& root : m_resource_roots) {
-        auto filesystem_path = std::filesystem::path { root } / base_directory / path;
+        auto filesystem_path = std::filesystem::path { root } / base / path;
         if (std::filesystem::exists(filesystem_path))
             return filesystem_path;
     }
     return {};
 }
 
-std::string ResourceManager::require_lookup_resource(std::string const& path, ResourceType type) const {
-    auto fs_path = lookup_resource(path, type);
+std::string ResourceManager::require_lookup_resource(std::string_view base, std::string const& path) const {
+    auto fs_path = lookup_resource(base, path);
     if (!fs_path) {
-        auto resource_name = [type]() {
-            switch (type) {
-            case ResourceType::Texture:
-                return "texture";
-            case ResourceType::Font:
-                return "font";
-            case ResourceType::Data:
-                return "data file";
-            case ResourceType::Generic:
-                return "resource";
-            }
-            __builtin_unreachable();
-        }();
-
-        std::cout << "ResourceManager: Failed to lookup required " << resource_name << " " << path << ", aborting!" << std::endl;
+        std::cout << "ResourceManager: Failed to lookup required resource from " << base << "/" << path << ", aborting!" << std::endl;
         exit(1);
     }
     return *fs_path;
 }
 
-llgl::opengl::Texture& ResourceManager::require_texture(std::string const& path) const {
-    auto cached_texture = m_cached_textures.find(path);
-    if (cached_texture != m_cached_textures.end())
-        return cached_texture->second;
-
-    auto image = llgl::ImageLoader::load_from_file(require_lookup_resource(path, ResourceType::Texture));
-    if (!image) {
-        std::cout << "ResourceManager: Failed to load required texture '" << path << "'. Aborting" << std::endl;
-        exit(1);
-    }
-    cached_texture = m_cached_textures.insert({ path, llgl::opengl::Texture::create_from_image(*image) }).first;
-    return cached_texture->second;
+std::optional<Texture> ResourceTraits<Texture>::load_from_file(std::string const& path) {
+    auto image = llgl::ImageLoader::load_from_file(path);
+    if (!image)
+        return {};
+    return llgl::opengl::Texture::create_from_image(*image);
 }
 
-llgl::TTFFont& ResourceManager::require_font(std::string const& path) const {
-    auto cached_font = m_cached_fonts.find(path);
-    if (cached_font != m_cached_fonts.end())
-        return cached_font->second;
-
-    cached_font = m_cached_fonts.insert({ path, llgl::TTFFont::open_from_file(require_lookup_resource(path, ResourceType::Font)) }).first;
-    return cached_font->second;
+std::optional<Font> ResourceTraits<Font>::load_from_file(std::string const& path) {
+    return llgl::TTFFont::open_from_file(path);
 }
 
 llgl::TTFFont& ResourceManager::font() const {
-    return require_font(m_config.get("DefaultFont").value_or("font.ttf"));
+    return require<Font>(m_config.get("DefaultFont").value_or("font.ttf"));
 }
 
 llgl::TTFFont& ResourceManager::bold_font() const {
-    return require_font(m_config.get("DefaultBoldFont").value_or("bold-font.ttf"));
+    return require<Font>(m_config.get("DefaultBoldFont").value_or("bold-font.ttf"));
 }
 
 llgl::TTFFont& ResourceManager::fixed_width_font() const {
-    return require_font(m_config.get("DefaultFixedWidthFont").value_or("fixed-width-font.ttf"));
+    return require<Font>(m_config.get("DefaultFixedWidthFont").value_or("fixed-width-font.ttf"));
 }
 
 static std::filesystem::path exec_path() {
