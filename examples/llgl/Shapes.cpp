@@ -3,6 +3,7 @@
 #include <LLGL/3D/Sphere.hpp>
 #include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
 #include <LLGL/OpenGL/Utils.hpp>
+#include <LLGL/Renderer/Camera.hpp>
 #include <LLGL/Renderer/Transform.hpp>
 #include <LLGL/Window/Window.hpp>
 
@@ -24,10 +25,11 @@ int main() {
         while (window.poll_event(event)) {
         }
 
-        window.renderer().clear();
-        window.renderer().apply_projection(llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()));
+        llgl::Camera camera { llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()) };
+        camera = camera.translate({ 0, 1.5, 5 }).rotate_z(10.0_deg);
 
-        llgl::Transform view_transform = llgl::Transform {}.translate({ 0, -1.5, -5 });
+        window.renderer().clear();
+        window.renderer().apply_projection(camera.projection());
 
         light_angle += 0.01;
         shape_angle += 0.05;
@@ -39,7 +41,7 @@ int main() {
             window.renderer().render_object(sphere, {
                                                         .shader = &shader,
                                                         .model_matrix = llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
-                                                        .view_matrix = view_transform.matrix(),
+                                                        .view_matrix = camera.view_matrix(),
                                                     });
         }
 
@@ -48,7 +50,7 @@ int main() {
             window.renderer().render_object(sphere, {
                                                         .shader = &shader,
                                                         .model_matrix = llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
-                                                        .view_matrix = view_transform.matrix(),
+                                                        .view_matrix = camera.view_matrix(),
                                                     });
         }
 
@@ -57,7 +59,7 @@ int main() {
             window.renderer().render_object(cube, {
                                                       .shader = &shader,
                                                       .model_matrix = llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
-                                                      .view_matrix = view_transform.matrix(),
+                                                      .view_matrix = camera.view_matrix(),
                                                   });
         }
 

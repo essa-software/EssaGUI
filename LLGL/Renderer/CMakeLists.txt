@@ -1,5 +1,6 @@
 set(SOURCES
     BatchRenderer.cpp
+    Camera.cpp
     CoreRenderer.cpp
     Renderer.cpp
     RenderToTexture.cpp
