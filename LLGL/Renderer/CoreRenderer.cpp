@@ -12,22 +12,22 @@
 
 namespace llgl {
 
-void CoreRenderer::apply_view(View const& view)
+void CoreRenderer::apply_projection(Projection const& projection)
 {
-    m_view = view;
-    auto viewport_rect = view.viewport();
+    m_projection = projection;
+    auto viewport_rect = projection.viewport();
     viewport_rect.top = m_window.size().y() - (viewport_rect.top + viewport_rect.height);
     opengl::set_viewport(viewport_rect);
 }
 
-View CoreRenderer::view() const
+Projection CoreRenderer::projection() const
 {
-    return m_view;
+    return m_projection;
 }
 
 void CoreRenderer::draw_vao(opengl::VAO const& vao, opengl::PrimitiveType primitive_type, DrawState const& state)
 {
-    StateScope scope(state, m_view);
+    StateScope scope(state, m_projection);
     vao.draw(state.shader->attribute_mapping(), primitive_type);
 }
 

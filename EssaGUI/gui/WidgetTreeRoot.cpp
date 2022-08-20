@@ -14,10 +14,10 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 }
 
 void WidgetTreeRoot::draw() {
-    llgl::View gui_view;
-    gui_view.set_viewport(window().rect());
-    gui_view.set_ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } });
-    m_window.set_view(gui_view);
+    llgl::Projection gui_projection;
+    gui_projection.set_viewport(window().rect());
+    gui_projection.set_ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } });
+    m_window.set_projection(gui_projection);
 
     if (!m_main_widget)
         return;

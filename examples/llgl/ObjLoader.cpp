@@ -13,14 +13,13 @@
 #include <LLGL/Window/Window.hpp>
 #include <iostream>
 
-int main()
-{
+int main() {
     llgl::Window window { { 500, 500 }, "OBJ loader", { 3, 2 } };
 
     llgl::opengl::enable(llgl::opengl::Feature::DepthTest);
     llgl::opengl::set_clear_color(Util::Color { 255, 128, 128 });
 
-    auto object = llgl::ObjLoader::load_object_from_file("../car.obj");
+    auto object = llgl::ObjLoader::load_object_from_file("../ladyball.obj");
     if (!object.has_value()) {
         std::cerr << "FAILED TO READ :((" << std::endl;
         return 1;
@@ -46,42 +45,42 @@ int main()
         llgl::Event event;
         while (window.poll_event(event)) {
             switch (event.type) {
-                case llgl::Event::Type::KeyPress:
-                    std::cout << "key press: " << llgl::to_string(event.key.keycode) << std::endl;
-                    if (event.key.keycode == llgl::KeyCode::A)
-                        a_pressed = true;
-                    else if (event.key.keycode == llgl::KeyCode::D)
-                        d_pressed = true;
-                    else if (event.key.keycode == llgl::KeyCode::W)
-                        w_pressed = true;
-                    else if (event.key.keycode == llgl::KeyCode::S)
-                        s_pressed = true;
-                    break;
-                case llgl::Event::Type::KeyRelease:
-                    std::cout << "key release: " << llgl::to_string(event.key.keycode) << std::endl;
-                    if (event.key.keycode == llgl::KeyCode::A)
-                        a_pressed = false;
-                    else if (event.key.keycode == llgl::KeyCode::D)
-                        d_pressed = false;
-                    else if (event.key.keycode == llgl::KeyCode::W)
-                        w_pressed = false;
-                    else if (event.key.keycode == llgl::KeyCode::S)
-                        s_pressed = false;
-                    break;
-                case llgl::Event::Type::MouseMove:
-                    yaw += Util::deg_to_rad<float>(event.mouse_move.relative.x);
-                    pitch += Util::deg_to_rad<float>(event.mouse_move.relative.y);
-                    break;
-                default:
-                    break;
+            case llgl::Event::Type::KeyPress:
+                std::cout << "key press: " << llgl::to_string(event.key.keycode) << std::endl;
+                if (event.key.keycode == llgl::KeyCode::A)
+                    a_pressed = true;
+                else if (event.key.keycode == llgl::KeyCode::D)
+                    d_pressed = true;
+                else if (event.key.keycode == llgl::KeyCode::W)
+                    w_pressed = true;
+                else if (event.key.keycode == llgl::KeyCode::S)
+                    s_pressed = true;
+                break;
+            case llgl::Event::Type::KeyRelease:
+                std::cout << "key release: " << llgl::to_string(event.key.keycode) << std::endl;
+                if (event.key.keycode == llgl::KeyCode::A)
+                    a_pressed = false;
+                else if (event.key.keycode == llgl::KeyCode::D)
+                    d_pressed = false;
+                else if (event.key.keycode == llgl::KeyCode::W)
+                    w_pressed = false;
+                else if (event.key.keycode == llgl::KeyCode::S)
+                    s_pressed = false;
+                break;
+            case llgl::Event::Type::MouseMove:
+                yaw += Util::deg_to_rad<float>(event.mouse_move.relative.x);
+                pitch += Util::deg_to_rad<float>(event.mouse_move.relative.y);
+                break;
+            default:
+                break;
             }
         }
         llgl::opengl::clear(llgl::opengl::ClearMask::Color | llgl::opengl::ClearMask::Depth);
 
-        llgl::View view;
-        view.set_viewport(window.rect());
-        view.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
-        window.renderer().apply_view(view);
+        llgl::Projection projection;
+        projection.set_viewport(window.rect());
+        projection.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
+        window.renderer().apply_projection(projection);
         model_transform = model_transform.rotate_x(0.05);
 
         if (a_pressed)

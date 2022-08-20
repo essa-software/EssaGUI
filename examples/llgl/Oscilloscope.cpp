@@ -14,8 +14,7 @@
 #include <SDL2/SDL_video.h>
 #include <iostream>
 
-static llgl::opengl::Program& shader()
-{
+static llgl::opengl::Program& shader() {
     static Util::DelayedInit<llgl::opengl::Program> program;
     if (!program.is_initialized()) {
         static char const* VERTEX_SHADER = R"~~~(
@@ -75,20 +74,17 @@ void main()
 class BlurShader : public llgl::opengl::Shader {
 public:
     BlurShader()
-        : llgl::opengl::Shader(shader())
-    {
+        : llgl::opengl::Shader(shader()) {
     }
 
-    virtual llgl::opengl::AttributeMapping attribute_mapping() const override
-    {
+    virtual llgl::opengl::AttributeMapping attribute_mapping() const override {
         return { .position = 1 };
     }
 
     void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
 
 private:
-    virtual void on_bind(llgl::opengl::ShaderScope& scope) const override
-    {
+    virtual void on_bind(llgl::opengl::ShaderScope& scope) const override {
         scope.set_uniform("accum", llgl::opengl::ShaderScope::CurrentTexture);
         scope.set_uniform("pass1", 1);
         scope.set_uniform("fbSize", m_framebuffer_size);
@@ -97,16 +93,14 @@ private:
     Util::Vector2f m_framebuffer_size;
 };
 
-Util::Vector2f next_oscilloscope_position()
-{
+Util::Vector2f next_oscilloscope_position() {
     static float angle = 0;
     angle += 0.7;
     return Util::Vector2f { std::sin(angle), std::cos(angle) } * 20
         + Util::Vector2f { llgl::mouse_position() };
 }
 
-int main()
-{
+int main() {
     llgl::Window window({ 512, 512 }, "Oscilloscope");
     llgl::opengl::enable_debug_output();
 
@@ -132,23 +126,23 @@ int main()
         llgl::Event event;
         while (window.poll_event(event)) {
             switch (event.type) {
-                default:
-                    break;
+            default:
+                break;
             }
         }
 
         renderer.clear(Util::Colors::Black);
 
-        llgl::View view;
-        view.set_viewport(window.rect());
+        llgl::Projection projection;
+        projection.set_viewport(window.rect());
         blur_shader.set_framebuffer_size(Util::Vector2f { window.size() });
 
         {
             // Draw the first (non-blurred) pass
             pass1.clear(Util::Color { 0, 0, 0 });
 
-            view.set_ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } });
-            pass1.apply_view(view);
+            projection.set_ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } });
+            pass1.apply_projection(projection);
 
             auto oscilloscope_position = next_oscilloscope_position();
 
@@ -185,10 +179,10 @@ int main()
         }
 
         // Draw the result to backbuffer
-        llgl::View no_transform_view;
-        no_transform_view.set_viewport(window.rect());
-        no_transform_view.set_ortho({ { -1, -1, 2, 2 } });
-        renderer.apply_view(no_transform_view);
+        llgl::Projection no_transform_projection;
+        no_transform_projection.set_viewport(window.rect());
+        no_transform_projection.set_ortho({ { -1, -1, 2, 2 } });
+        renderer.apply_projection(no_transform_projection);
         renderer.draw_vao(fullscreen_vao, llgl::opengl::PrimitiveType::TriangleStrip, { .shader = &basic_shader, .texture = &accum.texture() });
         window.display();
     }

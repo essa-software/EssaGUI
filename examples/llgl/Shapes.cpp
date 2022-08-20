@@ -27,10 +27,10 @@ int main()
 
         window.renderer().clear();
 
-        llgl::View view;
+        llgl::Projection view;
         view.set_viewport(window.rect());
         view.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
-        window.renderer().apply_view(view);
+        window.renderer().apply_projection(view);
 
         llgl::Transform view_transform = llgl::Transform {}.translate({ 0, -1.5, -5 });
 

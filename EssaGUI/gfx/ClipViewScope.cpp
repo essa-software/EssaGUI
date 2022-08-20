@@ -4,9 +4,9 @@ namespace Gfx {
 
 ClipViewScope::ClipViewScope(GUI::Window& target, Util::Rectf rect, Mode mode)
     : m_target(target)
-    , m_old_view(target.view()) {
+    , m_old_projection(target.projection()) {
 
-    auto old_viewport = m_old_view.viewport();
+    auto old_viewport = m_old_projection.viewport();
     auto clip_rect = [&]() {
         switch (mode) {
         case Mode::Override:
@@ -39,16 +39,15 @@ ClipViewScope::ClipViewScope(GUI::Window& target, Util::Rectf rect, Mode mode)
         ortho.bottom += offset_position.y();
         clip_view.set_ortho(ortho);
     }
-    m_target.set_view(clip_view);
+    m_target.set_projection(clip_view);
 }
 
 ClipViewScope::~ClipViewScope() {
-    m_target.set_view(m_old_view);
+    m_target.set_projection(m_old_projection);
 }
 
-llgl::View ClipViewScope::create_clip_view(Util::Rectf const& rect) const {
-
-    llgl::View view;
+llgl::Projection ClipViewScope::create_clip_view(Util::Rectf const& rect) const {
+    llgl::Projection view;
     view.set_ortho({ { 0, 0, rect.width, rect.height } });
     view.set_viewport(Util::Recti { rect });
     return view;

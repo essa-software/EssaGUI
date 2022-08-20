@@ -11,7 +11,7 @@
 #include <LLGL/OpenGL/Texture.hpp>
 #include <LLGL/OpenGL/VAO.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/OpenGL/View.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/Renderer/DrawState.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 #include <LLGL/Window/Window.hpp>
@@ -47,8 +47,8 @@ public:
     Window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& = {});
     virtual ~Window() = default;
 
-    void set_view(llgl::View view) { m_view = view; }
-    llgl::View view() const { return m_view; }
+    void set_projection(llgl::Projection p) { m_projection = p; }
+    llgl::Projection projection() const { return m_projection; }
 
     void set_texture(llgl::opengl::Texture const* tex) { m_texture = tex; }
 
@@ -105,7 +105,7 @@ private:
 
     llgl::opengl::VAO m_temporary_vao;
 
-    llgl::View m_view;
+    llgl::Projection m_projection;
     Util::Matrix4x4f m_model_matrix;
     Util::Matrix4x4f m_view_matrix;
     llgl::opengl::Shader* m_shader = nullptr;

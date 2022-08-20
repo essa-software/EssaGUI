@@ -6,7 +6,7 @@
 
 namespace llgl {
 
-class View {
+class Projection {
 public:
     enum class Type {
         Ortho,

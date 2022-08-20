@@ -1,7 +1,7 @@
 #include "LLGL/Core/Vector3.hpp"
 #include <EssaUtil/Color.hpp>
 #include <LLGL/OpenGL/Utils.hpp>
-#include <LLGL/OpenGL/View.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/Renderer/BatchRenderer.hpp>
 #include <LLGL/Renderer/Renderer.hpp>
 #include <LLGL/Window/Window.hpp>

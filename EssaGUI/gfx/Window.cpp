@@ -36,7 +36,7 @@ void Window::draw_indexed_vertices(llgl::opengl::PrimitiveType type, std::span<l
 }
 
 void Window::apply_states() {
-    renderer().apply_view(m_view);
+    renderer().apply_projection(m_projection);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }

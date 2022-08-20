@@ -4,7 +4,7 @@
 namespace llgl
 {
 
-StateScope::StateScope(DrawState const& state, View const& view)
+StateScope::StateScope(DrawState const& state, Projection const& view)
     : m_shader_scope(*state.shader)
 {
     m_shader_scope.set_uniform("projectionMatrix", view.matrix());

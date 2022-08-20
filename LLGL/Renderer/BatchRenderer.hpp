@@ -15,9 +15,9 @@ class BatchRenderer : public Renderer
     , public Renderable
 {
 public:
-    virtual void apply_view(View const&) override { }
+    virtual void apply_projection(Projection const&) override { }
     virtual void render(Renderer&, DrawState) const override;
-    virtual View view() const override { return {}; } // TODO
+    virtual Projection projection() const override { return {}; } // TODO
     virtual void draw_vao(opengl::VAO const&, opengl::PrimitiveType, DrawState const&) override {} // TODO until VAOs can be copied
     void draw_vao(opengl::VAO&&, opengl::PrimitiveType, DrawState const&);
 

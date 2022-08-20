@@ -15,10 +15,10 @@ public:
     ~ClipViewScope();
 
 private:
-    llgl::View create_clip_view(Util::Rectf const&) const;
+    llgl::Projection create_clip_view(Util::Rectf const&) const;
 
     GUI::Window& m_target;
-    llgl::View m_old_view;
+    llgl::Projection m_old_projection;
 };
 
 }

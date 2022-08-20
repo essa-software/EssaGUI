@@ -11,16 +11,15 @@ namespace llgl {
 class CoreRenderer : public Renderer {
 public:
     explicit CoreRenderer(Window& wnd)
-        : m_window(wnd)
-    {
+        : m_window(wnd) {
     }
 
-    virtual void apply_view(View const&) override;
-    virtual View view() const override;
+    virtual void apply_projection(Projection const&) override;
+    virtual Projection projection() const override;
     virtual void draw_vao(opengl::VAO const&, opengl::PrimitiveType, DrawState const&) override;
 
 private:
-    View m_view;
+    Projection m_projection;
     Window& m_window;
 };
 

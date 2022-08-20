@@ -11,8 +11,8 @@ public:
     explicit RenderToTexture(Util::Vector2i size);
 
     virtual void clear(std::optional<Util::Color> color = {}) override;
-    virtual void apply_view(View const&) override;
-    virtual View view() const override;
+    virtual void apply_projection(Projection const&) override;
+    virtual Projection projection() const override;
     virtual void draw_vao(opengl::VAO const&, opengl::PrimitiveType, DrawState const&) override;
     opengl::Texture const& texture() const { return m_fbo.color_texture(); }
     void set_label(std::string const& label);
@@ -20,7 +20,7 @@ public:
 private:
     Window const* m_window = nullptr;
     opengl::FBO m_fbo;
-    View m_view;
+    Projection m_projection;
 };
 
 }

@@ -5,7 +5,7 @@
 #include <EssaUtil/DelayedInit.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
-#include <LLGL/OpenGL/View.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 
 namespace llgl
 {
@@ -13,7 +13,7 @@ namespace llgl
 class StateScope
 {
 public:
-    StateScope(DrawState const&, View const&);
+    StateScope(DrawState const&, Projection const&);
 
     opengl::ShaderScope& shader_scope() { return m_shader_scope; }
 

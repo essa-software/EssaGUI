@@ -1,13 +1,13 @@
-#include "View.hpp"
+#include "Projection.hpp"
 
 #include <iostream>
 
 namespace llgl {
 
-Util::Matrix4x4f View::matrix() const
+Util::Matrix4x4f Projection::matrix() const
 {
     switch (type()) {
-        case View::Type::Ortho: {
+        case Projection::Type::Ortho: {
             auto ortho = ortho_args();
             float tx = -(ortho.right + ortho.left) / (ortho.right - ortho.left);
             float ty = -(ortho.top + ortho.bottom) / (ortho.top - ortho.bottom);
@@ -19,7 +19,7 @@ Util::Matrix4x4f View::matrix() const
                 0.0f, 0.0f, 0.0f, 1.0f
             };
         }
-        case View::Type::Perspective: {
+        case Projection::Type::Perspective: {
             auto persp = perspective_args();
             float f = 1.f / std::tan(persp.fov / 2);
             return {

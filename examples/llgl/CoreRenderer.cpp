@@ -1,16 +1,15 @@
 #include <EssaUtil/Color.hpp>
 #include <LLGL/OpenGL/Blend.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
 #include <LLGL/OpenGL/Transform.hpp>
 #include <LLGL/OpenGL/Utils.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/OpenGL/View.hpp>
 #include <LLGL/Renderer/BatchRenderer.hpp>
 #include <LLGL/Renderer/Renderer.hpp>
 #include <LLGL/Window/Window.hpp>
 
-int main()
-{
+int main() {
     llgl::Window window { { 500, 500 }, "core renderer", { 3, 2 } };
 
     std::vector<Util::Colorf> color_array;
@@ -48,10 +47,10 @@ int main()
         }
         llgl::opengl::clear(llgl::opengl::ClearMask::Color | llgl::opengl::ClearMask::Depth);
 
-        llgl::View view;
+        llgl::Projection view;
         view.set_viewport(window.rect());
         view.set_perspective({ 1.22, window.aspect(), 0.1, 20 });
-        window.renderer().apply_view(view);
+        window.renderer().apply_projection(view);
         window.renderer().render_object(batch_renderer, {});
         window.display();
     }
