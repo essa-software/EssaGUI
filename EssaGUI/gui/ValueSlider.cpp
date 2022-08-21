@@ -56,9 +56,9 @@ double ValueSlider::value() const {
     return m_slider->get_value();
 }
 
-void ValueSlider::set_value(double value) {
-    m_slider->set_value(value);
-    m_textbox->set_content(Util::UString { std::to_string(value) });
+void ValueSlider::set_value(double value, NotifyUser notify_user) {
+    m_slider->set_value(value, notify_user);
+    m_textbox->set_content(Util::UString { std::to_string(value) }, notify_user);
 }
 
 }

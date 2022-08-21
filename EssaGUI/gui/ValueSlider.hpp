@@ -15,7 +15,7 @@ public:
     void set_unit(Util::UString unit) { m_unit_textfield->set_content(std::move(unit)); }
 
     double value() const;
-    void set_value(double value);
+    void set_value(double value, NotifyUser = NotifyUser::Yes);
 
     Slider& slider() { return *m_slider; }
 
