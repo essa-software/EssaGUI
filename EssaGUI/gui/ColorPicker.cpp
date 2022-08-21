@@ -201,12 +201,12 @@ void ColorPicker::draw(GUI::Window& window) const {
 
     RectangleDrawOptions color_rect;
     color_rect.fill_color = m_color;
-    window.draw_rectangle({ 2, 2, size().y() - 4, size().y() - 4 }, color_rect);
+    window.draw_rectangle({ 4, 4, size().y() - 8, size().y() - 8 }, color_rect);
 
     TextDrawOptions html_display;
     html_display.fill_color = are_all_parents_enabled() ? theme().active_textbox.text : theme().textbox.text;
     html_display.text_align = Align::CenterLeft;
     html_display.font_size = 15;
-    window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { size().y(), 2, size().x() - size().y(), size().y() - 4 }, resource_manager().fixed_width_font(), html_display);
+    window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { size().y(), 4, size().x() - size().y(), size().y() - 8 }, resource_manager().fixed_width_font(), html_display);
 }
 }
