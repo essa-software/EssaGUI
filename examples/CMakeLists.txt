@@ -6,6 +6,7 @@ endfunction()
 
 add_example("essa-gui/canvas")
 add_example("essa-gui/checkboxes")
+add_example("essa-gui/color-picker")
 add_example("essa-gui/file-explorer")
 add_example("essa-gui/gfx-test")
 add_example("essa-gui/image-widget")
