@@ -71,8 +71,6 @@ void Texture::ensure_initialized(Format format)
 {
     if (m_id == 0) {
         glGenTextures(1, &m_id);
-
-        std::cout << "Ensure initialized " << m_id << std::endl;
         set_filtering(Filtering::Nearest);
 
         TextureBinder binder(*this);
