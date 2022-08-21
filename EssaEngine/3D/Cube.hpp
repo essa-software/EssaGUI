@@ -8,17 +8,17 @@
 #include <LLGL/Renderer/Renderable.hpp>
 #include <vector>
 
-namespace llgl {
+namespace Essa {
 
-class Cube : public Renderable {
+class Cube : public llgl::Renderable {
 public:
     explicit Cube();
-    virtual void render(Renderer&, DrawState) const override;
+    virtual void render(llgl::Renderer&, llgl::DrawState) const override;
 
 private:
     void generate();
 
-    opengl::VAO m_vao;
+    llgl::opengl::VAO m_vao;
 };
 
 }

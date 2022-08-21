@@ -8,18 +8,18 @@
 #include <LLGL/Renderer/Renderable.hpp>
 #include <vector>
 
-namespace llgl {
+namespace Essa {
 
-class Sphere : public Renderable {
+class Sphere : public llgl::Renderable {
 public:
     explicit Sphere();
-    virtual void render(Renderer&, DrawState) const override;
+    virtual void render(llgl::Renderer&, llgl::DrawState) const override;
 
 private:
     void generate();
     size_t vertex_index(unsigned stack, unsigned sector) const;
 
-    opengl::VAO m_vao;
+    llgl::opengl::VAO m_vao;
 };
 
 }

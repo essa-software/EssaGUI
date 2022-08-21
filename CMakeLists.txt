@@ -9,6 +9,7 @@ find_package(GLEW REQUIRED)
 find_package(EssaUtil REQUIRED)
 
 add_subdirectory(LLGL)
+add_subdirectory(EssaEngine)
 
 add_library(EssaGUI
     EssaGUI/gfx/DefaultGUIShader.cpp
@@ -76,6 +77,7 @@ setup_target(EssaGUI)
 target_compile_definitions(EssaGUI PUBLIC ESSAUTIL_ENABLE_SFML)
 
 install(FILES cmake/EssaGUIConfig.cmake DESTINATION lib/cmake/EssaGUI)
+install(DIRECTORY EssaEngine/ DESTINATION include/EssaEngine FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(DIRECTORY EssaGUI/ DESTINATION include/EssaGUI FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(DIRECTORY LLGL/ DESTINATION include/LLGL FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 install(DIRECTORY assets DESTINATION share/EssaGUI)

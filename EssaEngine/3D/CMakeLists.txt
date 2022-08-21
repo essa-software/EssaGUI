@@ -5,5 +5,5 @@ set(SOURCES
     Shapes.cpp
     Sphere.cpp
 )
-add_llgl_library(3D 3d)
-target_link_libraries(LLGL-3D LLGL-Renderer)
+add_essaengine_library(3D 3d)
+target_link_libraries(EssaEngine-3D LLGL-Renderer)

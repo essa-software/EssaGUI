@@ -1,28 +1,26 @@
 #include "Sphere.hpp"
-#include "LLGL/OpenGL/Vertex.hpp"
 
 #include <LLGL/OpenGL/Shader.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
 #include <LLGL/Renderer/DrawState.hpp>
 #include <LLGL/Renderer/Renderer.hpp>
 #include <cassert>
 #include <vector>
 
-namespace llgl {
+namespace Essa {
 
-Sphere::Sphere()
-{
+Sphere::Sphere() {
     generate();
 }
 
 constexpr auto Stacks = 36;
 constexpr auto Sectors = 36;
 
-void Sphere::generate()
-{
+void Sphere::generate() {
     float delta_stack_angle = M_PI / Stacks;
     float delta_sector_angle = 2 * M_PI / Sectors;
 
-    std::vector<Vertex> vertices;
+    std::vector<llgl::Vertex> vertices;
     std::vector<unsigned> indices;
 
     for (unsigned stack = 0; stack < Stacks; stack++) {
@@ -30,7 +28,7 @@ void Sphere::generate()
             auto stack_angle = stack * delta_stack_angle;
             auto sector_angle = sector * delta_sector_angle;
             auto point_position = Util::Vector3f::create_spheric(sector_angle, stack_angle, 1);
-            vertices.push_back(Vertex {
+            vertices.push_back(llgl::Vertex {
                 .position = point_position,
                 .color = Util::Colors::White,
                 .normal = point_position });
@@ -46,7 +44,7 @@ void Sphere::generate()
             indices.push_back(vertex_index(stack, sector));
         }
     }
-    vertices.push_back(Vertex { .position { 0, 0, -1 }, .color = Util::Colors::White, .normal = { 0, 0, -1 } });
+    vertices.push_back(llgl::Vertex { .position { 0, 0, -1 }, .color = Util::Colors::White, .normal = { 0, 0, -1 } });
     assert(vertices.size() == Sectors * Stacks + 1);
 
     m_vao.load_vertexes(vertices, indices);
@@ -56,17 +54,15 @@ void Sphere::generate()
     //     std::cout << m_vertices[i].position << std::endl;
 }
 
-size_t Sphere::vertex_index(unsigned stack, unsigned sector) const
-{
+size_t Sphere::vertex_index(unsigned stack, unsigned sector) const {
     assert(stack <= Stacks && sector <= Sectors);
     if (stack == Stacks)
         return Stacks * Sectors;
     return stack * Sectors + (sector % Sectors);
 }
 
-void Sphere::render(Renderer& renderer, DrawState state) const
-{
-    renderer.draw_vao(m_vao, opengl::PrimitiveType::Triangles, state);
+void Sphere::render(llgl::Renderer& renderer, llgl::DrawState state) const {
+    renderer.draw_vao(m_vao, llgl::opengl::PrimitiveType::Triangles, state);
 }
 
 }

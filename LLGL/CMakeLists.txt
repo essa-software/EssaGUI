@@ -6,7 +6,6 @@ function(add_llgl_library TARGET_NAME LIB_NAME)
     install(TARGETS LLGL-${TARGET_NAME} EXPORT EssaGUI DESTINATION lib)
 endfunction()
 
-add_subdirectory(3D)
 add_subdirectory(Core)
 add_subdirectory(EventLoop)
 add_subdirectory(OpenGL)

@@ -1,6 +1,6 @@
+#include <EssaEngine/3D/Cube.hpp>
+#include <EssaEngine/3D/Sphere.hpp>
 #include <EssaUtil/Angle.hpp>
-#include <LLGL/3D/Cube.hpp>
-#include <LLGL/3D/Sphere.hpp>
 #include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
 #include <LLGL/OpenGL/Utils.hpp>
 #include <LLGL/Renderer/Camera.hpp>
@@ -14,8 +14,8 @@ int main() {
     llgl::opengl::set_clear_color(Util::Color { 255, 128, 128 });
 
     llgl::opengl::shaders::ShadeFlat shader;
-    llgl::Sphere sphere;
-    llgl::Cube cube;
+    Essa::Sphere sphere;
+    Essa::Cube cube;
 
     double light_angle = 0;
     double shape_angle = 0;

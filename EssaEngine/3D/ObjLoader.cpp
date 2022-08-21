@@ -7,10 +7,9 @@
 #include <limits>
 #include <sstream>
 
-namespace llgl {
+namespace Essa {
 
-std::optional<Object3D> ObjLoader::load_object_from_file(std::string const& filename)
-{
+std::optional<Object3D> ObjLoader::load_object_from_file(std::string const& filename) {
     std::ifstream file { filename };
     if (file.fail())
         return {};
@@ -18,13 +17,11 @@ std::optional<Object3D> ObjLoader::load_object_from_file(std::string const& file
     return loader.load();
 }
 
-static inline void error(std::string_view message)
-{
+static inline void error(std::string_view message) {
     std::cerr << "failed to load OBJ file: " << message << std::endl;
 }
 
-std::optional<Object3D> ObjLoader::load()
-{
+std::optional<Object3D> ObjLoader::load() {
     Object3D output;
 
     while (true) {
@@ -50,7 +47,8 @@ std::optional<Object3D> ObjLoader::load()
                 w = 1;
             }
             m_vertexes.push_back({ x, y, z });
-        } else if (command == "vt") {
+        }
+        else if (command == "vt") {
             float u, v, w;
             if (!(m_in >> u)) {
                 error("invalid vt declaration");
@@ -65,15 +63,17 @@ std::optional<Object3D> ObjLoader::load()
                 w = 0;
             }
             m_tex_coords.push_back({ u, v });
-        } else if (command == "vn") {
+        }
+        else if (command == "vn") {
             float x, y, z;
             if (!(m_in >> x >> y >> z)) {
                 error("invalid vn declaration");
                 return {};
             }
             m_normals.push_back({ x, y, z });
-        } else if (command == "f") {
-            std::vector<Vertex> face;
+        }
+        else if (command == "f") {
+            std::vector<llgl::Vertex> face;
             std::string line;
             if (!std::getline(m_in, line)) {
                 error("failed to read f declaration");
@@ -87,7 +87,8 @@ std::optional<Object3D> ObjLoader::load()
                 face.push_back(vertex.value());
             }
             output.add_face(face);
-        } else {
+        }
+        else {
             // std::cerr << "ObjLoader: Unknown command: " << command << std::endl;
             std::string line;
             std::getline(m_in, line);
@@ -95,8 +96,7 @@ std::optional<Object3D> ObjLoader::load()
     }
 }
 
-std::optional<Vertex> ObjLoader::read_vertex(std::istream& in)
-{
+std::optional<llgl::Vertex> ObjLoader::read_vertex(std::istream& in) {
     size_t vertex = 0, tex_coord = 0, normal = 0;
     if (!(in >> vertex) || vertex > m_vertexes.size()) {
         error("invalid vertex index");
@@ -104,20 +104,20 @@ std::optional<Vertex> ObjLoader::read_vertex(std::istream& in)
     }
 
     if (in.get() != '/')
-        return Vertex { m_vertexes[vertex - 1], Util::Colors::White };
+        return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White };
     if (!(in >> tex_coord) || tex_coord > m_tex_coords.size()) {
         error("invalid tex coord index");
         return {};
     }
 
     if (in.get() != '/')
-        return Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1] };
+        return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1] };
     if (!(in >> normal) || normal > m_normals.size()) {
         error("invalid normal index");
         return {};
     }
     // TODO: Store normals in Vertex
-    return Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1], m_normals[normal - 1] };
+    return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1], m_normals[normal - 1] };
 }
 
 }

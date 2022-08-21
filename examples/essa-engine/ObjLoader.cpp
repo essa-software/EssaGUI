@@ -1,7 +1,7 @@
+#include <EssaEngine/3D/ObjLoader.hpp>
+#include <EssaEngine/3D/Object3D.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Color.hpp>
-#include <LLGL/3D/ObjLoader.hpp>
-#include <LLGL/3D/Object3D.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
 #include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
@@ -19,7 +19,7 @@ int main() {
     llgl::opengl::enable(llgl::opengl::Feature::DepthTest);
     llgl::opengl::set_clear_color(Util::Color { 255, 128, 128 });
 
-    auto object = llgl::ObjLoader::load_object_from_file("../ladyball.obj");
+    auto object = Essa::ObjLoader::load_object_from_file("../ladyball.obj");
     if (!object.has_value()) {
         std::cerr << "FAILED TO READ :((" << std::endl;
         return 1;
