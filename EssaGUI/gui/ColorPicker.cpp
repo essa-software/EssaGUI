@@ -172,8 +172,11 @@ ColorPicker::ColorPicker(Container& c)
     : Button(c) {
     on_click = [this]() {
         auto color = ColorPickerDialog::exec(m_color);
-        if (color)
+        if (color) {
             m_color = *color;
+            if (on_change)
+                on_change(m_color);
+        }
     };
 }
 
