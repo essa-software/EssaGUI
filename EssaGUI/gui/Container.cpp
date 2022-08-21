@@ -301,11 +301,13 @@ void Container::relayout() {
 void Container::dump(unsigned depth) {
     Widget::dump(depth);
     ++depth;
+    for (unsigned i = 0; i < depth; i++)
+        std::cout << "-   ";
     if (m_layout) {
-
-        for (unsigned i = 0; i < depth; i++)
-            std::cout << "-   ";
         std::cout << "layout: " << typeid(*m_layout).name() << std::endl;
+    }
+    else {
+        std::cout << "layout: NONE!" << std::endl;
     }
     if (!is_visible())
         return;
