@@ -143,6 +143,7 @@ void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Uti
         static llgl::opengl::Texture texture;
         texture.recreate(image->size(), llgl::opengl::Texture::Format::RGBA);
         texture.update<Util::Color>({}, image->size(), image->pixels(), llgl::opengl::Texture::Format::RGBA);
+        texture.set_filtering(llgl::opengl::Texture::Filtering::Linear);
 
         RectangleDrawOptions text_rect;
         text_rect.texture = &texture;
