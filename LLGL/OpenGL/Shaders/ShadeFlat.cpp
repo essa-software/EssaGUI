@@ -62,6 +62,8 @@ void main()
     vec4 diffuse = diff * lightColor;
         
     vec4 result = (ambient + diffuse) * f_color;
+    if (textureSet)
+        result *= texture2D(texture, f_texCoord);
     gl_FragColor = vec4(result.xyz, 1.0);
 }
 )~~~";
