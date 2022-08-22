@@ -155,4 +155,17 @@ std::optional<Util::Color> ConfigFile::get_color(std::string key) const {
     return {};
 }
 
+std::optional<uint32_t> ConfigFile::get_u32(std::string key) const {
+    auto value = get(key);
+    if (!value)
+        return {};
+
+    try {
+        return std::stoul(*value);
+    } catch (...) {
+        std::cerr << "ConfigFile: could not parse i32" << std::endl;
+        return {};
+    }
+}
+
 }
