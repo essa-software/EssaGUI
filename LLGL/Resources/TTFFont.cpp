@@ -5,22 +5,20 @@
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
 #include <cmath>
+#include <utility>
 
 namespace llgl {
 
-TTFFont::~TTFFont()
-{
+TTFFont::~TTFFont() {
     for (auto const& font : m_cached_fonts)
-        TTF_CloseFont(font.second);
+        TTF_CloseFont(font.second.sdl_font);
 }
 
-TTFFont TTFFont::open_from_file(std::string const& path)
-{
+TTFFont TTFFont::open_from_file(std::string const& path) {
     return TTFFont { path };
 }
 
-void ensure_sdl_ttf_initialized()
-{
+void ensure_sdl_ttf_initialized() {
     static bool s_initialized = false;
     if (!s_initialized) {
         if (TTF_Init() < 0) {
@@ -30,46 +28,43 @@ void ensure_sdl_ttf_initialized()
     }
 }
 
-int TTFFont::ascent(int font_size) const
-{
-    auto sdl_font = load_font_if_needed(font_size);
-    if (!sdl_font) {
-        // FIXME: IDK what to do here
-        return 0;
-    }
-    return TTF_FontAscent(sdl_font);
+int TTFFont::ascent(int font_size) const {
+    auto font_face = load_font_if_needed(font_size);
+    if (!font_face)
+        return {};
+    return TTF_FontAscent(font_face->sdl_font);
 }
 
-int TTFFont::descent(int font_size) const
-{
-    auto sdl_font = load_font_if_needed(font_size);
-    if (!sdl_font) {
-        // FIXME: IDK what to do here
-        return 0;
-    }
-    return TTF_FontDescent(sdl_font);
+int TTFFont::descent(int font_size) const {
+    auto font_face = load_font_if_needed(font_size);
+    if (!font_face)
+        return {};
+    return TTF_FontDescent(font_face->sdl_font);
 }
 
-int TTFFont::line_height(int font_size) const
-{
-    auto sdl_font = load_font_if_needed(font_size);
-    if (!sdl_font) {
-        // FIXME: IDK what to do here
-        return 0;
-    }
-    return TTF_FontLineSkip(sdl_font);
+int TTFFont::line_height(int font_size) const {
+    auto font_face = load_font_if_needed(font_size);
+    if (!font_face)
+        return {};
+    return TTF_FontLineSkip(font_face->sdl_font);
 }
 
-std::optional<llgl::Image> TTFFont::render_text(Util::UString const& text, int font_size) const
-{
+int TTFFont::kerning(int font_size, uint32_t previous, uint32_t current) const {
+    auto font_face = load_font_if_needed(font_size);
+    if (!font_face)
+        return {};
+    return TTF_GetFontKerningSizeGlyphs32(font_face->sdl_font, previous, current);
+}
+
+std::optional<llgl::Image> TTFFont::render_text(Util::UString const& text, int font_size) const {
     if (text.is_empty())
         return {};
 
-    auto sdl_font = load_font_if_needed(font_size);
-    if (!sdl_font)
+    auto font_face = load_font_if_needed(font_size);
+    if (!font_face)
         return {};
 
-    auto surface = TTF_RenderUTF8_Blended(sdl_font, text.encode().c_str(), { 255, 255, 255, 255 });
+    auto surface = TTF_RenderUTF8_Blended(font_face->sdl_font, text.encode().c_str(), { 255, 255, 255, 255 });
     if (!surface) {
         std::cerr << "TTFFont: Failed TTF_RenderUTF8_Blended: " << TTF_GetError() << std::endl;
         return {};
@@ -80,36 +75,38 @@ std::optional<llgl::Image> TTFFont::render_text(Util::UString const& text, int f
     return image;
 }
 
-Util::Vector2u TTFFont::calculate_text_size(Util::UString const& text, int font_size) const
-{
+Util::Vector2u TTFFont::calculate_text_size(Util::UString const& text, int font_size) const {
     if (text.is_empty())
         return {};
 
-    auto sdl_font = load_font_if_needed(font_size);
-    if (!sdl_font)
+    auto font_face = load_font_if_needed(font_size);
+    if (!font_face)
         return {};
 
     int w;
     int h;
-    TTF_SizeUTF8(sdl_font, text.encode().c_str(), &w, &h);
+    TTF_SizeUTF8(font_face->sdl_font, text.encode().c_str(), &w, &h);
     return { w, h };
 }
 
-TTF_Font* TTFFont::load_font_if_needed(int font_size) const
-{
+GlyphCache* TTFFont::cache(int font_size) const {
+    auto font_face = load_font_if_needed(font_size);
+    return font_face ? &font_face->cache : nullptr;
+}
+
+TTFFont::FontFace* TTFFont::load_font_if_needed(int font_size) const {
     ensure_sdl_ttf_initialized();
 
     auto it = m_cached_fonts.find(font_size);
     if (it != m_cached_fonts.end())
-        return it->second;
+        return &it->second;
 
     auto sdl_font = TTF_OpenFont(m_path.c_str(), font_size);
     if (!sdl_font) {
-        std::cerr << "TTFFont: Failed TTF_OpenFont: " << TTF_GetError() << std::endl;
-        return {};
+        std::cerr << "TTFFont: Failed TTF_OpenFont from " << m_path << ": " << TTF_GetError() << std::endl;
+        return nullptr;
     }
-    m_cached_fonts.insert({ font_size, sdl_font });
-    return sdl_font;
+    return &m_cached_fonts.emplace(std::piecewise_construct, std::make_tuple(font_size), std::make_tuple(sdl_font, font_size)).first->second;
 }
 
 }

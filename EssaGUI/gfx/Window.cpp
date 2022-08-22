@@ -92,10 +92,40 @@ void Window::draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& opti
     if (options.border_radius_bottom_left == 0 && options.border_radius_bottom_right == 0 && options.border_radius_top_left == 0 && options.border_radius_top_right == 0) {
         std::array<llgl::Vertex, 4> vertices;
         std::array<Util::Vector3f, 4> outline_positions;
-        vertices[0] = llgl::Vertex { .position = { bounds.left, bounds.top, 0 }, .color = options.fill_color, .tex_coord = {} };
-        vertices[1] = llgl::Vertex { .position = { bounds.left + bounds.width, bounds.top, 0 }, .color = options.fill_color, .tex_coord = { 1, 0 } };
-        vertices[2] = llgl::Vertex { .position = { bounds.left, bounds.top + bounds.height, 0 }, .color = options.fill_color, .tex_coord = { 0, 1 } };
-        vertices[3] = llgl::Vertex { .position = { bounds.left + bounds.width, bounds.top + bounds.height, 0 }, .color = options.fill_color, .tex_coord = { 1, 1 } };
+
+        Util::Vector2f normalized_texture_rect_position = options.texture
+            ? Util::Vector2f { static_cast<float>(options.texture_rect.position().x()) / options.texture->size().x(),
+                  static_cast<float>(options.texture_rect.position().y()) / options.texture->size().y() }
+            : Util::Vector2f {};
+
+        Util::Vector2f normalized_texture_rect_size = options.texture
+            ? Util::Vector2f { static_cast<float>(options.texture_rect.size().x()) / options.texture->size().x(),
+                  static_cast<float>(options.texture_rect.size().y()) / options.texture->size().y() }
+            : Util::Vector2f {};
+
+        if (normalized_texture_rect_position == Util::Vector2f {} && normalized_texture_rect_size == Util::Vector2f {})
+            normalized_texture_rect_size = { 1, 1 };
+
+        vertices[0] = llgl::Vertex {
+            .position = { bounds.left, bounds.top, 0 },
+            .color = options.fill_color,
+            .tex_coord = normalized_texture_rect_position
+        };
+        vertices[1] = llgl::Vertex {
+            .position = { bounds.left + bounds.width, bounds.top, 0 },
+            .color = options.fill_color,
+            .tex_coord = { normalized_texture_rect_position.x() + normalized_texture_rect_size.x(), normalized_texture_rect_position.y() }
+        };
+        vertices[2] = llgl::Vertex {
+            .position = { bounds.left, bounds.top + bounds.height, 0 },
+            .color = options.fill_color,
+            .tex_coord = { normalized_texture_rect_position.x(), normalized_texture_rect_position.y() + normalized_texture_rect_size.y() }
+        };
+        vertices[3] = llgl::Vertex {
+            .position = { bounds.left + bounds.width, bounds.top + bounds.height, 0 },
+            .color = options.fill_color,
+            .tex_coord = { normalized_texture_rect_position.x() + normalized_texture_rect_size.x(), normalized_texture_rect_position.y() + normalized_texture_rect_size.y() }
+        };
 
         outline_positions[0] = vertices[0].position;
         outline_positions[1] = vertices[1].position;
@@ -130,26 +160,28 @@ void Window::draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& opti
 
 void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Util::Vector2f position, TextDrawOptions const& options) {
     float line_y = 0;
-    text.for_each_line([&font, &options, position, &line_y, this](std::span<uint32_t const> span) {
+    auto cache = font.cache(options.font_size);
+    if (!cache)
+        return;
+    text.for_each_line([&font, &options, position, &line_y, cache, this](std::span<uint32_t const> span) {
         auto line_position = position;
         line_position.y() -= font.ascent(options.font_size);
         line_position.y() += line_y;
         line_y += font.line_height(options.font_size);
 
-        auto image = font.render_text(Util::UString { span }, options.font_size);
-        if (!image)
-            return;
-
-        static llgl::opengl::Texture texture;
-        texture.recreate(image->size(), llgl::opengl::Texture::Format::RGBA);
-        texture.update<Util::Color>({}, image->size(), image->pixels(), llgl::opengl::Texture::Format::RGBA);
-        texture.set_filtering(llgl::opengl::Texture::Filtering::Linear);
-
         RectangleDrawOptions text_rect;
-        text_rect.texture = &texture;
+        text_rect.texture = &cache->atlas();
         text_rect.fill_color = options.fill_color;
 
-        draw_rectangle({ line_position, Util::Vector2f { texture.size() } }, text_rect);
+        float x_position = 0;
+        uint32_t previous_codepoint = 0;
+        for (auto codepoint : span) {
+            auto glyph = cache->ensure_glyph(font, codepoint);
+            text_rect.texture_rect = glyph.texture_rect;
+            draw_rectangle({ x_position + line_position.x(), line_position.y(), static_cast<float>(glyph.texture_rect.width), static_cast<float>(glyph.texture_rect.height) }, text_rect);
+            x_position += glyph.texture_rect.width + font.kerning(options.font_size, previous_codepoint, codepoint);
+            previous_codepoint = codepoint;
+        }
     });
 }
 

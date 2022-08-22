@@ -10,6 +10,7 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace Gfx {
@@ -133,7 +134,9 @@ public:
             std::cout << "ResourceManager: Failed to load resource (" << typeid(T).name() << ") '" << id_and_base << "' from " << *fs_path << std::endl;
             return nullptr;
         }
-        return &static_cast<Detail::ResourceWrapper<T>*>(m_cached_resources.insert({ id_and_base, std::make_unique<Detail::ResourceWrapper<T>>(std::move(*resource)) }).first->second.get())->resource;
+        return &static_cast<Detail::ResourceWrapper<T>*>(
+            m_cached_resources.emplace(std::piecewise_construct, std::make_tuple(id_and_base), std::make_tuple(std::make_unique<Detail::ResourceWrapper<T>>(std::forward<T>(*resource)))).first->second.get())
+                    ->resource;
     }
 
     template<Resource T>

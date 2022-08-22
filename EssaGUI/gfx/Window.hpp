@@ -23,6 +23,7 @@ struct DrawOptions {
     Util::Color fill_color = Util::Colors::White;
     Util::Color outline_color = Util::Colors::White;
     llgl::opengl::Texture const* texture = nullptr;
+    Util::Rectu texture_rect;
     float outline_thickness = 0;
 };
 

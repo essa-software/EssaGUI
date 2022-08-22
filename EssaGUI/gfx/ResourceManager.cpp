@@ -1,8 +1,10 @@
 #include "ResourceManager.hpp"
 #include "EssaGUI/util/ConfigFile.hpp"
 
+#include <EssaUtil/NonCopyable.hpp>
 #include <LLGL/Resources/ImageLoader.hpp>
 #include <filesystem>
+#include <type_traits>
 #include <unistd.h>
 
 namespace Gfx {
