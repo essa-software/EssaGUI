@@ -147,7 +147,6 @@ int main() {
             if (diff.length_squared() < PointSize * PointSize)
                 diff = { PointSize, 0 };
             auto diff_norm = diff.normalized();
-            auto main = diff_norm * PointSize;
             auto cross = diff_norm.perpendicular() * PointSize;
 
             llgl::opengl::VAO input_vao {

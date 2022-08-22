@@ -2,6 +2,7 @@ function(add_example filename)
     string(REPLACE "/" "-" targetname "${filename}")
     add_executable(${targetname} ${filename}.cpp)
     target_link_libraries(${targetname} EssaGUI)
+    essautil_setup_target(${targetname})
 endfunction()
 
 add_example("essa-gui/arrow-buttons")

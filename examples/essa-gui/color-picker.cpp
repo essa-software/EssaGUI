@@ -10,7 +10,7 @@ int main() {
     auto& container = app.set_main_widget<GUI::Container>();
     container.set_layout<GUI::VerticalBoxLayout>().set_padding(10);
 
-    auto picker = container.add_widget<GUI::ColorPicker>();
+    container.add_widget<GUI::ColorPicker>();
 
     app.run();
     return 0;
