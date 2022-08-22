@@ -9,7 +9,7 @@
 
 namespace Essa {
 
-std::optional<Object3D> ObjLoader::load_object_from_file(std::string const& filename) {
+std::optional<Model> ObjLoader::load_object_from_file(std::string const& filename) {
     std::ifstream file { filename };
     if (file.fail())
         return {};
@@ -21,8 +21,8 @@ static inline void error(std::string_view message) {
     std::cerr << "failed to load OBJ file: " << message << std::endl;
 }
 
-std::optional<Object3D> ObjLoader::load() {
-    Object3D output;
+std::optional<Model> ObjLoader::load() {
+    Model output;
 
     while (true) {
         std::string command;

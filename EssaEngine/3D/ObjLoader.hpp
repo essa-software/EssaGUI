@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object3D.hpp"
+#include "Model.hpp"
 
 #include <istream>
 #include <optional>
@@ -12,9 +12,9 @@ public:
     ObjLoader(std::istream& in)
         : m_in(in) { }
 
-    std::optional<Object3D> load();
+    std::optional<Model> load();
 
-    static std::optional<Object3D> load_object_from_file(std::string const& filename);
+    static std::optional<Model> load_object_from_file(std::string const& filename);
 
 private:
     std::optional<llgl::Vertex> read_vertex(std::istream& in);

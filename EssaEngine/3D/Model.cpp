@@ -1,4 +1,4 @@
-#include "Object3D.hpp"
+#include "Model.hpp"
 
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
@@ -10,7 +10,7 @@
 
 namespace Essa {
 
-void Object3D::add_face(Face face) {
+void Model::add_face(Face face) {
     if constexpr (OBJECT3D_DEBUG) {
         m_normal_vertexes.push_back(llgl::Vertex { .position = face.v1.position });
         m_normal_vertexes.push_back(llgl::Vertex { .position = face.v1.position + face.v1.normal });
@@ -25,7 +25,7 @@ void Object3D::add_face(Face face) {
     m_needs_update = true;
 }
 
-void Object3D::add_face(std::span<llgl::Vertex> face) {
+void Model::add_face(std::span<llgl::Vertex> face) {
     if (face.size() < 3)
         return;
     for (size_t s = 0; s < face.size() - 2; s++) {
@@ -47,7 +47,7 @@ void Object3D::add_face(std::span<llgl::Vertex> face) {
     m_needs_update = true;
 }
 
-void Object3D::render(llgl::Renderer& renderer, llgl::DrawState state) const {
+void Model::render(llgl::Renderer& renderer, llgl::DrawState state) const {
     if (m_needs_update) {
         std::cerr << "needs update!" << std::endl;
         m_vao.load_vertexes(m_vertexes);

@@ -10,7 +10,7 @@
 
 namespace Essa {
 
-class Object3D : public llgl::Renderable {
+class Model : public llgl::Renderable {
 public:
     struct Face {
         llgl::Vertex v1, v2, v3;

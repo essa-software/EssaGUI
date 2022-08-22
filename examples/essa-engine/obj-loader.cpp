@@ -1,5 +1,5 @@
+#include <EssaEngine/3D/Model.hpp>
 #include <EssaEngine/3D/ObjLoader.hpp>
-#include <EssaEngine/3D/Object3D.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Color.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
