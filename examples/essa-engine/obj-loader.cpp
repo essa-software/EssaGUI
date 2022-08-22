@@ -19,7 +19,7 @@ int main() {
     llgl::opengl::enable(llgl::opengl::Feature::DepthTest);
     llgl::opengl::set_clear_color(Util::Color { 255, 128, 128 });
 
-    auto object = Essa::ObjLoader::load_object_from_file("../ladyball.obj");
+    auto object = Essa::ObjLoader::load_object_from_file("../examples/llgl/ladyball.obj");
     if (!object.has_value()) {
         std::cerr << "FAILED TO READ :((" << std::endl;
         return 1;
