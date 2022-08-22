@@ -20,7 +20,6 @@ void RadioGroup::do_update() {
         }
 
         radio->set_size({Length::Auto, m_row_height});
-        radio->set_text_color(get_text_color());
         i++;
     }
 
@@ -57,7 +56,6 @@ void RadioGroup::add_radio(const Util::UString& caption) {
     m_buttons.push_back(add_widget<RadioButton>());
     m_buttons.back()->set_size({Length::Auto, m_row_height});
     m_buttons.back()->set_caption(caption);
-    m_buttons.back()->set_text_color(get_text_color());
 }
 
 }

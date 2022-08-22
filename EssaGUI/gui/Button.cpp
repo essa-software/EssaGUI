@@ -13,24 +13,9 @@ void Button::handle_event(Event& event) {
     }
 }
 
-Util::Color Button::text_color_for_state() const {
-    auto colors = m_button_colors_override.value_or(default_button_colors());
-    return color_for_state(m_toggleable
-            ? (m_active ? colors.active.text : colors.inactive.text)
-            : colors.untoggleable.text);
-}
-
-Util::Color Button::bg_color_for_state() const {
-    auto colors = m_button_colors_override.value_or(default_button_colors());
-    return color_for_state(m_toggleable
-            ? (m_active ? colors.active.background : colors.inactive.background)
-            : colors.untoggleable.background);
-}
-
-Util::Color Button::color_for_state(Util::Color color) const {
-    if (is_hover())
-        color = color + Util::Color { 20, 20, 20, 0 };
-    return color;
+Theme::BgFgTextColors Button::colors_for_state() const {
+    auto colors = m_button_colors_override.value_or(default_button_colors()).value(*this);
+    return colors;
 }
 
 void Button::click() {

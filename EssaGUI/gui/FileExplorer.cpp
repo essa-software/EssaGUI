@@ -350,7 +350,6 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     open_directory_btn->set_content("Open folder");
     open_directory_btn->set_alignment(Align::Center);
     open_directory_btn->set_background_color(Util::Colors::Red);
-    open_directory_btn->set_text_color(Util::Colors::White);
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {

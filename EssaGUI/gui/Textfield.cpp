@@ -6,12 +6,14 @@
 namespace GUI {
 
 void Textfield::draw(GUI::Window& window) const {
+    auto theme_colors = theme().label;
+
     RectangleDrawOptions rect;
-    rect.fill_color = get_background_color();
+    rect.fill_color = theme_colors.background;
     window.draw_rectangle(local_rect(), rect);
 
     TextDrawOptions text;
-    text.fill_color = get_text_color();
+    text.fill_color = theme_colors.text;
     text.font_size = m_font_size;
     text.text_align = m_alignment;
     window.draw_text_aligned_in_rect(m_content, text_rect(), Application::the().font(), text);
@@ -28,7 +30,6 @@ Util::Rectf Textfield::text_rect() const {
 
 LengthVector Textfield::initial_size() const {
     TextDrawOptions text;
-    text.fill_color = get_text_color();
     text.font_size = m_font_size;
     text.text_align = m_alignment;
     auto size = window().calculate_text_size(m_content, Application::the().font(), text);

@@ -28,7 +28,9 @@ public:
     }
 
     void set_active_without_action(bool state) { m_active = state; }
+
     void set_toggleable(bool t) { m_toggleable = t; }
+    bool is_toggleable() const { return m_toggleable; }
 
     std::function<void(bool)> on_change;
 
@@ -41,9 +43,7 @@ public:
     }
 
 protected:
-    Util::Color color_for_state(Util::Color) const;
-    Util::Color bg_color_for_state() const;
-    Util::Color text_color_for_state() const;
+    Theme::BgFgTextColors colors_for_state() const;
 
     virtual Theme::ButtonColors default_button_colors() const = 0;
 

@@ -12,12 +12,12 @@ ImageButton::ImageButton(Container& c, llgl::opengl::Texture const& image)
 }
 
 void ImageButton::draw(GUI::Window& window) const {
+    auto colors = colors_for_state();
+
     DrawOptions cs_bg;
-    cs_bg.fill_color = bg_color_for_state();
-    if (is_focused()) {
-        cs_bg.outline_color = Util::Color { 200, 200, 200 };
-        cs_bg.outline_thickness = -0.05;
-    }
+    cs_bg.fill_color = colors.background;
+    cs_bg.outline_color = colors.foreground;
+    cs_bg.outline_thickness = -0.05;
     window.draw_ellipse(size() / 2.f, size(), cs_bg);
 
     // TODO: Implement TextureScope

@@ -82,14 +82,12 @@ void Datebox::m_create_container() {
     century_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     century_toggle_container->set_size({ Length::Auto, 20.0_px });
     auto left_century_arrow_btn = century_toggle_container->add_widget<ArrowButton>();
-    left_century_arrow_btn->set_arrow_color(Util::Color { 200, 200, 200 });
     left_century_arrow_btn->set_arrow_size(10);
     left_century_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
     m_century_textfield = century_toggle_container->add_widget<Textfield>();
     m_century_textfield->set_alignment(Align::Center);
-    m_century_textfield->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Color { 200, 200, 200 });
+    // m_century_textfield->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Color { 200, 200, 200 });
     auto right_century_arrow_btn = century_toggle_container->add_widget<ArrowButton>();
-    right_century_arrow_btn->set_arrow_color(Util::Color { 200, 200, 200 });
     right_century_arrow_btn->set_arrow_size(10);
     right_century_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
 
@@ -97,14 +95,12 @@ void Datebox::m_create_container() {
     year_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     year_toggle_container->set_size({ Length::Auto, 20.0_px });
     auto left_year_arrow_btn = year_toggle_container->add_widget<ArrowButton>();
-    left_year_arrow_btn->set_arrow_color(Util::Color { 200, 200, 200 });
     left_year_arrow_btn->set_arrow_size(10);
     left_year_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
     m_year_textfield = year_toggle_container->add_widget<Textfield>();
     m_year_textfield->set_alignment(Align::Center);
-    m_year_textfield->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Color { 200, 200, 200 });
+    // m_year_textfield->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Color { 200, 200, 200 });
     auto right_year_arrow_btn = year_toggle_container->add_widget<ArrowButton>();
-    right_year_arrow_btn->set_arrow_color(Util::Color { 200, 200, 200 });
     right_year_arrow_btn->set_arrow_size(10);
     right_year_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
 
@@ -112,14 +108,12 @@ void Datebox::m_create_container() {
     month_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     month_toggle_container->set_size({ Length::Auto, 20.0_px });
     auto left_month_arrow_btn = month_toggle_container->add_widget<ArrowButton>();
-    left_month_arrow_btn->set_arrow_color(Util::Color { 200, 200, 200 });
     left_month_arrow_btn->set_arrow_size(10);
     left_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
     m_month_textfield = month_toggle_container->add_widget<Textfield>();
     m_month_textfield->set_alignment(Align::Center);
-    m_month_textfield->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Color { 200, 200, 200 });
+    // m_month_textfield->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Color { 200, 200, 200 });
     auto right_month_arrow_btn = month_toggle_container->add_widget<ArrowButton>();
-    right_month_arrow_btn->set_arrow_color(Util::Color { 200, 200, 200 });
     right_month_arrow_btn->set_arrow_size(10);
     right_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
 
@@ -145,7 +139,7 @@ void Datebox::m_create_container() {
     first_colon->set_alignment(Align::Top);
     first_colon->set_content(":");
     first_colon->set_font_size(30);
-    first_colon->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Colors::Black);
+    // first_colon->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Colors::Black);
     auto minutes = daytime_container->add_widget<Textbox>();
     minutes->set_limit(2);
     minutes->set_min_max_values(0, 59);
@@ -154,7 +148,7 @@ void Datebox::m_create_container() {
     second_colon->set_alignment(Align::Top);
     second_colon->set_content(":");
     second_colon->set_font_size(30);
-    second_colon->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Colors::Black);
+    // second_colon->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Colors::Black);
     auto seconds = daytime_container->add_widget<Textbox>();
     seconds->set_limit(2);
     seconds->set_min_max_values(0, 59);
@@ -287,12 +281,12 @@ void Datebox::m_update_calendar() {
         // TODO: Add that to theme
         auto& colors = m_calendar_contents[j].first->override_button_colors();
         if (m_date == date) {
-            colors.untoggleable.background = Util::Colors::Blue;
-            colors.untoggleable.text = Util::Colors::White;
+            colors.normal.unhovered.background = Util::Colors::Blue;
+            colors.normal.unhovered.text = Util::Colors::White;
         }
         else {
-            colors.untoggleable.background = temp_tm.tm_mon == local_tm.tm_mon ? Util::Color { 150, 150, 150 } : Util::Color { 200, 200, 200 };
-            colors.untoggleable.text = temp_tm.tm_mon == local_tm.tm_mon ? Util::Colors::Black : Util::Color { 50, 50, 50 };
+            colors.normal.unhovered.background = temp_tm.tm_mon == local_tm.tm_mon ? Util::Color { 150, 150, 150 } : Util::Color { 200, 200, 200 };
+            colors.normal.unhovered.text = temp_tm.tm_mon == local_tm.tm_mon ? Util::Colors::Black : Util::Color { 50, 50, 50 };
         }
     }
 }

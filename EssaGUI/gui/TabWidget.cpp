@@ -21,18 +21,20 @@ private:
 };
 
 void TabButton::draw(GUI::Window& window) const {
+    auto colors = colors_for_state();
+
     RectangleDrawOptions rect;
     rect.set_border_radius(10);
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
-    rect.fill_color = bg_color_for_state();
+    rect.fill_color = colors.background;
     window.draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, size() } : local_rect(), rect);
 
     Util::Vector2f text_position;
     if (!is_active())
         text_position.y() = 2;
     TextDrawOptions text;
-    text.fill_color = text_color_for_state();
+    text.fill_color = colors.text;
     text.font_size = 15;
     text.text_align = Align::Center;
     window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font(), text);
@@ -91,7 +93,7 @@ void TabWidget::switch_to_tab(size_t index) {
 }
 
 void TabWidget::setup_tab(Util::UString caption, Container* tab) {
-    tab->set_background_color(theme().tab_button.active.background);
+    tab->set_background_color(theme().tab_button.active.unhovered.background);
     tab->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     tab->set_visible(m_tabs.size() == 0);
     m_tab_select->add_button(std::move(caption), m_tabs.size());

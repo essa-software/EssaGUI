@@ -189,14 +189,12 @@ void ColorPicker::set_color(Util::Color color) {
 }
 
 void ColorPicker::draw(GUI::Window& window) const {
+    auto theme_colors = theme().textbox.value(*this);
+
     RectangleDrawOptions background_rect;
-    background_rect.outline_color = Util::Color { 80, 80, 80 };
+    background_rect.fill_color = theme_colors.background;
+    background_rect.outline_color = theme_colors.foreground;
     background_rect.outline_thickness = -1;
-    background_rect.fill_color = are_all_parents_enabled() ? theme().active_textbox.background : theme().textbox.background;
-
-    if (is_focused())
-        background_rect.outline_color = are_all_parents_enabled() ? theme().active_textbox.foreground : theme().textbox.foreground;
-
     window.draw_rectangle(local_rect(), background_rect);
 
     RectangleDrawOptions color_rect;
@@ -204,7 +202,7 @@ void ColorPicker::draw(GUI::Window& window) const {
     window.draw_rectangle({ 4, 4, size().y() - 8, size().y() - 8 }, color_rect);
 
     TextDrawOptions html_display;
-    html_display.fill_color = are_all_parents_enabled() ? theme().active_textbox.text : theme().textbox.text;
+    html_display.fill_color = theme_colors.text;
     html_display.text_align = Align::CenterLeft;
     html_display.font_size = 15;
     window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { size().y(), 4, size().x() - size().y(), size().y() - 8 }, resource_manager().fixed_width_font(), html_display);

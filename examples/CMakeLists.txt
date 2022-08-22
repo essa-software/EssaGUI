@@ -4,6 +4,7 @@ function(add_example filename)
     target_link_libraries(${targetname} EssaGUI)
 endfunction()
 
+add_example("essa-gui/arrow-buttons")
 add_example("essa-gui/canvas")
 add_example("essa-gui/checkboxes")
 add_example("essa-gui/color-picker")

@@ -18,15 +18,11 @@ int main() {
     GUI::Application app(wnd);
 
     auto& container1 = app.set_main_widget<GUI::Container>();
-    container1.set_background_color(Util::Colors::White);
     container1.set_layout<GUI::VerticalBoxLayout>();
     
     auto check1 = container1.add_widget<GUI::Checkbox>();
     check1->set_caption("Sample checkbox");
     check1->set_size({Length::Auto, 15.0_px});
-    check1->set_background_color(Util::Colors::White);
-    check1->set_foreground_color(Util::Colors::Black);
-    check1->set_text_color(Util::Colors::Black);
 
     check1->on_change = [](bool state){
         if(state)
@@ -38,9 +34,6 @@ int main() {
     auto check2 = container1.add_widget<GUI::Checkbox>();
     check2->set_caption("Sample checkbox");
     check2->set_size({Length::Auto, 15.0_px});
-    check2->set_background_color(Util::Colors::White);
-    check2->set_foreground_color(Util::Colors::Black);
-    check2->set_text_color(Util::Colors::Black);
     check2->set_style(GUI::Checkbox::Style::MARK);
 
     check2->on_change = [](bool state){

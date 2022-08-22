@@ -34,12 +34,14 @@ void ListView::draw(GUI::Window& wnd) const {
     // TODO: Scrolling
     // TODO: Many more things...
 
+    auto list_odd = theme().list_odd;
+    auto list_even = theme().list_even;
+
     // Background
     if (rows > 0) {
         for (size_t r = first_row; r < last_row; r++) {
-            Util::Color bg_color = r % 2 == 0 ? Util::Color { 100, 100, 100, 128 } : Util::Color { 80, 80, 80, 128 };
             RectangleDrawOptions rs;
-            rs.fill_color = bg_color;
+            rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
             wnd.draw_rectangle({ Util::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x(), RowHeight } }, rs);
         }
     }
@@ -47,7 +49,7 @@ void ListView::draw(GUI::Window& wnd) const {
     // Column names
     {
         RectangleDrawOptions rs;
-        rs.fill_color = theme().text_button.untoggleable.background;
+        rs.fill_color = theme().text_button.normal.unhovered.background;
         wnd.draw_rectangle({ scroll_offset(), { size().x(), RowHeight } }, rs);
 
         float x_pos = 0;
@@ -81,6 +83,7 @@ void ListView::draw(GUI::Window& wnd) const {
                             TextDrawOptions text;
                             text.font_size = 15;
                             text.text_align = Align::CenterLeft;
+                            text.fill_color = c % 2 == 0 ? list_even.text : list_odd.text;
                             wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font(), text);
                         },
                         [&](llgl::opengl::Texture const* data) {

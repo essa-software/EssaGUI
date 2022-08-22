@@ -30,9 +30,6 @@ int main() {
     listbox1->set_row_height(15.0_px);
     listbox1->allow_multichoose(false);
     listbox1->sorted_list(true);
-    listbox1->set_background_color(Util::Colors::White);
-    listbox1->set_foreground_color(Util::Colors::Blue);
-    listbox1->set_text_color(Util::Colors::Black);
     listbox1->on_change = [](size_t index, bool state){
         std::cout << "Element " << index << " is now " << (state ? "enabled" : "disabled") << std::endl;
     };
@@ -45,9 +42,6 @@ int main() {
     listbox2->set_row_height(15.0_px);
     listbox2->allow_multichoose(true);
     listbox2->sorted_list(false);
-    listbox2->set_background_color(Util::Colors::White);
-    listbox2->set_foreground_color(Util::Colors::Green);
-    listbox2->set_text_color(Util::Colors::Black);
 
     app.run();
     return 0;

@@ -39,7 +39,7 @@ void MenuWidget::draw(Window& window) const {
         text_align_rect.top -= 2; // HACK: to fix text alignment
         if (background_rect.contains(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - position())) {
             RectangleDrawOptions hovered_background;
-            hovered_background.fill_color = theme().selection;
+            hovered_background.fill_color = theme().selection.value(*this);
             window.draw_rectangle(background_rect, hovered_background);
         }
         window.draw_text_aligned_in_rect(action, text_align_rect, Application::the().font(), text);

@@ -31,8 +31,6 @@ void Listbox::add(const Util::UString& label) {
     btn->set_content(label);
     btn->set_active_content(label);
     btn->set_alignment(Align::Center);
-    btn->set_background_color(get_background_color());
-    btn->set_text_color(get_text_color());
     btn->set_size({ Length::Auto, m_row_height });
     btn->set_toggleable(true);
 

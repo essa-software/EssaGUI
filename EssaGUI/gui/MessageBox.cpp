@@ -39,7 +39,11 @@ MessageBox::MessageBox(GUI::Window& wnd, Util::UString message, Util::UString ti
         auto button = button_container->add_widget<GUI::TextButton>();
         button->set_alignment(GUI::Align::Center);
         button->set_content(std::move(label));
-        button->override_button_colors().untoggleable.background = bg_color;
+
+        button->override_button_colors().normal.unhovered.background = bg_color;
+        // TODO: Take this from theme somehow?
+        button->override_button_colors().normal.hovered.background = bg_color + Util::Color { 20, 20, 20 };
+
         button->on_click = [this, button_role]() {
             m_clicked_button = button_role;
             close();

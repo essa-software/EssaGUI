@@ -13,7 +13,7 @@ SelectWidget<T>::SelectWidget(Container& c)
     layout.set_spacing(0);
     m_label = m_container->add_widget<Textfield>();
     m_textfield = m_container->add_widget<Textfield>();
-    m_textfield->set_display_attributes(Util::Color(220, 220, 220), Util::Color(120, 120, 120), Util::Color(30, 30, 30));
+    //m_textfield->set_display_attributes(Util::Color(220, 220, 220), Util::Color(120, 120, 120), Util::Color(30, 30, 30));
 
     m_elements_container->set_layout<VerticalBoxLayout>();
     m_elements_container->set_size({ Length::Auto, 0.0_px });

@@ -487,9 +487,11 @@ Util::Vector2f TextEditor::calculate_cursor_position() const {
 }
 
 TextDrawOptions TextEditor::get_text_options() const {
+    auto theme_colors = theme().textbox.value(*this);
+
     TextDrawOptions options;
     options.font_size = FontSize;
-    options.fill_color = are_all_parents_enabled() ? theme().active_textbox.text : theme().textbox.text;
+    options.fill_color = theme_colors.text;
 
     if (!is_focused() && m_lines.empty())
         options.fill_color = theme().placeholder;
@@ -497,14 +499,12 @@ TextDrawOptions TextEditor::get_text_options() const {
 }
 
 void TextEditor::draw(GUI::Window& window) const {
+    auto theme_colors = theme().textbox.value(*this);
+
     RectangleDrawOptions background_rect;
-    background_rect.outline_color = Util::Color { 80, 80, 80 };
+    background_rect.fill_color = theme_colors.background;
+    background_rect.outline_color = (is_focused() && !is_multiline()) ? theme().focus_frame : theme_colors.foreground;
     background_rect.outline_thickness = -1;
-    background_rect.fill_color = are_all_parents_enabled() ? theme().active_textbox.background : theme().textbox.background;
-
-    if (is_focused())
-        background_rect.outline_color = are_all_parents_enabled() ? theme().active_textbox.foreground : theme().textbox.foreground;
-
     window.draw_rectangle(local_rect(), background_rect);
 
     if (m_multiline) {
@@ -517,7 +517,7 @@ void TextEditor::draw(GUI::Window& window) const {
 
     if (m_selection_start != m_cursor) {
         RectangleDrawOptions selected_rect;
-        selected_rect.fill_color = is_focused() ? theme().active_selection : theme().selection;
+        selected_rect.fill_color = theme().selection.value(*this);
         auto selection_start = std::min(m_selection_start, m_cursor);
         auto selection_end = std::max(m_selection_start, m_cursor);
         for (size_t s = selection_start.line; s <= selection_end.line; s++) {
@@ -580,7 +580,7 @@ void TextEditor::draw(GUI::Window& window) const {
         // if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
         auto position = calculate_cursor_position();
         RectangleDrawOptions cursor;
-        cursor.fill_color = theme().active_textbox.text;
+        cursor.fill_color = theme_colors.text;
         window.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
             cursor);
         // }

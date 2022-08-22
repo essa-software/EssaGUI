@@ -11,8 +11,10 @@ TextButton::TextButton(Container& c)
 }
 
 void TextButton::draw(GUI::Window& window) const {
+    auto colors = colors_for_state();
+
     RectangleDrawOptions rect;
-    rect.fill_color = bg_color_for_state();
+    rect.fill_color = colors.background;
     window.draw_rectangle(local_rect(), rect);
 
     double text_offset = 0;
@@ -36,7 +38,7 @@ void TextButton::draw(GUI::Window& window) const {
 
     TextDrawOptions text;
     text.font_size = 15;
-    text.fill_color = text_color_for_state();
+    text.fill_color = colors.text;
     text.text_align = m_alignment;
 
     auto text_rect = local_rect();

@@ -1,5 +1,8 @@
 #include "Theme.hpp"
 
+#include "Button.hpp"
+#include "Widget.hpp"
+
 #include <EssaGUI/util/ConfigFile.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Error.hpp>
@@ -8,10 +11,41 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace GUI {
+
+Theme::BgFgTextColors Theme::ButtonColors::value(Button const& w) const {
+    if (!w.are_all_parents_enabled())
+        return disabled;
+    if (w.is_toggleable()) {
+        if (w.is_active())
+            return active.value(w);
+        else
+            return inactive.value(w);
+    }
+    return normal.value(w);
+}
+
+Theme::BgFgTextColors Theme::HoverableWidgetColors::value(Widget const& w) const {
+    if (w.is_hover())
+        return hovered;
+    return unhovered;
+}
+
+Theme::BgFgTextColors Theme::TextboxColors::value(Widget const& w) const {
+    if (w.are_all_parents_enabled())
+        return normal;
+    return disabled;
+}
+
+Util::Color Theme::SelectionColors::value(Widget const& w) const {
+    if (w.is_focused())
+        return focused;
+    return unfocused;
+}
 
 Theme& Theme::default_theme() {
     static Theme theme = []() {
@@ -26,120 +60,75 @@ Theme& Theme::default_theme() {
     return theme;
 }
 
+static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Util::Color& var) {
+    std::cout << key << std::endl;
+    options.insert({ key, &var });
+}
+
+static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::BgFgTextColors& var) {
+    add_theme_option(options, key + ".background", var.background);
+    add_theme_option(options, key + ".foreground", var.foreground);
+    add_theme_option(options, key + ".text", var.text);
+}
+
+static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::TextboxColors& var) {
+    add_theme_option(options, key + ".disabled", var.disabled);
+    add_theme_option(options, key + ".normal", var.normal);
+}
+
+static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::SelectionColors& var) {
+    add_theme_option(options, key + ".focused", var.focused);
+    add_theme_option(options, key + ".unfocused", var.unfocused);
+}
+
+static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::HoverableWidgetColors& var) {
+    add_theme_option(options, key + ".hovered", var.hovered);
+    add_theme_option(options, key + ".unhovered", var.unhovered);
+}
+
+static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::ButtonColors& var) {
+    add_theme_option(options, key + ".active", var.active);
+    add_theme_option(options, key + ".inactive", var.inactive);
+    add_theme_option(options, key + ".normal", var.normal);
+    add_theme_option(options, key + ".disabled", var.disabled);
+}
+
 Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
-    std::map<std::string, Util::Color*> const theme_options = {
-        // text button
-        { "text_button.untoggleable.background", &text_button.untoggleable.background },
-        { "text_button.untoggleable.foreground", &text_button.untoggleable.foreground },
-        { "text_button.untoggleable.text", &text_button.untoggleable.text },
+    auto const theme_options = [this]() {
+        std::map<std::string, Util::Color*> options;
 
-        { "text_button.active.background", &text_button.active.background },
-        { "text_button.active.foreground", &text_button.active.foreground },
-        { "text_button.active.text", &text_button.active.text },
+#define DEFINE_THEME_OPTION(var) add_theme_option(options, #var, var)
 
-        { "text_button.inactive.background", &text_button.inactive.background },
-        { "text_button.inactive.foreground", &text_button.inactive.foreground },
-        { "text_button.inactive.text", &text_button.inactive.text },
+        DEFINE_THEME_OPTION(image_button);
+        DEFINE_THEME_OPTION(text_button);
+        DEFINE_THEME_OPTION(tab_button);
 
-        // image button
-        { "image_button.untoggleable.background", &image_button.untoggleable.background },
-        { "image_button.untoggleable.foreground", &image_button.untoggleable.foreground },
-        { "image_button.untoggleable.text", &image_button.untoggleable.text },
+        DEFINE_THEME_OPTION(textbox);
+        DEFINE_THEME_OPTION(selection);
 
-        { "image_button.active.background", &image_button.active.background },
-        { "image_button.active.foreground", &image_button.active.foreground },
-        { "image_button.active.text", &image_button.active.text },
+        DEFINE_THEME_OPTION(gutter);
+        DEFINE_THEME_OPTION(label);
+        DEFINE_THEME_OPTION(list_even);
+        DEFINE_THEME_OPTION(list_odd);
+        DEFINE_THEME_OPTION(menu);
+        DEFINE_THEME_OPTION(slider);
+        DEFINE_THEME_OPTION(tooltip);
 
-        { "image_button.inactive.background", &image_button.inactive.background },
-        { "image_button.inactive.foreground", &image_button.inactive.foreground },
-        { "image_button.inactive.text", &image_button.inactive.text },
+        DEFINE_THEME_OPTION(placeholder);
+        DEFINE_THEME_OPTION(sidebar);
+        DEFINE_THEME_OPTION(focus_frame);
 
-        // tab button
-        { "tab_button.untoggleable.background", &tab_button.untoggleable.background },
-        { "tab_button.untoggleable.foreground", &tab_button.untoggleable.foreground },
-        { "tab_button.untoggleable.text", &tab_button.untoggleable.text },
+        DEFINE_THEME_OPTION(positive); // "Green" / the "good" thing like applying changes
+        DEFINE_THEME_OPTION(negative); // "Red" / the "bad" thing like removing objects
+        DEFINE_THEME_OPTION(neutral);  // "Blue"
 
-        { "tab_button.active.background", &tab_button.active.background },
-        { "tab_button.active.foreground", &tab_button.active.foreground },
-        { "tab_button.active.text", &tab_button.active.text },
+#undef DEFINE_THEME_OPTION
 
-        { "tab_button.inactive.background", &tab_button.inactive.background },
-        { "tab_button.inactive.foreground", &tab_button.inactive.foreground },
-        { "tab_button.inactive.text", &tab_button.inactive.text },
+        return options;
+    }();
 
-        // widget types
-        { "positive", &positive },
-        { "negative", &negative },
-        { "neutral", &neutral },
-
-        // slider
-        { "slider.background", &slider.background },
-        { "slider.foreground", &slider.foreground },
-        { "slider.text", &slider.text },
-
-        // textfield
-        { "textfield.background", &textfield.background },
-        { "textfield.foreground", &textfield.foreground },
-        { "textfield.text", &textfield.text },
-
-        // textbox
-        { "textbox.background", &textbox.background },
-        { "textbox.foreground", &textbox.foreground },
-        { "textbox.text", &textbox.text },
-
-        { "active_textbox.background", &active_textbox.background },
-        { "active_textbox.foreground", &active_textbox.foreground },
-        { "active_textbox.text", &active_textbox.text },
-
-        { "gutter.background", &gutter.background },
-        { "gutter.foreground", &gutter.foreground },
-        { "gutter.text", &gutter.text },
-
-        // datebox
-        { "datebox.background", &datebox.background },
-        { "datebox.foreground", &datebox.foreground },
-        { "datebox.text", &datebox.text },
-
-        { "datebox_active_calendar_day.background", &datebox_active_calendar_day.background },
-        { "datebox_active_calendar_day.foreground", &datebox_active_calendar_day.foreground },
-        { "datebox_active_calendar_day.text", &datebox_active_calendar_day.text },
-
-        { "datebox_inactive_calendar_day.background", &datebox_inactive_calendar_day.background },
-        { "datebox_inactive_calendar_day.foreground", &datebox_inactive_calendar_day.foreground },
-        { "datebox_inactive_calendar_day.text", &datebox_inactive_calendar_day.text },
-
-        // Widget list
-        { "list_record1.background", &list_record1.background },
-        { "list_record1.foreground", &list_record1.foreground },
-        { "list_record1.text", &list_record1.text },
-
-        { "list_record2.background", &list_record2.background },
-        { "list_record2.foreground", &list_record2.foreground },
-        { "list_record2.text", &list_record2.text },
-
-        // Prompts
-        { "prompt.background", &prompt.background },
-        { "prompt.foreground", &prompt.foreground },
-        { "prompt.text", &prompt.text },
-
-        // Tooltips
-        { "tooltip.background", &tooltip.background },
-        { "tooltip.foreground", &tooltip.foreground },
-        { "tooltip.text", &tooltip.text },
-
-        // Menu
-        { "menu.background", &menu.background },
-        { "menu.foreground", &menu.foreground },
-        { "menu.text", &menu.text },
-
-        // Selection etc.
-        { "active_selection", &active_selection },
-        { "selection", &selection },
-        { "placeholder", &placeholder },
-        { "sidebar", &sidebar },
-    };
-
-    auto theme_ini_file = TRY(Util::ConfigFile::open_ini(path));
+    auto theme_ini_file
+        = TRY(Util::ConfigFile::open_ini(path));
 
     for (auto const& keys : theme_options) {
         auto color = theme_ini_file.get_color(keys.first);

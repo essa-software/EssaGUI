@@ -129,18 +129,6 @@ public:
     virtual void dump(unsigned depth);
 
     void set_background_color(Util::Color const& color) { m_background_color = color; }
-    void set_foreground_color(Util::Color const& color) { m_foreground_color = color; }
-    void set_text_color(Util::Color const& color) { m_text_color = color; }
-
-    Util::Color get_background_color() const { return m_background_color; }
-    Util::Color get_foreground_color() const { return m_foreground_color; }
-    Util::Color get_text_color() const { return m_text_color; }
-
-    void set_display_attributes(Util::Color bg_color, Util::Color fg_color, Util::Color text_color) {
-        set_background_color(bg_color);
-        set_foreground_color(fg_color);
-        set_text_color(text_color);
-    }
 
 protected:
     explicit Widget(WidgetTreeRoot& wtr)
@@ -188,8 +176,6 @@ private:
     bool m_visible = true;
     bool m_enabled = true;
     Util::Color m_background_color = Util::Colors::Transparent;
-    Util::Color m_foreground_color = Util::Colors::Transparent;
-    Util::Color m_text_color = Util::Colors::White;
 };
 
 }
