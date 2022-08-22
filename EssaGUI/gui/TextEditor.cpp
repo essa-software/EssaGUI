@@ -398,7 +398,11 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
             if (ispunct(next))
                 state = State::PendingCharactersOfType;
             else if (!isspace(next)) {
-                if (is_in_range(new_cursor - 2) && ispunct(content.at(direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1)))
+                if (direction == CursorDirection::Left && !is_in_range(new_cursor - 1))
+                    break;
+                if (direction == CursorDirection::Right && !is_in_range(new_cursor + 1))
+                    break;
+                if (ispunct(content.at(direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1)))
                     state = State::PendingPunctuation;
                 else
                     state = State::PendingCharactersOfType;
