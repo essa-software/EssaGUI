@@ -1,7 +1,9 @@
 #include "ObjLoader.hpp"
 
+#include <EssaGUI/gui/Application.hpp>
 #include <LLGL/Core/Vertex.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -14,14 +16,14 @@ std::optional<Model> ObjLoader::load_object_from_file(std::string const& filenam
     if (file.fail())
         return {};
     ObjLoader loader { file };
-    return loader.load();
+    return loader.load(std::filesystem::path { filename }.parent_path());
 }
 
 static inline void error(std::string_view message) {
-    std::cerr << "failed to load OBJ file: " << message << std::endl;
+    std::cerr << "ObjLoader: Failed to load OBJ file: " << message << std::endl;
 }
 
-std::optional<Model> ObjLoader::load() {
+std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory) {
     Model output;
 
     while (true) {
@@ -88,6 +90,24 @@ std::optional<Model> ObjLoader::load() {
             }
             output.add_face(face);
         }
+        else if (command == "mtllib") {
+            std::string path;
+            if (!(m_in >> path)) {
+                error("expected path after 'mtllib'");
+                return {};
+            }
+            if (!load_mtl(base_directory / path, base_directory)) {
+                return {};
+            }
+        }
+        else if (command == "usemtl") {
+            std::string name;
+            if (!(m_in >> name)) {
+                error("expected material name after 'usemtl'");
+                return {};
+            }
+            output.set_material(m_materials[name]);
+        }
         else {
             // std::cerr << "ObjLoader: Unknown command: " << command << std::endl;
             std::string line;
@@ -118,6 +138,99 @@ std::optional<llgl::Vertex> ObjLoader::read_vertex(std::istream& in) {
     }
     // TODO: Store normals in Vertex
     return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1], m_normals[normal - 1] };
+}
+
+bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& base_directory) {
+    std::ifstream mtl_in { path };
+    if (!mtl_in.good()) {
+        error("mtl: failed to open file");
+        return false;
+    }
+
+    std::optional<std::pair<std::string, Material>> current_material;
+
+#define REQUIRE_CURRENT_MATERIAL()                 \
+    *({                                            \
+        if (!current_material) {                   \
+            error("mtl: newmtl command required"); \
+            return false;                          \
+        }                                          \
+        &current_material->second;                 \
+    })
+
+    while (true) {
+        std::string command;
+        if (!(mtl_in >> command)) {
+            if (current_material)
+                m_materials.insert(*current_material);
+            return true;
+        }
+
+        if (command.starts_with("#")) {
+            mtl_in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+
+        if (command == "newmtl") {
+            if (current_material)
+                m_materials.insert(*current_material);
+
+            std::string name;
+            if (!(mtl_in >> name)) {
+                error("mtl: expected name after 'newmtl'");
+                return false;
+            }
+
+            current_material = std::make_pair(name, Material {});
+        }
+        else if (command == "Ns"
+            || command == "Ka"
+            || command == "Ks"
+            || command == "Ke"
+            || command == "Ni"
+            || command == "d"
+            || command == "illum") {
+            std::cout << "ObjLoader: Ignoring unimplemented mtl command: " << command << std::endl;
+            mtl_in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+        else if (command == "Kd") {
+            auto& material = REQUIRE_CURRENT_MATERIAL();
+            float r;
+            if (!(mtl_in >> r)) {
+                error("mtl: failed to read r component in Kd");
+                return false;
+            }
+            float g;
+            if (!(mtl_in >> g)) {
+                error("mtl: failed to read r component in Kd");
+                return false;
+            }
+            float b;
+            if (!(mtl_in >> b)) {
+                error("mtl: failed to read r component in Kd");
+                return false;
+            }
+            material.diffuse.color = Util::Colorf { r, g, b };
+        }
+        else if (command == "map_Kd") {
+            auto& material = REQUIRE_CURRENT_MATERIAL();
+            std::string path;
+            if (!(mtl_in >> path)) {
+                error("mtl: failed to read path in map_Kd");
+                return false;
+            }
+
+            auto absolute_path = std::filesystem::absolute(std::filesystem::path { base_directory } / path);
+            material.diffuse.texture = &GUI::Application::the().resource_manager().require_external<Gfx::Texture>(absolute_path.string());
+        }
+        else {
+            // std::cerr << "ObjLoader: Unknown command: " << command << std::endl;
+            std::string line;
+            std::getline(m_in, line);
+        }
+    }
+#undef REQUIRE_CURRENT_MATERIAL
 }
 
 }

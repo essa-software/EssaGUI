@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Material.hpp"
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <LLGL/Core/Vertex.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
@@ -19,10 +20,12 @@ public:
 
     void add_face(Face face);
     void add_face(std::span<llgl::Vertex>);
+    void set_material(Material mat) { m_material = std::move(mat); }
 
 private:
     virtual void render(llgl::Renderer& renderer, llgl::DrawState) const override;
 
+    std::optional<Material> m_material;
     std::vector<llgl::Vertex> m_vertexes;
     std::vector<llgl::Vertex> m_normal_vertexes;
     mutable llgl::opengl::VAO m_vao;

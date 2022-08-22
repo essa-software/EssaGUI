@@ -58,6 +58,9 @@ void Model::render(llgl::Renderer& renderer, llgl::DrawState state) const {
         m_needs_update = false;
     }
 
+    if (m_material && m_material->diffuse.texture)
+        state.texture = m_material->diffuse.texture;
+
     renderer.draw_vao(m_vao, llgl::opengl::PrimitiveType::Triangles, state);
 
     if constexpr (OBJECT3D_DEBUG)
