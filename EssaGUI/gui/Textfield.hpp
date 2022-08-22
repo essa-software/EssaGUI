@@ -34,7 +34,7 @@ private:
     virtual LengthVector initial_size() const override;
 
     Util::UString m_content;
-    int m_font_size = 15;
+    int m_font_size = theme().label_font_size;
     Align m_alignment = Align::CenterLeft;
     float m_padding = 5;
 };

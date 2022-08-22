@@ -60,33 +60,37 @@ Theme& Theme::default_theme() {
     return theme;
 }
 
-static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Util::Color& var) {
-    std::cout << key << std::endl;
+using ThemeOption = std::variant<Util::Color*, uint32_t*>;
+using ThemeOptionMap = std::map<std::string, ThemeOption>;
+
+template<class T>
+requires requires(ThemeOption t) { std::get<T>(t); }
+static void add_theme_option(ThemeOptionMap& options, std::string key, T& var) {
     options.insert({ key, &var });
 }
 
-static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::BgFgTextColors& var) {
+static void add_theme_option(ThemeOptionMap& options, std::string key, Theme::BgFgTextColors& var) {
     add_theme_option(options, key + ".background", var.background);
     add_theme_option(options, key + ".foreground", var.foreground);
     add_theme_option(options, key + ".text", var.text);
 }
 
-static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::TextboxColors& var) {
+static void add_theme_option(ThemeOptionMap& options, std::string key, Theme::TextboxColors& var) {
     add_theme_option(options, key + ".disabled", var.disabled);
     add_theme_option(options, key + ".normal", var.normal);
 }
 
-static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::SelectionColors& var) {
+static void add_theme_option(ThemeOptionMap& options, std::string key, Theme::SelectionColors& var) {
     add_theme_option(options, key + ".focused", var.focused);
     add_theme_option(options, key + ".unfocused", var.unfocused);
 }
 
-static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::HoverableWidgetColors& var) {
+static void add_theme_option(ThemeOptionMap& options, std::string key, Theme::HoverableWidgetColors& var) {
     add_theme_option(options, key + ".hovered", var.hovered);
     add_theme_option(options, key + ".unhovered", var.unhovered);
 }
 
-static void add_theme_option(std::map<std::string, Util::Color*>& options, std::string key, Theme::ButtonColors& var) {
+static void add_theme_option(ThemeOptionMap& options, std::string key, Theme::ButtonColors& var) {
     add_theme_option(options, key + ".active", var.active);
     add_theme_option(options, key + ".inactive", var.inactive);
     add_theme_option(options, key + ".normal", var.normal);
@@ -95,7 +99,7 @@ static void add_theme_option(std::map<std::string, Util::Color*>& options, std::
 
 Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
     auto const theme_options = [this]() {
-        std::map<std::string, Util::Color*> options;
+        ThemeOptionMap options;
 
 #define DEFINE_THEME_OPTION(var) add_theme_option(options, #var, var)
 
@@ -122,6 +126,9 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(negative); // "Red" / the "bad" thing like removing objects
         DEFINE_THEME_OPTION(neutral);  // "Blue"
 
+        DEFINE_THEME_OPTION(label_font_size);
+        DEFINE_THEME_OPTION(line_height);
+
 #undef DEFINE_THEME_OPTION
 
         return options;
@@ -131,14 +138,32 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         = TRY(Util::ConfigFile::open_ini(path));
 
     for (auto const& keys : theme_options) {
-        auto color = theme_ini_file.get_color(keys.first);
-        if (!color) {
-            std::cout << "Theme: Missing value for " << keys.first << std::endl;
-            *keys.second = Util::Colors::Magenta; // So that you easily see the bug
-        }
-        else {
-            *keys.second = *color;
-        }
+        std::visit([&theme_ini_file, &keys](auto a) {
+            if constexpr (std::is_same_v<decltype(a), Util::Color*>) {
+                auto color = theme_ini_file.get_color(keys.first);
+                if (!color) {
+                    std::cout << "Theme: Missing or invalid color value for " << keys.first << std::endl;
+                    *a = Util::Colors::Magenta; // So that you easily see the bug
+                }
+                else {
+                    *a = *color;
+                }
+            }
+            else if constexpr (std::is_same_v<decltype(a), uint32_t*>) {
+                auto value = theme_ini_file.get_u32(keys.first);
+                if (!value) {
+                    std::cout << "Theme: Missing or invalid u32 value for " << keys.first << std::endl;
+                    *a = 32;
+                }
+                else {
+                    *a = *value;
+                }
+            }
+            else {
+                std::cout << "This should be a compile-time error!" << std::endl;
+            }
+        },
+            keys.second);
     }
 
     return {};

@@ -63,7 +63,7 @@ void StateTextButton<T>::draw(GUI::Window& window) const {
     window.draw_rectangle(local_rect(), bg);
 
     GUI::TextDrawOptions text_options {
-        .font_size = 15,
+        .font_size = theme().label_font_size,
         .text_align = m_alignment,
     };
     text_options.fill_color = get_element_from_index(m_index).second.text_color;

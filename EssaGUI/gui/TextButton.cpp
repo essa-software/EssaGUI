@@ -37,7 +37,7 @@ void TextButton::draw(GUI::Window& window) const {
     }
 
     TextDrawOptions text;
-    text.font_size = 15;
+    text.font_size = theme().label_font_size;
     text.fill_color = colors.text;
     text.text_align = m_alignment;
 

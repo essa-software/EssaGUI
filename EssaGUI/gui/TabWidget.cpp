@@ -35,7 +35,7 @@ void TabButton::draw(GUI::Window& window) const {
         text_position.y() = 2;
     TextDrawOptions text;
     text.fill_color = colors.text;
-    text.font_size = 15;
+    text.font_size = theme().label_font_size;
     text.text_align = Align::Center;
     window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font(), text);
 }

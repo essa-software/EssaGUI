@@ -204,7 +204,7 @@ void ColorPicker::draw(GUI::Window& window) const {
     TextDrawOptions html_display;
     html_display.fill_color = theme_colors.text;
     html_display.text_align = Align::CenterLeft;
-    html_display.font_size = 15;
+    html_display.font_size = theme().label_font_size;
     window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { size().y(), 4, size().x() - size().y(), size().y() - 8 }, resource_manager().fixed_width_font(), html_display);
 }
 }

@@ -111,7 +111,7 @@ void Application::draw() {
 
 void Application::draw_notification(Notification const& notification, float y) {
     TextDrawOptions text;
-    text.font_size = 15;
+    text.font_size = theme().label_font_size;
     auto text_bounds = window().calculate_text_size(notification.message, font(), text);
     Util::Vector2f text_position { window().size().x() - text_bounds.x() - 20, y + 20 };
 

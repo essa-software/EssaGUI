@@ -86,6 +86,10 @@ public:
     Util::Color positive; // "Green" / the "good" thing like applying changes
     Util::Color negative; // "Red" / the "bad" thing like removing objects
     Util::Color neutral;  // "Blue"
+
+    uint32_t label_font_size;
+
+    uint32_t line_height; // Default height of buttons, textboxes etc.
 };
 
 }

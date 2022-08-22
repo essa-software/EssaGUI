@@ -189,7 +189,7 @@ void ToolWindow::draw() {
     rs_titlebar.fill_color = titlebar_color;
     window().draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
 
-    window().draw_text(title(), Application::the().bold_font(), { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = 15 });
+    window().draw_text(title(), Application::the().bold_font(), { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = theme().label_font_size });
 
     float titlebar_button_position_x = position.x() + size.x() - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {

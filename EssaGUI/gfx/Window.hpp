@@ -27,7 +27,7 @@ struct DrawOptions {
 };
 
 struct TextDrawOptions : public DrawOptions {
-    int font_size = 30;
+    uint32_t font_size = 30;
     Align text_align = Align::TopLeft;
 };
 

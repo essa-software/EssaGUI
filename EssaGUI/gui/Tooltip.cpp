@@ -8,7 +8,7 @@ namespace GUI {
 
 void TooltipOverlay::draw() {
     TextDrawOptions text;
-    text.font_size = 15;
+    text.font_size = theme().label_font_size;
     text.fill_color = theme().tooltip.text;
     text.text_align = Align::Center;
 

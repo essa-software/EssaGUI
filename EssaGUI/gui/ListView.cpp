@@ -81,7 +81,7 @@ void ListView::draw(GUI::Window& wnd) const {
                     overloaded {
                         [&](Util::UString const& data) {
                             TextDrawOptions text;
-                            text.font_size = 15;
+                            text.font_size = theme().label_font_size;
                             text.text_align = Align::CenterLeft;
                             text.fill_color = c % 2 == 0 ? list_even.text : list_odd.text;
                             wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font(), text);

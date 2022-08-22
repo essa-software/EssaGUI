@@ -13,10 +13,8 @@
 
 namespace GUI {
 
-constexpr int FontSize = 15;
-
 float TextEditor::line_height() const {
-    return Application::the().fixed_width_font().line_height(FontSize);
+    return Application::the().fixed_width_font().line_height(theme().label_font_size);
 }
 
 constexpr float GutterWidth = 50.f;
@@ -490,7 +488,7 @@ TextDrawOptions TextEditor::get_text_options() const {
     auto theme_colors = theme().textbox.value(*this);
 
     TextDrawOptions options;
-    options.font_size = FontSize;
+    options.font_size = theme().label_font_size;
     options.fill_color = theme_colors.text;
 
     if (!is_focused() && m_lines.empty())
@@ -567,7 +565,7 @@ void TextEditor::draw(GUI::Window& window) const {
         Util::Vector2f position = scroll_offset();
         position.y() += 5;
         line_numbers.fill_color = theme().gutter.text;
-        line_numbers.font_size = FontSize;
+        line_numbers.font_size = theme().label_font_size;
         line_numbers.text_align = Align::CenterRight;
         for (size_t s = 0; s < m_lines.size(); s++) {
             window.draw_text_aligned_in_rect(Util::UString { std::to_string(s + 1) }, { position, { GutterWidth - 10, line_height() } },

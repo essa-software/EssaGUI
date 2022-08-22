@@ -32,7 +32,7 @@ void Console::draw(GUI::Window& window) const {
     for (auto& line : m_lines) {
         TextDrawOptions options;
         options.fill_color = line.color;
-        options.font_size = 15;
+        options.font_size = theme().label_font_size;
         window.draw_text(line.text, Application::the().fixed_width_font(), Util::Vector2f { 5, s * LINE_SPACING + 19 } + scroll_offset(), options);
         s++;
     }

@@ -71,7 +71,7 @@ void Checkbox::draw(GUI::Window& window) const {
     TextDrawOptions text_opt;
     text_opt.text_align = Align::CenterLeft;
     text_opt.fill_color = theme().label.text;
-    text_opt.font_size = size().y() - 2;
+    text_opt.font_size = theme().label_font_size;
 
     window.draw_text_aligned_in_rect(m_caption, text_rect, Application::the().font(), text_opt);
 }
