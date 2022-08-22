@@ -10,22 +10,22 @@
 
 namespace GUI {
 
-constexpr float RowHeight = 30;
-
 // https://en.cppreference.com/w/cpp/utility/variant/visit
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
 void ListView::draw(GUI::Window& wnd) const {
+    auto row_height = theme().line_height;
+
     assert(m_model);
 
     size_t rows = m_model->row_count();
     size_t columns = m_model->column_count();
 
-    size_t first_row = -scroll_offset().y() / RowHeight;
+    size_t first_row = -scroll_offset().y() / row_height;
     if (first_row > 0)
         first_row--;
-    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_height()) / RowHeight);
+    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_height()) / row_height);
     if (last_row < rows - 1)
         last_row++;
 
@@ -42,7 +42,7 @@ void ListView::draw(GUI::Window& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
-            wnd.draw_rectangle({ Util::Vector2f { 0, RowHeight * (r + 1) } + scroll_offset(), { size().x(), RowHeight } }, rs);
+            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (r + 1) } + scroll_offset(), { size().x(), row_height } }, rs);
         }
     }
 
@@ -50,7 +50,7 @@ void ListView::draw(GUI::Window& wnd) const {
     {
         RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
-        wnd.draw_rectangle({ scroll_offset(), { size().x(), RowHeight } }, rs);
+        wnd.draw_rectangle({ scroll_offset(), { size().x(), row_height } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
@@ -69,7 +69,7 @@ void ListView::draw(GUI::Window& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = m_model->data(r, c);
-                Util::Vector2f cell_position { current_x_pos, (r + 1) * RowHeight };
+                Util::Vector2f cell_position { current_x_pos, (r + 1) * row_height };
                 cell_position += scroll_offset();
                 auto cell_size = this->cell_size(r, c);
 
@@ -102,11 +102,11 @@ void ListView::draw(GUI::Window& wnd) const {
 }
 
 Util::Vector2f ListView::row_position(unsigned row) const {
-    return Util::Vector2f { position().x(), position().y() + RowHeight * (row + 1) } + scroll_offset();
+    return Util::Vector2f { position().x(), position().y() + theme().line_height * (row + 1) } + scroll_offset();
 }
 
 Util::Vector2f ListView::cell_size(size_t, size_t column) const {
-    return { m_model->column(column).width, RowHeight };
+    return { m_model->column(column).width, theme().line_height };
 }
 
 void ListView::handle_event(Event& event) {
@@ -119,7 +119,7 @@ void ListView::handle_event(Event& event) {
         if (is_mouse_over(mouse_pos)) {
             for (size_t row = 0; row < rows; row++) {
                 Util::Vector2f cell_position = row_position(row);
-                Util::Rectf rect(cell_position, { size().x(), RowHeight });
+                Util::Rectf rect(cell_position, { size().x(), theme().line_height });
 
                 if (rect.contains(mouse_pos)) {
                     if (event.event().mouse_button.button == llgl::MouseButton::Left && on_click) {
@@ -138,7 +138,7 @@ void ListView::handle_event(Event& event) {
 }
 
 float ListView::content_height() const {
-    return (m_model->row_count() + 1) * RowHeight;
+    return (m_model->row_count() + 1) * theme().line_height;
 }
 
 }

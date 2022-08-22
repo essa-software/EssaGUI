@@ -195,9 +195,11 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     auto& container = set_main_widget<GUI::Container>();
     container.set_layout<VerticalBoxLayout>().set_spacing(1);
 
+    Length toolbar_height = { static_cast<float>(theme().line_height), Length::Unit::Px };
+
     auto toolbar = container.add_widget<Container>();
     toolbar->set_layout<HorizontalBoxLayout>();
-    toolbar->set_size({ Length::Auto, 30.0_px });
+    toolbar->set_size({ Length::Auto, toolbar_height });
 
     m_path_textbox = toolbar->add_widget<Textbox>();
     m_path_textbox->set_data_type(Textbox::Type::TEXT);
@@ -207,13 +209,13 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     parent_directory_button->set_image(&parent_directory_icon);
     parent_directory_button->set_tooltip_text("Parent");
     parent_directory_button->set_alignment(Align::Center);
-    parent_directory_button->set_size({ 30.0_px, Length::Auto });
+    parent_directory_button->set_size({ toolbar_height, Length::Auto });
 
     auto create_directory_button = toolbar->add_widget<TextButton>();
     create_directory_button->set_image(&new_folder_icon);
     create_directory_button->set_tooltip_text("Create folder");
     create_directory_button->set_alignment(Align::Center);
-    create_directory_button->set_size({ 30.0_px, Length::Auto });
+    create_directory_button->set_size({ toolbar_height, Length::Auto });
     create_directory_button->on_click = [&]() {
         auto path = GUI::prompt("Folder name: ", "Create folder");
         if (path.has_value()) {
@@ -292,7 +294,6 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
         auto button = sidebar->add_widget<GUI::TextButton>();
         button->set_content(name);
         button->set_tooltip_text(Util::UString { path.string() });
-        button->set_size({ Length::Auto, 30.0_px });
         button->on_click = [this, path]() {
             open_path(path);
         };

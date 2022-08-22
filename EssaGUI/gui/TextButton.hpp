@@ -28,6 +28,7 @@ private:
     virtual void draw(GUI::Window& window) const override;
 
     virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
+    virtual LengthVector initial_size() const override { return { Length::Auto, { static_cast<float>(theme().line_height), Length::Unit::Px } }; }
 
     Util::UString m_content;
     Util::UString m_active_content;

@@ -37,6 +37,8 @@ private:
     virtual bool can_insert_codepoint(uint32_t ch) const override;
     virtual void on_content_change() override;
 
+    virtual LengthVector initial_size() const override { return { Length::Auto, { static_cast<float>(theme().line_height), Length::Unit::Px } }; }
+
     unsigned m_limit = 1024;
     bool m_has_decimal = false;
     bool m_has_limit = false;

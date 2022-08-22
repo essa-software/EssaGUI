@@ -27,7 +27,7 @@ public:
     std::function<void(double)> on_change;
 
 private:
-    virtual LengthVector initial_size() const override { return { Length::Auto, 32.0_px }; }
+    virtual LengthVector initial_size() const override { return { Length::Auto, { static_cast<float>(theme().line_height), Length::Unit::Px } }; }
 
     Textfield* m_name_textfield = nullptr;
     Slider* m_slider = nullptr;
