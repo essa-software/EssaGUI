@@ -26,5 +26,7 @@ add_example("llgl/simple-renderer")
 
 add_example("essa-engine/obj-loader")
 target_link_libraries(essa-engine-obj-loader EssaEngine-3D)
+add_example("essa-engine/obj-loader-resource-manager")
+target_link_libraries(essa-engine-obj-loader-resource-manager EssaEngine-3D)
 add_example("essa-engine/shapes")
 target_link_libraries(essa-engine-shapes EssaEngine-3D)

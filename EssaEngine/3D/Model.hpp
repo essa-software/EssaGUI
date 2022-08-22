@@ -1,10 +1,11 @@
 #pragma once
 
-#include "LLGL/OpenGL/Shader.hpp"
-#include "LLGL/Renderer/Renderer.hpp"
+#include <EssaGUI/gfx/ResourceManager.hpp>
 #include <LLGL/Core/Vertex.hpp>
+#include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/VAO.hpp>
 #include <LLGL/Renderer/Renderable.hpp>
+#include <LLGL/Renderer/Renderer.hpp>
 #include <LLGL/Renderer/Transform.hpp>
 #include <vector>
 
@@ -30,3 +31,9 @@ private:
 };
 
 }
+
+template<>
+struct Gfx::ResourceTraits<Essa::Model> {
+    static std::optional<Essa::Model> load_from_file(std::string const&);
+    static std::string_view base_path() { return "models"; }
+};
