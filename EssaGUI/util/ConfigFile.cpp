@@ -1,5 +1,7 @@
 #include "ConfigFile.hpp"
 
+#include <sstream>
+
 namespace Util {
 
 ConfigFile::ConfigFile(std::ifstream input) {
@@ -11,34 +13,84 @@ std::optional<Util::Color> ConfigFile::parse_color(std::string const& value) con
         return Util::Colors::White;
 
     Util::Color color;
-    uint8_t color_arr[4] { 0 };
-    color_arr[3] = 255;
-    size_t i = 0;
+    color.a = 255;
 
-    for (const auto& c : value) {
-        if (c == ',') {
-            i++;
-
-            if (i == 4)
-                break;
-            continue;
-        }
-
-        // TODO: Add overflow check
-        if (c >= '0' && c <= '9')
-            color_arr[i] = color_arr[i] * 10 + (c - 48);
-    }
-
-    i++;
-    if (i < 3) {
-        std::cout << "Not enough color components, expected at least 3 but got " << i << std::endl;
+    if (!value.starts_with("rgb(")) {
         return {};
     }
 
-    color.r = color_arr[0];
-    color.g = color_arr[1];
-    color.b = color_arr[2];
-    color.a = color_arr[3];
+    std::istringstream iss { value.substr(4) };
+    int r;
+    int g;
+    int b;
+    int a = 255;
+
+    // R
+    if (!(iss >> r)) {
+        std::cerr << "ConfigFile: expected R component" << std::endl;
+        return {};
+    }
+    iss >> std::ws;
+    if (iss.get() != ',') {
+        std::cerr << "ConfigFile: expected ',' after R component" << std::endl;
+        return {};
+    }
+
+    // G
+    if (!(iss >> g)) {
+        std::cerr << "ConfigFile: expected G component" << std::endl;
+        return {};
+    }
+    iss >> std::ws;
+    if (iss.get() != ',') {
+        std::cerr << "ConfigFile: expected ',' after G component" << std::endl;
+        return {};
+    }
+
+    // B
+    if (!(iss >> b)) {
+        std::cerr << "ConfigFile: expected B component" << std::endl;
+        return {};
+    }
+
+    // optional A
+    iss >> std::ws;
+    if (iss.peek() == ',') {
+        iss.get();
+        if (!(iss >> a)) {
+            std::cerr << "ConfigFile: expected A component" << std::endl;
+            return {};
+        }
+    }
+
+    iss >> std::ws;
+    if (auto c = iss.get(); c != ')') {
+        std::cerr << "ConfigFile: expected ')', got '" << c << std::endl;
+        return {};
+    }
+
+    if (r > 255 || r < 0) {
+        std::cerr << "ConfigFile: R component out of range (R=" << r << ", expected 0..255)" << std::endl;
+        return {};
+    }
+    if (g > 255 || g < 0) {
+        std::cerr << "ConfigFile: G component out of range (G=" << r << ", expected 0..255)" << std::endl;
+        return {};
+    }
+    if (b > 255 || b < 0) {
+        std::cerr << "ConfigFile: B component out of range (B=" << r << ", expected 0..255)" << std::endl;
+        return {};
+    }
+    if (a > 255 || a < 0) {
+        std::cerr << "ConfigFile: A component out of range (A=" << r << ", expected 0..255)" << std::endl;
+        return {};
+    }
+
+    color.r = r;
+    color.g = g;
+    color.b = b;
+    color.a = a;
+
     return color;
 }
 
