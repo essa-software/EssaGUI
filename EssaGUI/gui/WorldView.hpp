@@ -43,6 +43,7 @@ private:
     friend WorldDrawScope;
 
     virtual llgl::Camera camera() const = 0;
+    virtual void draw(GUI::Window&) const = 0;
 };
 
 }
