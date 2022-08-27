@@ -29,7 +29,7 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
     while (true) {
         std::string command;
         if (!(m_in >> command))
-            return output;
+            break;
 
         if (command.starts_with("#")) {
             m_in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -48,7 +48,7 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
                 m_in.clear();
                 w = 1;
             }
-            m_vertexes.push_back({ x, y, z });
+            m_positions.push_back({ x, y, z });
         }
         else if (command == "vt") {
             float u, v, w;
@@ -75,20 +75,21 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
             m_normals.push_back({ x, y, z });
         }
         else if (command == "f") {
-            std::vector<llgl::Vertex> face;
             std::string line;
             if (!std::getline(m_in, line)) {
                 error("failed to read f declaration");
                 return {};
             }
+
             std::istringstream iss { line };
+            std::vector<Vertex> face;
             while (!iss.eof()) {
                 auto vertex = read_vertex(iss);
-                if (!vertex.has_value())
+                if (!vertex)
                     return {};
-                face.push_back(vertex.value());
+                face.push_back(*vertex);
             }
-            output.add_face(face);
+            m_faces.push_back(face);
         }
         else if (command == "mtllib") {
             std::string path;
@@ -114,30 +115,61 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
             std::getline(m_in, line);
         }
     }
+
+    for (auto const& face : m_faces) {
+        std::vector<llgl::Vertex> resolved_face;
+
+        for (auto const& vertex : face) {
+            if (vertex.position >= m_positions.size()) {
+                error("vertex position out of range");
+                return {};
+            }
+            auto position = m_positions[vertex.position];
+
+            if (vertex.tex_coord && *vertex.tex_coord >= m_tex_coords.size()) {
+                error("vertex tex coord out of range");
+                return {};
+            }
+            auto tex_coord = vertex.tex_coord ? m_tex_coords[*vertex.tex_coord] : Util::Vector2f {};
+
+            if (vertex.normal && *vertex.normal >= m_normals.size()) {
+                error("vertex normal out of range");
+                return {};
+            }
+            auto normal = vertex.normal ? m_normals[*vertex.normal] : Util::Vector3f {};
+
+            resolved_face.push_back(llgl::Vertex { .position = position, .color = Util::Colors::White, .tex_coord = tex_coord, .normal = normal });
+        }
+
+        output.add_face(resolved_face);
+    }
+    return output;
 }
 
-std::optional<llgl::Vertex> ObjLoader::read_vertex(std::istream& in) {
-    size_t vertex = 0, tex_coord = 0, normal = 0;
-    if (!(in >> vertex) || vertex > m_vertexes.size()) {
+std::optional<ObjLoader::Vertex> ObjLoader::read_vertex(std::istream& in) {
+    size_t position = 0;
+    std::optional<size_t> tex_coord;
+    std::optional<size_t> normal;
+    if (!(in >> position)) {
+        in.clear();
         error("invalid vertex index");
         return {};
     }
-
     if (in.get() != '/')
-        return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White };
-    if (!(in >> tex_coord) || tex_coord > m_tex_coords.size()) {
+        return { { position - 1, {}, {} } };
+
+    if (in.peek() != '/' && !(in >> *tex_coord)) {
         error("invalid tex coord index");
         return {};
     }
-
     if (in.get() != '/')
-        return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1] };
-    if (!(in >> normal) || normal > m_normals.size()) {
+        return { { position - 1, tex_coord ? *tex_coord - 1 : tex_coord, {} } };
+
+    if (in.peek() != '/' && !(in >> *normal)) {
         error("invalid normal index");
         return {};
     }
-    // TODO: Store normals in Vertex
-    return llgl::Vertex { m_vertexes[vertex - 1], Util::Colors::White, m_tex_coords[tex_coord - 1], m_normals[normal - 1] };
+    return { { position - 1, tex_coord ? *tex_coord - 1 : tex_coord, normal ? *normal - 1 : normal } };
 }
 
 bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& base_directory) {

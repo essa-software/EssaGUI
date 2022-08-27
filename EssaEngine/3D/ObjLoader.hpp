@@ -18,14 +18,22 @@ public:
     static std::optional<Model> load_object_from_file(std::string const& filename);
 
 private:
-    std::optional<llgl::Vertex> read_vertex(std::istream& in);
+    struct Vertex {
+        size_t position;
+        std::optional<size_t> tex_coord;
+        std::optional<size_t> normal;
+    };
+
+    std::optional<Vertex> read_vertex(std::istream& in);
 
     bool load_mtl(std::string const& path, std::filesystem::path const& base_directory);
 
     std::istream& m_in;
-    std::vector<Util::Vector3f> m_vertexes;
+    std::vector<Util::Vector3f> m_positions;
     std::vector<Util::Vector2f> m_tex_coords;
     std::vector<Util::Vector3f> m_normals;
+    std::vector<std::vector<Vertex>> m_faces;
+
     std::map<std::string, Material> m_materials;
 };
 
