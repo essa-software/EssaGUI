@@ -148,8 +148,6 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
 
 std::optional<ObjLoader::Vertex> ObjLoader::read_vertex(std::istream& in) {
     size_t position = 0;
-    std::optional<size_t> tex_coord;
-    std::optional<size_t> normal;
     if (!(in >> position)) {
         in.clear();
         error("invalid vertex index");
@@ -158,18 +156,20 @@ std::optional<ObjLoader::Vertex> ObjLoader::read_vertex(std::istream& in) {
     if (in.get() != '/')
         return { { position - 1, {}, {} } };
 
-    if (in.peek() != '/' && !(in >> *tex_coord)) {
+    size_t tex_coord = 0;
+    if (in.peek() != '/' && !(in >> tex_coord)) {
         error("invalid tex coord index");
         return {};
     }
     if (in.get() != '/')
-        return { { position - 1, tex_coord ? *tex_coord - 1 : tex_coord, {} } };
+        return { { position - 1, tex_coord == 0 ? std::optional<size_t> {} : tex_coord - 1, {} } };
 
-    if (in.peek() != '/' && !(in >> *normal)) {
+    size_t normal;
+    if (!(in >> normal)) {
         error("invalid normal index");
         return {};
     }
-    return { { position - 1, tex_coord ? *tex_coord - 1 : tex_coord, normal ? *normal - 1 : normal } };
+    return { { position - 1, tex_coord == 0 ? std::optional<size_t> {} : tex_coord - 1, normal - 1 } };
 }
 
 bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& base_directory) {
