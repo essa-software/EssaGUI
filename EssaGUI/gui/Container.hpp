@@ -2,6 +2,7 @@
 
 #include "Widget.hpp"
 
+#include <algorithm>
 #include <initializer_list>
 #include <memory>
 #include <optional>
@@ -97,7 +98,7 @@ class Container : public Widget {
 public:
     explicit Container(Container& parent)
         : Widget(parent) { }
-        
+
     explicit Container(WidgetTreeRoot& parent)
         : Widget(parent) { }
 
@@ -123,6 +124,8 @@ public:
     virtual void do_handle_event(Event&) override;
     virtual void do_relayout() override;
     virtual void do_draw(GUI::Window& window) const override;
+
+    void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Layout, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
@@ -187,7 +190,6 @@ public:
     // clang-format on
 
 protected:
-
     virtual void relayout() override;
     virtual void handle_event(Event&) override;
     virtual float intrinsic_padding() const { return 0; }

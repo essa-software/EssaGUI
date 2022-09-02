@@ -17,6 +17,7 @@ add_library(EssaGUI
     gui/FileExplorer.cpp
     gui/FilePrompt.cpp
     gui/Frame.cpp
+    gui/Grid.cpp
     gui/ImageButton.cpp
     gui/ImageWidget.cpp
     gui/Listbox.cpp
