@@ -1,4 +1,5 @@
-add_library(EssaGUI
+add_library(EssaGUI SHARED
+
     gfx/DefaultGUIShader.cpp
     gfx/ClipViewScope.cpp
     gfx/ResourceManager.cpp
