@@ -6,9 +6,6 @@ namespace GUI {
 
 class Frame : public Container {
 public:
-    explicit Frame(Container& c)
-        : Container(c) { }
-
     static constexpr float BorderRadius = 20;
 
 private:

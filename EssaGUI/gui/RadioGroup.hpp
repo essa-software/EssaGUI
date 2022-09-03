@@ -10,7 +10,7 @@ namespace GUI {
 
 class RadioGroup : public Container {
 public:
-    explicit RadioGroup(Container& c);
+    explicit RadioGroup();
 
     void add_radio(Util::UString const& caption);
 

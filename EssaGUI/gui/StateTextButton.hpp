@@ -1,20 +1,21 @@
 #pragma once
+#include "Application.hpp"
 #include "TextAlign.hpp"
 #include "Widget.hpp"
-#include "Application.hpp"
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace GUI {
 
-template <typename T>
+template<typename T>
 class StateTextButton : public Widget {
-    struct State{
+    struct State {
         Util::Color bg_color, fg_color, text_color;
         T state;
     };
+
 public:
-    explicit StateTextButton(Container& c);
+    explicit StateTextButton();
 
     void add_state(Util::UString content, T state, Util::Color bg_color, Util::Color fg_color = Util::Colors::Blue, Util::Color text_color = Util::Colors::White);
 
@@ -50,6 +51,6 @@ private:
 
 // These ifndefs are just so that clangd doesn't complain that much
 #ifndef STATE_TEXT_BUTTON_INL
-#define STATE_TEXT_BUTTON_HPP
-#include "StateTextButton.inl"
+#    define STATE_TEXT_BUTTON_HPP
+#    include "StateTextButton.inl"
 #endif

@@ -6,9 +6,6 @@ namespace GUI {
 
 class ArrowButton : public Button {
 public:
-    explicit ArrowButton(Container& c)
-        : Button(c) { }
-
     enum class ArrowType {
         LEFTARROW,
         BOTTOMARROW,

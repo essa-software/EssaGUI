@@ -7,8 +7,8 @@
 
 namespace GUI {
 
-SettingsMenu::SettingsMenu(Container& c)
-    : Container(c) {
+SettingsMenu::SettingsMenu()
+    : Container() {
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(10);
     m_buttons_container = add_widget<Container>();

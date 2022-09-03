@@ -8,9 +8,6 @@ namespace GUI {
 
 class Textfield : public Widget {
 public:
-    explicit Textfield(Container& c)
-        : Widget(c) { }
-
     virtual void draw(GUI::Window& window) const override;
 
     Util::UString get_content() const { return m_content; }

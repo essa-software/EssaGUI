@@ -11,11 +11,6 @@
 namespace GUI {
 
 template<typename T>
-StateTextButton<T>::StateTextButton(Container& c)
-    : Widget(c) {
-}
-
-template<typename T>
 std::pair<Util::UString, typename StateTextButton<T>::State> StateTextButton<T>::get_element_from_index(unsigned index) const {
     unsigned i = 0;
 

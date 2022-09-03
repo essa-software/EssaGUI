@@ -10,10 +10,6 @@
 namespace GUI {
 
 class TabButton : public TextButton {
-public:
-    TabButton(Container& c)
-        : TextButton(c) { }
-
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
 
@@ -40,8 +36,7 @@ void TabButton::draw(GUI::Window& window) const {
     window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font(), text);
 }
 
-TabSelectWidget::TabSelectWidget(Container& c)
-    : Container(c) {
+TabSelectWidget::TabSelectWidget() {
     set_layout<HorizontalBoxLayout>();
 }
 
@@ -68,8 +63,7 @@ void TabSelectWidget::switch_to_tab(size_t index) {
     }
 }
 
-TabWidget::TabWidget(Container& c)
-    : Container(c) {
+TabWidget::TabWidget() {
     set_layout<VerticalBoxLayout>();
     m_tab_select = add_widget<TabSelectWidget>();
     m_tab_select->set_size({ Length::Auto, 30.0_px });

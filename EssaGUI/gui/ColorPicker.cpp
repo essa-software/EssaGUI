@@ -15,9 +15,6 @@ namespace GUI {
 
 class ColorField : public Widget {
 public:
-    explicit ColorField(Container& c)
-        : Widget(c) { }
-
     void set_color(Util::Color color) { m_color = color; }
 
 private:
@@ -168,8 +165,7 @@ void ColorPickerDialog::set_color(Util::Color color) {
     m_b_slider->set_value(color.b);
 }
 
-ColorPicker::ColorPicker(Container& c)
-    : Button(c) {
+ColorPicker::ColorPicker() {
     on_click = [this]() {
         auto color = ColorPickerDialog::exec(m_color);
         if (color) {

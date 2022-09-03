@@ -1,5 +1,5 @@
 function(add_llgl_library TARGET_NAME LIB_NAME)
-    add_library(LLGL-${TARGET_NAME} ${SOURCES})
+    add_library(LLGL-${TARGET_NAME} SHARED ${SOURCES})
     add_library(EssaGUI::LLGL-${TARGET_NAME} ALIAS LLGL-${TARGET_NAME})
     set_target_properties(LLGL-${TARGET_NAME} PROPERTIES OUTPUT_NAME "llgl-${LIB_NAME}")
     essautil_setup_target(LLGL-${TARGET_NAME})

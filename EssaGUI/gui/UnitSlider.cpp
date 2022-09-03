@@ -21,8 +21,7 @@ static std::string serialize_value(double value, double step) {
     return oss.str();
 }
 
-UnitSlider::UnitSlider(Container& parent, Util::Quantity q, double min, double max, double step)
-    : Container(parent) {
+UnitSlider::UnitSlider(Util::Quantity q, double min, double max, double step) {
 
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(5);
@@ -56,23 +55,23 @@ UnitSlider::UnitSlider(Container& parent, Util::Quantity q, double min, double m
 
     unsigned i = 0;
 
-    for(const auto& u : Util::s_units.find(m_unit)->second){
+    for (const auto& u : Util::s_units.find(m_unit)->second) {
         m_unit_button->add_state(u.string, i, Util::Color::Green);
         std::cout << u.string << " " << i << "\n";
         i++;
     }
 
-    m_unit_button->on_change = [this](unsigned index){
+    m_unit_button->on_change = [this](unsigned index) {
         auto unit = Util::s_units.find(m_unit)->second;
 
         unsigned prev_index;
-        if(index == 0)
+        if (index == 0)
             prev_index = unit.size() - 1;
         else
             prev_index = index - 1;
-        
+
         double mul = 1.0 / unit[prev_index].multiplier * unit[index].multiplier;
-        
+
         m_slider->set_value(m_slider->get_value() * mul);
         m_slider->set_range(m_slider->min_value() * mul, m_slider->max_value() * mul, m_slider->step() * mul);
     };

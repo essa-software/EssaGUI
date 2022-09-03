@@ -1,4 +1,9 @@
 add_library(EssaGUI SHARED
+    eml/AST.cpp
+    eml/EMLObject.cpp
+    eml/Lexer.cpp
+    eml/Loader.cpp
+    eml/Parser.cpp
 
     gfx/DefaultGUIShader.cpp
     gfx/ClipViewScope.cpp

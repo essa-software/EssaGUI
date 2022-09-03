@@ -35,10 +35,6 @@ private:
 };
 
 class WorldView : public Widget {
-public:
-    WorldView(Container& parent)
-        : Widget(parent) { }
-
 private:
     friend WorldDrawScope;
 

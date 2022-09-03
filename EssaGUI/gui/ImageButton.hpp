@@ -6,7 +6,7 @@ namespace GUI {
 
 class ImageButton : public Button {
 public:
-    ImageButton(Container&, llgl::opengl::Texture const& image);
+    ImageButton(llgl::opengl::Texture const& image);
 
     virtual void draw(GUI::Window& window) const override;
 

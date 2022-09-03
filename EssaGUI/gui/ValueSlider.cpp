@@ -19,9 +19,7 @@ static Util::UString serialize_value(double value, double step) {
     return Util::UString { oss.str() };
 }
 
-ValueSlider::ValueSlider(Container& parent, double min, double max, double step, ValueSliderOptions options)
-    : Container(parent) {
-
+ValueSlider::ValueSlider(double min, double max, double step, ValueSliderOptions options) {
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(5);
     m_name_textfield = add_widget<Textfield>();

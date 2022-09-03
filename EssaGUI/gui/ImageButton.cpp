@@ -6,8 +6,8 @@
 
 namespace GUI {
 
-ImageButton::ImageButton(Container& c, llgl::opengl::Texture const& image)
-    : Button(c)
+ImageButton::ImageButton(llgl::opengl::Texture const& image)
+    : Button()
     , m_texture(std::move(image)) {
 }
 

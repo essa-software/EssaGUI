@@ -2,12 +2,13 @@
 
 #include "Application.hpp"
 #include "Button.hpp"
+#include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
-TextButton::TextButton(Container& c)
-    : Button(c) {
+TextButton::TextButton()
+    : Button() {
 }
 
 void TextButton::draw(GUI::Window& window) const {
@@ -50,5 +51,14 @@ void TextButton::draw(GUI::Window& window) const {
     else
         window.draw_text_aligned_in_rect(m_content, local_rect(), Application::the().font(), text);
 }
+
+EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Button::load_from_eml_object(object, loader));
+    m_content = TRY(object.get_property("content", Util::UString {}).to_string());
+    m_active_content = TRY(object.get_property("active_content", Util::UString {}).to_string());
+    return {};
+}
+
+EML_REGISTER_CLASS(TextButton);
 
 }

@@ -30,7 +30,7 @@ public:
         LEFT
     };
 
-    Slider(Container&, double min_val, double max_val, double step = 1);
+    Slider(double min_val, double max_val, double step = 1);
     double get_value() const;
     double get_raw_value() const { return m_val; }
     void set_value(double val, NotifyUser = NotifyUser::Yes);

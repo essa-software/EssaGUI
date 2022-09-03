@@ -1,5 +1,6 @@
 #pragma once
 
+#include <EssaGUI/eml/EMLObject.hpp>
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>
@@ -57,10 +58,9 @@ private:
     bool m_seen = false;
 };
 
-class Widget {
+class Widget : public EML::EMLObject {
 public:
-    explicit Widget(Container& parent);
-
+    Widget() = default;
     Widget(Widget const&) = delete;
     Widget& operator=(Widget const&) = delete;
 
@@ -130,15 +130,14 @@ public:
 
     void set_background_color(Util::Color const& color) { m_background_color = color; }
 
-protected:
-    explicit Widget(WidgetTreeRoot& wtr)
-        : m_widget_tree_root(wtr) {
-    }
+    virtual void eml_construct(WidgetTreeRoot& root) { set_widget_tree_root(root); }
 
-    WidgetTreeRoot& widget_tree_root() const { return m_widget_tree_root; }
+protected:
+    WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }
     virtual bool is_mouse_over(Util::Vector2i) const;
     virtual void update();
@@ -159,18 +158,22 @@ protected:
 
 private:
     friend Container;
+    friend WidgetTreeRoot;
+
+    void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
+    void set_parent(Container& parent);
 
     virtual LengthVector initial_size() const { return LengthVector {}; }
 
     Container* m_parent = nullptr;
-    WidgetTreeRoot& m_widget_tree_root;
+    WidgetTreeRoot* m_widget_tree_root = nullptr;
     Util::Vector2f m_pos, m_size;
     LengthVector m_expected_pos;
     LengthVector m_input_size { Length::Initial, Length::Initial };
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
     Util::UString m_tooltip_text;
-    std::string_view m_id;
+    std::string m_id;
     std::string_view m_class_name;
     bool m_hover = false;
     bool m_visible = true;

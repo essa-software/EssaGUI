@@ -5,8 +5,7 @@ namespace GUI {
 
 class Checkbox : public Button {
 public:
-    explicit Checkbox(Container& c)
-        : Button(c) { set_toggleable(true); }
+    explicit Checkbox() { set_toggleable(true); }
 
     virtual void draw(GUI::Window& window) const override;
 

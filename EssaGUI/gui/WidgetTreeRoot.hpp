@@ -1,16 +1,18 @@
 #pragma once
 
-#include "EssaGUI/gfx/ResourceManager.hpp"
 #include "EventLoop.hpp"
 #include "Widget.hpp"
 
+#include <EssaGUI/eml/EMLObject.hpp>
+#include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <list>
 #include <memory>
 
 namespace GUI {
 
-class WidgetTreeRoot : public EventLoop {
+class WidgetTreeRoot : public EventLoop
+    , public EML::EMLObject {
 public:
     explicit WidgetTreeRoot(GUI::Window& wnd)
         : m_window(wnd) {
@@ -29,9 +31,10 @@ public:
 
     template<class T, class... Args>
     auto& set_main_widget(Args&&... args) {
-        auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
+        auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         auto widget_ptr = widget.get();
         m_main_widget = std::move(widget);
+        m_main_widget->set_widget_tree_root(*this);
         m_needs_relayout = true;
         return *widget_ptr;
     }
@@ -40,9 +43,12 @@ public:
     auto& set_created_main_widget(std::shared_ptr<T> w) {
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
+        m_main_widget->set_widget_tree_root(*this);
         m_needs_relayout = true;
         return *widget_ptr;
     }
+
+    auto* main_widget() { return m_main_widget.get(); }
 
     void set_id(std::string id) { m_id = id; }
 
@@ -72,6 +78,8 @@ protected:
     llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
 
 private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+
     GUI::Window& m_window;
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;

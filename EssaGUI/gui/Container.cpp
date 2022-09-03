@@ -1,17 +1,15 @@
 #include "Container.hpp"
 
 #include "Application.hpp"
+#include "EssaGUI/eml/Loader.hpp"
 
+#include <EssaGUI/eml/Loader.hpp>
 #include <EssaUtil/Config.hpp>
 #include <cassert>
 #include <iostream>
 #include <vector>
 
 namespace GUI {
-
-WidgetList& Layout::widgets() {
-    return m_container.m_widgets;
-}
 
 void Layout::set_multipliers(std::initializer_list<float> list) {
     m_multipliers.clear();
@@ -21,7 +19,12 @@ void Layout::set_multipliers(std::initializer_list<float> list) {
     }
 }
 
-void BoxLayout::run() {
+EML::EMLErrorOr<void> Layout::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+    m_padding = TRY(object.get_property("padding", 0.0).to_double());
+    return {};
+}
+
+void BoxLayout::run(Container& container) {
     // std::cout << "BOXLAYOUT " << m_container.size().x() << "," << m_container.size().y() << " spacing=" << m_spacing << std::endl;
     auto vec2f_main_coord_by_orientation = [this](auto vec) -> auto{
         if constexpr (requires() { vec.x(); }) {
@@ -46,10 +49,10 @@ void BoxLayout::run() {
         return vec;
     };
 
-    auto total_spacing_size = (m_spacing * (widgets().size() - 1));
+    auto total_spacing_size = (m_spacing * (container.widgets().size() - 1));
 
     // 1. Compute widget size (in main axis) if it has fixed size
-    for (auto& w : widgets()) {
+    for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
 
@@ -62,7 +65,7 @@ void BoxLayout::run() {
             break;
         case Length::Percent:
             // std::cout << size << std::endl;
-            size = vec2f_main_coord_by_orientation(w->input_size()).value() * (vec2f_main_coord_by_orientation(m_container.size()) - total_spacing_size) / 100.0;
+            size = vec2f_main_coord_by_orientation(w->input_size()).value() * (vec2f_main_coord_by_orientation(container.size()) - total_spacing_size) / 100.0;
             break;
         case Length::Auto:
             size = 0;
@@ -70,13 +73,13 @@ void BoxLayout::run() {
         case Length::Initial:
             ESSA_UNREACHABLE;
         }
-        w->set_raw_size(convert_vector_by_orientation({ size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
+        w->set_raw_size(convert_vector_by_orientation({ size, vec2f_cross_coord_by_orientation(container.size()) - m_padding * 2 }));
     }
 
     // 2. Compute size available for auto-sized widgets
-    float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(m_container.size()) - m_padding * 2;
+    float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(container.size()) - m_padding * 2;
     size_t autosized_widget_count = 0;
-    for (auto& w : widgets()) {
+    for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
         if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
@@ -93,28 +96,28 @@ void BoxLayout::run() {
     switch (m_content_alignment) {
     case ContentAlignment::BoxStart: {
         float current_position = 0;
-        for (auto& w : widgets()) {
+        for (auto& w : container.widgets()) {
             if (!w->is_visible())
                 continue;
             if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
-                w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
-            w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position + m_padding,
-                vec2f_cross_coord_by_orientation(m_container.position()) + m_padding }));
+                w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(container.size()) - m_padding * 2 }));
+            w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(container.position()) + current_position + m_padding,
+                vec2f_cross_coord_by_orientation(container.position()) + m_padding }));
             current_position += vec2f_main_coord_by_orientation(w->size()) + m_spacing;
             index++;
         }
     } break;
     case ContentAlignment::BoxEnd: {
-        float current_position = vec2f_main_coord_by_orientation(m_container.size());
-        for (auto it = widgets().rbegin(); it != widgets().rend(); it++) {
+        float current_position = vec2f_main_coord_by_orientation(container.size());
+        for (auto it = container.widgets().rbegin(); it != container.widgets().rend(); it++) {
             auto& w = *it;
             if (!w->is_visible())
                 continue;
             if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
-                w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
+                w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(container.size()) - m_padding * 2 }));
             current_position -= vec2f_main_coord_by_orientation(w->size()) + m_spacing;
-            w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position + m_padding,
-                vec2f_cross_coord_by_orientation(m_container.position()) + m_padding }));
+            w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(container.position()) + current_position + m_padding,
+                vec2f_cross_coord_by_orientation(container.position()) + m_padding }));
             index++;
         }
     } break;
@@ -127,7 +130,17 @@ void BoxLayout::run() {
     }*/
 }
 
-void BasicLayout::run() {
+EML::EMLErrorOr<void> BoxLayout::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Layout::load_from_eml_object(object, loader));
+
+    m_spacing = TRY(object.get_property("spacing", 0.0).to_double());
+    return {};
+}
+
+EML_REGISTER_CLASS(HorizontalBoxLayout);
+EML_REGISTER_CLASS(VerticalBoxLayout);
+
+void BasicLayout::run(Container& container) {
     auto resolve_position = [&](double container_size, double widget_size, Length const& input_position) -> float {
         switch (input_position.unit()) {
         case Length::Px:
@@ -153,12 +166,12 @@ void BasicLayout::run() {
         }
     };
 
-    for (auto& w : widgets()) {
+    for (auto& w : container.widgets()) {
         auto input_position = w->input_position();
-        w->set_raw_size({ resolve_size(m_container.size().x(), w->input_size().x), resolve_size(m_container.size().y(), w->input_size().y) });
-        auto x = resolve_position(m_container.size().x(), w->size().x(), input_position.x);
-        auto y = resolve_position(m_container.size().y(), w->size().y(), input_position.y);
-        w->set_raw_position({ x + m_container.position().x(), y + m_container.position().y() });
+        w->set_raw_size({ resolve_size(container.size().x(), w->input_size().x), resolve_size(container.size().y(), w->input_size().y) });
+        auto x = resolve_position(container.size().x(), w->size().x(), input_position.x);
+        auto y = resolve_position(container.size().y(), w->size().y(), input_position.y);
+        w->set_raw_position({ x + container.position().x(), y + container.position().y() });
     }
 }
 
@@ -295,7 +308,7 @@ void Container::relayout() {
     }
     if (m_layout->padding() == 0)
         m_layout->set_padding(intrinsic_padding());
-    m_layout->run();
+    m_layout->run(*this);
 }
 
 void Container::dump(unsigned depth) {
@@ -368,4 +381,21 @@ Widget* Container::find_widget_by_id_recursively(std::string_view id) const {
     }
     return nullptr;
 }
+
+EML::EMLErrorOr<void> Container::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+
+    m_layout = TRY(object.require_and_construct_object<Layout>("layout", loader));
+
+    for (auto const& child : object.objects) {
+        std::shared_ptr<Widget> widget = TRY(child.construct<Widget>(loader, widget_tree_root()));
+        assert(widget);
+        add_created_widget(std::move(widget));
+    }
+
+    return {};
+}
+
+EML_REGISTER_CLASS(Container);
+
 }

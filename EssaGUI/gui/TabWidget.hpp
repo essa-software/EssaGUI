@@ -10,7 +10,7 @@ class TabWidget;
 
 class TabSelectWidget : public Container {
 public:
-    explicit TabSelectWidget(Container& c);
+    explicit TabSelectWidget();
 
     void add_button(Util::UString caption, size_t tab_index);
     void switch_to_tab(size_t index);
@@ -21,7 +21,7 @@ private:
 
 class TabWidget : public Container {
 public:
-    explicit TabWidget(Container& c);
+    explicit TabWidget();
 
     template<class... Args>
     Container& add_tab(Util::UString caption, Args&&... args) {
@@ -31,7 +31,7 @@ public:
     }
 
     void switch_to_tab(size_t index);
-    unsigned index() const{return m_index;}
+    unsigned index() const { return m_index; }
 
     std::function<void(unsigned)> on_tab_switch;
 

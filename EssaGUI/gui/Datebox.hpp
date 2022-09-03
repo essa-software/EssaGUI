@@ -1,18 +1,16 @@
 #pragma once
 
-#include <EssaUtil/SimulationClock.hpp>
 #include "Container.hpp"
 #include "StateTextButton.hpp"
 #include "TextButton.hpp"
 #include "Textfield.hpp"
+#include <EssaUtil/SimulationClock.hpp>
 #include <memory>
 #include <vector>
 
-namespace GUI
-{
+namespace GUI {
 
-class Datebox : public Container
-{
+class Datebox : public Container {
     Util::SimulationClock::time_point m_date;
     Textfield* m_date_textfield = nullptr;
     Textfield* m_century_textfield = nullptr;
@@ -28,7 +26,7 @@ class Datebox : public Container
     void m_update_calendar();
 
 public:
-    explicit Datebox(Container& parent);
+    explicit Datebox();
 
     void set_display_attributes(Util::Color bg_color, Util::Color fg_color, Util::Color text_color);
 };

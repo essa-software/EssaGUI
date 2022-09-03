@@ -60,10 +60,6 @@ void MenuWidget::handle_event(Event& event) {
 }
 
 class Separator : public Widget {
-public:
-    explicit Separator(Container& parent)
-        : Widget(parent) { }
-
 private:
     virtual LengthVector initial_size() const override { return { Length::Auto, 10.0_px }; }
 

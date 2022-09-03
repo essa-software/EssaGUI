@@ -10,8 +10,8 @@
 
 class WorldView : public GUI::WorldView {
 public:
-    explicit WorldView(GUI::Container& parent)
-        : GUI::WorldView(parent) {
+    explicit WorldView()
+        : GUI::WorldView() {
         set_background_color(Util::Colors::LightBlue);
     }
 
@@ -52,8 +52,7 @@ private:
 
 class MainWidget : public GUI::Container {
 public:
-    MainWidget(GUI::WidgetTreeRoot& wtr)
-        : GUI::Container(wtr) {
+    MainWidget() {
         set_layout<GUI::VerticalBoxLayout>();
 
         m_tps_container = add_widget<GUI::Textfield>();
