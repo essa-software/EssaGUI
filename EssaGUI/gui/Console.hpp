@@ -8,9 +8,6 @@ namespace GUI {
 
 class Console : public ScrollableWidget {
 public:
-    explicit Console(Container& c)
-        : ScrollableWidget(c) { }
-
     struct LogLine {
         Util::Color color;
         Util::UString text;

@@ -6,7 +6,7 @@ namespace GUI {
 
 class ColorPicker : public Button {
 public:
-    explicit ColorPicker(Container& c);
+    explicit ColorPicker();
 
     Util::Color color() const;
     void set_color(Util::Color color);

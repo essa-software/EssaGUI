@@ -9,8 +9,7 @@ namespace GUI {
 class Grid : public Container {
 public:
     friend Border;
-    Grid(Container& c)
-        : Container(c) {
+    Grid() {
         set_layout<VerticalBoxLayout>();
     }
 

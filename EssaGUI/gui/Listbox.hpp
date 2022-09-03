@@ -11,8 +11,7 @@ namespace GUI {
 
 class Listbox : public Container {
 public:
-    explicit Listbox(Container& c)
-        : Container(c) {
+    explicit Listbox() {
         set_layout<VerticalBoxLayout>();
     }
 
@@ -28,8 +27,8 @@ public:
 
     void allow_multichoose(bool con) {
         m_allow_multichoose = con;
-        if (!m_allow_multichoose) { 
-            for(size_t i = 1; i < m_index_vector.size(); i++){
+        if (!m_allow_multichoose) {
+            for (size_t i = 1; i < m_index_vector.size(); i++) {
                 m_list_buttons[i]->set_active(false, NotifyUser::No);
             }
 

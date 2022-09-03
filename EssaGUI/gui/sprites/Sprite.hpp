@@ -10,9 +10,6 @@ namespace GUI {
 
 class Sprite : public Widget {
 public:
-    explicit Sprite(Container& c)
-        : Widget(c) { }
-
     virtual void draw(Window& window) const override = 0;
 
     void move_by_vec(Util::Vector2f const& vec) { set_raw_position(position() + vec); }

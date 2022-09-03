@@ -24,7 +24,7 @@ class SelectWidget : public Widget {
     bool expanded = false;
 
 public:
-    explicit SelectWidget(Container& c);
+    explicit SelectWidget();
 
     void add_entry(Util::UString label, T value);
     void set_label(Util::UString label) { m_label->set_content(label); }

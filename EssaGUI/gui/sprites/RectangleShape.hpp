@@ -9,9 +9,6 @@ namespace GUI {
 
 class RectangleShape : public Sprite {
 public:
-    explicit RectangleShape(Container& c)
-        : Sprite(c) { }
-
     virtual void draw(Window& window) const override;
 
     enum class RectangleVertex {

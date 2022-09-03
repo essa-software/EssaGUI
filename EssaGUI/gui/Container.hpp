@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/eml/EMLObject.hpp"
 #include "Widget.hpp"
 
 #include <algorithm>
@@ -15,17 +16,15 @@ class Container;
 
 using WidgetList = std::vector<std::shared_ptr<Widget>>;
 
-class Layout {
+class Layout : public EML::EMLObject {
 public:
-    Layout(Container& c)
-        : m_container(c) { }
-
+    Layout() = default;
     Layout(Layout const&) = delete;
     Layout& operator=(Layout const&) = delete;
 
     virtual ~Layout() = default;
 
-    virtual void run() = 0;
+    virtual void run(Container&) = 0;
 
     void set_multipliers(std::initializer_list<float> list);
 
@@ -37,10 +36,9 @@ public:
     std::vector<float> m_multipliers;
 
 protected:
-    Container& m_container;
-    float m_padding = 0;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
-    WidgetList& widgets();
+    float m_padding = 0;
 };
 
 enum class Orientation {
@@ -51,13 +49,12 @@ enum class Orientation {
 /// Widgets are resized to fill up the entire space (in the vertical axis)
 class BoxLayout : public Layout {
 public:
-    BoxLayout(Container& c, Orientation o)
-        : Layout(c)
-        , m_orientation(o) { }
+    BoxLayout(Orientation o)
+        : m_orientation(o) { }
 
     // Spacing = a gap between widgets (but not between edges and widgets)
     void set_spacing(float s) { m_spacing = s; }
-    virtual void run() override;
+    virtual void run(Container&) override;
 
     enum class ContentAlignment {
         BoxStart,
@@ -65,6 +62,9 @@ public:
     };
 
     void set_content_alignment(ContentAlignment alignment) { m_content_alignment = alignment; }
+
+protected:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
 private:
     Orientation m_orientation;
@@ -74,39 +74,30 @@ private:
 
 class VerticalBoxLayout : public BoxLayout {
 public:
-    VerticalBoxLayout(Container& c)
-        : BoxLayout(c, Orientation::Vertical) { }
+    VerticalBoxLayout()
+        : BoxLayout(Orientation::Vertical) { }
 };
 
 class HorizontalBoxLayout : public BoxLayout {
 public:
-    HorizontalBoxLayout(Container& c)
-        : BoxLayout(c, Orientation::Horizontal) { }
+    HorizontalBoxLayout()
+        : BoxLayout(Orientation::Horizontal) { }
 };
 
 // Just assigns input_size to size.
 class BasicLayout : public Layout {
-public:
-    BasicLayout(Container& c)
-        : Layout(c) { }
-
 private:
-    virtual void run() override;
+    virtual void run(Container&) override;
 };
 
 class Container : public Widget {
 public:
-    explicit Container(Container& parent)
-        : Widget(parent) { }
-
-    explicit Container(WidgetTreeRoot& parent)
-        : Widget(parent) { }
-
     template<class T, class... Args>
-    requires(std::is_base_of_v<Widget, T>&& requires(Container& c, Args&&... args) { T(c, std::forward<Args>(args)...); })
+    requires(std::is_base_of_v<Widget, T>&& requires(Args&&... args) { T(std::forward<Args>(args)...); })
         T* add_widget(Args&&... args) {
-        auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
+        auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(widget);
+        widget->set_parent(*this);
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
         set_needs_relayout();
@@ -114,6 +105,7 @@ public:
     }
 
     void add_created_widget(std::shared_ptr<Widget> widget) {
+        widget->set_parent(*this);
         m_widgets.push_back(std::move(widget));
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
@@ -128,9 +120,9 @@ public:
     void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 
     template<class T, class... Args>
-    requires(std::is_base_of_v<Layout, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
+    requires(std::is_base_of_v<Layout, T>&& requires(Args&&... args) { T(args...); })
         T& set_layout(Args&&... args) {
-        auto layout = std::make_unique<T>(*this, std::forward<Args>(args)...);
+        auto layout = std::make_unique<T>(std::forward<Args>(args)...);
         auto layout_ptr = layout.get();
         m_layout = std::move(layout);
         return *layout_ptr;
@@ -189,7 +181,11 @@ public:
     }
     // clang-format on
 
+    // Footgun alert, use it only in *Layout::run()!
+    WidgetList& widgets() { return m_widgets; }
+
 protected:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() override;
     virtual void handle_event(Event&) override;
     virtual float intrinsic_padding() const { return 0; }

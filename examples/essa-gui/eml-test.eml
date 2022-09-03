@@ -1,0 +1,10 @@
+@aregaergaer {
+    main_widget: @Container {
+        layout: @HorizontalBoxLayout
+
+        @TextButton test {
+            content: "test"
+            width: 50%
+        }
+    }
+}

@@ -1,9 +1,10 @@
 #include "WidgetTreeRoot.hpp"
 
 #include "Application.hpp"
-#include "EssaGUI/gfx/ClipViewScope.hpp"
 #include "Widget.hpp"
 
+#include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/ClipViewScope.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -23,6 +24,7 @@ void WidgetTreeRoot::draw() {
         m_main_widget->set_size({ { size().x(), Length::Unit::Px }, { size().y(), Length::Unit::Px } });
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
+        m_main_widget->dump(0);
         m_needs_relayout = false;
     }
     m_main_widget->do_draw(m_window);
@@ -85,4 +87,10 @@ Theme const& WidgetTreeRoot::theme() const {
 Gfx::ResourceManager const& WidgetTreeRoot::resource_manager() const {
     return Application::the().resource_manager();
 }
+
+EML::EMLErrorOr<void> WidgetTreeRoot::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    m_main_widget = TRY(object.require_and_construct_object<Widget>("main_widget", loader, *this));
+    return {};
+}
+
 }

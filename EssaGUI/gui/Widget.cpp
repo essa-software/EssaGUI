@@ -11,14 +11,9 @@
 
 namespace GUI {
 
-Widget::Widget(Container& parent)
-    : m_parent(&parent)
-    , m_widget_tree_root(parent.m_widget_tree_root) {
-}
-
 Widget::~Widget() {
-    if (m_widget_tree_root.focused_widget() == this)
-        m_widget_tree_root.set_focused_widget(nullptr);
+    if (m_widget_tree_root && m_widget_tree_root->focused_widget() == this)
+        m_widget_tree_root->set_focused_widget(nullptr);
 }
 
 bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
@@ -33,7 +28,7 @@ void Widget::update() {
         if (m_hover) {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
-                m_tooltip = &Application::the().add_tooltip(Tooltip { m_tooltip_text, this, position() + m_widget_tree_root.position() });
+                m_tooltip = &Application::the().add_tooltip(Tooltip { m_tooltip_text, this, position() + m_widget_tree_root->position() });
                 // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
@@ -61,11 +56,11 @@ void Widget::do_update() {
 
 void Widget::set_focused() {
     assert(accepts_focus());
-    m_widget_tree_root.set_focused_widget(this);
+    m_widget_tree_root->set_focused_widget(this);
 }
 
 bool Widget::is_focused() const {
-    return m_widget_tree_root.focused_widget() == this;
+    return m_widget_tree_root->focused_widget() == this;
 }
 
 void Widget::focus_first_child_or_self() {
@@ -117,7 +112,7 @@ void Widget::do_draw(GUI::Window& window) const {
 }
 
 Util::Rectf Widget::rect() const {
-    return { position() + m_widget_tree_root.position(), size() };
+    return { position() + m_widget_tree_root->position(), size() };
 }
 
 void Widget::do_relayout() {
@@ -127,11 +122,11 @@ void Widget::do_relayout() {
 }
 
 void Widget::set_needs_relayout() {
-    m_widget_tree_root.set_needs_relayout();
+    m_widget_tree_root->set_needs_relayout();
 }
 
 GUI::Window& Widget::window() const {
-    return m_widget_tree_root.window();
+    return m_widget_tree_root->window();
 }
 
 Theme const& Widget::theme() const {
@@ -140,6 +135,11 @@ Theme const& Widget::theme() const {
 
 Gfx::ResourceManager const& Widget::resource_manager() const {
     return Application::the().resource_manager();
+}
+
+void Widget::set_parent(Container& parent) {
+    set_widget_tree_root(parent.widget_tree_root());
+    m_parent = &parent;
 }
 
 void Widget::dump(unsigned depth) {
@@ -151,6 +151,13 @@ void Widget::dump(unsigned depth) {
         std::cout << " #" << m_id;
     std::cout << ": pos=" << m_pos.x() << "," << m_pos.y() << " size=" << m_size.x() << "," << m_size.y();
     std::cout << std::endl;
+}
+
+EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+    m_id = object.id;
+    m_input_size.x = TRY(object.get_property("width", Length { Length::Initial }).to_length());
+    m_input_size.y = TRY(object.get_property("height", Length { Length::Initial }).to_length());
+    return {};
 }
 
 }

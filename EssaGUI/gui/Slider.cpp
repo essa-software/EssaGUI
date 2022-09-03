@@ -7,8 +7,8 @@
 
 namespace GUI {
 
-Slider::Slider(Container& c, double min_val, double max_val, double step)
-    : Widget(c)
+Slider::Slider(double min_val, double max_val, double step)
+    : Widget()
     , m_min_val(min_val)
     , m_max_val(max_val)
     , m_step(step)

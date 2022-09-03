@@ -9,9 +9,6 @@ namespace GUI {
 
 class Button : public Widget {
 public:
-    explicit Button(Container& c)
-        : Widget(c) { }
-
     std::function<void()> on_click;
 
     virtual void handle_event(Event&) override;
@@ -47,6 +44,7 @@ protected:
 
     virtual Theme::ButtonColors default_button_colors() const = 0;
 
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
     virtual bool accepts_focus() const override { return true; }
 
 private:

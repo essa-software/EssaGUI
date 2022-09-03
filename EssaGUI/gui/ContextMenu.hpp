@@ -7,12 +7,6 @@ namespace GUI {
 
 class MenuWidget : public Widget {
 public:
-    explicit MenuWidget(WidgetTreeRoot& parent)
-        : Widget(parent) { }
-
-    explicit MenuWidget(Container& parent)
-        : Widget(parent) { }
-
     std::function<void(size_t)> on_action;
 
     void add_action(Util::UString);

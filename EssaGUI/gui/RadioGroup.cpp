@@ -2,8 +2,8 @@
 #include "RadioButton.hpp"
 
 namespace GUI {
-RadioGroup::RadioGroup(Container& c)
-    : Container(c) {
+RadioGroup::RadioGroup()
+    : Container() {
     set_layout<VerticalBoxLayout>().set_spacing(5);
 }
 

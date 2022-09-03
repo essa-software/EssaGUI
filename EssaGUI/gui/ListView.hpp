@@ -12,8 +12,8 @@ namespace GUI {
 
 class ListView : public ScrollableWidget {
 public:
-    explicit ListView(Container& parent)
-        : ScrollableWidget(parent) { }
+    explicit ListView()
+        : ScrollableWidget() { }
 
     void set_model(std::unique_ptr<Model> model) { m_model = std::move(model); }
 

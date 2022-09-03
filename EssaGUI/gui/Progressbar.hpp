@@ -10,9 +10,8 @@ namespace GUI {
 
 class Progressbar : public Widget {
 public:
-    explicit Progressbar(Container& parent, size_t min, size_t max)
-        : Widget(parent)
-        , m_min(min)
+    explicit Progressbar(size_t min, size_t max)
+        : m_min(min)
         , m_max(max) { }
 
     virtual void draw(GUI::Window& window) const override;

@@ -11,7 +11,7 @@ namespace GUI {
 
 class UnitSlider : public Container {
 public:
-    UnitSlider(Container& parent, Util::Quantity q, double min, double max, double step = 1);
+    UnitSlider(Util::Quantity q, double min, double max, double step = 1);
 
     void set_name(std::string name) { m_name_textfield->set_content(std::move(name)); }
 

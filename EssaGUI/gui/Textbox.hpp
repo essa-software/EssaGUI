@@ -18,8 +18,8 @@ public:
 
     Type m_type = NUMBER;
 
-    explicit Textbox(Container& c)
-        : TextEditor(c) { set_multiline(false); }
+    explicit Textbox()
+        : TextEditor() { set_multiline(false); }
 
     void set_limit(unsigned limit) { m_limit = limit; }
 

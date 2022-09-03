@@ -2,12 +2,12 @@
 
 #include "Container.hpp"
 #include "ContextMenu.hpp"
-#include "EssaGUI/gfx/ResourceManager.hpp"
 #include "Theme.hpp"
 #include "ToolWindow.hpp"
 #include "Tooltip.hpp"
 #include "WidgetTreeRoot.hpp"
 
+#include <EssaGUI/gfx/ResourceManager.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 #include <iostream>
 #include <list>
