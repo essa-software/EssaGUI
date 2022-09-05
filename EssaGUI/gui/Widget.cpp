@@ -155,6 +155,7 @@ void Widget::dump(unsigned depth) {
 
 EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
     m_id = object.id;
+    m_tooltip_text = TRY(object.get_property("tooltip_text", Util::UString {}).to_string());
     m_input_size.x = TRY(object.get_property("width", Length { Length::Initial }).to_length());
     m_input_size.y = TRY(object.get_property("height", Length { Length::Initial }).to_length());
     return {};
