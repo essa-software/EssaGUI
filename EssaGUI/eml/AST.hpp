@@ -42,14 +42,18 @@ struct Object : public Scope {
     template<class T, class... Args>
     requires(sizeof...(Args) == 0) || requires(T t, Args... args) { t.eml_construct(args...); }
     EMLErrorOr<std::unique_ptr<T>> construct(EML::Loader& loader, Args&&... args) const {
-        auto object = dynamic_cast<T*>(TRY(construct_impl(loader)).release());
+        auto object_uptr = TRY(construct_impl(loader)).release();
+        // MANUAL MEMORY MANAGEMENT OF object STARTS HERE
+        auto object = dynamic_cast<T*>(object_uptr);
         if (!object) {
+            delete object_uptr;
             return EMLError { "Cannot convert " + class_name + " object to " + typeid(T).name() };
         }
         if constexpr (sizeof...(Args) > 0) {
             object->eml_construct(std::forward<Args>(args)...);
         }
         TRY(populate_impl(loader, *object));
+        // and ENDS HERE
         return std::unique_ptr<T> { object };
     }
 
