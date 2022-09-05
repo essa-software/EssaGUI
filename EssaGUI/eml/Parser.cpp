@@ -106,16 +106,21 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
     case TokenType::Number: {
         get();
         auto number = std::stoi(token->value());
-        auto maybe_unit = get();
-        if (maybe_unit->type() == TokenType::PercentSign)
+        auto maybe_unit = peek();
+        if (maybe_unit->type() == TokenType::PercentSign) {
+            get();
             return Length { static_cast<float>(number), Length::Percent };
-        if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px")
+        }
+        if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px") {
+            get();
             return Length { static_cast<float>(number), Length::Px };
+        }
         if (maybe_unit->type() == TokenType::DoubleDot) {
+            get();
             auto range_max = TRY(expect(TokenType::Number));
             return Range { static_cast<double>(number), std::stof(range_max.value()) };
         }
-        return error_in_already_read("Expected unit or range");
+        return static_cast<double>(number);
     }
     case TokenType::Identifier: {
         get();
