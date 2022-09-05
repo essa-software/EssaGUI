@@ -1,6 +1,5 @@
 #pragma once
 
-#include "AST.hpp"
 #include "EMLError.hpp"
 
 #include <EssaUtil/GenericParser.hpp>
@@ -10,6 +9,7 @@
 namespace EML {
 
 class Loader;
+struct Object;
 
 // A GUI object (Widget etc.) which can be loaded from EML
 class EMLObject {

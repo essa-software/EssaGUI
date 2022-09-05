@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EMLError.hpp"
+#include "EMLObject.hpp"
 
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaUtil/UString.hpp>

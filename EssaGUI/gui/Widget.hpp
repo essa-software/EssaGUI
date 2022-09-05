@@ -1,6 +1,8 @@
 #pragma once
 
+#include <EssaGUI/eml/AST.hpp>
 #include <EssaGUI/eml/EMLObject.hpp>
+#include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>

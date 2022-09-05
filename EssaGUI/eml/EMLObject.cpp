@@ -1,5 +1,6 @@
 #include "EMLObject.hpp"
 
+#include "AST.hpp"
 #include "Lexer.hpp"
 #include "Loader.hpp"
 #include "Parser.hpp"
