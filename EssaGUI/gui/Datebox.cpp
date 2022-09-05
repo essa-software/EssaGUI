@@ -19,7 +19,7 @@ Util::UString const month_names[] = {
 
 namespace GUI {
 
-void Datebox::on_add() {
+void Datebox::on_init() {
     m_date = Util::SimulationTime::create(2022, 4, 24);
     set_layout<VerticalBoxLayout>().set_spacing(10);
     auto main_container = add_widget<Container>();

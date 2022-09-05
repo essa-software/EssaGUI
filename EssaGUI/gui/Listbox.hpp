@@ -11,7 +11,7 @@ namespace GUI {
 
 class Listbox : public Container {
 public:
-    virtual void on_add() override {
+    virtual void on_init() override {
         set_layout<VerticalBoxLayout>();
     }
 

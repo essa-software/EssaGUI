@@ -3,7 +3,7 @@
 
 namespace GUI {
 
-void RadioGroup::on_add() {
+void RadioGroup::on_init() {
     set_layout<VerticalBoxLayout>().set_spacing(5);
 }
 

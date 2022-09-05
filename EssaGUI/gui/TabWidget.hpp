@@ -10,7 +10,7 @@ class TabWidget;
 
 class TabSelectWidget : public Container {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     void add_button(Util::UString caption, size_t tab_index);
     void switch_to_tab(size_t index);
@@ -21,7 +21,7 @@ private:
 
 class TabWidget : public Container {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     template<class... Args>
     Container& add_tab(Util::UString caption, Args&&... args) {

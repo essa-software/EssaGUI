@@ -7,7 +7,7 @@
 namespace GUI {
 
 template<typename T>
-void SelectWidget<T>::on_add() {
+void SelectWidget<T>::on_init() {
     auto& layout = m_container->set_layout<HorizontalBoxLayout>();
     layout.set_spacing(0);
     m_label = m_container->add_widget<Textfield>();

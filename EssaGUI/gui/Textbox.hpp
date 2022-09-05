@@ -18,7 +18,7 @@ public:
 
     Type m_type = NUMBER;
 
-    virtual void on_add() override { set_multiline(false); }
+    virtual void on_init() override { set_multiline(false); }
 
     void set_limit(unsigned limit) { m_limit = limit; }
 

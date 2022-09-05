@@ -8,7 +8,7 @@
 
 class EMLPreview : public GUI::Container {
 public:
-    virtual void on_add() override {
+    virtual void on_init() override {
         set_layout<GUI::HorizontalBoxLayout>();
 
         auto eml_editor = add_widget<GUI::TextEditor>();

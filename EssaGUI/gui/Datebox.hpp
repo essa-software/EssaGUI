@@ -26,7 +26,7 @@ class Datebox : public Container {
     void m_update_calendar();
 
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     void set_display_attributes(Util::Color bg_color, Util::Color fg_color, Util::Color text_color);
 };

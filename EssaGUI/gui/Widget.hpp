@@ -130,8 +130,12 @@ public:
 
     void set_background_color(Util::Color const& color) { m_background_color = color; }
 
-    virtual void eml_construct(WidgetTreeRoot& root) { set_widget_tree_root(root); }
-    virtual void on_add() { }
+    virtual void eml_construct(WidgetTreeRoot& root) {
+        set_widget_tree_root(root);
+        if (!m_initialized)
+            on_init();
+    }
+    virtual void on_init() { }
 
 protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
@@ -179,6 +183,7 @@ private:
     bool m_hover = false;
     bool m_visible = true;
     bool m_enabled = true;
+    bool m_initialized = false;
     Util::Color m_background_color = Util::Colors::Transparent;
 };
 

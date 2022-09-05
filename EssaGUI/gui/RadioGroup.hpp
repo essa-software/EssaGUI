@@ -10,7 +10,7 @@ namespace GUI {
 
 class RadioGroup : public Container {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     void add_radio(Util::UString const& caption);
     void set_index(size_t index);

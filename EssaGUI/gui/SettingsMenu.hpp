@@ -8,7 +8,7 @@ namespace GUI {
 
 class SettingsMenu : public Container {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     struct MenuEntry {
         ImageButton* button {};

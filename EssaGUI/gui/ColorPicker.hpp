@@ -6,7 +6,7 @@ namespace GUI {
 
 class ColorPicker : public Button {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     Util::Color color() const;
     void set_color(Util::Color color);

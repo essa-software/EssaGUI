@@ -9,7 +9,7 @@ namespace GUI {
 
 class ValueSlider : public Container {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     void set_min(double min) { m_slider->set_min(min); }
     void set_max(double max) { m_slider->set_max(max); }

@@ -166,7 +166,7 @@ void ColorPickerDialog::set_color(Util::Color color) {
     m_b_slider->set_value(color.b);
 }
 
-void ColorPicker::on_add() {
+void ColorPicker::on_init() {
     on_click = [this]() {
         auto color = ColorPickerDialog::exec(m_color);
         if (color) {

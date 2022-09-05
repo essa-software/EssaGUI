@@ -7,7 +7,7 @@ namespace GUI {
 
 class Canvas : public Container {
 public:
-    virtual void on_add() override { set_layout<BasicLayout>(); }
+    virtual void on_init() override { set_layout<BasicLayout>(); }
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Sprite, T>&& requires(Args&&... args) { T(std::forward<Args>(args)...); })

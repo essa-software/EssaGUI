@@ -7,7 +7,7 @@
 
 namespace GUI {
 
-void SettingsMenu::on_add() {
+void SettingsMenu::on_init() {
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(10);
     m_buttons_container = add_widget<Container>();

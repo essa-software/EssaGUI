@@ -10,7 +10,7 @@ class Grid : public Container {
 public:
     friend Border;
 
-    virtual void on_add() override {
+    virtual void on_init() override {
         set_layout<VerticalBoxLayout>();
     }
 

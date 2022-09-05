@@ -36,7 +36,7 @@ void TabButton::draw(GUI::Window& window) const {
     window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font(), text);
 }
 
-void TabSelectWidget::on_add() {
+void TabSelectWidget::on_init() {
     set_layout<HorizontalBoxLayout>();
 }
 
@@ -63,7 +63,7 @@ void TabSelectWidget::switch_to_tab(size_t index) {
     }
 }
 
-void TabWidget::on_add() {
+void TabWidget::on_init() {
     set_layout<VerticalBoxLayout>();
     m_tab_select = add_widget<TabSelectWidget>();
     m_tab_select->set_size({ Length::Auto, 30.0_px });
