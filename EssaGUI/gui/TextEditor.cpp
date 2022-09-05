@@ -231,9 +231,14 @@ void TextEditor::handle_event(Event& event) {
                                 m_cursor.column--;
                                 m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
                             };
-                            do {
+                            if (isspace(m_lines[m_cursor.line].at(m_cursor.column - 1))) {
+                                do {
+                                    remove_character();
+                                } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
+                            }
+                            else {
                                 remove_character();
-                            } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
+                            }
                         }
                         else if (m_cursor.line != 0) {
                             m_cursor.line--;
