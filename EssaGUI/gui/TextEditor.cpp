@@ -269,6 +269,19 @@ void TextEditor::handle_event(Event& event) {
                     if (on_change)
                         on_change(get_content());
                 }
+                break;
+            }
+            case llgl::KeyCode::Home: {
+                m_cursor.column = 0;
+                update_selection_after_set_cursor();
+                break;
+            }
+            case llgl::KeyCode::End: {
+                if (m_lines.empty())
+                    break;
+                m_cursor.column = m_lines[m_cursor.line].size();
+                update_selection_after_set_cursor();
+                break;
             }
             default:
                 break;
