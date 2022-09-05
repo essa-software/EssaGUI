@@ -322,7 +322,7 @@ Util::UString TextEditor::selected_text() const {
         float start = s == selection_start.line ? selection_start.column : 0;
         float end = s == selection_end.line ? selection_end.column : m_lines[s].size();
         text = text + m_lines[s].substring(start, end - start);
-        if (s != selection_end.line - 1)
+        if (s != selection_end.line)
             text = text + "\n";
     }
     return text;
