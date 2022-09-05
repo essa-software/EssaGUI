@@ -134,8 +134,10 @@ public:
 
     virtual void eml_construct(WidgetTreeRoot& root) {
         set_widget_tree_root(root);
-        if (!m_initialized)
+        if (!m_initialized) {
             on_init();
+            m_initialized = true;
+        }
     }
     virtual void on_init() { }
 
