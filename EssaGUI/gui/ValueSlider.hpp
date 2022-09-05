@@ -7,14 +7,16 @@
 
 namespace GUI {
 
-struct ValueSliderOptions {
-    Length name_textfield_size = 100.0_px;
-    Length unit_textfield_size = 50.0_px;
-};
-
 class ValueSlider : public Container {
 public:
-    ValueSlider(double min, double max, double step = 1, ValueSliderOptions options = {});
+    virtual void on_add() override;
+
+    void set_min(double min) { m_slider->set_min(min); }
+    void set_max(double max) { m_slider->set_max(max); }
+    void set_step(double step) { m_slider->set_step(step); }
+
+    void set_name_textfield_size(Length l) { m_name_textfield->set_size({ l, Length::Auto }); }
+    void set_unit_textfield_size(Length l) { m_unit_textfield->set_size({ l, Length::Auto }); }
 
     void set_name(Util::UString name) { m_name_textfield->set_content(std::move(name)); }
     void set_unit(Util::UString unit) { m_unit_textfield->set_content(std::move(unit)); }

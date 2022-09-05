@@ -8,9 +8,6 @@ namespace GUI {
 
 class ScrollableWidget : public Widget {
 public:
-    explicit ScrollableWidget()
-        : Widget() { }
-
     void set_scroll(float);
     float scroll() const { return m_scroll; }
 

@@ -7,14 +7,6 @@
 
 namespace GUI {
 
-Slider::Slider(double min_val, double max_val, double step)
-    : Widget()
-    , m_min_val(min_val)
-    , m_max_val(max_val)
-    , m_step(step)
-    , m_val((min_val + max_val) / 2) {
-}
-
 double Slider::get_value() const {
     switch (m_mode) {
     case Mode::Linear:

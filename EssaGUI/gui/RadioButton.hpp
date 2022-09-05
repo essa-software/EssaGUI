@@ -8,8 +8,7 @@ namespace GUI {
 
 class RadioButton : public Button {
 public:
-    explicit RadioButton()
-        : Button() { set_toggleable(true); }
+    virtual void on_add() override { set_toggleable(true); }
 
     virtual void draw(GUI::Window& window) const override;
 

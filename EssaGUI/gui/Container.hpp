@@ -98,6 +98,7 @@ public:
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(widget);
         widget->set_parent(*this);
+        widget->on_add();
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
         set_needs_relayout();
@@ -106,6 +107,7 @@ public:
 
     void add_created_widget(std::shared_ptr<Widget> widget) {
         widget->set_parent(*this);
+        widget->on_add();
         m_widgets.push_back(std::move(widget));
         if (m_layout)
             m_layout->m_multipliers.push_back(1);

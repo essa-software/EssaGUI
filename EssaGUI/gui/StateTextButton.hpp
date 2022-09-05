@@ -15,8 +15,6 @@ class StateTextButton : public Widget {
     };
 
 public:
-    explicit StateTextButton();
-
     void add_state(Util::UString content, T state, Util::Color bg_color, Util::Color fg_color = Util::Colors::Blue, Util::Color text_color = Util::Colors::White);
 
     unsigned get_font_size() const { return m_font_size; }

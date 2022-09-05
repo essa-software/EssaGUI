@@ -35,6 +35,7 @@ public:
         auto widget_ptr = widget.get();
         m_main_widget = std::move(widget);
         m_main_widget->set_widget_tree_root(*this);
+        m_main_widget->on_add();
         m_needs_relayout = true;
         return *widget_ptr;
     }
@@ -44,6 +45,7 @@ public:
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
         m_main_widget->set_widget_tree_root(*this);
+        m_main_widget->on_add();
         m_needs_relayout = true;
         return *widget_ptr;
     }

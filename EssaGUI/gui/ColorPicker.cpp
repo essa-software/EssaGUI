@@ -87,10 +87,11 @@ ColorPickerDialog::ColorPickerDialog(GUI::Window& wnd)
 
             {
                 auto create_color_slider = [&](Util::UString component, int max, Mode mode) {
-                    auto slider = sliders_container->add_widget<ValueSlider>(0, max, 1,
-                        ValueSliderOptions {
-                            .name_textfield_size = 20.0_px,
-                            .unit_textfield_size = 0.0_px });
+                    auto slider = sliders_container->add_widget<ValueSlider>();
+                    slider->set_min(0);
+                    slider->set_max(max);
+                    slider->set_name_textfield_size(20.0_px);
+                    slider->set_unit_textfield_size(0.0_px);
                     slider->set_name(component);
                     slider->on_change = [this, mode](double) {
                         update_controls(mode);
@@ -165,7 +166,7 @@ void ColorPickerDialog::set_color(Util::Color color) {
     m_b_slider->set_value(color.b);
 }
 
-ColorPicker::ColorPicker() {
+void ColorPicker::on_add() {
     on_click = [this]() {
         auto color = ColorPickerDialog::exec(m_color);
         if (color) {

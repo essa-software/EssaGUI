@@ -2,25 +2,25 @@
 
 #include "EssaGUI/gui/Container.hpp"
 
-namespace GUI{
+namespace GUI {
 
-class Border : public Container{
+class Border : public Container {
 public:
-    Border() {
+    virtual void on_add() override {
         set_layout<HorizontalBoxLayout>();
     }
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Widget, T>&& requires(Args&&... args) { T(std::forward<Args>(args)...); })
-    T* add_child(Args&&... args){
-        
+        T* add_child(Args&&... args) {
+
         m_widgets.clear();
-        
+
         auto child = add_widget<T>(std::forward<Args>(args)...);
-        child->set_size({Length::Auto, Length::Auto});
+        child->set_size({ Length::Auto, Length::Auto });
 
         return child;
-    } 
+    }
 };
 
 }

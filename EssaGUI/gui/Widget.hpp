@@ -131,6 +131,7 @@ public:
     void set_background_color(Util::Color const& color) { m_background_color = color; }
 
     virtual void eml_construct(WidgetTreeRoot& root) { set_widget_tree_root(root); }
+    virtual void on_add() { }
 
 protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }

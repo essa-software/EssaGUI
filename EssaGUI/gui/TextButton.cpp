@@ -7,10 +7,6 @@
 
 namespace GUI {
 
-TextButton::TextButton()
-    : Button() {
-}
-
 void TextButton::draw(GUI::Window& window) const {
     auto colors = colors_for_state();
 

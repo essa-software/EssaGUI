@@ -28,14 +28,15 @@ int main() {
     std::vector<std::thread> thread_vec;
 
     auto create_progressbar = [&](Util::Color color, size_t timestep, GUI::Container& con, Util::UString const& content, GUI::Progressbar::Labelling label) {
-        auto prog1 = con.add_widget<GUI::Progressbar>(0, 100);
+        auto prog1 = con.add_widget<GUI::Progressbar>();
+        prog1->set_max(100);
         prog1->set_content(content);
         prog1->set_size({ Length::Auto, 30.0_px });
         prog1->set_progressbar_color(color);
         prog1->set_labelling(label);
         // prog1->set_step(1);
 
-        prog1->on_finish = [content](){
+        prog1->on_finish = [content]() {
             std::cout << "Finished " + content << "\n";
         };
 

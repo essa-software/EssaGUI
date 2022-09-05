@@ -8,8 +8,6 @@ namespace GUI {
 
 class TextButton : public Button {
 public:
-    explicit TextButton();
-
     void set_content(Util::UString content) { m_content = std::move(content); }
     void set_active_content(Util::UString content) { m_active_content = std::move(content); }
 

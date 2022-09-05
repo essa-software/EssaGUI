@@ -19,12 +19,12 @@ static Util::UString serialize_value(double value, double step) {
     return Util::UString { oss.str() };
 }
 
-ValueSlider::ValueSlider(double min, double max, double step, ValueSliderOptions options) {
+void ValueSlider::on_add() {
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(5);
     m_name_textfield = add_widget<Textfield>();
-    m_name_textfield->set_size({ options.name_textfield_size, Length::Auto });
-    m_slider = add_widget<Slider>(min, max, step);
+    m_name_textfield->set_size({ 100.0_px, Length::Auto });
+    m_slider = add_widget<Slider>();
     m_slider->on_change = [this](double value) {
         m_textbox->set_content(serialize_value(value, m_slider->step()), NotifyUser::No);
         if (on_change)
@@ -47,7 +47,7 @@ ValueSlider::ValueSlider(double min, double max, double step, ValueSliderOptions
         }
     };
     m_unit_textfield = add_widget<Textfield>();
-    m_unit_textfield->set_size({ options.unit_textfield_size, Length::Auto });
+    m_unit_textfield->set_size({ 50.0_px, Length::Auto });
 }
 
 double ValueSlider::value() const {

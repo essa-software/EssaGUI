@@ -9,9 +9,9 @@
 namespace GUI {
 
 class Slider : public Widget {
-    double m_min_val, m_max_val;
-    double m_step;
-    double m_val;
+    double m_min_val = 0, m_max_val = 100;
+    double m_step = 1;
+    double m_val = 50;
 
     bool m_dragging = false;
     unsigned m_text_size;
@@ -30,7 +30,15 @@ public:
         LEFT
     };
 
-    Slider(double min_val, double max_val, double step = 1);
+    double min() const { return m_min_val; }
+    void set_min(double min) { m_min_val = min; }
+
+    double max() const { return m_max_val; }
+    void set_max(double max) { m_max_val = max; }
+
+    double step() const { return m_step; }
+    void set_step(double step) { m_step = step; }
+
     double get_value() const;
     double get_raw_value() const { return m_val; }
     void set_value(double val, NotifyUser = NotifyUser::Yes);
@@ -46,8 +54,6 @@ public:
 
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
     void set_range(double min, double max, double step);
-
-    double step() const { return m_step; }
 
     std::function<void(double)> on_change;
 

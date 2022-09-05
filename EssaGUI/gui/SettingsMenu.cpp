@@ -7,8 +7,7 @@
 
 namespace GUI {
 
-SettingsMenu::SettingsMenu()
-    : Container() {
+void SettingsMenu::on_add() {
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(10);
     m_buttons_container = add_widget<Container>();
@@ -22,7 +21,8 @@ SettingsMenu::SettingsMenu()
 }
 
 SettingsMenu::MenuEntry& SettingsMenu::add_entry(llgl::opengl::Texture const& image, Util::UString tooltip, Expandable expandable) {
-    auto button = m_buttons_container->add_widget<ImageButton>(std::move(image));
+    auto button = m_buttons_container->add_widget<ImageButton>();
+    button->set_image(&image);
     button->set_tooltip_text(std::move(tooltip));
     if (expandable == Expandable::Yes) {
         button->set_toggleable(true);
