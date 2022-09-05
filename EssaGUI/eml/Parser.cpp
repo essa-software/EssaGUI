@@ -113,6 +113,8 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
         get();
         auto number = std::stoi(token->value());
         auto maybe_unit = peek();
+        if (!maybe_unit)
+            return error("Expected unit, got EOF");
         if (maybe_unit->type() == TokenType::PercentSign) {
             get();
             return Length { static_cast<float>(number), Length::Percent };
