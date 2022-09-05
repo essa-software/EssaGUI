@@ -52,6 +52,9 @@ public:
     // for multiline textboxes.
     std::function<void(Util::UString const&)> on_enter;
 
+protected:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+
 private:
     TextPosition m_character_pos_from_mouse(Event& event);
     Util::Vector2f calculate_cursor_position() const;

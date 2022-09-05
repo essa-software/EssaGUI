@@ -4,6 +4,7 @@
 #include "ScrollableWidget.hpp"
 #include "Widget.hpp"
 
+#include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaUtil/CharacterType.hpp>
@@ -594,4 +595,14 @@ void TextEditor::draw(GUI::Window& window) const {
 
     ScrollableWidget::draw_scrollbar(window);
 }
+
+EML::EMLErrorOr<void> TextEditor::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+    m_placeholder = TRY(object.get_property("placeholder", Util::UString { "" }).to_string());
+    m_multiline = TRY(object.get_property("multiline", false).to_bool());
+    return {};
+}
+
+EML_REGISTER_CLASS(TextEditor);
+
 }

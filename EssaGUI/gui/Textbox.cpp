@@ -1,8 +1,10 @@
 #include "Textbox.hpp"
 
 #include "Application.hpp"
+#include "EssaGUI/eml/Loader.hpp"
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
+#include <EssaGUI/gui/TextEditor.hpp>
 #include <EssaUtil/CharacterType.hpp>
 #include <cassert>
 #include <cctype>
@@ -69,5 +71,15 @@ void Textbox::on_content_change() {
     if (m_type == Type::NUMBER)
         m_fit_in_range();
 }
+
+EML::EMLErrorOr<void> Textbox::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(TextEditor::load_from_eml_object(object, loader));
+    m_limit = TRY(object.get_property("limit", static_cast<double>(m_limit)).to_double());
+    m_min_value = TRY(object.get_property("min_value", m_min_value).to_double());
+    m_max_value = TRY(object.get_property("max_value", m_min_value).to_double());
+    return {};
+}
+
+EML_REGISTER_CLASS(Textbox);
 
 }

@@ -35,6 +35,7 @@ private:
     std::string m_fix_content(std::string content) const;
     virtual bool can_insert_codepoint(uint32_t ch) const override;
     virtual void on_content_change() override;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 
     virtual LengthVector initial_size() const override { return { Length::Auto, { static_cast<float>(theme().line_height), Length::Unit::Px } }; }
 

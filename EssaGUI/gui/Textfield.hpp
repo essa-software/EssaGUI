@@ -29,6 +29,7 @@ public:
 
 private:
     virtual LengthVector initial_size() const override;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 
     Util::UString m_content;
     int m_font_size = theme().label_font_size;
