@@ -8,6 +8,7 @@
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaUtil/CharacterType.hpp>
+#include <LLGL/Window/Clipboard.hpp>
 
 #include <sstream>
 #include <string>
@@ -173,8 +174,7 @@ void TextEditor::handle_event(Event& event) {
             case llgl::KeyCode::X: {
                 if (event.event().key.ctrl) {
                     auto selected_text = this->selected_text();
-                    // TODO
-                    // sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
+                    llgl::Clipboard::set_string(selected_text);
                     erase_selected_text();
                 }
                 break;
@@ -182,18 +182,16 @@ void TextEditor::handle_event(Event& event) {
             case llgl::KeyCode::C: {
                 if (event.event().key.ctrl) {
                     auto selected_text = this->selected_text();
-                    // TODO
-                    // sf::Clipboard::setString(sf::String::fromUtf32(selected_text.begin(), selected_text.end()));
+                    llgl::Clipboard::set_string(selected_text);
                 }
                 break;
             }
             case llgl::KeyCode::V: {
-                if (event.event().key.ctrl) {
+                if (event.event().key.ctrl && llgl::Clipboard::has_string()) {
                     erase_selected_text();
                     m_selection_start = m_cursor;
-                    // auto clipboard_contents = sf::Clipboard::getString();
-                    // for (auto codepoint : clipboard_contents)
-                    //     insert_codepoint(codepoint);
+                    for (auto codepoint : llgl::Clipboard::get_string())
+                        insert_codepoint(codepoint);
                 }
                 break;
             }
@@ -323,7 +321,9 @@ Util::UString TextEditor::selected_text() const {
     for (size_t s = selection_start.line; s <= selection_end.line; s++) {
         float start = s == selection_start.line ? selection_start.column : 0;
         float end = s == selection_end.line ? selection_end.column : m_lines[s].size();
-        text = text + m_lines[s].substring(start, end - start + 1);
+        text = text + m_lines[s].substring(start, end - start);
+        if (s != selection_end.line - 1)
+            text = text + "\n";
     }
     return text;
 }
