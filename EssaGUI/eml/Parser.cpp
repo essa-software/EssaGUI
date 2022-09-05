@@ -25,9 +25,11 @@ Util::ParseErrorOr<Declaration> Parser::parse_declaration() {
 }
 
 Util::ParseErrorOr<Object> Parser::parse_object() {
-    Object object;
+    ignore_newlines_and_comments();
 
     TRY(expect(TokenType::At));
+
+    Object object;
     object.class_name = TRY(expect(TokenType::Identifier)).value();
 
     if (next_token_is(TokenType::Identifier)) {
@@ -73,6 +75,8 @@ Util::ParseErrorOr<Object> Parser::parse_object() {
 }
 
 Util::ParseErrorOr<ClassDefinition> Parser::parse_class_definition() {
+    ignore_newlines_and_comments();
+
     TRY(expect(TokenType::KeywordDefine));
 
     ClassDefinition definition;
@@ -83,6 +87,8 @@ Util::ParseErrorOr<ClassDefinition> Parser::parse_class_definition() {
 }
 
 Util::ParseErrorOr<Property> Parser::parse_property() {
+    ignore_newlines_and_comments();
+
     // Name
     auto name = TRY(expect(TokenType::Identifier));
 
