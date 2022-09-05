@@ -227,8 +227,13 @@ void TextEditor::handle_event(Event& event) {
                 if (m_lines.size() > 0) {
                     if (m_cursor == m_selection_start) {
                         if (m_cursor.column > 0) {
-                            m_cursor.column--;
-                            m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                            auto remove_character = [this]() {
+                                m_cursor.column--;
+                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                            };
+                            do {
+                                remove_character();
+                            } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
                         }
                         else if (m_cursor.line != 0) {
                             m_cursor.line--;
