@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL_keycode.h>
 #include <string>
 
 #include <SDL2/SDL_keyboard.h>
@@ -40,7 +41,9 @@ namespace llgl {
     K(Backspace, SDLK_BACKSPACE)       \
     K(Delete, SDLK_DELETE)             \
     K(Escape, SDLK_ESCAPE)             \
+    K(End, SDLK_END)                   \
     K(Enter, SDLK_RETURN)              \
+    K(Home, SDLK_HOME)                 \
     K(Space, SDLK_SPACE)               \
     K(Tab, SDLK_TAB)                   \
     K(Tilde, SDLK_BACKQUOTE)
@@ -51,8 +54,7 @@ enum class KeyCode {
 #undef __ENUMERATE_KEY
 };
 
-constexpr std::string_view to_string(KeyCode key)
-{
+constexpr std::string_view to_string(KeyCode key) {
     switch (key) {
 #define __ENUMERATE_KEY(key, value) \
     case KeyCode::key:              \
