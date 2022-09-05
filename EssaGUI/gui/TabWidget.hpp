@@ -39,6 +39,8 @@ private:
     unsigned m_index = 0;
     void setup_tab(Util::UString caption, Container* tab);
 
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+
     TabSelectWidget* m_tab_select {};
     Container* m_tab_container {};
     std::vector<Container*> m_tabs;

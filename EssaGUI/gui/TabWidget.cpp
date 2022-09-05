@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Container.hpp"
 
+#include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <cassert>
 #include <iostream>
@@ -93,5 +94,17 @@ void TabWidget::setup_tab(Util::UString caption, Container* tab) {
     m_tab_select->add_button(std::move(caption), m_tabs.size());
     m_tabs.push_back(tab);
 }
+
+EML::EMLErrorOr<void> TabWidget::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+    for (auto const& child : object.objects) {
+        std::shared_ptr<Container> container = TRY(child.construct<Container>(loader, widget_tree_root()));
+        add_created_widget(container);
+        setup_tab(TRY(TRY(child.require_property("caption")).to_string()), container.get());
+    }
+    return {};
+}
+
+EML_REGISTER_CLASS(TabWidget);
 
 }
