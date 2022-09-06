@@ -1,5 +1,6 @@
 #include "Slider.hpp"
 
+#include "EssaGUI/eml/Loader.hpp"
 #include "NotifyUser.hpp"
 #include <EssaGUI/gfx/Window.hpp>
 #include <cmath>
@@ -97,5 +98,18 @@ void Slider::set_range(double min, double max, double step) {
     m_max_val = max;
     m_step = step;
 }
+
+EML::EMLErrorOr<void> Slider::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+
+    m_min_val = TRY(object.get_property("min", m_min_val).to_double());
+    m_max_val = TRY(object.get_property("max", m_max_val).to_double());
+    m_step = TRY(object.get_property("step", m_step).to_double());
+    m_val = TRY(object.get_property("value", m_val).to_double());
+
+    return {};
+}
+
+EML_REGISTER_CLASS(Slider);
 
 }

@@ -58,8 +58,9 @@ public:
     std::function<void(double)> on_change;
 
 private:
-    double value_clamped_to_min_max() const;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
 
+    double value_clamped_to_min_max() const;
     float calculate_knob_size() const;
 
     TextPos m_text_pos;
