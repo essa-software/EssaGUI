@@ -52,6 +52,9 @@ EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object
     TRY(Button::load_from_eml_object(object, loader));
     m_content = TRY(object.get_property("content", Util::UString {}).to_string());
     m_active_content = TRY(object.get_property("active_content", Util::UString {}).to_string());
+    auto image = object.get_property("image", false).to_resource_id();
+    if (!image.is_error())
+        m_image = resource_manager().get<Gfx::Texture>(image.release_value());
     return {};
 }
 
