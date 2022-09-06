@@ -1,8 +1,8 @@
 #include "RadioButton.hpp"
 #include "Application.hpp"
-#include "EssaGUI/gfx/Window.hpp"
-#include "EssaGUI/gui/TextAlign.hpp"
+
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
 
 namespace GUI {
@@ -52,5 +52,15 @@ Theme::ButtonColors RadioButton::default_button_colors() const {
 
     return colors;
 }
+
+EML::EMLErrorOr<void> RadioButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+
+    m_caption = TRY(object.get_property("caption", Util::UString {}).to_string());
+
+    return {};
+}
+
+EML_REGISTER_CLASS(RadioButton);
 
 }
