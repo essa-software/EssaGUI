@@ -90,7 +90,7 @@ Value Array::at(size_t index) const {
 EMLErrorOr<Value> Object::require_property(std::string const& name) const {
     auto it = properties.find(name);
     if (it == properties.end())
-        return EMLError { "Required property not defined: " + name };
+        return EMLError { "Required property '" + name + "' not defined for type " + class_name };
 
     return it->second.value;
 }
