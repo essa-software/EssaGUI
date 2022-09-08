@@ -6,6 +6,7 @@
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>
+#include <EssaUtil/Orientation.hpp>
 #include <EssaUtil/Units.hpp>
 #include <cassert>
 #include <string_view>
@@ -19,6 +20,18 @@ class WidgetTreeRoot;
 struct LengthVector {
     Length x;
     Length y;
+
+    Length main(Util::Orientation o) const {
+        if (o == Util::Orientation::Horizontal)
+            return x;
+        return y;
+    }
+
+    Length cross(Util::Orientation o) const {
+        if (o == Util::Orientation::Vertical)
+            return x;
+        return y;
+    }
 };
 
 constexpr bool operator==(LengthVector const& a, LengthVector const& b) {
