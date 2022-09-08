@@ -1,8 +1,9 @@
 #pragma once
 
-#include "EssaGUI/eml/EMLObject.hpp"
 #include "Widget.hpp"
 
+#include <EssaGUI/eml/EMLObject.hpp>
+#include <EssaUtil/Orientation.hpp>
 #include <algorithm>
 #include <initializer_list>
 #include <memory>
@@ -41,15 +42,10 @@ protected:
     float m_padding = 0;
 };
 
-enum class Orientation {
-    Horizontal,
-    Vertical
-};
-
 /// Widgets are resized to fill up the entire space (in the vertical axis)
 class BoxLayout : public Layout {
 public:
-    BoxLayout(Orientation o)
+    BoxLayout(Util::Orientation o)
         : m_orientation(o) { }
 
     // Spacing = a gap between widgets (but not between edges and widgets)
@@ -67,7 +63,7 @@ protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
 private:
-    Orientation m_orientation;
+    Util::Orientation m_orientation;
     ContentAlignment m_content_alignment = ContentAlignment::BoxStart;
     float m_spacing = 0;
 };
@@ -75,13 +71,13 @@ private:
 class VerticalBoxLayout : public BoxLayout {
 public:
     VerticalBoxLayout()
-        : BoxLayout(Orientation::Vertical) { }
+        : BoxLayout(Util::Orientation::Vertical) { }
 };
 
 class HorizontalBoxLayout : public BoxLayout {
 public:
     HorizontalBoxLayout()
-        : BoxLayout(Orientation::Horizontal) { }
+        : BoxLayout(Util::Orientation::Horizontal) { }
 };
 
 // Just assigns input_size to size.

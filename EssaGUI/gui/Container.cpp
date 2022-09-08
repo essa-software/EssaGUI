@@ -1,7 +1,6 @@
 #include "Container.hpp"
 
 #include "Application.hpp"
-#include "EssaGUI/eml/Loader.hpp"
 
 #include <EssaGUI/eml/Loader.hpp>
 #include <EssaUtil/Config.hpp>
@@ -28,23 +27,23 @@ void BoxLayout::run(Container& container) {
     // std::cout << "BOXLAYOUT " << m_container.size().x() << "," << m_container.size().y() << " spacing=" << m_spacing << std::endl;
     auto vec2f_main_coord_by_orientation = [this](auto vec) -> auto{
         if constexpr (requires() { vec.x(); }) {
-            if (m_orientation == Orientation::Horizontal)
+            if (m_orientation == Util::Orientation::Horizontal)
                 return vec.x();
             return vec.y();
         }
         else {
-            if (m_orientation == Orientation::Horizontal)
+            if (m_orientation == Util::Orientation::Horizontal)
                 return vec.x;
             return vec.y;
         }
     };
     auto vec2f_cross_coord_by_orientation = [this](auto vec) -> auto{
-        if (m_orientation == Orientation::Vertical)
+        if (m_orientation == Util::Orientation::Vertical)
             return vec.x();
         return vec.y();
     };
     auto convert_vector_by_orientation = [this](Util::Vector2f vec) {
-        if (m_orientation == Orientation::Vertical)
+        if (m_orientation == Util::Orientation::Vertical)
             return Util::Vector2f { vec.y(), vec.x() };
         return vec;
     };
