@@ -78,6 +78,7 @@ public:
 
 protected:
     virtual void tick() override;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
@@ -86,8 +87,6 @@ protected:
     llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
 
 private:
-    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
-
     GUI::Window& m_window;
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;

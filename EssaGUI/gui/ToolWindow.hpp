@@ -35,6 +35,8 @@ private:
         m_first_tick = false;
     }
 
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+
     enum class Resize {
         LEFT,
         LEFTBOTTOM,
