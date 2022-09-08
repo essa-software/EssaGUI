@@ -16,7 +16,7 @@ Prompt::Prompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_t
 
     auto& container = set_main_widget<GUI::Container>();
     auto& container_layout = container.set_layout<GUI::VerticalBoxLayout>();
-    container_layout.set_padding(20);
+    container_layout.set_padding(Boxf::all_equal(20));
     container_layout.set_spacing(10);
 
     auto input_container = container.add_widget<GUI::Container>();

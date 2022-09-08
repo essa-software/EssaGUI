@@ -10,7 +10,7 @@ public:
 
 private:
     virtual void draw(GUI::Window&) const override;
-    virtual float intrinsic_padding() const override { return BorderRadius; }
+    virtual Boxf intrinsic_padding() const override { return Boxf::all_equal(BorderRadius); }
     virtual bool steals_focus() const override { return true; }
 };
 

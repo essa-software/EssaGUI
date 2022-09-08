@@ -17,6 +17,43 @@ class Container;
 
 using WidgetList = std::vector<std::shared_ptr<Widget>>;
 
+template<class T>
+struct Box {
+    T top {};
+    T right {};
+    T bottom {};
+    T left {};
+
+    static Box all_equal(T value) { return { value, value, value, value }; }
+
+    T main_start(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? left : top;
+    }
+
+    T main_end(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? right : bottom;
+    }
+
+    T main_sum(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? left + right : top + bottom;
+    }
+
+    T cross_start(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? top : left;
+    }
+
+    T cross_end(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? bottom : right;
+    }
+
+    T cross_sum(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? top + bottom : left + right;
+    }
+
+    bool operator==(Box<T> const& other) const = default;
+};
+using Boxf = Box<float>;
+
 class Layout : public EML::EMLObject {
 public:
     Layout() = default;
@@ -31,15 +68,15 @@ public:
 
     // Padding = a gap between content (child widgets) and edge
     // TODO: Support separate paddings for sides
-    void set_padding(float m) { m_padding = m; }
-    float padding() const { return m_padding; }
+    void set_padding(Boxf m) { m_padding = m; }
+    Boxf padding() const { return m_padding; }
 
     std::vector<float> m_multipliers;
 
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
-    float m_padding = 0;
+    Boxf m_padding;
 };
 
 /// Widgets are resized to fill up the entire space (in the vertical axis)
@@ -192,7 +229,7 @@ protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() override;
     virtual void handle_event(Event&) override;
-    virtual float intrinsic_padding() const { return 0; }
+    virtual Boxf intrinsic_padding() const { return {}; }
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;
 

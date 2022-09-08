@@ -73,7 +73,7 @@ ColorPickerDialog::ColorPickerDialog(GUI::Window& wnd)
     auto& container = set_main_widget<Container>();
     auto& container_layout = container.set_layout<VerticalBoxLayout>();
     container_layout.set_spacing(10);
-    container_layout.set_padding(10);
+    container_layout.set_padding(Boxf::all_equal(10));
 
     {
         auto main_container = container.add_widget<Container>();
