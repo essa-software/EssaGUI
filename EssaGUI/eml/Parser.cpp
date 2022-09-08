@@ -149,13 +149,36 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
     case TokenType::At: {
         return TRY(parse_object());
     }
+    case TokenType::BraceOpen: {
+        return TRY(parse_array());
+    }
     case TokenType::KeywordAsset:
     case TokenType::KeywordExternal: {
         return TRY(parse_resource_id());
     }
     default:
-        return error_in_already_read("Invalid value");
+        return error_in_already_read("Value cannot start with '" + token->value() + "'");
     }
+}
+
+Util::ParseErrorOr<Array> Parser::parse_array() {
+    TRY(expect(TokenType::BraceOpen));
+
+    std::vector<Value> values;
+    while (true) {
+        auto value = TRY(parse_value());
+        values.push_back(value);
+        auto maybe_comma = peek();
+        if (!maybe_comma) {
+            return error("Unexpected EOF in array");
+        }
+        if (maybe_comma->type() != TokenType::Comma)
+            break;
+        get(); // ,
+    }
+
+    TRY(expect(TokenType::BraceClose));
+    return Array { std::move(values) };
 }
 
 Util::ParseErrorOr<Gfx::ResourceId> Parser::parse_resource_id() {

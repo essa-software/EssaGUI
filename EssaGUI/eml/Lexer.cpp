@@ -50,6 +50,14 @@ Util::OsErrorOr<std::vector<Token>> Lexer::lex() {
                 TRY(consume());
                 tokens.push_back(create_token(TokenType::At, "@", start));
                 break;
+            case '[':
+                TRY(consume());
+                tokens.push_back(create_token(TokenType::BraceOpen, "[", start));
+                break;
+            case ']':
+                TRY(consume());
+                tokens.push_back(create_token(TokenType::BraceClose, "]", start));
+                break;
             case ':':
                 TRY(consume());
                 tokens.push_back(create_token(TokenType::Colon, ":", start));

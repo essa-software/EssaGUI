@@ -20,6 +20,7 @@ private:
     Util::ParseErrorOr<Property> parse_property();
     Util::ParseErrorOr<Gfx::ResourceId> parse_resource_id();
     Util::ParseErrorOr<Value> parse_value();
+    Util::ParseErrorOr<Array> parse_array();
 
     void ignore_newlines_and_comments();
 };

@@ -13,6 +13,8 @@ enum class TokenType {
     String,             // "abc"
 
     At,          // @
+    BraceOpen,   // [
+    BraceClose,  // ]
     Colon,       // :
     Comma,       // ,
     CurlyOpen,   // {

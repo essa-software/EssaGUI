@@ -4,6 +4,7 @@
 #include "Loader.hpp"
 
 #include <EssaUtil/ScopeGuard.hpp>
+#include <fmt/format.h>
 
 namespace EML {
 
@@ -70,10 +71,20 @@ std::string Value::string() const {
             [](Range const& r) -> std::string {
                 return fmt::format("{}..{}", r.min, r.max);
             },
+            [](Array const& array) -> std::string {
+                return fmt::format("<TODO array with {} elements>", array.values().size());
+            },
             [](auto const&) -> std::string {
                 return "???";
             } },
         *this);
+}
+
+Array::Array(std::vector<Value> values)
+    : m_values(std::move(values)) { }
+
+Value Array::at(size_t index) const {
+    return m_values[index];
 }
 
 EMLErrorOr<Value> Object::require_property(std::string const& name) const {

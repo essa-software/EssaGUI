@@ -68,7 +68,21 @@ struct Range {
     double max;
 };
 
-using ValueVariant = std::variant<double, bool, Util::UString, Object, Length, Gfx::ResourceId, Range>;
+class Array {
+public:
+    explicit Array(std::vector<Value> values);
+
+    Value at(size_t index) const;
+    std::vector<Value> const& values() const { return m_values; }
+
+    template<class T, size_t S>
+    EMLErrorOr<std::array<T, S>> to_static() const;
+
+private:
+    std::vector<Value> m_values;
+};
+
+using ValueVariant = std::variant<double, bool, Util::UString, Object, Length, Gfx::ResourceId, Range, Array>;
 
 #define VALUE_TYPE(Type, camel_case)                                                                              \
     Value(Type v)                                                                                                 \
@@ -92,9 +106,28 @@ public:
     VALUE_TYPE(Length, length)
     VALUE_TYPE(Gfx::ResourceId, resource_id)
     VALUE_TYPE(Range, range)
+    VALUE_TYPE(Array, array)
+
+    template<class T>
+    EMLErrorOr<T> to() const {
+        if (!std::holds_alternative<T>(*this))
+            return EMLError { "Invalid type" };
+        return std::get<T>(*this);
+    }
 
     std::string string() const;
 };
+
+template<class T, size_t S>
+EMLErrorOr<std::array<T, S>> Array::to_static() const {
+    std::array<T, S> result;
+    if (m_values.size() != S)
+        return EMLError { fmt::format("Array of size {} required", S) };
+    for (size_t s = 0; s < S; s++) {
+        result[s] = TRY(m_values[s].to<T>());
+    }
+    return result;
+}
 
 template<class T, class... Args>
 EMLErrorOr<std::unique_ptr<T>> Object::require_and_construct_object(std::string const& name, Loader& loader, Args&&... args) const {

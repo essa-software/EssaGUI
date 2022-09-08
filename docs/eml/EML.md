@@ -102,6 +102,14 @@ Numeric range
 range: 0..10
 ```
 
+### `array`
+List of elements. They may be of distinct types.
+
+```qml
+padding: [10,20,30,40]
+test: [10, 20px, 5%, @TextButton { content: "test" }]
+```
+
 ## Custom types
 
 You can define custom types using `define` syntax. The newly defined type must be also registered in C++.
