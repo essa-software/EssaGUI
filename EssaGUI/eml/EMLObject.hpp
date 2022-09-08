@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EMLError.hpp"
+#include "EMLResource.hpp"
 
 #include <EssaUtil/GenericParser.hpp>
 #include <EssaUtil/Stream/Stream.hpp>
@@ -18,6 +19,7 @@ public:
 
     virtual EMLErrorOr<void> load_from_eml_object(Object const&, Loader& loader) = 0;
 
+    [[nodiscard]] bool load_from_eml_resource(EMLResource const&);
     [[nodiscard]] bool load_from_eml_string(std::string_view source);
     [[nodiscard]] bool load_from_eml_file(std::string const& path);
     [[nodiscard]] bool load_from_eml_stream(Util::ReadableStream&);

@@ -12,6 +12,10 @@
 
 namespace EML {
 
+bool EMLObject::load_from_eml_resource(EMLResource const& resource) {
+    return load_from_eml_string(resource.source);
+}
+
 bool EMLObject::load_from_eml_string(std::string_view source) {
     auto input = Util::ReadableMemoryStream::from_string(source);
     return load_from_eml_stream(input);

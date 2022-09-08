@@ -1,6 +1,7 @@
 add_library(EssaGUI SHARED
     eml/AST.cpp
     eml/EMLObject.cpp
+    eml/EMLResource.cpp
     eml/Lexer.cpp
     eml/Loader.cpp
     eml/Parser.cpp
