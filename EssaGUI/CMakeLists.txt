@@ -60,3 +60,6 @@ set_target_properties(EssaGUI PROPERTIES OUTPUT_NAME "essa-gui")
 essautil_setup_target(EssaGUI)
 install(TARGETS EssaGUI EXPORT EssaGUI DESTINATION lib)
 target_link_libraries(EssaGUI PUBLIC essautil EssaGUI::LLGL-Renderer EssaGUI::LLGL-Resources)
+
+# FIXME: This breaks build of eml/AST.cpp somewhere in Value::string()
+target_compile_options(EssaGUI PRIVATE -Wno-restrict)
