@@ -58,6 +58,8 @@ struct Object : public Scope {
         return specific_object;
     }
 
+    void merge(Object const& other);
+
 private:
     EMLErrorOr<std::unique_ptr<EMLObject>> construct_impl(EML::Loader&) const;
     EMLErrorOr<void> populate_impl(EML::Loader&, EMLObject& constructed_object) const;

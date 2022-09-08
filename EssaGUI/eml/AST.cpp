@@ -104,22 +104,43 @@ Value Object::get_property(std::string const& name, Value&& fallback) const {
 }
 
 EMLErrorOr<std::unique_ptr<EMLObject>> Object::construct_impl(EML::Loader& loader) const {
-    return loader.construct_object(class_name);
+    // 1. Try to construct the object with specified class name
+    auto object = loader.construct_object(class_name);
+    if (!object.is_error())
+        return object.release_value();
+
+    // 2. If this is a `define`d object, allow constructing it
+    //    from base without C++ wrapper defined for this exact
+    //    type. E.g if there is `define EssaSplash : @ToolWindow`
+    //    and EssaSplash isn't registered, construct ToolWindow.
+    auto class_definition = loader.find_class_definition(class_name);
+    if (class_definition) {
+        return class_definition->base.construct_impl(loader);
+    }
+    return object.release_error();
 }
 
 EMLErrorOr<void> Object::populate_impl(EML::Loader& loader, EMLObject& constructed_object) const {
     loader.push_scope(this);
     Util::ScopeGuard guard { [&loader]() { loader.pop_scope(); } };
 
-    // 1. Populate native object with EML defined default (`define` declaration)
+    Object object_to_load = *this;
+
+    // 1. Load EML defined defaults into this object (`define` declaration)
     auto class_definition = loader.find_class_definition(class_name);
     if (class_definition)
-        TRY(constructed_object.load_from_eml_object(class_definition->base, loader));
+        object_to_load.merge(class_definition->base);
 
-    // 2. Populate native object using local overrides from this object
-    TRY(constructed_object.load_from_eml_object(*this, loader));
+    // 2. Populate native object using the merged objects
+    TRY(constructed_object.load_from_eml_object(object_to_load, loader));
 
     return {};
+}
+
+void Object::merge(Object const& other) {
+    for (auto const& property : other.properties) {
+        properties.insert_or_assign(property.first, std::move(property.second));
+    }
 }
 
 }
