@@ -4,6 +4,7 @@
 #include "EMLObject.hpp"
 
 #include <EssaGUI/gfx/ResourceManager.hpp>
+#include <EssaUtil/Color.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
 #include <cstdint>
@@ -84,7 +85,7 @@ private:
     std::vector<Value> m_values;
 };
 
-using ValueVariant = std::variant<double, bool, Util::UString, Object, Length, Gfx::ResourceId, Range, Array>;
+using ValueVariant = std::variant<double, bool, Util::UString, Object, Length, Gfx::ResourceId, Range, Array, Util::Color>;
 
 #define VALUE_TYPE(Type, camel_case)                                                                              \
     Value(Type v)                                                                                                 \
@@ -109,6 +110,7 @@ public:
     VALUE_TYPE(Gfx::ResourceId, resource_id)
     VALUE_TYPE(Range, range)
     VALUE_TYPE(Array, array)
+    VALUE_TYPE(Util::Color, color)
 
     template<class T>
     EMLErrorOr<T> to() const {

@@ -21,6 +21,7 @@ private:
     Util::ParseErrorOr<Gfx::ResourceId> parse_resource_id();
     Util::ParseErrorOr<Value> parse_value();
     Util::ParseErrorOr<Array> parse_array();
+    Util::ParseErrorOr<Util::Color> parse_hexcolor();
 
     void ignore_newlines_and_comments();
 };
