@@ -21,7 +21,11 @@ public:
         return sprite.get();
     }
 
+    void draw_rect(LengthVector pos, LengthVector size );
+
 private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+    
     std::vector<Sprite*> m_sprites;
 };
 

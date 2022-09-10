@@ -29,6 +29,8 @@ public:
     void set_foreground_color(Util::Color color) { m_foreground_color = color; }
 
 private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+    
     float m_border_radius[4] { 0 };
     Util::Color m_background_color;
     Util::Color m_foreground_color;

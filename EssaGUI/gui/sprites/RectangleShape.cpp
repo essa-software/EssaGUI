@@ -39,4 +39,12 @@ void RectangleShape::set_border_radius(RectangleVertex vert, float value) {
     }
 }
 
+EML::EMLErrorOr<void> RectangleShape::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+
+    return {};
+}
+
+EML_REGISTER_CLASS(RectangleShape);
+
 }
