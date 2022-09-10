@@ -14,6 +14,8 @@ public:
     std::function<void(Util::Color)> on_change;
 
 private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+    
     virtual Theme::ButtonColors default_button_colors() const override {
         return theme().text_button;
     }

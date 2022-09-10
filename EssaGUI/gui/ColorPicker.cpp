@@ -204,4 +204,15 @@ void ColorPicker::draw(GUI::Window& window) const {
     html_display.font_size = theme().label_font_size;
     window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { size().y(), 4, size().x() - size().y(), size().y() - 8 }, resource_manager().fixed_width_font(), html_display);
 }
+
+EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+    
+    m_color = TRY(object.get_property("color", Util::Color()).to_color());
+
+    return {};
+}
+
+EML_REGISTER_CLASS(ColorPicker);
+
 }
