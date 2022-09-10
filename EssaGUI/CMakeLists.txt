@@ -13,6 +13,7 @@ add_library(EssaGUI SHARED
 
     gui/Application.cpp
     gui/ArrowButton.cpp
+    gui/Border.cpp
     gui/Button.cpp
     gui/Checkbox.cpp
     gui/ColorPicker.cpp

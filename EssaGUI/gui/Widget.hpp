@@ -126,6 +126,8 @@ public:
 
     void set_enabled(bool enabled) { m_enabled = enabled; }
     bool is_enabled() const { return m_enabled; }
+    void set_initialized(bool initialized) { m_initialized = initialized; }
+    bool is_initialized() const { return m_initialized; }
     bool are_all_parents_enabled() const;
 
     void set_focused();
