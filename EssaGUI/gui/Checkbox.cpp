@@ -2,6 +2,7 @@
 #include "Application.hpp"
 #include "EssaGUI/gfx/Window.hpp"
 #include <EssaUtil/Rect.hpp>
+#include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/Core/Vertex.hpp>
 #include <array>
@@ -14,7 +15,7 @@ namespace GUI {
 void Checkbox::draw(GUI::Window& window) const {
     auto colors = colors_for_state();
 
-    Util::Rectf box(2, 2, size().y() - 4, size().y() - 4);
+    Util::Rectf box(2, 2, m_box_size.value() - 4, m_box_size.value() - 4);
     RectangleDrawOptions box_opt;
     box_opt.outline_thickness = 1;
     box_opt.outline_color = colors.foreground;
@@ -87,5 +88,23 @@ Theme::ButtonColors Checkbox::default_button_colors() const {
 
     return colors;
 }
+
+EML::EMLErrorOr<void> Checkbox::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+    
+    m_caption = TRY(object.get_property("caption", Util::UString{}).to_string());
+    m_box_size = TRY(object.get_property("box_size", 12.0_px).to_length());
+    auto mark_type = TRY(object.get_property("box_type", Util::UString("cross")).to_string());
+
+    if(mark_type == "cross"){
+        m_style = Style::CROSS;
+    }else if(mark_type == "mark"){
+        m_style = Style::MARK;
+    }
+
+    return {};
+}
+
+EML_REGISTER_CLASS(Checkbox);
 
 }
