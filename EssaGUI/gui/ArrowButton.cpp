@@ -17,15 +17,17 @@ void ArrowButton::draw(GUI::Window& window) const {
 
     // std::cout << Vector3(midpoint) << "\n";
 
+    double real_size = m_arrow_size.value();
+
     const Util::Vector2f points[8] = {
-        Util::Vector2f(std::round(midpoint.x() - m_arrow_size / 2), std::round(midpoint.y() - m_arrow_size / 2)),
-        Util::Vector2f(std::round(midpoint.x() + 0), std::round(midpoint.y() - m_arrow_size / 2)),
-        Util::Vector2f(std::round(midpoint.x() + m_arrow_size / 2), std::round(midpoint.y() - m_arrow_size / 2)),
-        Util::Vector2f(std::round(midpoint.x() - m_arrow_size / 2), std::round(midpoint.y() + 0)),
-        Util::Vector2f(std::round(midpoint.x() + m_arrow_size / 2), std::round(midpoint.y() + 0)),
-        Util::Vector2f(std::round(midpoint.x() - m_arrow_size / 2), std::round(midpoint.y() + m_arrow_size / 2)),
-        Util::Vector2f(std::round(midpoint.x() + 0), std::round(midpoint.y() + m_arrow_size / 2)),
-        Util::Vector2f(std::round(midpoint.x() + m_arrow_size / 2), std::round(midpoint.y() + m_arrow_size / 2))
+        Util::Vector2f(std::round(midpoint.x() - real_size / 2), std::round(midpoint.y() - real_size / 2)),
+        Util::Vector2f(std::round(midpoint.x() + 0), std::round(midpoint.y() - real_size / 2)),
+        Util::Vector2f(std::round(midpoint.x() + real_size / 2), std::round(midpoint.y() - real_size / 2)),
+        Util::Vector2f(std::round(midpoint.x() - real_size / 2), std::round(midpoint.y() + 0)),
+        Util::Vector2f(std::round(midpoint.x() + real_size / 2), std::round(midpoint.y() + 0)),
+        Util::Vector2f(std::round(midpoint.x() - real_size / 2), std::round(midpoint.y() + real_size / 2)),
+        Util::Vector2f(std::round(midpoint.x() + 0), std::round(midpoint.y() + real_size / 2)),
+        Util::Vector2f(std::round(midpoint.x() + real_size / 2), std::round(midpoint.y() + real_size / 2))
     };
 
     std::array<llgl::Vertex, 3> arrow;
@@ -56,5 +58,25 @@ void ArrowButton::draw(GUI::Window& window) const {
     }
     window.draw_vertices(llgl::opengl::PrimitiveType::Triangles, arrow);
 }
+
+EML::EMLErrorOr<void> ArrowButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Button::load_from_eml_object(object, loader));
+    m_arrow_size = TRY(object.get_property("arrow_size", 8.0_px).to_length());
+    auto type = TRY(object.get_property("arrow_type", Util::UString {"left"}).to_string());
+
+    if(type == "left"){
+        m_arrow_type = ArrowType::LEFTARROW;
+    }else if(type == "bottom"){
+        m_arrow_type = ArrowType::BOTTOMARROW;
+    }else if(type == "right"){
+        m_arrow_type = ArrowType::RIGHTARROW;
+    }else if(type == "top"){
+        m_arrow_type = ArrowType::TOPARROW;
+    }
+
+    return {};
+}
+
+EML_REGISTER_CLASS(ArrowButton);
 
 }

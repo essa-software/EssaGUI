@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Button.hpp"
+#include <EssaUtil/Units.hpp>
 
 namespace GUI {
 
@@ -14,16 +15,17 @@ public:
     };
 
     void set_arrow_type(ArrowType type) { m_arrow_type = type; }
-    void set_arrow_size(double size) { m_arrow_size = size; }
+    void set_arrow_size(Length size) { m_arrow_size = size; }
 
     ArrowType arrow_type() const { return m_arrow_type; }
-    double arrow_size() const { return m_arrow_size; }
+    Length arrow_size() const { return m_arrow_size; }
 
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
 
     ArrowType m_arrow_type = ArrowType::TOPARROW;
-    double m_arrow_size = 8;
+    Length m_arrow_size = 8.0_px;
     virtual void draw(GUI::Window&) const override;
 };
 
