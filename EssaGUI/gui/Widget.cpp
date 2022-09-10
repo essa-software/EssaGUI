@@ -5,6 +5,7 @@
 #include "Tooltip.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
 
+#include <EssaUtil/Color.hpp>
 #include <cassert>
 #include <iostream>
 #include <typeinfo>
@@ -158,6 +159,11 @@ EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EM
     m_tooltip_text = TRY(object.get_property("tooltip_text", Util::UString {}).to_string());
     m_input_size.x = TRY(object.get_property("width", Length { Length::Initial }).to_length());
     m_input_size.y = TRY(object.get_property("height", Length { Length::Initial }).to_length());
+    m_expected_pos.x = TRY(object.get_property("left", Length { Length::Initial }).to_length());
+    m_expected_pos.y = TRY(object.get_property("top", Length { Length::Initial }).to_length());
+    m_background_color = TRY(object.get_property("background_color", Util::Color{0x000000 }).to_color());
+    m_enabled = TRY(object.get_property("enabled", true).to_bool());
+    m_visible = TRY(object.get_property("visible", true).to_bool());
     return {};
 }
 
