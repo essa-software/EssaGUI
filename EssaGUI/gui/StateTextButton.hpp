@@ -20,9 +20,6 @@ public:
     CREATE_VALUE(size_t, font_size, 20)
     CREATE_VALUE(Align, alignment, Align::CenterLeft);
 
-    Align get_alignment() const { return m_alignment; };
-    void set_alignment(Align alignment) { m_alignment = alignment; };
-
     std::pair<Util::UString, State> get_element_from_index(unsigned index) const;
 
     T state() const;
