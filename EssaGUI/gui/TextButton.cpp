@@ -19,7 +19,7 @@ void TextButton::draw(GUI::Window& window) const {
         RectangleDrawOptions image;
         image.texture = m_image;
         if (m_content.is_empty()) {
-            window.draw_rectangle({ size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
+            window.draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
                                       Util::Vector2f { m_image->size() } },
                 image);
             return;
@@ -27,7 +27,7 @@ void TextButton::draw(GUI::Window& window) const {
         else {
             text_offset = 5 + m_image->size().x();
             window.draw_rectangle(
-                { { 5, size().y() / 2 - m_image->size().y() / 2.f },
+                { { 5, raw_size().y() / 2 - m_image->size().y() / 2.f },
                     { static_cast<float>(m_image->size().x()), static_cast<float>(m_image->size().y()) } },
                 image);
         }

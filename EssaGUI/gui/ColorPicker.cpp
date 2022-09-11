@@ -177,14 +177,6 @@ void ColorPicker::on_init() {
     };
 }
 
-Util::Color ColorPicker::color() const {
-    return m_color;
-}
-
-void ColorPicker::set_color(Util::Color color) {
-    m_color = color;
-}
-
 void ColorPicker::draw(GUI::Window& window) const {
     auto theme_colors = theme().textbox.value(*this);
 
@@ -196,18 +188,18 @@ void ColorPicker::draw(GUI::Window& window) const {
 
     RectangleDrawOptions color_rect;
     color_rect.fill_color = m_color;
-    window.draw_rectangle({ 4, 4, size().y() - 8, size().y() - 8 }, color_rect);
+    window.draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
 
     TextDrawOptions html_display;
     html_display.fill_color = theme_colors.text;
     html_display.text_align = Align::CenterLeft;
     html_display.font_size = theme().label_font_size;
-    window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { size().y(), 4, size().x() - size().y(), size().y() - 8 }, resource_manager().fixed_width_font(), html_display);
+    window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { raw_size().y(), 4, raw_size().x() - raw_size().y(), raw_size().y() - 8 }, resource_manager().fixed_width_font(), html_display);
 }
 
 EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
-    
+
     m_color = TRY(object.get_property("color", Util::Color()).to_color());
 
     return {};

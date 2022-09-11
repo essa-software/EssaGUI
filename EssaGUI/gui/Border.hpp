@@ -22,6 +22,7 @@ public:
         return child;
     }
 
+private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 };
 

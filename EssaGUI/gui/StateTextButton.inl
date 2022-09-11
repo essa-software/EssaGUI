@@ -65,27 +65,4 @@ void StateTextButton<T>::draw(GUI::Window& window) const {
     window.draw_text_aligned_in_rect(get_element_from_index(m_index).first, local_rect(), Application::the().font(), text_options);
 }
 
-template<typename T>
-T StateTextButton<T>::state() const {
-    return get_element_from_index(m_index).second.state;
-}
-
-template<typename T>
-void StateTextButton<T>::set_bg_color(Util::Color color) {
-    for (auto& state : m_states)
-        state.second.bg_color = color;
-}
-
-template<typename T>
-void StateTextButton<T>::set_fg_color(Util::Color color) {
-    for (auto& state : m_states)
-        state.second.fg_color = color;
-}
-
-template<typename T>
-void StateTextButton<T>::set_text_color(Util::Color color) {
-    for (auto& state : m_states)
-        state.second.text_color = color;
-}
-
 }

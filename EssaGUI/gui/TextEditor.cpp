@@ -38,7 +38,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (m_lines.size() == 0)
         return {};
 
-    auto delta = Util::Vector2f { event.mouse_position() } - position();
+    auto delta = Util::Vector2f { event.mouse_position() } - raw_position();
     if (delta.x() < 0)
         return {};
 
@@ -56,7 +56,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
 }
 
-Util::UString TextEditor::get_content() const {
+Util::UString TextEditor::content() const {
     // TODO: Implement UStringBuilder
     Util::UString content;
     for (size_t s = 0; s < m_lines.size(); s++) {
@@ -98,7 +98,7 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
 
     // TODO: Handle X scroll
     auto y_offset = m_cursor.line * line_height() + scroll_offset().y();
-    auto max_y = size().y() - line_height() - 8;
+    auto max_y = raw_size().y() - line_height() - 8;
     if (y_offset < 0)
         set_scroll(scroll() + y_offset);
     else if (y_offset > max_y)
@@ -199,7 +199,7 @@ void TextEditor::handle_event(Event& event) {
                 // TODO: Handle multiline case
                 if (m_multiline) {
                     if (event.event().key.ctrl && on_enter) {
-                        on_enter(get_content());
+                        on_enter(content());
                     }
                     else {
                         insert_codepoint('\n');
@@ -207,7 +207,7 @@ void TextEditor::handle_event(Event& event) {
                 }
                 else {
                     if (on_enter)
-                        on_enter(get_content());
+                        on_enter(content());
                 }
                 break;
             }
@@ -252,7 +252,7 @@ void TextEditor::handle_event(Event& event) {
                         erase_selected_text();
                     }
                     if (on_change)
-                        on_change(get_content());
+                        on_change(content());
                 }
                 break;
             }
@@ -270,7 +270,7 @@ void TextEditor::handle_event(Event& event) {
                         erase_selected_text();
                     }
                     if (on_change)
-                        on_change(get_content());
+                        on_change(content());
                 }
                 break;
             }
@@ -490,7 +490,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
             m_lines.push_back("");
         m_lines[m_cursor.line] = m_lines[m_cursor.line].insert(Util::UString { codepoint }, m_cursor.column);
         if (on_change)
-            on_change(get_content());
+            on_change(content());
         m_cursor.column++;
     }
     else {
@@ -504,11 +504,11 @@ Util::Vector2f TextEditor::calculate_cursor_position() const {
     auto options = get_text_options();
     auto character_position = window().find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font(), options);
     auto position = Util::Vector2f { character_position, 0 } + scroll_offset();
-    auto const cursor_height = std::min(size().y() - 6, line_height());
+    auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_multiline)
         position.y() += line_height() / 2 - cursor_height / 4 + line_height() * m_cursor.line;
     else
-        position.y() = size().y() / 2 - cursor_height / 2;
+        position.y() = raw_size().y() / 2 - cursor_height / 2;
     return position;
 }
 
@@ -536,10 +536,10 @@ void TextEditor::draw(GUI::Window& window) const {
     if (m_multiline) {
         RectangleDrawOptions gutter_rect;
         gutter_rect.fill_color = theme().gutter.background;
-        window.draw_rectangle({ {}, Util::Vector2f { GutterWidth, size().y() } }, gutter_rect);
+        window.draw_rectangle({ {}, Util::Vector2f { GutterWidth, raw_size().y() } }, gutter_rect);
     }
 
-    auto const cursor_height = std::min(size().y() - 6, line_height());
+    auto const cursor_height = std::min(raw_size().y() - 6, line_height());
 
     if (m_selection_start != m_cursor) {
         RectangleDrawOptions selected_rect;
@@ -553,7 +553,7 @@ void TextEditor::draw(GUI::Window& window) const {
             float end = window.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size(), m_lines[s],
                 Application::the().fixed_width_font(),
                 get_text_options());
-            float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : size().y() / 2 - cursor_height / 2;
+            float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : raw_size().y() / 2 - cursor_height / 2;
             window.draw_rectangle({ Util::Vector2f { start + left_margin(), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
@@ -565,7 +565,7 @@ void TextEditor::draw(GUI::Window& window) const {
         bool should_draw_placeholder = is_empty();
         if (!m_multiline) {
             position.y() += line_height();
-            Util::Rectf align_rect { Margin, 0, size().x(), size().y() };
+            Util::Rectf align_rect { Margin, 0, raw_size().x(), raw_size().y() };
             text_options.text_align = Align::CenterLeft;
             if (should_draw_placeholder)
                 text_options.fill_color = theme().placeholder;

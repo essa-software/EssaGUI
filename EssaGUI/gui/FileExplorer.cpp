@@ -202,7 +202,7 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     toolbar->set_size({ Length::Auto, toolbar_height });
 
     m_path_textbox = toolbar->add_widget<Textbox>();
-    m_path_textbox->set_data_type(Textbox::Type::TEXT);
+    m_path_textbox->set_type(Textbox::Type::TEXT);
     m_path_textbox->set_content(Util::UString { m_current_path.string() });
 
     auto parent_directory_button = toolbar->add_widget<TextButton>();
@@ -250,7 +250,7 @@ FileExplorer::FileExplorer(GUI::Window& wnd)
     auto find = toolbar->add_widget<Textbox>();
     find->set_placeholder("Find file or directory");
     find->set_size({ { 25.0, Length::Percent }, Length::Auto });
-    find->set_data_type(Textbox::Type::TEXT);
+    find->set_type(Textbox::Type::TEXT);
     find->on_change = [&](Util::UString const& content) {
         // FIXME: The encode() hack
         m_model->update_content(m_current_path, [content = content.encode()](std::filesystem::path path) {

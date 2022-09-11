@@ -30,13 +30,12 @@ public:
     virtual void handle_event(Event&) override;
     virtual void draw(GUI::Window& window) const override;
 
-    Util::UString get_content() const;
+    Util::UString content() const;
     void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);
-    void set_placeholder(Util::UString placeholder) { m_placeholder = std::move(placeholder); }
     bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].is_empty()); }
 
-    bool is_multiline() const { return m_multiline; }
-    void set_multiline(bool multiline) { m_multiline = multiline; }
+    CREATE_VALUE(Util::UString, placeholder, "")
+    CREATE_BOOLEAN(multiline, true)
 
     enum class SetCursorSelectionBehavior {
         Extend,
@@ -86,11 +85,9 @@ private:
 
     bool m_shift_pressed = false;
     std::vector<Util::UString> m_lines;
-    Util::UString m_placeholder;
     bool m_dragging = false;
     TextPosition m_cursor;
     TextPosition m_selection_start;
-    bool m_multiline = true;
 };
 
 }

@@ -30,7 +30,7 @@ Prompt::Prompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_t
     }
     auto input = input_container->add_widget<GUI::Textbox>();
     // FIXME: Why textboxes are numeric by default
-    input->set_data_type(GUI::Textbox::TEXT);
+    input->set_type(GUI::Textbox::TEXT);
     input->set_placeholder(std::move(placeholder));
     input->set_focused();
 
@@ -50,7 +50,7 @@ Prompt::Prompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_t
         ok_button->set_alignment(GUI::Align::Center);
         ok_button->set_content("OK");
         ok_button->on_click = [this, input]() {
-            m_result = input->get_content();
+            m_result = input->content();
             close();
         };
     }

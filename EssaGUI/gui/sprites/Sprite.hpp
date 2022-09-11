@@ -12,7 +12,7 @@ class Sprite : public Widget {
 public:
     virtual void draw(Window& window) const override = 0;
 
-    void move_by_vec(Util::Vector2f const& vec) { set_raw_position(position() + vec); }
+    void move_by_vec(Util::Vector2f const& vec) { set_raw_position(raw_position() + vec); }
 
     void rotate(Util::Angle angle) { m_rotation = angle; }
 
@@ -20,13 +20,10 @@ public:
 
     std::function<void()> on_click;
 
-    void set_outline_thickness(float thickness) { m_outline_thickness = thickness; }
-
-    float get_outline_thickness() const { return m_outline_thickness; }
+    CREATE_VALUE(float, outline_thickness, 0)
 
 protected:
     Util::Angle m_rotation;
-    float m_outline_thickness = 0;
 
     virtual void handle_event(Event&) override;
 };

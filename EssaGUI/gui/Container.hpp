@@ -63,20 +63,10 @@ public:
     virtual ~Layout() = default;
 
     virtual void run(Container&) = 0;
+    
+    CREATE_VALUE(Boxf, padding, Boxf{})
 
-    void set_multipliers(std::initializer_list<float> list);
-
-    // Padding = a gap between content (child widgets) and edge
-    // TODO: Support separate paddings for sides
-    void set_padding(Boxf m) { m_padding = m; }
-    Boxf padding() const { return m_padding; }
-
-    std::vector<float> m_multipliers;
-
-protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
-
-    Boxf m_padding;
 };
 
 /// Widgets are resized to fill up the entire space (in the vertical axis)
@@ -86,7 +76,7 @@ public:
         : m_orientation(o) { }
 
     // Spacing = a gap between widgets (but not between edges and widgets)
-    void set_spacing(float s) { m_spacing = s; }
+    CREATE_VALUE(float, spacing, 0.f)
     virtual void run(Container&) override;
 
     enum class ContentAlignment {
@@ -94,15 +84,12 @@ public:
         BoxEnd
     };
 
-    void set_content_alignment(ContentAlignment alignment) { m_content_alignment = alignment; }
-
-protected:
-    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+    CREATE_VALUE(ContentAlignment, content_alignment, ContentAlignment::BoxStart)
 
 private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+
     Util::Orientation m_orientation;
-    ContentAlignment m_content_alignment = ContentAlignment::BoxStart;
-    float m_spacing = 0;
 };
 
 class VerticalBoxLayout : public BoxLayout {
@@ -135,8 +122,6 @@ public:
             widget->on_init();
             widget->m_initialized = true;
         }
-        if (m_layout)
-            m_layout->m_multipliers.push_back(1);
         set_needs_relayout();
         return widget.get();
     }
@@ -148,8 +133,6 @@ public:
             widget->m_initialized = true;
         }
         m_widgets.push_back(std::move(widget));
-        if (m_layout)
-            m_layout->m_multipliers.push_back(1);
         set_needs_relayout();
     }
 

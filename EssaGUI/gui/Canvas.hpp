@@ -15,8 +15,6 @@ public:
         auto sprite = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(sprite);
         m_sprites.push_back(sprite.get());
-        if (get_layout())
-            get_layout()->m_multipliers.push_back(1);
         set_needs_relayout();
         return sprite.get();
     }

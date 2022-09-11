@@ -39,12 +39,12 @@ void ScrollableWidget::draw_scrollbar(GUI::Window& window) const {
     if (content_size > scroll_area_size) {
         RectangleDrawOptions scrollbar;
         scrollbar.fill_color = Util::Color { 200, 200, 200 };
-        window.draw_rectangle({ { size().x() - 5, m_scroll * scroll_area_size / content_size + 2 }, { 3, scroll_area_size / content_size * scroll_area_size - 4 } }, scrollbar);
+        window.draw_rectangle({ { raw_size().x() - 5, m_scroll * scroll_area_size / content_size + 2 }, { 3, scroll_area_size / content_size * scroll_area_size - 4 } }, scrollbar);
     }
 }
 
 float ScrollableWidget::scroll_area_height() const {
-    return size().y();
+    return raw_size().y();
 }
 
 }

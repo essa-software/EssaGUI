@@ -12,7 +12,7 @@ constexpr float LINE_SPACING = 20;
 
 void Console::append_line(LogLine line) {
     m_lines.push_back(line);
-    if (size().y() != 0) {
+    if (raw_size().y() != 0) {
         double bottom_content = m_lines.size() * LINE_SPACING - scroll_area_height();
         if (bottom_content > 0)
             set_scroll(bottom_content);
@@ -46,14 +46,14 @@ float Console::content_height() const {
     return m_lines.size() * LINE_SPACING + 10;
 }
 EML::EMLErrorOr<void> Console::load_from_eml_object(EML::Object const& object, EML::Loader&) {
-    for(auto const& line : object.properties){
-        if(line.second.name != "line")
+    for (auto const& line : object.properties) {
+        if (line.second.name != "line")
             continue;
 
         auto arr = TRY(line.second.value.to_array());
 
-        if(arr.values().size() != 2){
-            return EML::EMLError{"Incorrect array params"};
+        if (arr.values().size() != 2) {
+            return EML::EMLError { "Incorrect array params" };
         }
 
         auto text = TRY(arr.values()[0].to_string());

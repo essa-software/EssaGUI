@@ -1,15 +1,16 @@
 #pragma once
 
 #include "Button.hpp"
+#include "EssaGUI/gui/Widget.hpp"
+#include <EssaUtil/Color.hpp>
 
 namespace GUI {
 
 class ColorPicker : public Button {
 public:
     virtual void on_init() override;
-
-    Util::Color color() const;
-    void set_color(Util::Color color);
+    
+    CREATE_VALUE(Util::Color, color, Util::Colors::Black)
 
     std::function<void(Util::Color)> on_change;
 
@@ -21,8 +22,6 @@ private:
     }
     virtual void draw(GUI::Window& window) const override;
     virtual LengthVector initial_size() const override { return { Length::Auto, 30.0_px }; }
-
-    Util::Color m_color;
 };
 
 }

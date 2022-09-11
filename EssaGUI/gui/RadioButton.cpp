@@ -8,7 +8,7 @@
 namespace GUI {
 
 void RadioButton::draw(GUI::Window& window) const {
-    Util::Vector2f circle_size(size().y(), size().y());
+    Util::Vector2f circle_size(raw_size().y(), raw_size().y());
     Util::Vector2f circle_pos = circle_size / 2;
 
     circle_size -= Util::Vector2f(2, 2);
@@ -32,11 +32,11 @@ void RadioButton::draw(GUI::Window& window) const {
         window.draw_ellipse(circle_pos, circle_size, circle_opt);
     }
 
-    Util::Rectf text_rect(position().x() + size().y() + 5, 0, local_rect().left - size().y() - 5, local_rect().height);
+    Util::Rectf text_rect(raw_position().x() + raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
     TextDrawOptions text_opt;
     text_opt.text_align = Align::CenterLeft;
     text_opt.fill_color = theme().label.text;
-    text_opt.font_size = size().y() - 2;
+    text_opt.font_size = raw_size().y() - 2;
 
     window.draw_text_aligned_in_rect(m_caption, text_rect, Application::the().font(), text_opt);
 }

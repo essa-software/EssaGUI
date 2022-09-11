@@ -30,17 +30,17 @@ void Progressbar::draw(GUI::Window& window) const {
     window.draw_rectangle(local_rect(), background_rect);
 
     Util::Rectf completed_rect = local_rect();
-    completed_rect.width = std::min((float)m_value / (float)m_max * size().x(), size().x() - 4);
+    completed_rect.width = std::min((float)m_value / (float)m_max * raw_size().x(), raw_size().x() - 4);
     completed_rect.height -= 4;
     completed_rect.left = 2;
     completed_rect.top = 2;
     RectangleDrawOptions completed_opt;
-    completed_opt.fill_color = m_processbar_color;
+    completed_opt.fill_color = m_progressbar_color;
     window.draw_rectangle(completed_rect, completed_opt);
 
     TextDrawOptions text_opt;
     text_opt.text_align = Align::Center;
-    text_opt.font_size = size().y() - 2;
+    text_opt.font_size = raw_size().y() - 2;
     text_opt.fill_color = theme_colors.text;
     window.draw_text_aligned_in_rect(get_content_with_labelling(), local_rect(), Application::the().font(), text_opt);
 }

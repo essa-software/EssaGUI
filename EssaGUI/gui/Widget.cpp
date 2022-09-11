@@ -18,7 +18,7 @@ Widget::~Widget() {
 }
 
 bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
-    return Util::Rectf { m_pos, m_size }.contains(mouse_pos);
+    return Util::Rectf { m_raw_position, m_raw_size }.contains(mouse_pos);
 }
 
 void Widget::update() {
@@ -29,7 +29,7 @@ void Widget::update() {
         if (m_hover) {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
-                m_tooltip = &Application::the().add_tooltip(Tooltip { m_tooltip_text, this, position() + m_widget_tree_root->position() });
+                m_tooltip = &Application::the().add_tooltip(Tooltip { m_tooltip_text, this, raw_position() + m_widget_tree_root->position() });
                 // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
@@ -113,7 +113,7 @@ void Widget::do_draw(GUI::Window& window) const {
 }
 
 Util::Rectf Widget::rect() const {
-    return { position() + m_widget_tree_root->position(), size() };
+    return { raw_position() + m_widget_tree_root->position(), raw_size() };
 }
 
 void Widget::do_relayout() {
@@ -150,7 +150,7 @@ void Widget::dump(unsigned depth) {
     std::cout << typeid(*this).name() << " @" << this;
     if (!m_id.empty())
         std::cout << " #" << m_id;
-    std::cout << ": pos=" << m_pos.x() << "," << m_pos.y() << " size=" << m_size.x() << "," << m_size.y();
+    std::cout << ": pos=" << m_raw_position.x() << "," << m_raw_position.y() << " size=" << m_raw_position.x() << "," << m_raw_position.y();
     std::cout << std::endl;
 }
 

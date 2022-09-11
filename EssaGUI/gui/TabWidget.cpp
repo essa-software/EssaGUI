@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
+#include "EssaGUI/gui/NotifyUser.hpp"
 
 #include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Window.hpp>
@@ -25,7 +26,7 @@ void TabButton::draw(GUI::Window& window) const {
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
     rect.fill_color = colors.background;
-    window.draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, size() } : local_rect(), rect);
+    window.draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, raw_size() } : local_rect(), rect);
 
     Util::Vector2f text_position;
     if (!is_active())
@@ -34,7 +35,7 @@ void TabButton::draw(GUI::Window& window) const {
     text.fill_color = colors.text;
     text.font_size = theme().label_font_size;
     text.text_align = Align::Center;
-    window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, size() }, Application::the().font(), text);
+    window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, raw_size() }, Application::the().font(), text);
 }
 
 void TabSelectWidget::on_init() {
@@ -57,7 +58,7 @@ void TabSelectWidget::add_button(Util::UString caption, size_t tab_index) {
 
 void TabSelectWidget::switch_to_tab(size_t index) {
     for (size_t s = 0; s < m_buttons.size(); s++) {
-        m_buttons[s]->set_active_without_action(s == index);
+        m_buttons[s]->set_active(s == index, NotifyUser::No);
         // FIXME: There is a bug in event propagation apparently which causes
         //        sibling buttons' event handler to be run.
         // m_buttons[s]->set_enabled(s != index);

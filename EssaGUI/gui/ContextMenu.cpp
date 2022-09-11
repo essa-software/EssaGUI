@@ -37,7 +37,7 @@ void MenuWidget::draw(Window& window) const {
         text_align_rect.left += 10;
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
-        if (background_rect.contains(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - position())) {
+        if (background_rect.contains(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - raw_position())) {
             RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             window.draw_rectangle(background_rect, hovered_background);
@@ -49,7 +49,7 @@ void MenuWidget::draw(Window& window) const {
 
 void MenuWidget::handle_event(Event& event) {
     if (event.type() == llgl::Event::Type::MouseButtonPress && event.event().mouse_button.button == llgl::MouseButton::Left) {
-        int action = std::floor((event.mouse_position().y() - position().y()) / MenuItemHeight);
+        int action = std::floor((event.mouse_position().y() - raw_position().y()) / MenuItemHeight);
         std::cout << action << std::endl;
         if (action < 0 || static_cast<size_t>(action) >= m_actions.size())
             return;
@@ -66,7 +66,7 @@ private:
     virtual void draw(Window& window) const override {
         RectangleDrawOptions rect;
         rect.fill_color = theme().menu.foreground;
-        window.draw_rectangle({ 10, size().y() / 2, size().x() - 20, 1 }, rect);
+        window.draw_rectangle({ 10, raw_size().y() / 2, raw_size().x() - 20, 1 }, rect);
     }
 };
 

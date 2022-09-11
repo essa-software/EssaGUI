@@ -1,7 +1,7 @@
 #include "Border.hpp"
 #include <cassert>
 
-namespace GUI{
+namespace GUI {
 
 EML::EMLErrorOr<void> Border::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));

@@ -13,7 +13,7 @@ int main() {
     container1.set_layout<GUI::HorizontalBoxLayout>();
     auto image_widget = container1.add_widget<GUI::ImageWidget>();
 
-    image_widget->set_image(app.resource_manager().require_texture("gui/directory.png"));
+    image_widget->set_image(&app.resource_manager().require_texture("gui/directory.png"));
 
     app.run();
     return 0;

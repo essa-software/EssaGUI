@@ -10,14 +10,6 @@
 
 namespace GUI {
 
-void Layout::set_multipliers(std::initializer_list<float> list) {
-    m_multipliers.clear();
-
-    for (auto& l : list) {
-        m_multipliers.push_back(l);
-    }
-}
-
 EML::EMLErrorOr<void> Layout::load_from_eml_object(EML::Object const& object, EML::Loader&) {
     auto padding = object.get_property("padding", 0.0);
     if (padding.is_array()) {
@@ -36,47 +28,47 @@ EML::EMLErrorOr<void> Layout::load_from_eml_object(EML::Object const& object, EM
 void BoxLayout::run(Container& container) {
     auto total_spacing_size = (m_spacing * (container.widgets().size() - 1));
 
-    // 1. Compute widget size (in main axis) if it has fixed size
+    // 1. Compute widget raw_size (in main axis) if it has fixed raw_size
     for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
 
-        float size = 0;
-        switch (w->input_size().main(m_orientation).unit()) {
+        float raw_size = 0;
+        switch (w->size().main(m_orientation).unit()) {
         case Length::Px:
         case Length::PxOtherSide:
             // std::cout << "test" << std::endl;
-            size = w->input_size().main(m_orientation).value();
+            raw_size = w->size().main(m_orientation).value();
             break;
         case Length::Percent:
-            // std::cout << size << std::endl;
-            size = w->input_size().main(m_orientation).value() * (container.size().main(m_orientation) - total_spacing_size) / 100.0;
+            // std::cout << raw_size << std::endl;
+            raw_size = w->size().main(m_orientation).value() * (container.raw_size().main(m_orientation) - total_spacing_size) / 100.0;
             break;
         case Length::Auto:
-            size = 0;
+            raw_size = 0;
             break;
         case Length::Initial:
             ESSA_UNREACHABLE;
         }
         w->set_raw_size(Util::Vector2f::from_main_cross(
             m_orientation,
-            size,
-            container.size().cross(m_orientation) - m_padding.cross_sum(m_orientation)));
+            raw_size,
+            container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation)));
     }
 
-    // 2. Compute size available for auto-sized widgets
-    float available_size_for_autosized_widgets = container.size().main(m_orientation) - m_padding.main_sum(m_orientation);
+    // 2. Compute raw_size available for auto-sized widgets
+    float available_size_for_autosized_widgets = container.raw_size().main(m_orientation) - m_padding.main_sum(m_orientation);
     size_t autosized_widget_count = 0;
     for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
-        if (w->input_size().main(m_orientation).unit() == Length::Auto)
+        if (w->size().main(m_orientation).unit() == Length::Auto)
             autosized_widget_count++;
         else
-            available_size_for_autosized_widgets -= w->size().main(m_orientation) + m_spacing;
+            available_size_for_autosized_widgets -= w->raw_size().main(m_orientation) + m_spacing;
     }
 
-    // 3. Set autosized widgets' size + arrange widgets
+    // 3. Set autosized widgets' raw_size + arrange widgets
     float autosized_widget_size = (available_size_for_autosized_widgets - (m_spacing * (autosized_widget_count - 1))) / autosized_widget_count;
     if (autosized_widget_size < 0)
         autosized_widget_size = 0;
@@ -87,37 +79,37 @@ void BoxLayout::run(Container& container) {
         for (auto& w : container.widgets()) {
             if (!w->is_visible())
                 continue;
-            if (w->input_size().main(m_orientation).unit() == Length::Auto) {
+            if (w->size().main(m_orientation).unit() == Length::Auto) {
                 w->set_raw_size(Util::Vector2f::from_main_cross(
                     m_orientation,
                     autosized_widget_size,
-                    container.size().cross(m_orientation) - m_padding.cross_sum(m_orientation)));
+                    container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation)));
             }
             w->set_raw_position(Util::Vector2f::from_main_cross(
                 m_orientation,
-                container.position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
-                container.position().cross(m_orientation) + m_padding.cross_start(m_orientation)));
-            current_position += w->size().main(m_orientation) + m_spacing;
+                container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
+                container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)));
+            current_position += w->raw_size().main(m_orientation) + m_spacing;
             index++;
         }
     } break;
     case ContentAlignment::BoxEnd: {
-        float current_position = container.size().main(m_orientation);
+        float current_position = container.raw_size().main(m_orientation);
         for (auto it = container.widgets().rbegin(); it != container.widgets().rend(); it++) {
             auto& w = *it;
             if (!w->is_visible())
                 continue;
-            if (w->input_size().main(m_orientation).unit() == Length::Auto) {
+            if (w->size().main(m_orientation).unit() == Length::Auto) {
                 w->set_raw_size(Util::Vector2f::from_main_cross(
                     m_orientation,
                     autosized_widget_size,
-                    container.size().cross(m_orientation) - m_padding.cross_sum(m_orientation)));
+                    container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation)));
             }
-            current_position -= w->size().main(m_orientation) + m_spacing;
+            current_position -= w->raw_size().main(m_orientation) + m_spacing;
             w->set_raw_position(Util::Vector2f::from_main_cross(
                 m_orientation,
-                container.position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
-                container.position().cross(m_orientation) + m_padding.cross_start(m_orientation)));
+                container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
+                container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)));
             index++;
         }
     } break;
@@ -125,8 +117,8 @@ void BoxLayout::run(Container& container) {
 
     /*for(auto& w : widgets())
     {
-        std::cout << w->input_size().x() << "," << w->input_size().y() << " @ " << w->input_position().x() << "," << w->input_position().y() << " ----> ";
-        std::cout << w->size().x() << "," << w->size().y() << " @ " << w->position().x() << "," << w->position().y() << std::endl;
+        std::cout << w->size().x() << "," << w->size().y() << " @ " << w->input_position().x() << "," << w->input_position().y() << " ----> ";
+        std::cout << w->raw_size().x() << "," << w->raw_size().y() << " @ " << w->position().x() << "," << w->position().y() << std::endl;
     }*/
 }
 
@@ -154,24 +146,24 @@ void BasicLayout::run(Container& container) {
         }
     };
 
-    auto resolve_size = [&](double container_size, Length const& input_size) -> float {
-        switch (input_size.unit()) {
+    auto resolve_size = [&](double container_size, Length const& size) -> float {
+        switch (size.unit()) {
         case Length::Px:
         case Length::PxOtherSide:
-            return input_size.value();
+            return size.value();
         case Length::Percent:
-            return input_size.value() * container_size / 100.0;
+            return size.value() * container_size / 100.0;
         default:
             return 0;
         }
     };
 
     for (auto& w : container.widgets()) {
-        auto input_position = w->input_position();
-        w->set_raw_size({ resolve_size(container.size().x(), w->input_size().x), resolve_size(container.size().y(), w->input_size().y) });
-        auto x = resolve_position(container.size().x(), w->size().x(), input_position.x);
-        auto y = resolve_position(container.size().y(), w->size().y(), input_position.y);
-        w->set_raw_position({ x + container.position().x(), y + container.position().y() });
+        auto input_position = w->position();
+        w->set_raw_size({ resolve_size(container.raw_size().x(), w->size().x), resolve_size(container.raw_size().y(), w->size().y) });
+        auto x = resolve_position(container.raw_size().x(), w->raw_size().x(), input_position.x);
+        auto y = resolve_position(container.raw_size().y(), w->raw_size().y(), input_position.y);
+        w->set_raw_position({ x + container.raw_position().x(), y + container.raw_position().y() });
     }
 }
 
@@ -244,7 +236,7 @@ bool Container::focus_next_widget(bool called_from_child) {
     do {
         index++;
         // dump(0);
-        // std::cout << "focus_next_widget " << called_from_child << ": " << index << " " << m_widgets.size() << std::endl;
+        // std::cout << "focus_next_widget " << called_from_child << ": " << index << " " << m_widgets.raw_size() << std::endl;
         if (index == m_widgets.size()) {
             if (m_parent && !steals_focus())
                 m_parent->focus_next_widget(true);
@@ -317,7 +309,7 @@ void Container::dump(unsigned depth) {
     for (unsigned i = 0; i < depth; i++)
         std::cout << "-   ";
     if (m_layout) {
-        std::cout << "layout: " << typeid(*m_layout).name() << std::endl;
+        std::cout << "layout: " << typeid(m_layout).name() << std::endl;
     }
     else {
         std::cout << "layout: NONE!" << std::endl;

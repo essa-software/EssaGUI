@@ -30,7 +30,7 @@ void ListView::draw(GUI::Window& wnd) const {
         last_row++;
 
     float current_x_pos = 0;
-    // TODO: Limit display to widget size
+    // TODO: Limit display to widget raw_size
     // TODO: Scrolling
     // TODO: Many more things...
 
@@ -42,7 +42,7 @@ void ListView::draw(GUI::Window& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
-            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (r + 1) } + scroll_offset(), { size().x(), row_height } }, rs);
+            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (r + 1) } + scroll_offset(), { raw_size().x(), row_height } }, rs);
         }
     }
 
@@ -50,7 +50,7 @@ void ListView::draw(GUI::Window& wnd) const {
     {
         RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
-        wnd.draw_rectangle({ scroll_offset(), { size().x(), row_height } }, rs);
+        wnd.draw_rectangle({ scroll_offset(), { raw_size().x(), row_height } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
@@ -75,7 +75,7 @@ void ListView::draw(GUI::Window& wnd) const {
 
                 // TODO: ClipViewScope it
 
-                // TODO: Make this all (font, font size, alignment) configurable
+                // TODO: Make this all (font, font raw_size, alignment) configurable
 
                 std::visit(
                     overloaded {
@@ -102,7 +102,7 @@ void ListView::draw(GUI::Window& wnd) const {
 }
 
 Util::Vector2f ListView::row_position(unsigned row) const {
-    return Util::Vector2f { position().x(), position().y() + theme().line_height * (row + 1) } + scroll_offset();
+    return Util::Vector2f { raw_position().x(), raw_position().y() + theme().line_height * (row + 1) } + scroll_offset();
 }
 
 Util::Vector2f ListView::cell_size(size_t, size_t column) const {
@@ -119,7 +119,7 @@ void ListView::handle_event(Event& event) {
         if (is_mouse_over(mouse_pos)) {
             for (size_t row = 0; row < rows; row++) {
                 Util::Vector2f cell_position = row_position(row);
-                Util::Rectf rect(cell_position, { size().x(), theme().line_height });
+                Util::Rectf rect(cell_position, { raw_size().x(), theme().line_height });
 
                 if (rect.contains(mouse_pos)) {
                     if (event.event().mouse_button.button == llgl::MouseButton::Left && on_click) {

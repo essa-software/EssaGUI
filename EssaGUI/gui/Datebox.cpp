@@ -39,11 +39,11 @@ void Datebox::on_init() {
     m_toggle_container_button->set_content("Show");
     m_toggle_container_button->set_active_content("Hide");
     // m_date = Util::SimulationTime::create(1602, 7, 21);
-    m_create_container();
+    create_container();
 
     m_toggle_container_button->on_change = [this](bool state) {
         m_calendar_container->set_visible(state);
-        m_update_calendar();
+        update_calendar();
         if (state)
             set_size({ Length::Auto, 280.0_px });
         else
@@ -53,7 +53,7 @@ void Datebox::on_init() {
     m_calendar_container->set_visible(false);
 }
 
-TextButton* Datebox::m_create_calendar_button(Container& c) {
+TextButton* Datebox::create_calendar_button(Container& c) {
     auto btn = c.add_widget<TextButton>();
     btn->set_content("");
     btn->set_active_content("");
@@ -66,13 +66,13 @@ TextButton* Datebox::m_create_calendar_button(Container& c) {
             i++;
         }
 
-        m_update_calendar();
+        update_calendar();
     };
 
     return btn;
 }
 
-void Datebox::m_create_container() {
+void Datebox::create_container() {
     m_calendar_container = add_widget<Container>();
     m_calendar_container->set_layout<VerticalBoxLayout>().set_spacing(2);
     m_calendar_container->set_background_color(Util::Colors::White);
@@ -124,7 +124,7 @@ void Datebox::m_create_container() {
         row->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
         m_calendar_rows.push_back(row);
         for (unsigned i = 0; i < 7; i++)
-            m_calendar_contents.push_back({ m_create_calendar_button(*row), {} });
+            m_calendar_contents.push_back({ create_calendar_button(*row), {} });
     }
 
     auto daytime_container = m_calendar_container->add_widget<Container>();
@@ -132,7 +132,8 @@ void Datebox::m_create_container() {
     daytime_container->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
     auto hours = daytime_container->add_widget<Textbox>();
     hours->set_limit(2);
-    hours->set_min_max_values(0, 23);
+    hours->set_min(0);
+    hours->set_max(23);
     hours->set_content("0");
     auto first_colon = daytime_container->add_widget<Textfield>();
     first_colon->set_alignment(Align::Top);
@@ -141,7 +142,8 @@ void Datebox::m_create_container() {
     // first_colon->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Colors::Black);
     auto minutes = daytime_container->add_widget<Textbox>();
     minutes->set_limit(2);
-    minutes->set_min_max_values(0, 59);
+    hours->set_min(0);
+    hours->set_max(59);
     minutes->set_content("0");
     auto second_colon = daytime_container->add_widget<Textfield>();
     second_colon->set_alignment(Align::Top);
@@ -150,7 +152,8 @@ void Datebox::m_create_container() {
     // second_colon->set_display_attributes(Util::Colors::White, Util::Colors::White, Util::Colors::Black);
     auto seconds = daytime_container->add_widget<Textbox>();
     seconds->set_limit(2);
-    seconds->set_min_max_values(0, 59);
+    hours->set_min(0);
+    hours->set_max(59);
     seconds->set_content("0");
 
     // std::cout << hours << " " << minutes << " " << seconds << "\n";
@@ -160,7 +163,7 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year - 100, local_tm.tm_mon + 1, local_tm.tm_mday);
-        m_update_calendar();
+        update_calendar();
     };
 
     left_year_arrow_btn->on_click = [this]() {
@@ -168,7 +171,7 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year - 1, local_tm.tm_mon + 1, local_tm.tm_mday);
-        m_update_calendar();
+        update_calendar();
     };
 
     left_month_arrow_btn->on_click = [this]() {
@@ -176,7 +179,7 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon, local_tm.tm_mday);
-        m_update_calendar();
+        update_calendar();
     };
 
     right_century_arrow_btn->on_click = [this]() {
@@ -184,7 +187,7 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year + 100, local_tm.tm_mon + 1, local_tm.tm_mday);
-        m_update_calendar();
+        update_calendar();
     };
 
     right_year_arrow_btn->on_click = [this]() {
@@ -192,7 +195,7 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year + 1, local_tm.tm_mon + 1, local_tm.tm_mday);
-        m_update_calendar();
+        update_calendar();
     };
 
     right_month_arrow_btn->on_click = [this]() {
@@ -200,7 +203,7 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 2, local_tm.tm_mday);
-        m_update_calendar();
+        update_calendar();
     };
 
     hours->on_change = [&](Util::UString const& str) {
@@ -209,7 +212,7 @@ void Datebox::m_create_container() {
 
         // TODO: Implement std::stoi as UString function
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, std::stoi(str.encode()), local_tm.tm_min, local_tm.tm_sec);
-        m_update_calendar();
+        update_calendar();
     };
 
     minutes->on_change = [&](Util::UString const& str) {
@@ -218,7 +221,7 @@ void Datebox::m_create_container() {
 
         // TODO: Implement std::stoi as UString function
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, std::stoi(str.encode()), local_tm.tm_sec);
-        m_update_calendar();
+        update_calendar();
     };
 
     seconds->on_change = [&](Util::UString const& str) {
@@ -226,11 +229,11 @@ void Datebox::m_create_container() {
         tm local_tm = *localtime(&clock);
 
         m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, std::stoi(str.encode()));
-        m_update_calendar();
+        update_calendar();
     };
 }
 
-void Datebox::m_update_calendar() {
+void Datebox::update_calendar() {
     time_t clock = m_date.time_since_epoch().count();
     tm local_tm = *localtime(&clock);
     local_tm.tm_mday = 1;

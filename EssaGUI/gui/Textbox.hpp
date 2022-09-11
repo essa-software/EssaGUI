@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/gui/Widget.hpp"
 #include "NotifyUser.hpp"
 #include "TextEditor.hpp"
 
@@ -16,18 +17,12 @@ public:
         NUMBER
     };
 
-    Type m_type = NUMBER;
-
     virtual void on_init() override { set_multiline(false); }
-
-    void set_limit(unsigned limit) { m_limit = limit; }
-
-    void set_data_type(Type type) { m_type = type; }
-    void set_min_max_values(double min_value, double max_value) {
-        m_min_value = min_value;
-        m_max_value = max_value;
-        m_has_limit = true;
-    }
+    
+    CREATE_VALUE(double, min, std::numeric_limits<double>::min())
+    CREATE_VALUE(double, max, std::numeric_limits<double>::max())
+    CREATE_VALUE(size_t, limit, 1024)
+    CREATE_VALUE(Type, type, Type::NUMBER)
 
 private:
     void m_fit_in_range();
@@ -39,11 +34,7 @@ private:
 
     virtual LengthVector initial_size() const override { return { Length::Auto, { static_cast<float>(theme().line_height), Length::Unit::Px } }; }
 
-    unsigned m_limit = 1024;
     bool m_has_decimal = false;
-    bool m_has_limit = false;
-    double m_min_value = std::numeric_limits<double>::lowest();
-    double m_max_value = std::numeric_limits<double>::max();
 };
 
 }

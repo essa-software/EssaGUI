@@ -1,7 +1,9 @@
 #pragma once
 
 #include "EssaGUI/gfx/Window.hpp"
+#include "EssaGUI/gui/Widget.hpp"
 #include "Overlay.hpp"
+#include <EssaUtil/UString.hpp>
 
 namespace GUI {
 
@@ -22,8 +24,8 @@ private:
 
 class ContextMenu {
 public:
-    void set_title(Util::UString title) { m_title = std::move(title); }
-    Util::UString title() const { return m_title; }
+
+    CREATE_VALUE(Util::UString, title, "")
 
     void add_action(Util::UString label, std::function<void()> callback) {
         m_actions.push_back({ label, callback });
@@ -32,7 +34,6 @@ public:
     std::vector<std::pair<Util::UString, std::function<void()>>> const& actions() const { return m_actions; }
 
 private:
-    Util::UString m_title;
     std::vector<std::pair<Util::UString, std::function<void()>>> m_actions;
 };
 

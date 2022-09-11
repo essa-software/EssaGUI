@@ -17,7 +17,7 @@ public:
 
 private:
     virtual llgl::Camera camera() const override {
-        return llgl::Camera { llgl::Projection::perspective({ 1.44, size().x() / size().y(), 0.1, 20 }, window().rect()) }
+        return llgl::Camera { llgl::Projection::perspective({ 1.44, raw_size().x() / raw_size().y(), 0.1, 20 }, window().rect()) }
             .translate({ 0, 3, 3 })
             .rotate_x(45.0_deg)
             .translate({ 0, 0, -1 });

@@ -62,19 +62,17 @@ public:
     };
 
     FileModel* model() { return m_model; }
-    FileExplorerType get_type() const { return m_type; }
-    void set_type(FileExplorerType type) { m_type = type; }
     void open_path(std::filesystem::path path);
 
     std::function<void(std::filesystem::path path)> on_submit;
 
+    CREATE_VALUE(FileExplorerType, type, FileExplorerType::FILE)
+    CREATE_VALUE(std::filesystem::path, current_path, ".")
+
 private:
-    std::filesystem::path m_current_path;
     Textbox* m_path_textbox {};
     FileModel* m_model {};
     ListView* m_list {};
-
-    FileExplorerType m_type = FileExplorerType::FILE;
 };
 
 }

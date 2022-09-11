@@ -15,7 +15,7 @@ namespace GUI {
 void Checkbox::draw(GUI::Window& window) const {
     auto colors = colors_for_state();
 
-    Util::Rectf box(2, 2, m_box_size.value() - 4, m_box_size.value() - 4);
+    Util::Rectf box(2, 2, raw_size().y() - 4, raw_size().y() - 4);
     RectangleDrawOptions box_opt;
     box_opt.outline_thickness = 1;
     box_opt.outline_color = colors.foreground;
@@ -68,7 +68,7 @@ void Checkbox::draw(GUI::Window& window) const {
         }
     }
 
-    Util::Rectf text_rect(position().x() + size().y() + 5, 0, local_rect().left - size().y() - 5, local_rect().height);
+    Util::Rectf text_rect(raw_position().x() + raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
     TextDrawOptions text_opt;
     text_opt.text_align = Align::CenterLeft;
     text_opt.fill_color = theme().label.text;
@@ -93,7 +93,6 @@ EML::EMLErrorOr<void> Checkbox::load_from_eml_object(EML::Object const& object, 
     TRY(Widget::load_from_eml_object(object, loader));
     
     m_caption = TRY(object.get_property("caption", Util::UString{}).to_string());
-    m_box_size = TRY(object.get_property("box_size", 12.0_px).to_length());
     auto mark_type = TRY(object.get_property("box_type", Util::UString("cross")).to_string());
 
     if(mark_type == "cross"){

@@ -13,12 +13,12 @@ void ImageButton::draw(GUI::Window& window) const {
     cs_bg.fill_color = colors.background;
     cs_bg.outline_color = colors.foreground;
     cs_bg.outline_thickness = -0.05;
-    window.draw_ellipse(size() / 2.f, size(), cs_bg);
+    window.draw_ellipse(raw_size() / 2.f, raw_size(), cs_bg);
 
-    if (!m_texture)
+    if (!m_image)
         return;
     RectangleDrawOptions sprite;
-    sprite.texture = m_texture;
+    sprite.texture = m_image;
     window.draw_rectangle(local_rect(), sprite);
 }
 

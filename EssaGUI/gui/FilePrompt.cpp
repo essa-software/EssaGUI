@@ -33,7 +33,7 @@ FilePrompt::FilePrompt(GUI::Window& wnd, Util::UString help_text, Util::UString 
     }
     auto input = input_container->add_widget<Textbox>();
     // FIXME: Why textboxes are numeric by default
-    input->set_data_type(Textbox::TEXT);
+    input->set_type(Textbox::TEXT);
     input->set_placeholder(std::move(placeholder));
 
     auto file_btn = input_container->add_widget<TextButton>();
@@ -70,7 +70,7 @@ FilePrompt::FilePrompt(GUI::Window& wnd, Util::UString help_text, Util::UString 
         ok_button->set_alignment(Align::Center);
         ok_button->set_content("OK");
         ok_button->on_click = [&, input]() {
-            m_result = input->get_content();
+            m_result = input->content();
             close();
         };
     }

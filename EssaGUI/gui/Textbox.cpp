@@ -16,7 +16,7 @@
 namespace GUI {
 
 bool Textbox::find_decimal() const {
-    for (const auto& c : get_content()) {
+    for (const auto& c : content()) {
         if (c == '.')
             return true;
     }
@@ -24,7 +24,7 @@ bool Textbox::find_decimal() const {
 }
 
 std::string Textbox::m_fix_content(std::string content) const {
-    unsigned i = content.size();
+    size_t i = content.size();
     while (i > 0 && content[i - 1] == '0')
         i--;
 
@@ -39,13 +39,13 @@ void Textbox::m_fit_in_range() {
 
     try {
         // TODO: Implement this in UString
-        double val = std::stod(get_content().encode());
+        double val = std::stod(content().encode());
         std::ostringstream oss;
         oss << std::fixed;
-        if (val < m_min_value)
-            oss << m_min_value;
-        else if (val > m_max_value)
-            oss << m_max_value;
+        if (val < m_min)
+            oss << m_min;
+        else if (val > m_max)
+            oss << m_max;
         else
             return;
         set_content(Util::UString { m_fix_content(oss.str()) });
@@ -55,7 +55,7 @@ void Textbox::m_fit_in_range() {
 }
 
 bool Textbox::can_insert_codepoint(uint32_t ch) const {
-    if (get_content().size() >= m_limit)
+    if (content().size() >= m_limit)
         return false;
 
     switch (m_type) {
@@ -75,8 +75,8 @@ void Textbox::on_content_change() {
 EML::EMLErrorOr<void> Textbox::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(TextEditor::load_from_eml_object(object, loader));
     m_limit = TRY(object.get_property("limit", static_cast<double>(m_limit)).to_double());
-    m_min_value = TRY(object.get_property("min_value", m_min_value).to_double());
-    m_max_value = TRY(object.get_property("max_value", m_min_value).to_double());
+    m_min = TRY(object.get_property("min_value", m_min).to_double());
+    m_max = TRY(object.get_property("max_value", m_min).to_double());
     return {};
 }
 

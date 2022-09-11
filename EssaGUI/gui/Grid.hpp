@@ -15,17 +15,17 @@ public:
     }
 
     void set_spacing(float spacing);
-    float get_spacing() const { return m_spacing; }
+    float spacing() const { return m_spacing; }
 
     void set_line_height(float height);
-    float get_line_height() const { return m_line_height; }
+    float line_height() const { return m_line_height; }
 
     void resize(size_t width, size_t height);
     void set_width(size_t width);
     void set_height(size_t height);
 
-    size_t get_width() const { return m_width; }
-    size_t get_height() const { return m_height; }
+    size_t width() const { return m_width; }
+    size_t height() const { return m_height; }
 
     Border* get_cell(size_t x, size_t y);
 

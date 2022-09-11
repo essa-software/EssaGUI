@@ -17,8 +17,8 @@ class StateTextButton : public Widget {
 public:
     void add_state(Util::UString content, T state, Util::Color bg_color, Util::Color fg_color = Util::Colors::Blue, Util::Color text_color = Util::Colors::White);
 
-    unsigned get_font_size() const { return m_font_size; }
-    void set_font_size(unsigned font_size) { m_font_size = font_size; }
+    CREATE_VALUE(size_t, font_size, 20)
+    CREATE_VALUE(Align, alignment, Align::CenterLeft);
 
     Align get_alignment() const { return m_alignment; };
     void set_alignment(Align alignment) { m_alignment = alignment; };
@@ -29,10 +29,6 @@ public:
 
     std::function<void(T)> on_change;
 
-    void set_bg_color(Util::Color color);
-    void set_fg_color(Util::Color color);
-    void set_text_color(Util::Color color);
-
     void set_index(unsigned index);
 
 private:
@@ -41,8 +37,7 @@ private:
 
     std::vector<std::pair<Util::UString, State>> m_states;
 
-    unsigned m_font_size = 20, m_index = 0;
-    Align m_alignment = Align::CenterLeft;
+    size_t m_index = 0;
 };
 
 }

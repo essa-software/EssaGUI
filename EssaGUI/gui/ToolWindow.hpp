@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/gui/Widget.hpp"
 #include "Overlay.hpp"
 
 namespace GUI {
@@ -18,13 +19,13 @@ public:
 
     virtual Util::Vector2f size() const override { return m_size; }
     void set_size(Util::Vector2f size) { m_size = size; }
-
-    void set_title(Util::UString string) { m_title = std::move(string); }
-    Util::UString title() const { return m_title; }
+    
+    CREATE_VALUE(Util::UString, title, "")
 
     virtual Util::Rectf full_rect() const override { return { position() - Util::Vector2f(0, TitleBarSize), size() + Util::Vector2f(0, TitleBarSize) }; }
     Util::Rectf titlebar_rect() const { return { position() - Util::Vector2f(0, TitleBarSize), { size().x(), TitleBarSize } }; }
 
+protected:
     virtual void handle_event(llgl::Event) override;
     virtual void draw() override;
 
@@ -47,7 +48,6 @@ private:
     };
     Resize m_resize_mode = Resize::DEFAULT;
 
-    Util::UString m_title;
     Util::Vector2f m_position;
     Util::Vector2f m_size;
     bool m_dragging = false;

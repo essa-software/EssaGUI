@@ -11,9 +11,9 @@ void ArrowButton::draw(GUI::Window& window) const {
 
     RectangleDrawOptions options;
     options.fill_color = colors.background;
-    window.draw_rectangle({ {}, size() }, options);
+    window.draw_rectangle({ {}, raw_size() }, options);
 
-    const Util::Vector2f midpoint = size() / 2.f;
+    const Util::Vector2f midpoint = raw_size() / 2.f;
 
     // std::cout << Vector3(midpoint) << "\n";
 

@@ -24,10 +24,7 @@ public:
         }
     }
 
-    void set_active_without_action(bool state) { m_active = state; }
-
-    void set_toggleable(bool t) { m_toggleable = t; }
-    bool is_toggleable() const { return m_toggleable; }
+    CREATE_BOOLEAN(toggleable, false)
 
     std::function<void(bool)> on_change;
 
@@ -52,7 +49,6 @@ private:
 
     std::optional<Theme::ButtonColors> m_button_colors_override;
 
-    bool m_toggleable { false };
     bool m_active { false };
     bool m_pressed_on_button { false };
 };

@@ -32,8 +32,8 @@ void ValueSlider::on_init() {
             on_change(value);
     };
     m_textbox = add_widget<Textbox>();
-    m_textbox->set_data_type(Textbox::NUMBER);
-    m_textbox->set_content(serialize_value(m_slider->get_value(), m_slider->step()));
+    m_textbox->set_type(Textbox::NUMBER);
+    m_textbox->set_content(serialize_value(m_slider->value(), m_slider->step()));
     m_textbox->on_change = [this](Util::UString const& value) {
         if (value.is_empty())
             m_slider->set_value(0, NotifyUser::No);
@@ -52,7 +52,7 @@ void ValueSlider::on_init() {
 }
 
 double ValueSlider::value() const {
-    return m_slider->get_value();
+    return m_slider->value();
 }
 
 void ValueSlider::set_value(double value, NotifyUser notify_user) {

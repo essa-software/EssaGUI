@@ -21,7 +21,7 @@ int main() {
 
     auto text_box = container1.add_widget<GUI::Textbox>();
     text_box->set_placeholder("Enter text");
-    text_box->set_data_type(GUI::Textbox::Type::TEXT);
+    text_box->set_type(GUI::Textbox::Type::TEXT);
     text_box->on_enter = [](Util::UString const& content) {
         GUI::message_box("You entered text: " + content, "Message", GUI::MessageBox::Buttons::Ok);
     };

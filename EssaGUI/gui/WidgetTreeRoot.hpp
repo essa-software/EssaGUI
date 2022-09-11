@@ -24,8 +24,8 @@ public:
     virtual ~WidgetTreeRoot() = default;
 
     GUI::Window& window() const { return m_window; }
-    Widget* focused_widget() const { return m_focused_widget; }
-    void set_focused_widget(Widget* w);
+    
+    CREATE_VALUE(Widget*, focused_widget, nullptr)
 
     void set_needs_relayout() { m_needs_relayout = true; }
 
@@ -58,7 +58,7 @@ public:
 
     auto* main_widget() { return m_main_widget.get(); }
 
-    void set_id(std::string id) { m_id = id; }
+    CREATE_VALUE(std::string, id, "")
 
     virtual void draw();
     virtual void handle_event(llgl::Event);
@@ -88,11 +88,8 @@ protected:
 
 private:
     GUI::Window& m_window;
-    Widget* m_focused_widget {};
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
-
-    std::string m_id = "";
 };
 
 }

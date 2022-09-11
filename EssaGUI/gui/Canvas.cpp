@@ -1,9 +1,9 @@
 #include "Canvas.hpp"
 #include "sprites/RectangleShape.hpp"
 
-namespace GUI{
+namespace GUI {
 
-void Canvas::draw_rect(LengthVector pos, LengthVector size){
+void Canvas::draw_rect(LengthVector pos, LengthVector size) {
     auto sprite = add_sprite<RectangleShape>();
     sprite->set_position(pos);
     sprite->set_size(size);

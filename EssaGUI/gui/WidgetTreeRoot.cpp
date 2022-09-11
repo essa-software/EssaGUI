@@ -10,10 +10,6 @@
 
 namespace GUI {
 
-void WidgetTreeRoot::set_focused_widget(Widget* w) {
-    m_focused_widget = w;
-}
-
 void WidgetTreeRoot::draw() {
     m_window.set_projection(llgl::Projection::ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } }, window().rect()));
 

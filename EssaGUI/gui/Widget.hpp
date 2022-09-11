@@ -6,12 +6,32 @@
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>
+#include <EssaUtil/Color.hpp>
 #include <EssaUtil/Orientation.hpp>
+#include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <cassert>
+#include <string>
 #include <string_view>
 
 namespace GUI {
+
+#define CREATE_VALUE(Type, camel_case, def_val)        \
+protected:                                             \
+    Type m_##camel_case = def_val;                     \
+                                                       \
+public:                                                \
+    Type camel_case() const { return m_##camel_case; } \
+    void set_##camel_case(Type const& value) { m_##camel_case = value; }
+
+#define CREATE_BOOLEAN(camel_case, def_val)                 \
+protected:                                                  \
+    bool m_##camel_case = def_val;                          \
+                                                            \
+public:                                                     \
+    bool is_##camel_case() const { return m_##camel_case; } \
+    void set_##camel_case(bool const& value) { m_##camel_case = value; }
 
 class Container;
 class TooltipOverlay;
@@ -47,10 +67,10 @@ public:
     llgl::Event event() const { return m_event; }
 
     // FIXME: idk the names
-    bool is_handled() const { return m_handled; }
     void set_handled() { m_handled = true; }
-    bool is_seen() const { return m_seen; }
+    bool is_handled() const { return m_handled; }
     void set_seen() { m_seen = true; }
+    bool is_seen() const { return m_seen; }
 
     llgl::Event::Type type() const { return m_event.type; }
 
@@ -87,12 +107,11 @@ public:
     virtual void do_update();
     virtual void draw(GUI::Window&) const { }
 
-    void set_raw_position(Util::Vector2f p) {
-        m_pos = p;
-    }
-    void set_raw_size(Util::Vector2f s) {
-        m_size = s;
-    }
+    CREATE_VALUE(Util::Vector2f, raw_position, Util::Vector2f())
+    CREATE_VALUE(Util::Vector2f, raw_size, Util::Vector2f())
+
+    LengthVector position() const { return m_expected_pos; }
+    LengthVector size() const { return m_input_size; }
 
     void set_position(LengthVector l) {
         m_expected_pos = l;
@@ -104,12 +123,8 @@ public:
         set_needs_relayout();
     }
 
-    Util::Vector2f position() const { return m_pos; }
-    Util::Vector2f size() const { return m_size; }
     Util::Rectf rect() const;
-    Util::Rectf local_rect() const { return { {}, m_size }; }
-    LengthVector input_position() const { return m_expected_pos; }
-    LengthVector input_size() const { return m_input_size; }
+    Util::Rectf local_rect() const { return { Util::Vector2f(), m_raw_size }; }
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
@@ -122,12 +137,11 @@ public:
         }
     }
 
-    bool is_visible() const { return m_visible; }
+    bool is_visible() const {return m_visible;}
 
-    void set_enabled(bool enabled) { m_enabled = enabled; }
-    bool is_enabled() const { return m_enabled; }
-    void set_initialized(bool initialized) { m_initialized = initialized; }
-    bool is_initialized() const { return m_initialized; }
+    CREATE_BOOLEAN(enabled, true);
+    CREATE_BOOLEAN(initialized, false);
+
     bool are_all_parents_enabled() const;
 
     void set_focused();
@@ -136,16 +150,13 @@ public:
     GUI::Window& window() const;
     Container* parent() const { return m_parent; }
 
-    void set_tooltip_text(Util::UString t) { m_tooltip_text = std::move(t); }
-
-    std::string_view id() const { return m_id; }
-    std::string_view class_name() const { return m_class_name; }
-    void set_id(std::string_view id) { m_id = id; }
-    void set_class_name(std::string_view class_name) { m_class_name = class_name; }
+    CREATE_VALUE(Util::UString, tooltip_text, "")
+    CREATE_VALUE(std::string, id, "")
+    CREATE_VALUE(std::string, class_name, "")
+    CREATE_VALUE(Util::Color, background_color, Util::Colors::Transparent)
 
     virtual void dump(unsigned depth);
-
-    void set_background_color(Util::Color const& color) { m_background_color = color; }
+    virtual void default_values() {};
 
     virtual void eml_construct(WidgetTreeRoot& root) {
         set_widget_tree_root(root);
@@ -191,19 +202,12 @@ private:
 
     Container* m_parent = nullptr;
     WidgetTreeRoot* m_widget_tree_root = nullptr;
-    Util::Vector2f m_pos, m_size;
     LengthVector m_expected_pos;
     LengthVector m_input_size { Length::Initial, Length::Initial };
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
-    Util::UString m_tooltip_text;
-    std::string m_id;
-    std::string_view m_class_name;
     bool m_hover = false;
     bool m_visible = true;
-    bool m_enabled = true;
-    bool m_initialized = false;
-    Util::Color m_background_color = Util::Colors::Transparent;
 };
 
 }

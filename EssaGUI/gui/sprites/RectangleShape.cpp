@@ -7,7 +7,7 @@ void RectangleShape::draw(Window& window) const {
     RectangleDrawOptions options;
     options.fill_color = background_color();
     options.outline_color = foreground_color();
-    options.outline_thickness = get_outline_thickness();
+    options.outline_thickness = outline_thickness();
     options.border_radius_top_left = m_border_radius[0];
     options.border_radius_top_right = m_border_radius[1];
     options.border_radius_bottom_left = m_border_radius[2];

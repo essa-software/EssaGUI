@@ -1,5 +1,7 @@
 #pragma once
 #include "Button.hpp"
+#include "EssaGUI/gui/Widget.hpp"
+#include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
 
 namespace GUI {
@@ -9,9 +11,8 @@ public:
     virtual void on_init() override { set_toggleable(true); }
 
     virtual void draw(GUI::Window& window) const override;
-
-    Util::UString get_caption() const { return m_caption; }
-    void set_caption(Util::UString const& str) { m_caption = str; }
+    
+    CREATE_VALUE(Util::UString, caption, "")
 
     virtual Theme::ButtonColors default_button_colors() const override;
 
@@ -20,17 +21,10 @@ public:
         MARK
     };
 
-    Style get_style() const { return m_style; }
-    void set_style(const Style& style) { m_style = style; }
-    Length get_box_size() const { return m_box_size; }
-    void box_size(Length box_size) { m_box_size = box_size; }
+    CREATE_VALUE(Style, style, Style::CROSS)
 
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
-    Util::UString m_caption = "";
-
-    Style m_style = Style::CROSS;
-    Length m_box_size = 12.0_px;
 };
 
 }
