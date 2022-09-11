@@ -1,6 +1,8 @@
 #include "Console.hpp"
 
 #include "Application.hpp"
+#include "EssaGUI/eml/EMLError.hpp"
+#include "EssaGUI/eml/Loader.hpp"
 
 #include <sstream>
 
@@ -43,5 +45,30 @@ void Console::draw(GUI::Window& window) const {
 float Console::content_height() const {
     return m_lines.size() * LINE_SPACING + 10;
 }
+EML::EMLErrorOr<void> Console::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+    for(auto const& line : object.properties){
+        if(line.second.name != "line")
+            continue;
+
+        auto arr = TRY(line.second.value.to_array());
+
+        if(arr.values().size() != 2){
+            return EML::EMLError{"Incorrect array params"};
+        }
+
+        auto text = TRY(arr.values()[0].to_string());
+        auto color = TRY(arr.values()[1].to_color());
+
+        LogLine log;
+        log.color = color;
+        log.text = text;
+
+        append_line(log);
+    }
+
+    return {};
+}
+
+EML_REGISTER_CLASS(Console)
 
 }

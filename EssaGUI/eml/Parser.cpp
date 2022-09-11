@@ -212,8 +212,6 @@ Util::ParseErrorOr<Util::Color> Parser::parse_hexcolor() {
         color_token = peek();
     }
 
-    std::cout << "X" << str << "X" << "\n";
-
     if(str.size() != 6 && str.size() != 8){
         return error_in_already_read("Not valid hexadecimal number");
     }
@@ -234,8 +232,6 @@ Util::ParseErrorOr<Util::Color> Parser::parse_hexcolor() {
     if (str.size() == 6) {
         color <<= 8;
     }
-
-    get();
 
     return Util::Color(color);
 }
