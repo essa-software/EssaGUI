@@ -8,8 +8,8 @@
 
 namespace GUI {
 
-MessageBox::MessageBox(Util::UString message, Util::UString title, Buttons buttons)
-    : ToolWindow("MessageBox") {
+MessageBox::MessageBox(HostWindow& window, Util::UString message, Util::UString title, Buttons buttons)
+    : ToolWindow(window, "MessageBox") {
     set_title(std::move(title));
 
     auto& prompt_container = set_main_widget<GUI::Container>();
@@ -66,8 +66,8 @@ void MessageBox::handle_event(llgl::Event event) {
         m_default_button->on_click();
 }
 
-MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
-    auto& msgbox = GUI::Application::the().host_window().open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
+MessageBox::ButtonRole message_box(HostWindow& window, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
+    auto& msgbox = window.open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
     return msgbox.exec();
 }
 

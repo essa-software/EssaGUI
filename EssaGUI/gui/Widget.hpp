@@ -34,6 +34,7 @@ public:                                                     \
     void set_##camel_case(bool const& value) { m_##camel_case = value; }
 
 class Container;
+class HostWindow;
 class TooltipOverlay;
 class WidgetTreeRoot;
 
@@ -137,7 +138,7 @@ public:
         }
     }
 
-    bool is_visible() const {return m_visible;}
+    bool is_visible() const { return m_visible; }
 
     CREATE_BOOLEAN(enabled, true);
     CREATE_BOOLEAN(initialized, false);
@@ -170,6 +171,8 @@ protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
+    HostWindow& host_window() { return const_cast<HostWindow&>(static_cast<Widget const&>(*this).host_window()); }
+    HostWindow const& host_window() const;
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }

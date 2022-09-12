@@ -30,7 +30,7 @@ public:
     template<class T = Overlay, class... Args>
     requires(std::is_base_of_v<Overlay, T>)
         T& open_overlay(Args&&... args) {
-        return static_cast<T&>(open_overlay_impl(std::make_unique<T>(std::forward<Args>(args)...)));
+        return static_cast<T&>(open_overlay_impl(std::make_unique<T>(*this, std::forward<Args>(args)...)));
     }
 
     struct OpenOrFocusResult {

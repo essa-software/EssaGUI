@@ -21,8 +21,8 @@ struct Tooltip {
 
 class TooltipOverlay : public Overlay {
 public:
-    TooltipOverlay(Tooltip tooltip, std::string id = "TooltipOverlay")
-        : Overlay(std::move(id))
+    TooltipOverlay(HostWindow& window, Tooltip tooltip, std::string id = "TooltipOverlay")
+        : Overlay(window, std::move(id))
         , m_tooltip(std::move(tooltip)) { }
 
     virtual Util::Vector2f position() const override { return m_tooltip.position; }

@@ -71,8 +71,8 @@ private:
     }
 };
 
-ContextMenuOverlay::ContextMenuOverlay(ContextMenu context_menu, Util::Vector2f position)
-    : Overlay("ContextMenu")
+ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_menu, Util::Vector2f position)
+    : Overlay(window, "ContextMenu")
     , m_context_menu(context_menu)
     , m_position(position) {
 

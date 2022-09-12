@@ -66,7 +66,7 @@ public:
 
 private:
     virtual void update() override {
-        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(GUI::Application::the().host_window().tps()) });
+        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(host_window().tps()) });
     }
 
     GUI::Textfield* m_tps_container = nullptr;

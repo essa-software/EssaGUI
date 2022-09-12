@@ -15,7 +15,7 @@ public:
         Ok
     };
 
-    explicit MessageBox(Util::UString message, Util::UString title, Buttons buttons);
+    explicit MessageBox(HostWindow& window, Util::UString message, Util::UString title, Buttons buttons);
 
     enum class ButtonRole {
         None,
@@ -36,6 +36,6 @@ private:
     Button* m_default_button = nullptr;
 };
 
-MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons);
+MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons);
 
 }

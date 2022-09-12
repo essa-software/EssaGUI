@@ -10,8 +10,8 @@
 
 namespace GUI {
 
-FilePrompt::FilePrompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder)
-    : ToolWindow("Prompt") {
+FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
+    : ToolWindow(window, "Prompt") {
 
     set_title(std::move(window_title));
     set_size({ 500, 100 });
@@ -39,8 +39,8 @@ FilePrompt::FilePrompt(Util::UString help_text, Util::UString window_title, Util
     auto file_btn = input_container->add_widget<TextButton>();
     file_btn->set_content("Browse file");
 
-    file_btn->on_click = [this, input]() {
-        auto& file_explorer_wnd = GUI::Application::the().host_window().open_overlay<FileExplorer>();
+    file_btn->on_click = [this, input, &window]() {
+        auto& file_explorer_wnd = window.open_overlay<FileExplorer>();
         file_explorer_wnd.set_size({ 1000, 600 });
         file_explorer_wnd.center_on_screen();
 
@@ -76,8 +76,8 @@ FilePrompt::FilePrompt(Util::UString help_text, Util::UString window_title, Util
     }
 };
 
-FilePrompt* file_prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
-    auto& prompt = Application::the().host_window().open_overlay<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
+FilePrompt* file_prompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
+    auto& prompt = window.open_overlay<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
 
     prompt.run();
 

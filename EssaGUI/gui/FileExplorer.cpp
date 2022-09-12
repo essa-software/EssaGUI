@@ -186,7 +186,8 @@ llgl::opengl::Texture const* FileModel::file_icon(size_t row) const {
     }
 }
 
-FileExplorer::FileExplorer() {
+FileExplorer::FileExplorer(HostWindow& window)
+    : ToolWindow(window) {
     static llgl::opengl::Texture& parent_directory_icon = resource_manager().require_texture("gui/parentDirectory.png");
     static llgl::opengl::Texture& new_folder_icon = resource_manager().require_texture("gui/newFolder.png");
     static llgl::opengl::Texture& new_file_icon = resource_manager().require_texture("gui/newFile.png");
@@ -216,7 +217,7 @@ FileExplorer::FileExplorer() {
     create_directory_button->set_alignment(Align::Center);
     create_directory_button->set_size({ toolbar_height, Length::Auto });
     create_directory_button->on_click = [&]() {
-        auto path = GUI::prompt("Folder name: ", "Create folder");
+        auto path = GUI::prompt(host_window(), "Folder name: ", "Create folder");
         if (path.has_value()) {
             try {
                 // C++ Why mutable paths?!!!
@@ -225,7 +226,7 @@ FileExplorer::FileExplorer() {
                 std::filesystem::create_directory(new_path);
                 m_model->update_content(m_current_path);
             } catch (std::filesystem::filesystem_error& error) {
-                GUI::message_box(Util::UString { error.what() }, "Error", GUI::MessageBox::Buttons::Ok);
+                GUI::message_box(host_window(), Util::UString { error.what() }, "Error", GUI::MessageBox::Buttons::Ok);
             }
         };
     };
@@ -236,7 +237,7 @@ FileExplorer::FileExplorer() {
     create_file_button->set_alignment(Align::Center);
     create_file_button->set_size({ 30.0_px, Length::Auto });
     create_file_button->on_click = [&]() {
-        auto file_name = GUI::prompt("File name with extension: ", "Create file");
+        auto file_name = GUI::prompt(host_window(), "File name with extension: ", "Create file");
         if (file_name.has_value()) {
             // C++ Why mutable paths?!!!
             auto new_path = m_current_path;
@@ -363,7 +364,7 @@ void FileExplorer::open_path(std::filesystem::path path) {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
         m_model->update_content(m_current_path);
-        GUI::message_box(Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box(host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!", GUI::MessageBox::Buttons::Ok);
         return;
     }
     m_current_path = path;

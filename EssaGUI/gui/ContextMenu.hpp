@@ -38,7 +38,7 @@ private:
 
 class ContextMenuOverlay : public Overlay {
 public:
-    ContextMenuOverlay(ContextMenu, Util::Vector2f position);
+    ContextMenuOverlay(HostWindow&, ContextMenu, Util::Vector2f position);
 
     virtual Util::Vector2f position() const override { return m_position; }
     virtual Util::Vector2f size() const override;

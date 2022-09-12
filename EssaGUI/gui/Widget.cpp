@@ -4,8 +4,9 @@
 #include "Container.hpp"
 #include "Tooltip.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
-
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/Config.hpp>
+#include <EssaUtil/Is.hpp>
 #include <cassert>
 #include <iostream>
 #include <typeinfo>
@@ -29,7 +30,7 @@ void Widget::update() {
         if (m_hover) {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
-                m_tooltip = &Application::the().host_window().add_tooltip(Tooltip { m_tooltip_text, this, raw_position() + m_widget_tree_root->position() });
+                m_tooltip = &host_window().add_tooltip(Tooltip { m_tooltip_text, this, raw_position() + m_widget_tree_root->position() });
                 // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
@@ -132,6 +133,15 @@ Theme const& Widget::theme() const {
 
 Gfx::ResourceManager const& Widget::resource_manager() const {
     return Application::the().resource_manager();
+}
+
+HostWindow const& Widget::host_window() const {
+    if (Util::is<HostWindow>(*m_widget_tree_root))
+        return static_cast<HostWindow const&>(*m_widget_tree_root);
+    if (Util::is<Overlay>(*m_widget_tree_root))
+        return static_cast<Overlay const&>(*m_widget_tree_root).host_window();
+    // WTR can currently be only HostWindow or Overlay
+    ESSA_UNREACHABLE;
 }
 
 void Widget::set_parent(Container& parent) {

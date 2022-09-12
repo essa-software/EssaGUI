@@ -8,8 +8,8 @@
 
 namespace GUI {
 
-Prompt::Prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder)
-    : ToolWindow("Prompt") {
+Prompt::Prompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
+    : ToolWindow(window, "Prompt") {
     set_title(std::move(window_title));
     set_size({ 500, 100 });
     center_on_screen();
@@ -56,8 +56,8 @@ Prompt::Prompt(Util::UString help_text, Util::UString window_title, Util::UStrin
     }
 };
 
-std::optional<Util::UString> prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
-    auto& prompt = GUI::Application::the().host_window().open_overlay<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
+std::optional<Util::UString> prompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
+    auto& prompt = window.open_overlay<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
     prompt.run();
     return prompt.result();
 }

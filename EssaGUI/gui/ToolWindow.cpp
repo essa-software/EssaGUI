@@ -1,11 +1,10 @@
 #include "ToolWindow.hpp"
 
-#include "Application.hpp"
-#include "Widget.hpp"
-#include "WidgetTreeRoot.hpp"
-#include <EssaGUI/gfx/Window.hpp>
-
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/Widget.hpp>
+#include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <cassert>
 #include <cmath>
@@ -13,8 +12,8 @@
 
 namespace GUI {
 
-ToolWindow::ToolWindow(std::string id)
-    : Overlay(std::move(id)) {
+ToolWindow::ToolWindow(HostWindow& window, std::string id)
+    : Overlay(window, std::move(id)) {
     m_titlebar_buttons.push_back(TitlebarButton {
         .on_click = [this]() {
             close();
@@ -25,7 +24,7 @@ void ToolWindow::handle_event(llgl::Event event) {
     if (m_first_tick)
         return;
 
-    auto& window = GUI::Application::the().host_window().window();
+    auto& window = host_window().window();
 
     Event gui_event { event };
     if (gui_event.is_mouse_related()) {
@@ -159,7 +158,7 @@ void ToolWindow::handle_event(llgl::Event event) {
 }
 
 void ToolWindow::center_on_screen() {
-    auto& window = GUI::Application::the().host_window().window();
+    auto& window = host_window().window();
     m_position = Util::Vector2f(window.size().x() / 2, window.size().y() / 2) - m_size / 2.f;
 }
 
@@ -173,7 +172,7 @@ void ToolWindow::draw(GUI::Window& window) {
 
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
-    auto titlebar_color = Application::the().host_window().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
+    auto titlebar_color = host_window().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
 
     RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = 5;

@@ -31,12 +31,12 @@ void ColorField::draw(GUI::Window& window) const {
 
 class ColorPickerDialog : public ToolWindow {
 public:
-    explicit ColorPickerDialog();
+    explicit ColorPickerDialog(HostWindow&);
 
     Util::Color color() const;
     void set_color(Util::Color color);
 
-    static std::optional<Util::Color> exec(Util::Color initial_color);
+    static std::optional<Util::Color> exec(HostWindow&, Util::Color initial_color);
 
 private:
     enum class Mode {
@@ -57,15 +57,15 @@ private:
     ValueSlider* m_v_slider = nullptr;
 };
 
-std::optional<Util::Color> ColorPickerDialog::exec(Util::Color initial_color) {
-    auto& dialog = Application::the().host_window().open_overlay<ColorPickerDialog>();
+std::optional<Util::Color> ColorPickerDialog::exec(HostWindow& window, Util::Color initial_color) {
+    auto& dialog = window.open_overlay<ColorPickerDialog>();
     dialog.set_color(initial_color);
     dialog.run();
     return dialog.m_ok_clicked ? dialog.color() : std::optional<Util::Color> {};
 }
 
-ColorPickerDialog::ColorPickerDialog()
-    : ToolWindow("GUI::ColorPickerDialog") {
+ColorPickerDialog::ColorPickerDialog(HostWindow& window)
+    : ToolWindow(window, "GUI::ColorPickerDialog") {
     set_title("Pick a color");
     set_size({ 500, 305 });
     center_on_screen();
@@ -168,7 +168,7 @@ void ColorPickerDialog::set_color(Util::Color color) {
 
 void ColorPicker::on_init() {
     on_click = [this]() {
-        auto color = ColorPickerDialog::exec(m_color);
+        auto color = ColorPickerDialog::exec(host_window(), m_color);
         if (color) {
             m_color = *color;
             if (on_change)

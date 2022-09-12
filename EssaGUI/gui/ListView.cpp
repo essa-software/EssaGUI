@@ -127,7 +127,7 @@ void ListView::handle_event(Event& event) {
                     }
                     else if (event.event().mouse_button.button == llgl::MouseButton::Right && on_context_menu_request) {
                         if (auto context_menu = on_context_menu_request(row)) {
-                            GUI::Application::the().host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos } + widget_tree_root().position());
+                            host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos } + widget_tree_root().position());
                         }
                     }
                     return;

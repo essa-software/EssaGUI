@@ -8,7 +8,7 @@ namespace GUI {
 
 class ToolWindow : public Overlay {
 public:
-    explicit ToolWindow(std::string id = "ToolWindow");
+    explicit ToolWindow(HostWindow&, std::string id = "ToolWindow");
 
     static constexpr auto TitleBarSize = 28;
     static constexpr auto MinSize = 50;
