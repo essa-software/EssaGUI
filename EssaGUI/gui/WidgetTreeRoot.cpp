@@ -69,13 +69,6 @@ llgl::Event WidgetTreeRoot::transform_event(Util::Vector2f offset, llgl::Event e
     return event;
 }
 
-bool WidgetTreeRoot::pass_event_to_window_if_needed(WidgetTreeRoot& wtr, llgl::Event event) {
-    wtr.handle_event(transform_event(wtr.position(), event));
-    bool scroll_outside_window = event.type == llgl::Event::Type::MouseScroll
-        && !wtr.full_rect().contains({ static_cast<float>(event.mouse_scroll.position.x), static_cast<float>(event.mouse_scroll.position.y) });
-    return !(event.type == llgl::Event::Type::MouseMove || event.type == llgl::Event::Type::MouseButtonRelease || scroll_outside_window);
-}
-
 Theme const& WidgetTreeRoot::theme() const {
     return Application::the().theme();
 }

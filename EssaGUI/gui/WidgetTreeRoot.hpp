@@ -83,7 +83,6 @@ protected:
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
-    bool pass_event_to_window_if_needed(WidgetTreeRoot& wtr, llgl::Event event);
     llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
 
 private:
