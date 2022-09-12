@@ -29,6 +29,12 @@ public:
     CREATE_VALUE(double, exponent, 2.0)
     CREATE_VALUE(bool, wraparound, false)
 
+    void set_range(double min, double max, double step = 1) {
+        set_min(min);
+        set_max(max);
+        set_step(step);
+    }
+
     double value() const;
     double raw_value() const { return m_val; }
     void set_value(double val, NotifyUser = NotifyUser::Yes);
