@@ -13,7 +13,7 @@ public:
     CREATE_VALUE(Util::UString, active_content, "")
     CREATE_VALUE(llgl::opengl::Texture const*, image, nullptr)
     CREATE_VALUE(size_t, font_size, 20)
-    CREATE_VALUE(Align, alignment, Align::CenterLeft)
+    CREATE_VALUE(Align, alignment, Align::Center)
 
 private:
     virtual void draw(GUI::Window& window) const override;
