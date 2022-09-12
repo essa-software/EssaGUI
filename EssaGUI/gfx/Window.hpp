@@ -7,11 +7,11 @@
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <LLGL/Core/Vertex.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
 #include <LLGL/OpenGL/VAO.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/Renderer/DrawState.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 #include <LLGL/Window/Window.hpp>
@@ -96,9 +96,9 @@ public:
     void draw_text_aligned_in_rect(Util::UString const&, Util::Rectf rect, llgl::TTFFont const&, TextDrawOptions const& = {});
     void draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& = {});
 
-    // FIXME: Add some class like sf::Text.
-    Util::Vector2u calculate_text_size(Util::UString const&, llgl::TTFFont const&, TextDrawOptions const& = {});
-    float find_character_position(size_t index, Util::UString const&, llgl::TTFFont const&, TextDrawOptions const& = {});
+    // FIXME: This is not a proper place for these functions. Add some class like sf::Text.
+    static Util::Vector2u calculate_text_size(Util::UString const&, llgl::TTFFont const&, TextDrawOptions const& = {});
+    static float find_character_position(size_t index, Util::UString const&, llgl::TTFFont const&, TextDrawOptions const& = {});
 
 private:
     void apply_states();

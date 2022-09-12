@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/gfx/Window.hpp"
 #include "EssaGUI/gui/Widget.hpp"
 #include "Overlay.hpp"
 
@@ -7,7 +8,7 @@ namespace GUI {
 
 class ToolWindow : public Overlay {
 public:
-    explicit ToolWindow(GUI::Window& wnd, std::string id = "ToolWindow");
+    explicit ToolWindow(std::string id = "ToolWindow");
 
     static constexpr auto TitleBarSize = 28;
     static constexpr auto MinSize = 50;
@@ -15,11 +16,11 @@ public:
 
     virtual Util::Vector2f position() const override { return m_position; }
     void set_position(Util::Vector2f position) { m_position = position; }
-    void center_on_screen() { m_position = Util::Vector2f(window().size().x() / 2, window().size().y() / 2) - m_size / 2.f; }
+    void center_on_screen();
 
     virtual Util::Vector2f size() const override { return m_size; }
     void set_size(Util::Vector2f size) { m_size = size; }
-    
+
     CREATE_VALUE(Util::UString, title, "")
 
     virtual Util::Rectf full_rect() const override { return { position() - Util::Vector2f(0, TitleBarSize), size() + Util::Vector2f(0, TitleBarSize) }; }
@@ -27,10 +28,9 @@ public:
 
 protected:
     virtual void handle_event(llgl::Event) override;
-    virtual void draw() override;
+    virtual void draw(GUI::Window&) override;
 
 private:
-    virtual void handle_events() override;
     virtual void update() override {
         WidgetTreeRoot::update();
         m_first_tick = false;

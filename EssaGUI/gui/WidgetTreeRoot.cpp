@@ -10,8 +10,8 @@
 
 namespace GUI {
 
-void WidgetTreeRoot::draw() {
-    m_window.set_projection(llgl::Projection::ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window().size() } } }, window().rect()));
+void WidgetTreeRoot::draw(Window& window) {
+    window.set_projection(llgl::Projection::ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window.size() } } }, window.rect()));
 
     if (!m_main_widget)
         return;
@@ -23,7 +23,7 @@ void WidgetTreeRoot::draw() {
         m_main_widget->dump(0);
         m_needs_relayout = false;
     }
-    m_main_widget->do_draw(m_window);
+    m_main_widget->do_draw(window);
 }
 
 void WidgetTreeRoot::handle_event(llgl::Event event) {
@@ -31,6 +31,23 @@ void WidgetTreeRoot::handle_event(llgl::Event event) {
         return;
     Event gui_event(event);
     m_main_widget->do_handle_event(gui_event);
+}
+
+void WidgetTreeRoot::handle_events() {
+    // This event handler just takes all the events
+    // (except global events) and passes the to the
+    // underlying main_widget. This is used for modal
+    // windows.
+    // FIXME: Support moving other ToolWindows even
+    //        if other modal window is open.
+    // FIXME: This is copied from ToolWindow. Add
+    //        some way to deduplicate this.
+    llgl::Event event;
+    while (GUI::Application::the().window().poll_event(event)) {
+        handle_event(transform_event(position(), event));
+        if (event.type == llgl::Event::Type::Resize)
+            Application::the().handle_event(event);
+    }
 }
 
 void WidgetTreeRoot::tick() {
@@ -45,9 +62,9 @@ void WidgetTreeRoot::tick() {
         quit();
 
     // ...but redraw the entire Application!
-    window().clear();
-    Application::the().draw();
-    window().display();
+    Application::the().window().clear();
+    Application::the().draw(Application::the().window());
+    Application::the().window().display();
 
     // Remove closed overlays on Application so
     // that closed windows actually are closed

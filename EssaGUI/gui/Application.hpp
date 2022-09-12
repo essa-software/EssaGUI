@@ -21,10 +21,11 @@ public:
     static Application& the();
 
     // TODO: Find a way for this to be private
-    virtual void draw() override;
+    virtual void draw(Window&) override;
 
     virtual void handle_event(llgl::Event) override;
 
+    GUI::Window& window() const { return m_window; }
     Gfx::ResourceManager const& resource_manager() const { return m_resource_manager; }
 
     llgl::TTFFont& font() const { return m_resource_manager.font(); }
@@ -40,7 +41,7 @@ public:
     template<class T = Overlay, class... Args>
     requires(std::is_base_of_v<Overlay, T>)
         T& open_overlay(Args&&... args) {
-        return static_cast<T&>(open_overlay_impl(std::make_unique<T>(window(), std::forward<Args>(args)...)));
+        return static_cast<T&>(open_overlay_impl(std::make_unique<T>(std::forward<Args>(args)...)));
     }
 
     struct OpenOrFocusResult {
@@ -89,6 +90,7 @@ private:
 
     void focus_window(OverlayList::iterator);
 
+    GUI::Window& m_window;
     OverlayList m_overlays;
     Util::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
     Overlay* m_focused_overlay = nullptr;

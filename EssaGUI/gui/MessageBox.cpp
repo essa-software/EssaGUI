@@ -8,8 +8,8 @@
 
 namespace GUI {
 
-MessageBox::MessageBox(GUI::Window& wnd, Util::UString message, Util::UString title, Buttons buttons)
-    : ToolWindow(wnd, "MessageBox") {
+MessageBox::MessageBox(Util::UString message, Util::UString title, Buttons buttons)
+    : ToolWindow("MessageBox") {
     set_title(std::move(title));
 
     auto& prompt_container = set_main_widget<GUI::Container>();
@@ -25,7 +25,7 @@ MessageBox::MessageBox(GUI::Window& wnd, Util::UString message, Util::UString ti
     {
         TextDrawOptions text_options;
         text_options.font_size = prompt_text->font_size();
-        auto text_size = window().calculate_text_size(prompt_text->content(), GUI::Application::the().font(), text_options);
+        auto text_size = Window::calculate_text_size(prompt_text->content(), GUI::Application::the().font(), text_options);
         Util::Vector2f total_size { 40 + text_size.x(), 110 + text_size.y() };
         set_size(total_size);
         center_on_screen();

@@ -51,7 +51,7 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     // We can just check the offset of 1st character because we use
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
-    float character_width = window().find_character_position(1, "test", GUI::Application::the().fixed_width_font(), get_text_options());
+    float character_width = Window::find_character_position(1, "test", GUI::Application::the().fixed_width_font(), get_text_options());
     auto cursor = (delta.x() - scroll_offset().x() - left_margin()) / character_width;
     return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
 }
@@ -502,7 +502,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
 
 Util::Vector2f TextEditor::calculate_cursor_position() const {
     auto options = get_text_options();
-    auto character_position = window().find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font(), options);
+    auto character_position = Window::find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font(), options);
     auto position = Util::Vector2f { character_position, 0 } + scroll_offset();
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_multiline)

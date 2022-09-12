@@ -54,7 +54,7 @@ private:
 
 class FileExplorer : public ToolWindow {
 public:
-    explicit FileExplorer(GUI::Window& wnd);
+    explicit FileExplorer();
 
     enum class FileExplorerType {
         FILE,

@@ -31,7 +31,7 @@ void ColorField::draw(GUI::Window& window) const {
 
 class ColorPickerDialog : public ToolWindow {
 public:
-    explicit ColorPickerDialog(GUI::Window& wnd);
+    explicit ColorPickerDialog();
 
     Util::Color color() const;
     void set_color(Util::Color color);
@@ -64,8 +64,8 @@ std::optional<Util::Color> ColorPickerDialog::exec(Util::Color initial_color) {
     return dialog.m_ok_clicked ? dialog.color() : std::optional<Util::Color> {};
 }
 
-ColorPickerDialog::ColorPickerDialog(GUI::Window& wnd)
-    : ToolWindow(wnd, "GUI::ColorPickerDialog") {
+ColorPickerDialog::ColorPickerDialog()
+    : ToolWindow("GUI::ColorPickerDialog") {
     set_title("Pick a color");
     set_size({ 500, 305 });
     center_on_screen();

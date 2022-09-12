@@ -13,8 +13,8 @@
 
 namespace GUI {
 
-ToolWindow::ToolWindow(GUI::Window& wnd, std::string id)
-    : Overlay(wnd, std::move(id)) {
+ToolWindow::ToolWindow(std::string id)
+    : Overlay(std::move(id)) {
     m_titlebar_buttons.push_back(TitlebarButton {
         .on_click = [this]() {
             close();
@@ -24,6 +24,8 @@ ToolWindow::ToolWindow(GUI::Window& wnd, std::string id)
 void ToolWindow::handle_event(llgl::Event event) {
     if (m_first_tick)
         return;
+
+    auto& window = GUI::Application::the().window();
 
     Event gui_event { event };
     if (gui_event.is_mouse_related()) {
@@ -115,12 +117,12 @@ void ToolWindow::handle_event(llgl::Event event) {
 
                 if (m_position.y() < TitleBarSize)
                     m_position.y() = TitleBarSize;
-                if (m_position.y() > window().size().y())
-                    m_position.y() = window().size().y();
+                if (m_position.y() > window.size().y())
+                    m_position.y() = window.size().y();
                 if (m_position.x() < -size().x() + TitleBarSize)
                     m_position.x() = -size().x() + TitleBarSize;
-                if (m_position.x() > window().size().x() - TitleBarSize)
-                    m_position.x() = window().size().x() - TitleBarSize;
+                if (m_position.x() > window.size().x() - TitleBarSize)
+                    m_position.x() = window.size().x() - TitleBarSize;
 
                 return;
             }
@@ -156,28 +158,18 @@ void ToolWindow::handle_event(llgl::Event event) {
     WidgetTreeRoot::handle_event(event);
 }
 
-void ToolWindow::handle_events() {
-    // This event handler just takes all the events
-    // (except global events) and passes the to the
-    // underlying main_widget. This is used for modal
-    // windows.
-    // FIXME: Support moving other ToolWindows even
-    //        if other modal window is open.
-    llgl::Event event;
-    while (window().poll_event(event)) {
-        handle_event(transform_event(position(), event));
-        if (event.type == llgl::Event::Type::Resize)
-            Application::the().handle_event(event);
-    }
+void ToolWindow::center_on_screen() {
+    auto& window = GUI::Application::the().window();
+    m_position = Util::Vector2f(window.size().x() / 2, window.size().y() / 2) - m_size / 2.f;
 }
 
-void ToolWindow::draw() {
+void ToolWindow::draw(GUI::Window& window) {
     Util::Vector2f position { std::round(this->position().x()), std::round(this->position().y()) };
     Util::Vector2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
     RectangleDrawOptions background;
     background.fill_color = { 50, 50, 50, 220 };
-    window().draw_rectangle({ position, size }, background);
+    window.draw_rectangle({ position, size }, background);
 
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
@@ -187,9 +179,9 @@ void ToolWindow::draw() {
     rs_titlebar.border_radius_top_left = 5;
     rs_titlebar.border_radius_top_right = 5;
     rs_titlebar.fill_color = titlebar_color;
-    window().draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
+    window.draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
 
-    window().draw_text(title(), Application::the().bold_font(), { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = theme().label_font_size });
+    window.draw_text(title(), Application::the().bold_font(), { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = theme().label_font_size });
 
     float titlebar_button_position_x = position.x() + size.x() - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {
@@ -199,7 +191,7 @@ void ToolWindow::draw() {
         RectangleDrawOptions tbb_background;
         tbb_background.border_radius_top_right = 5;
         tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
-        window().draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
+        window.draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };
 
@@ -209,7 +201,7 @@ void ToolWindow::draw() {
         varr[1] = llgl::Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
         varr[2] = llgl::Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
         varr[3] = llgl::Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
-        window().draw_vertices(llgl::opengl::PrimitiveType::Lines, varr);
+        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, varr);
 
         titlebar_button_position_x -= TitleBarSize;
     }
@@ -219,10 +211,10 @@ void ToolWindow::draw() {
     varr_border[1] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = titlebar_color };
     varr_border[2] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = titlebar_color };
     varr_border[3] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = titlebar_color };
-    window().draw_vertices(llgl::opengl::PrimitiveType::LineStrip, varr_border);
+    window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, varr_border);
     {
-        Gfx::ClipViewScope scope(window(), rect(), Gfx::ClipViewScope::Mode::Override);
-        WidgetTreeRoot::draw();
+        Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Override);
+        WidgetTreeRoot::draw(window);
     }
 }
 

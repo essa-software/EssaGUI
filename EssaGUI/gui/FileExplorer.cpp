@@ -186,8 +186,7 @@ llgl::opengl::Texture const* FileModel::file_icon(size_t row) const {
     }
 }
 
-FileExplorer::FileExplorer(GUI::Window& wnd)
-    : ToolWindow(wnd) {
+FileExplorer::FileExplorer() {
     static llgl::opengl::Texture& parent_directory_icon = resource_manager().require_texture("gui/parentDirectory.png");
     static llgl::opengl::Texture& new_folder_icon = resource_manager().require_texture("gui/newFolder.png");
     static llgl::opengl::Texture& new_file_icon = resource_manager().require_texture("gui/newFile.png");

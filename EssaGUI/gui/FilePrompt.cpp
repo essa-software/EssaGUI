@@ -10,8 +10,8 @@
 
 namespace GUI {
 
-FilePrompt::FilePrompt(GUI::Window& wnd, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
-    : ToolWindow(wnd, "Prompt") {
+FilePrompt::FilePrompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder)
+    : ToolWindow("Prompt") {
 
     set_title(std::move(window_title));
     set_size({ 500, 100 });

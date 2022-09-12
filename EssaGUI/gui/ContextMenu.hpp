@@ -24,7 +24,6 @@ private:
 
 class ContextMenu {
 public:
-
     CREATE_VALUE(Util::UString, title, "")
 
     void add_action(Util::UString label, std::function<void()> callback) {
@@ -39,15 +38,14 @@ private:
 
 class ContextMenuOverlay : public Overlay {
 public:
-    ContextMenuOverlay(GUI::Window& wnd, ContextMenu, Util::Vector2f position);
+    ContextMenuOverlay(ContextMenu, Util::Vector2f position);
 
     virtual Util::Vector2f position() const override { return m_position; }
     virtual Util::Vector2f size() const override;
 
 private:
     virtual void handle_event(llgl::Event) override;
-    virtual void handle_events() override;
-    virtual void draw() override;
+    virtual void draw(Window&) override;
 
     MenuWidget* m_menu_widget = nullptr;
     ContextMenu m_context_menu;

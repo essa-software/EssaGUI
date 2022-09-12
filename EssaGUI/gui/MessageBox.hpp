@@ -15,7 +15,7 @@ public:
         Ok
     };
 
-    explicit MessageBox(GUI::Window& wnd, Util::UString message, Util::UString title, Buttons buttons);
+    explicit MessageBox(Util::UString message, Util::UString title, Buttons buttons);
 
     enum class ButtonRole {
         None,

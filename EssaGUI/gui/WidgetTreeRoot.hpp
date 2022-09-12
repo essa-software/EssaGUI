@@ -14,17 +14,12 @@ namespace GUI {
 class WidgetTreeRoot : public EventLoop
     , public EML::EMLObject {
 public:
-    explicit WidgetTreeRoot(GUI::Window& wnd)
-        : m_window(wnd) {
-    }
-
+    WidgetTreeRoot() = default;
     WidgetTreeRoot(WidgetTreeRoot const&) = delete;
     WidgetTreeRoot& operator=(WidgetTreeRoot const&) = delete;
 
     virtual ~WidgetTreeRoot() = default;
 
-    GUI::Window& window() const { return m_window; }
-    
     CREATE_VALUE(Widget*, focused_widget, nullptr)
 
     void set_needs_relayout() { m_needs_relayout = true; }
@@ -60,9 +55,9 @@ public:
 
     CREATE_VALUE(std::string, id, "")
 
-    virtual void draw();
+    virtual void draw(Window&);
     virtual void handle_event(llgl::Event);
-    virtual void handle_events() { }
+    virtual void handle_events();
     virtual void update() {
         if (m_main_widget)
             m_main_widget->do_update();
@@ -86,7 +81,6 @@ protected:
     llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
 
 private:
-    GUI::Window& m_window;
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
 };

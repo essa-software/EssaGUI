@@ -8,8 +8,8 @@ namespace GUI {
 
 class Overlay : public WidgetTreeRoot {
 public:
-    Overlay(GUI::Window& wnd, std::string id)
-        : WidgetTreeRoot(wnd)
+    Overlay(std::string id)
+        : WidgetTreeRoot()
         , m_id(std::move(id)) { }
 
     void close() {

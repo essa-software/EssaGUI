@@ -147,7 +147,6 @@ public:
     void set_focused();
     bool is_focused() const;
 
-    GUI::Window& window() const;
     Container* parent() const { return m_parent; }
 
     CREATE_VALUE(Util::UString, tooltip_text, "")

@@ -70,8 +70,8 @@ private:
     }
 };
 
-ContextMenuOverlay::ContextMenuOverlay(GUI::Window& wnd, ContextMenu context_menu, Util::Vector2f position)
-    : Overlay(wnd, "ContextMenu")
+ContextMenuOverlay::ContextMenuOverlay(ContextMenu context_menu, Util::Vector2f position)
+    : Overlay("ContextMenu")
     , m_context_menu(context_menu)
     , m_position(position) {
 
@@ -118,31 +118,14 @@ void ContextMenuOverlay::handle_event(llgl::Event event) {
     }
 }
 
-void ContextMenuOverlay::handle_events() {
-    // This event handler just takes all the events
-    // (except global events) and passes the to the
-    // underlying main_widget. This is used for modal
-    // windows.
-    // FIXME: Support moving other ToolWindows even
-    //        if other modal window is open.
-    // FIXME: This is copied from ToolWindow. Add
-    //        some way to deduplicate this.
-    llgl::Event event;
-    while (window().poll_event(event)) {
-        handle_event(transform_event(position(), event));
-        if (event.type == llgl::Event::Type::Resize)
-            Application::the().handle_event(event);
-    }
-}
-
-void ContextMenuOverlay::draw() {
+void ContextMenuOverlay::draw(Window& window) {
     RectangleDrawOptions background;
     background.fill_color = theme().menu.background;
     background.outline_color = theme().menu.foreground;
     background.outline_thickness = -1;
-    window().draw_rectangle(rect(), background);
+    window.draw_rectangle(rect(), background);
 
-    WidgetTreeRoot::draw();
+    WidgetTreeRoot::draw(window);
 }
 
 }

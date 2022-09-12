@@ -21,7 +21,7 @@ Application& Application::the() {
 }
 
 Application::Application(GUI::Window& wnd)
-    : WidgetTreeRoot(wnd) {
+    : m_window(wnd) {
     assert(!s_the);
     s_the = this;
 }
@@ -103,10 +103,10 @@ void Application::handle_events() {
         handle_event(event);
 }
 
-void Application::draw() {
-    WidgetTreeRoot::draw();
+void Application::draw(Window& window) {
+    WidgetTreeRoot::draw(window);
     for (auto& overlay : m_overlays)
-        overlay->draw();
+        overlay->draw(window);
 }
 
 void Application::draw_notification(Notification const& notification, float y) {
