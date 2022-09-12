@@ -48,7 +48,7 @@ void Textbox::m_fit_in_range() {
             oss << m_max;
         else
             return;
-        set_content(Util::UString { m_fix_content(oss.str()) });
+        set_content(Util::UString { m_fix_content(oss.str()) }, NotifyUser::No);
     } catch (...) {
         return;
     }
