@@ -1,9 +1,9 @@
-#include "EssaGUI/gui/WidgetTreeRoot.hpp"
 #include <EssaEngine/3D/Model.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
+#include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <EssaGUI/gui/WorldView.hpp>
 #include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
 #include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
@@ -17,7 +17,7 @@ public:
 
 private:
     virtual llgl::Camera camera() const override {
-        return llgl::Camera { llgl::Projection::perspective({ 1.44, raw_size().x() / raw_size().y(), 0.1, 20 }, window().rect()) }
+        return llgl::Camera { llgl::Projection::perspective({ 1.44, raw_size().x() / raw_size().y(), 0.1, 20 }, Util::Recti { rect() }) }
             .translate({ 0, 3, 3 })
             .rotate_x(45.0_deg)
             .translate({ 0, 0, -1 });
@@ -52,7 +52,7 @@ private:
 
 class MainWidget : public GUI::Container {
 public:
-    MainWidget() {
+    virtual void on_init() override {
         set_layout<GUI::VerticalBoxLayout>();
 
         m_tps_container = add_widget<GUI::Textfield>();
@@ -66,7 +66,7 @@ public:
 
 private:
     virtual void update() override {
-        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(GUI::Application::the().tps()) });
+        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(GUI::Application::the().host_window().tps()) });
     }
 
     GUI::Textfield* m_tps_container = nullptr;
@@ -77,7 +77,7 @@ int main() {
     GUI::Window window { { 500, 500 }, "Model ResourceManager integration" };
 
     GUI::Application app { window };
-    app.set_main_widget<MainWidget>();
+    app.host_window().set_main_widget<MainWidget>();
 
     app.run();
     return 0;

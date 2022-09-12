@@ -67,7 +67,7 @@ void MessageBox::handle_event(llgl::Event event) {
 }
 
 MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
-    auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
+    auto& msgbox = GUI::Application::the().host_window().open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
     return msgbox.exec();
 }
 

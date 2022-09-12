@@ -40,13 +40,13 @@ void WidgetTreeRoot::handle_events() {
     // windows.
     // FIXME: Support moving other ToolWindows even
     //        if other modal window is open.
-    // FIXME: This is copied from ToolWindow. Add
-    //        some way to deduplicate this.
+    // FIXME: This host_window() spam is temporary
+    //        until we get multiple windows support.
     llgl::Event event;
-    while (GUI::Application::the().window().poll_event(event)) {
+    while (GUI::Application::the().host_window().window().poll_event(event)) {
         handle_event(transform_event(position(), event));
         if (event.type == llgl::Event::Type::Resize)
-            Application::the().handle_event(event);
+            Application::the().host_window().handle_event(event);
     }
 }
 
@@ -62,15 +62,17 @@ void WidgetTreeRoot::tick() {
         quit();
 
     // ...but redraw the entire Application!
-    Application::the().window().clear();
-    Application::the().draw(Application::the().window());
-    Application::the().window().display();
+    // FIXME: This host_window() spam is temporary
+    //        until we get multiple windows support.
+    Application::the().host_window().window().clear();
+    Application::the().host_window().draw(Application::the().host_window().window());
+    Application::the().host_window().window().display();
 
     // Remove closed overlays on Application so
     // that closed windows actually are closed
     if (!is_running())
         return;
-    Application::the().remove_closed_overlays();
+    Application::the().host_window().remove_closed_overlays();
 }
 
 llgl::Event WidgetTreeRoot::transform_event(Util::Vector2f offset, llgl::Event event) const {

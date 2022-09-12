@@ -22,7 +22,7 @@ public:
 
     std::pair<Util::UString, State> get_element_from_index(unsigned index) const;
 
-    T state() const;
+    T state() const { return m_states[m_index].second.state; }
 
     std::function<void(T)> on_change;
 

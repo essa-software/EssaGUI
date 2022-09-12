@@ -8,7 +8,7 @@ int main() {
 
     GUI::Application app(wnd);
 
-    auto& container1 = app.set_main_widget<GUI::Container>();
+    auto& container1 = app.host_window().set_main_widget<GUI::Container>();
     container1.set_layout<GUI::VerticalBoxLayout>();
     auto text_editor = container1.add_widget<GUI::TextEditor>();
     text_editor->set_placeholder("Test placeholder");

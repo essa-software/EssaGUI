@@ -58,7 +58,7 @@ private:
 };
 
 std::optional<Util::Color> ColorPickerDialog::exec(Util::Color initial_color) {
-    auto& dialog = Application::the().open_overlay<ColorPickerDialog>();
+    auto& dialog = Application::the().host_window().open_overlay<ColorPickerDialog>();
     dialog.set_color(initial_color);
     dialog.run();
     return dialog.m_ok_clicked ? dialog.color() : std::optional<Util::Color> {};

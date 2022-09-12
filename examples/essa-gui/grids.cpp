@@ -1,13 +1,14 @@
 
-#include "EssaGUI/gui/Application.hpp"
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/Grid.hpp"
-#include "EssaGUI/gui/Textfield.hpp"
-int main(){
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/Grid.hpp>
+#include <EssaGUI/gui/Textfield.hpp>
+
+int main() {
     GUI::Window wnd { { 800, 600 }, "Listboxes" };
     GUI::Application app(wnd);
 
-    auto& container = app.set_main_widget<GUI::Container>();
+    auto& container = app.host_window().set_main_widget<GUI::Container>();
     container.set_layout<GUI::HorizontalBoxLayout>();
 
     auto grid = container.add_widget<GUI::Grid>();
@@ -23,4 +24,3 @@ int main(){
 
     app.run();
 }
-

@@ -27,6 +27,7 @@ add_library(EssaGUI SHARED
     gui/FilePrompt.cpp
     gui/Frame.cpp
     gui/Grid.cpp
+    gui/HostWindow.cpp
     gui/ImageButton.cpp
     gui/ImageWidget.cpp
     gui/Listbox.cpp

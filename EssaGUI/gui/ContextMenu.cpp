@@ -1,6 +1,7 @@
 #include "ContextMenu.hpp"
 
 #include "Application.hpp"
+#include "Container.hpp"
 #include "Textfield.hpp"
 #include "Widget.hpp"
 

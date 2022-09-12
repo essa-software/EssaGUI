@@ -57,7 +57,7 @@ Prompt::Prompt(Util::UString help_text, Util::UString window_title, Util::UStrin
 };
 
 std::optional<Util::UString> prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
-    auto& prompt = GUI::Application::the().open_overlay<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
+    auto& prompt = GUI::Application::the().host_window().open_overlay<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
     prompt.run();
     return prompt.result();
 }

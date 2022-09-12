@@ -1,6 +1,6 @@
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/MessageBox.hpp"
 #include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/TextButton.hpp>
 #include <EssaGUI/gui/TextEditor.hpp>
 #include <EssaUtil/Error.hpp>
@@ -26,7 +26,7 @@ private:
 int main() {
     GUI::Window window { { 500, 500 }, "EML test" };
     GUI::Application app { window };
-    app.set_main_widget<EMLPreview>();
+    app.host_window().set_main_widget<EMLPreview>();
     app.run();
     return 0;
 }

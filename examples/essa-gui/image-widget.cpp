@@ -9,7 +9,7 @@ int main() {
 
     GUI::Application app(wnd);
 
-    auto& container1 = app.set_main_widget<GUI::Container>();
+    auto& container1 = app.host_window().set_main_widget<GUI::Container>();
     container1.set_layout<GUI::HorizontalBoxLayout>();
     auto image_widget = container1.add_widget<GUI::ImageWidget>();
 

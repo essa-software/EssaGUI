@@ -16,12 +16,12 @@ WorldDrawScope const* WorldDrawScope::current() {
 
 WorldDrawScope::WorldDrawScope(WorldView const& view, ClearDepth clear_depth)
     : m_world_view(view)
-    , m_previous_projection(GUI::Application::the().window().projection()) {
+    , m_previous_projection(GUI::Application::the().host_window().window().projection()) {
 
     if (current())
         return;
 
-    auto& window = GUI::Application::the().window();
+    auto& window = GUI::Application::the().host_window().window();
 
     auto projection = view.camera().projection();
     projection.set_viewport(Util::Recti { view.rect() });
@@ -51,7 +51,7 @@ WorldDrawScope::~WorldDrawScope() {
         return;
 
     glDisable(GL_DEPTH_TEST);
-    auto& window = GUI::Application::the().window();
+    auto& window = GUI::Application::the().host_window().window();
     window.set_projection(m_previous_projection);
     window.set_view_matrix({});
 }

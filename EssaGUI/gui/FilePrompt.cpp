@@ -40,7 +40,7 @@ FilePrompt::FilePrompt(Util::UString help_text, Util::UString window_title, Util
     file_btn->set_content("Browse file");
 
     file_btn->on_click = [this, input]() {
-        auto& file_explorer_wnd = GUI::Application::the().open_overlay<FileExplorer>();
+        auto& file_explorer_wnd = GUI::Application::the().host_window().open_overlay<FileExplorer>();
         file_explorer_wnd.set_size({ 1000, 600 });
         file_explorer_wnd.center_on_screen();
 
@@ -77,7 +77,7 @@ FilePrompt::FilePrompt(Util::UString help_text, Util::UString window_title, Util
 };
 
 FilePrompt* file_prompt(Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
-    auto& prompt = Application::the().open_overlay<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
+    auto& prompt = Application::the().host_window().open_overlay<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
 
     prompt.run();
 

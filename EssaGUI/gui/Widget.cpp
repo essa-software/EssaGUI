@@ -29,7 +29,7 @@ void Widget::update() {
         if (m_hover) {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
-                m_tooltip = &Application::the().add_tooltip(Tooltip { m_tooltip_text, this, raw_position() + m_widget_tree_root->position() });
+                m_tooltip = &Application::the().host_window().add_tooltip(Tooltip { m_tooltip_text, this, raw_position() + m_widget_tree_root->position() });
                 // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
