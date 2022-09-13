@@ -20,11 +20,10 @@
 #include <string>
 
 int main() {
-    GUI::Window wnd { { 800, 600 }, "Listboxes" };
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 800, 600 }, "Canvas");
 
-    GUI::Application app(wnd);
-
-    auto& container1 = app.host_window().set_main_widget<GUI::Container>();
+    auto& container1 = host_window.set_main_widget<GUI::Container>();
     container1.set_background_color(Util::Colors::White);
     container1.set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
 

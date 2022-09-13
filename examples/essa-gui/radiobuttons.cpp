@@ -12,11 +12,10 @@
 #include <string>
 
 int main() {
-    GUI::Window wnd { { 500, 500 }, "Radiobuttons" };
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 500, 500 }, "Radio buttons");
 
-    GUI::Application app(wnd);
-
-    auto& container1 = app.host_window().set_main_widget<GUI::Container>();
+    auto& container1 = host_window.set_main_widget<GUI::Container>();
     container1.set_layout<GUI::VerticalBoxLayout>();
 
     auto radiogrp = container1.add_widget<GUI::RadioGroup>();

@@ -171,8 +171,7 @@ protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
-    HostWindow& host_window() { return const_cast<HostWindow&>(static_cast<Widget const&>(*this).host_window()); }
-    HostWindow const& host_window() const;
+    HostWindow& host_window() const;
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }

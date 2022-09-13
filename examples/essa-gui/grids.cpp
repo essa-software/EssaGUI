@@ -5,10 +5,10 @@
 #include <EssaGUI/gui/Textfield.hpp>
 
 int main() {
-    GUI::Window wnd { { 800, 600 }, "Listboxes" };
-    GUI::Application app(wnd);
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 800, 600 }, "Grids");
 
-    auto& container = app.host_window().set_main_widget<GUI::Container>();
+    auto& container = host_window.set_main_widget<GUI::Container>();
     container.set_layout<GUI::HorizontalBoxLayout>();
 
     auto grid = container.add_widget<GUI::Grid>();

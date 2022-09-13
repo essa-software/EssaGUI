@@ -135,11 +135,11 @@ Gfx::ResourceManager const& Widget::resource_manager() const {
     return Application::the().resource_manager();
 }
 
-HostWindow const& Widget::host_window() const {
+HostWindow& Widget::host_window() const {
     if (Util::is<HostWindow>(*m_widget_tree_root))
-        return static_cast<HostWindow const&>(*m_widget_tree_root);
+        return static_cast<HostWindow&>(*m_widget_tree_root);
     if (Util::is<Overlay>(*m_widget_tree_root))
-        return static_cast<Overlay const&>(*m_widget_tree_root).host_window();
+        return static_cast<Overlay&>(*m_widget_tree_root).host_window();
     // WTR can currently be only HostWindow or Overlay
     ESSA_UNREACHABLE;
 }

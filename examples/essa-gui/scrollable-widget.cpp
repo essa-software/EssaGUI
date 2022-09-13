@@ -4,11 +4,10 @@
 #include <EssaGUI/gui/ToolWindow.hpp>
 
 int main() {
-    GUI::Window wnd { { 1000, 1000 }, "Scrollable widget" };
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 1000, 1000 }, "Text Editor");
 
-    GUI::Application app(wnd);
-
-    auto& wnd1 = app.host_window().open_overlay<GUI::ToolWindow>();
+    auto& wnd1 = host_window.open_overlay<GUI::ToolWindow>();
     wnd1.set_size({ 500, 100 });
     wnd1.center_on_screen();
     auto& container1 = wnd1.set_main_widget<GUI::Container>();

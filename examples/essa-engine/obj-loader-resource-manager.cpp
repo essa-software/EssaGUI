@@ -66,19 +66,16 @@ public:
 
 private:
     virtual void update() override {
-        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(host_window().tps()) });
+        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(GUI::Application::the().tps()) });
     }
 
     GUI::Textfield* m_tps_container = nullptr;
 };
 
 int main() {
-
-    GUI::Window window { { 500, 500 }, "Model ResourceManager integration" };
-
-    GUI::Application app { window };
-    app.host_window().set_main_widget<MainWidget>();
-
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 500, 500 }, "Text Editor");
+    host_window.set_main_widget<MainWidget>();
     app.run();
     return 0;
 }

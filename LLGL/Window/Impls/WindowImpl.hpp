@@ -21,6 +21,7 @@ public:
     virtual bool poll_event(Event&) = 0;
     virtual void set_mouse_position(Util::Vector2i) = 0;
     virtual bool is_focused() const = 0;
+    virtual void set_active() = 0;
 };
 
 }

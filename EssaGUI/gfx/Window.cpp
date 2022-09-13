@@ -8,6 +8,7 @@
 #include <LLGL/OpenGL/Texture.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <cstdint>
+#include <fmt/format.h>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -22,6 +23,7 @@ Window::Window(Util::Vector2i size, Util::UString const& title, llgl::ContextSet
 }
 
 void Window::clear(Util::Color color) {
+    set_active();
     renderer().clear(color);
 }
 
@@ -38,6 +40,7 @@ void Window::draw_indexed_vertices(llgl::opengl::PrimitiveType type, std::span<l
 }
 
 void Window::apply_states() {
+    set_active();
     renderer().apply_projection(m_projection);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

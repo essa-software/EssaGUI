@@ -1,11 +1,11 @@
 #include "Application.hpp"
 
 #include "ContextMenu.hpp"
-#include "EssaGUI/gfx/ResourceManager.hpp"
 #include "ToolWindow.hpp"
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 
 #include <cassert>
@@ -20,8 +20,7 @@ Application& Application::the() {
     return *s_the;
 }
 
-Application::Application(GUI::Window& wnd)
-    : m_host_window(wnd) {
+Application::Application() {
     assert(!s_the);
     s_the = this;
 }
@@ -34,8 +33,24 @@ Theme const& Application::theme() const {
     return *m_cached_theme;
 }
 
-void Application::run() {
-    m_host_window.run();
+HostWindow& Application::create_host_window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings) {
+    return m_host_windows.emplace_back(size, title, settings);
+}
+
+void Application::redraw_all_host_windows() {
+    for (auto& host_window : m_host_windows) {
+        host_window.do_draw();
+    }
+}
+
+void Application::tick() {
+    for (auto& host_window : m_host_windows) {
+        host_window.handle_events();
+    }
+    for (auto& host_window : m_host_windows) {
+        host_window.update();
+    }
+    redraw_all_host_windows();
 }
 
 }

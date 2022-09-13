@@ -24,9 +24,9 @@ private:
 };
 
 int main() {
-    GUI::Window window { { 500, 500 }, "EML test" };
-    GUI::Application app { window };
-    app.host_window().set_main_widget<EMLPreview>();
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 500, 500 }, "EML test");
+    host_window.set_main_widget<EMLPreview>();
     app.run();
     return 0;
 }

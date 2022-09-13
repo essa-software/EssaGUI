@@ -5,11 +5,10 @@
 #include <EssaGUI/gui/ToolWindow.hpp>
 
 int main() {
-    GUI::Window wnd { { 1000, 1000 }, "ImageWidget" };
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 1000, 1000 }, "Image Widget");
 
-    GUI::Application app(wnd);
-
-    auto& container1 = app.host_window().set_main_widget<GUI::Container>();
+    auto& container1 = host_window.set_main_widget<GUI::Container>();
     container1.set_layout<GUI::HorizontalBoxLayout>();
     auto image_widget = container1.add_widget<GUI::ImageWidget>();
 

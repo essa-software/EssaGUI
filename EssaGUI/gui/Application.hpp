@@ -6,9 +6,9 @@
 
 namespace GUI {
 
-class Application {
+class Application : public EventLoop {
 public:
-    explicit Application(GUI::Window&);
+    Application();
 
     static Application& the();
 
@@ -19,16 +19,16 @@ public:
     llgl::TTFFont& fixed_width_font() const { return m_resource_manager.fixed_width_font(); }
     Theme const& theme() const;
 
-    HostWindow const& host_window() const { return m_host_window; }
-    HostWindow& host_window() { return m_host_window; }
-
-    void run();
-    bool is_running() const { return host_window().is_running(); }
+    HostWindow& create_host_window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& = {});
+    std::list<HostWindow>& host_windows() { return m_host_windows; }
+    void redraw_all_host_windows();
 
 private:
+    virtual void tick() override;
+
     Gfx::ResourceManager m_resource_manager;
     mutable std::optional<Theme> m_cached_theme;
-    HostWindow m_host_window;
+    std::list<HostWindow> m_host_windows;
 };
 
 }

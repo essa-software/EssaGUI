@@ -19,10 +19,10 @@ public:
     virtual bool poll_event(Event&) override;
     virtual void set_mouse_position(Util::Vector2i) override;
     virtual bool is_focused() const override;
+    virtual void set_active() override;
 
 private:
     SDL_Window* m_window {};
-    SDL_GLContext m_context;
     bool m_focused = false;
 };
 

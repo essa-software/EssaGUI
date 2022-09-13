@@ -12,15 +12,17 @@ namespace GUI {
 // to the operating system's window.
 class HostWindow : public WidgetTreeRoot {
 public:
-    explicit HostWindow(GUI::Window&);
+    explicit HostWindow(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& = {});
 
     // TODO: Find a way for this to be private
-    virtual void draw(Window&) override;
+    void do_draw();
     virtual void handle_events() override; // Called by Application
+    virtual void update() override;        // Called by Application
 
     virtual void handle_event(llgl::Event) override;
 
-    GUI::Window& window() const { return m_window; }
+    GUI::Window& window() { return m_window; }
+    GUI::Window const& window() const { return m_window; }
 
     enum class NotificationLevel {
         Error
@@ -62,8 +64,6 @@ public:
     void focus_overlay(Overlay&);
 
 private:
-    virtual void update() override;
-
     struct Notification {
         int remaining_ticks = 120;
         Util::UString message;
@@ -78,7 +78,7 @@ private:
 
     void focus_window(OverlayList::iterator);
 
-    GUI::Window& m_window;
+    GUI::Window m_window;
     OverlayList m_overlays;
     Util::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
     Overlay* m_focused_overlay = nullptr;

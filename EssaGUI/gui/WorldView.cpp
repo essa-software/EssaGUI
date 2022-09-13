@@ -22,6 +22,7 @@ WorldDrawScope::WorldDrawScope(WorldView const& view, ClearDepth clear_depth)
         return;
 
     auto& window = view.host_window().window();
+    window.set_active();
 
     auto projection = view.camera().projection();
     projection.set_viewport(Util::Recti { view.rect() });

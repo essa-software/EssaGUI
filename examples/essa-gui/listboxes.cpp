@@ -15,11 +15,10 @@
 #include <string>
 
 int main() {
-    GUI::Window wnd { { 500, 500 }, "Listboxes" };
+    GUI::Application app;
+    auto& host_window = app.create_host_window({ 500, 500 }, "ListBoxes");
 
-    GUI::Application app(wnd);
-
-    auto& container1 = app.host_window().set_main_widget<GUI::Container>();
+    auto& container1 = host_window.set_main_widget<GUI::Container>();
     container1.set_background_color(Util::Colors::White);
     container1.set_layout<GUI::HorizontalBoxLayout>();
 

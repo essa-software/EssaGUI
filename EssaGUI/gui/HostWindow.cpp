@@ -1,4 +1,5 @@
 #include "HostWindow.hpp"
+#include "LLGL/OpenGL/Utils.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
@@ -7,8 +8,8 @@
 
 namespace GUI {
 
-HostWindow::HostWindow(GUI::Window& wnd)
-    : m_window(wnd) {
+HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings)
+    : m_window(size, title, settings) {
 }
 
 llgl::Event HostWindow::transform_event(Util::Vector2f offset, llgl::Event event) const {
@@ -88,10 +89,14 @@ void HostWindow::handle_events() {
         handle_event(event);
 }
 
-void HostWindow::draw(Window& window) {
-    WidgetTreeRoot::draw(window);
+void HostWindow::do_draw() {
+    // hacky hacky hacky hacky
+    window().clear();
+    llgl::opengl::clear(llgl::opengl::ClearMask::Depth);
+    WidgetTreeRoot::draw(window());
     for (auto& overlay : m_overlays)
-        overlay->draw(window);
+        overlay->draw(window());
+    window().display();
 }
 
 void HostWindow::draw_notification(Notification const& notification, float y) {
