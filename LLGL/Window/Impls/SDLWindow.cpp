@@ -6,6 +6,7 @@
 #include <EssaUtil/UString.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_hints.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_video.h>
@@ -24,6 +25,7 @@ SDLWindowImpl::~SDLWindowImpl() {
 
 void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, ContextSettings const& settings) {
     static bool initialized = false;
+    SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
     if (!initialized && SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "SDLWindow: Failed to initialize SDL: " << SDL_GetError() << std::endl;
         exit(1);
@@ -32,6 +34,7 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Cont
         std::cout << "SDLWindow: Failed to load GL library" << std::endl;
         exit(1);
     }
+    
     initialized = true;
 
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
