@@ -1,22 +1,19 @@
 #include "FileExplorer.hpp"
 
-#include "Application.hpp"
-#include "Button.hpp"
-#include "Container.hpp"
-#include "ListView.hpp"
-#include "MessageBox.hpp"
-#include "NotifyUser.hpp"
-#include "Prompt.hpp"
-#include "TextButton.hpp"
-#include "Textbox.hpp"
-#include "Textfield.hpp"
-#include "ToolWindow.hpp"
-
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/Button.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/ListView.hpp>
+#include <EssaGUI/gui/MessageBox.hpp>
+#include <EssaGUI/gui/NotifyUser.hpp>
+#include <EssaGUI/gui/Prompt.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
+#include <EssaGUI/gui/TextButton.hpp>
+#include <EssaGUI/gui/Textbox.hpp>
+#include <EssaGUI/gui/Textfield.hpp>
+#include <EssaGUI/gui/ToolWindow.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
-
 #include <EssaUtil/Units.hpp>
-
 #include <filesystem>
 #include <fstream>
 #include <functional>
