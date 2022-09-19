@@ -2,8 +2,6 @@
 
 #include "Shapes.hpp"
 
-#include <LLGL/Renderer/Renderer.hpp>
-
 namespace Essa {
 
 Cube::Cube() {
@@ -11,13 +9,9 @@ Cube::Cube() {
 }
 
 void Cube::generate() {
-    std::vector<llgl::Vertex> vertices;
+    std::vector<Model::Vertex> vertices;
     Shapes::add_cube(vertices);
-    m_vao.load_vertexes(vertices);
-}
-
-void Cube::render(llgl::Renderer& renderer, llgl::DrawState state) const {
-    renderer.draw_vao(m_vao, llgl::opengl::PrimitiveType::Triangles, state);
+    m_vao.upload_vertices(vertices);
 }
 
 }

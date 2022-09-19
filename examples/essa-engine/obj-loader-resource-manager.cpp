@@ -1,12 +1,12 @@
 #include <EssaEngine/3D/Model.hpp>
+#include <EssaEngine/3D/Shaders/Lighting.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <EssaGUI/gui/WorldView.hpp>
-#include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
-#include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
+#include <LLGL/Core/Transform.hpp>
 
 class WorldView : public GUI::WorldView {
 public:
@@ -16,7 +16,7 @@ public:
     }
 
 private:
-    virtual llgl::Camera camera() const override {
+    llgl::Camera camera() const {
         return llgl::Camera { llgl::Projection::perspective({ 1.44, raw_size().x() / raw_size().y(), 0.1, 20 }, Util::Recti { rect() }) }
             .translate({ 0, 3, 3 })
             .rotate_x(45.0_deg)
@@ -32,7 +32,7 @@ private:
     virtual void draw(GUI::Window& window) const override {
         GUI::WorldDrawScope scope { *this, GUI::WorldDrawScope::ClearDepth::Yes };
 
-        static llgl::opengl::shaders::ShadeFlat shader;
+        static Essa::Shaders::Lighting shader;
         shader.set_light_color(Util::Colors::LightGoldenRodYellow);
 
         auto& model = resource_manager().require_external<Essa::Model>("../examples/essa-engine/cube.obj");
@@ -41,8 +41,8 @@ private:
                              .rotate_x(m_angle_x.rad())
                              .rotate_y(m_angle_y.rad())
                              .rotate_z(m_angle_z.rad());
-
-        window.renderer().render_object(model, { .shader = &shader, .model_matrix = transform.matrix(), .view_matrix = window.view_matrix() });
+        shader.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
+        model.render(window.renderer(), shader);
     }
 
     Util::Angle m_angle_x;

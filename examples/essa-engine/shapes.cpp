@@ -1,19 +1,18 @@
+#include "LLGL/OpenGL/Transform.hpp"
 #include <EssaEngine/3D/Cube.hpp>
+#include <EssaEngine/3D/Shaders/Lighting.hpp>
 #include <EssaEngine/3D/Sphere.hpp>
 #include <EssaUtil/Angle.hpp>
-#include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
-#include <LLGL/OpenGL/Utils.hpp>
-#include <LLGL/Renderer/Camera.hpp>
-#include <LLGL/Renderer/Transform.hpp>
+#include <LLGL/Core/Camera.hpp>
+#include <LLGL/Core/Transform.hpp>
 #include <LLGL/Window/Window.hpp>
 
 int main() {
-    llgl::Window window { { 500, 500 }, "Primitive Shapes", { 3, 2 } };
+    llgl::Window window { { 500, 500 }, "Primitive Shapes" };
 
-    llgl::opengl::enable(llgl::opengl::Feature::DepthTest);
-    llgl::opengl::set_clear_color(Util::Color { 255, 128, 128 });
+    glEnable(GL_DEPTH_TEST);
 
-    llgl::opengl::shaders::ShadeFlat shader;
+    Essa::Shaders::Lighting shader;
     Essa::Sphere sphere;
     Essa::Cube cube;
 
@@ -28,8 +27,9 @@ int main() {
         llgl::Camera camera { llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()) };
         camera = camera.translate({ 0, 1.5, 5 }).rotate_z(10.0_deg);
 
-        window.renderer().clear();
-        window.renderer().apply_projection(camera.projection());
+        window.renderer().clear(Util::Color { 255, 128, 128 });
+        llgl::set_viewport(camera.projection().viewport());
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         light_angle += 0.01;
         shape_angle += 0.05;
@@ -38,29 +38,23 @@ int main() {
 
         {
             shader.set_light_color(Util::Colors::Red * 0.8);
-            window.renderer().render_object(sphere, {
-                                                        .shader = &shader,
-                                                        .model_matrix = llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
-                                                        .view_matrix = camera.view_matrix(),
-                                                    });
+            shader.set_transform(llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
+                camera.view_matrix(), camera.projection().matrix());
+            sphere.render(window.renderer(), shader);
         }
 
         {
             shader.set_light_color(Util::Colors::Green * 0.8);
-            window.renderer().render_object(sphere, {
-                                                        .shader = &shader,
-                                                        .model_matrix = llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
-                                                        .view_matrix = camera.view_matrix(),
-                                                    });
+            shader.set_transform(llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
+                camera.view_matrix(), camera.projection().matrix());
+            sphere.render(window.renderer(), shader);
         }
 
         {
             shader.set_light_color(Util::Colors::Blue * 0.8);
-            window.renderer().render_object(cube, {
-                                                      .shader = &shader,
-                                                      .model_matrix = llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
-                                                      .view_matrix = camera.view_matrix(),
-                                                  });
+            shader.set_transform(llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
+                camera.view_matrix(), camera.projection().matrix());
+            cube.render(window.renderer(), shader);
         }
 
         window.display();

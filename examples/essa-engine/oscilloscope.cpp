@@ -1,0 +1,180 @@
+#include <EssaEngine/3D/Shaders/Basic.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Config.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/Vector.hpp>
+#include <LLGL/OpenGL/Error.hpp>
+#include <LLGL/OpenGL/FBO.hpp>
+#include <LLGL/OpenGL/Framebuffer.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
+#include <LLGL/OpenGL/Renderer.hpp>
+#include <LLGL/OpenGL/Shader.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
+#include <LLGL/OpenGL/VertexArray.hpp>
+#include <LLGL/Window/Mouse.hpp>
+#include <LLGL/Window/Window.hpp>
+#include <iostream>
+
+class BlurShader : public llgl::Shader {
+public:
+    using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f>;
+
+    auto uniforms() {
+        return llgl::UniformList { accum, pass1, m_framebuffer_size };
+    }
+
+    auto source(llgl::ShaderType type) {
+        switch (type) {
+        case llgl::ShaderType::Fragment:
+            return R"~~~(// BlurShader fs
+                #version 410 core
+
+                uniform sampler2D accum;
+                uniform sampler2D pass1;
+                uniform vec2 fbSize;
+
+                in vec4 f_Position;
+
+                void main()
+                {
+                    vec2 fragPos = f_Position.st / 2 + vec2(0.5, 0.5);
+                    vec4 color;
+
+                    // Box blur
+                    for (int x = -3; x <= 3; x++) {
+                        for (int y = -3; y <= 3; y++) {
+                            color += texture2D(pass1, fragPos + vec2(x/fbSize.x, y/fbSize.y)) / 49;
+                        }
+                    }
+
+                    // Motion blur
+                    vec4 accumFactor = texture2D(accum, fragPos) * 0.9;
+                    if (accumFactor.r < 0.05)
+                        accumFactor.r = 0;
+                    if (accumFactor.g < 0.05)
+                        accumFactor.g = 0;
+                    if (accumFactor.b < 0.05)
+                        accumFactor.b = 0;
+                    gl_FragColor = color + accumFactor;
+                }
+                )~~~";
+        case llgl::ShaderType::Vertex:
+            return R"~~~(// BlurShader vs
+                #version 410 core
+
+                layout(location=0) in vec4 position;
+
+                out vec4 f_Position;
+
+                void main()
+                {
+                    f_Position = position;
+                    gl_Position = position;
+                }
+                )~~~";
+        }
+        ESSA_UNREACHABLE;
+    }
+
+    void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
+
+    void set_accum(llgl::Texture const* tex) { accum->texture = tex; }
+    void set_pass1(llgl::Texture const* tex) { pass1->texture = tex; }
+
+private:
+    llgl::Uniform<llgl::TextureUnit> accum { "accum", { 0, nullptr } };
+    llgl::Uniform<llgl::TextureUnit> pass1 { "pass1", { 1, nullptr } };
+    llgl::Uniform<Util::Vector2f> m_framebuffer_size { "fbSize" };
+};
+
+Util::Vector2f next_oscilloscope_position() {
+    static float angle = 0;
+    angle += 0.7;
+    return Util::Vector2f { std::sin(angle), std::cos(angle) } * 20
+        + Util::Vector2f { llgl::mouse_position() };
+}
+
+int main() {
+    llgl::Window window({ 512, 512 }, "Oscilloscope");
+    llgl::opengl::enable_debug_output();
+
+    Essa::Shaders::Basic basic_shader;
+    BlurShader blur_shader;
+
+    llgl::Renderer renderer { 0 };
+
+    llgl::Framebuffer pass1 { { 512, 512 } };
+    pass1.set_label("pass1");
+    llgl::Framebuffer accum { { 512, 512 } };
+    accum.set_label("accum");
+
+    llgl::VertexArray<Essa::Shaders::Basic::Vertex> fullscreen_vao {
+        { { -1, -1, 0 }, Util::Colors::White, { 0, 1 } },
+        { { 1, -1, 0 }, Util::Colors::White, { 1, 1 } },
+        { { -1, 1, 0 }, Util::Colors::White, { 0, 0 } },
+        { { 1, 1, 0 }, Util::Colors::White, { 1, 0 } }
+    };
+
+    auto old_oscilloscope_position = next_oscilloscope_position();
+
+    for (;;) {
+        llgl::Event event;
+        while (window.poll_event(event)) {
+            switch (event.type) {
+            default:
+                break;
+            }
+        }
+
+        renderer.clear();
+
+        blur_shader.set_framebuffer_size(Util::Vector2f { window.size() });
+        pass1.resize(window.size());
+        accum.resize(window.size());
+
+        {
+            // Draw the first (non-blurred) pass
+            pass1.clear();
+            auto oscilloscope_position = next_oscilloscope_position();
+
+            constexpr float PointSize = 2;
+            auto diff = oscilloscope_position - old_oscilloscope_position;
+            if (diff.length_squared() < PointSize * PointSize)
+                diff = { PointSize, 0 };
+            auto diff_norm = diff.normalized();
+            auto cross = diff_norm.perpendicular() * PointSize;
+
+            llgl::VertexArray<BlurShader::Vertex> input_vao {
+                { Util::Vector3f { old_oscilloscope_position - cross, 0 }, Util::Colors::Green, {} },
+                { Util::Vector3f { old_oscilloscope_position + cross, 0 }, Util::Colors::Green, {} },
+                { Util::Vector3f { old_oscilloscope_position + diff - cross, 0 }, Util::Colors::Green, {} },
+                { Util::Vector3f { old_oscilloscope_position + diff + cross, 0 }, Util::Colors::Green, {} }
+            };
+
+            basic_shader.set_texture(nullptr);
+            basic_shader.set_transform({},
+                {},
+                llgl::Projection::ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } }, {}).matrix());
+            pass1.draw_vertices(input_vao, llgl::DrawState { basic_shader, llgl::PrimitiveType::TriangleStrip });
+
+            old_oscilloscope_position = oscilloscope_position;
+        }
+
+        {
+            // Blur the pass1 and blend with accum
+            // Do not clear because we want previous frames
+            blur_shader.set_accum(&accum.color_texture());
+            blur_shader.set_pass1(&pass1.color_texture());
+            accum.draw_vertices(fullscreen_vao, llgl::DrawState { blur_shader, llgl::PrimitiveType::TriangleStrip });
+        }
+
+        // Draw the result to backbuffer
+
+        llgl::set_viewport(window.rect());
+        basic_shader.set_texture(&accum.color_texture());
+        basic_shader.set_transform({}, {}, llgl::Projection::ortho({ { -1, -1, 2, 2 } }, {}).matrix());
+        renderer.draw_vertices(fullscreen_vao, llgl::DrawState { basic_shader, llgl::PrimitiveType::TriangleStrip });
+        window.display();
+    }
+    return 0;
+}

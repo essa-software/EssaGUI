@@ -6,7 +6,8 @@
 
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <LLGL/Renderer/Renderer.hpp>
+#include <LLGL/OpenGL/Renderer.hpp>
+
 #include <memory>
 #include <string>
 
@@ -27,7 +28,7 @@ public:
     bool is_focused() const;
     void set_active() const;
 
-    Renderer& renderer() { return *m_renderer; }
+    Renderer& renderer() { return m_renderer; }
     Util::Vector2i size() const { return m_size; }
     Util::Vector2f center() const { return Util::Vector2f { m_size } / 2.f; }
     float aspect() const { return (float)m_size.x() / m_size.y(); }
@@ -35,7 +36,7 @@ public:
 
 private:
     std::unique_ptr<WindowImpl> m_impl;
-    std::unique_ptr<Renderer> m_renderer;
+    Renderer m_renderer { 0 };
     Util::Vector2i m_size;
 };
 

@@ -1,6 +1,7 @@
 #include "WorldView.hpp"
-#include "EssaGUI/gui/Application.hpp"
-#include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
+
+#include <EssaGUI/gui/Application.hpp>
+#include <LLGL/OpenGL/Transform.hpp>
 
 namespace GUI {
 
@@ -24,19 +25,6 @@ WorldDrawScope::WorldDrawScope(WorldView const& view, ClearDepth clear_depth)
     auto& window = view.host_window().window();
     window.set_active();
 
-    auto projection = view.camera().projection();
-    projection.set_viewport(Util::Recti { view.rect() });
-    window.set_projection(view.camera().projection());
-    window.set_view_matrix(view.camera().view_matrix());
-
-    static llgl::opengl::shaders::Basic330Core shader;
-    window.set_shader(&shader);
-
-    // HACK: Normally (e.g when using EssaGUI's draw_vertices) EssaGUI
-    // makes sure that the view is applied. It's not done when doing
-    // direct LLGL rendering, so we need to do this manually here.
-    window.renderer().apply_projection(projection);
-
     glEnable(GL_DEPTH_TEST);
 
     if (clear_depth == ClearDepth::Yes)
@@ -52,9 +40,6 @@ WorldDrawScope::~WorldDrawScope() {
         return;
 
     glDisable(GL_DEPTH_TEST);
-    auto& window = m_world_view.host_window().window();
-    window.set_projection(m_previous_projection);
-    window.set_view_matrix({});
 }
 
 }

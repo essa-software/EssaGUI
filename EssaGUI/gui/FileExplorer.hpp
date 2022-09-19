@@ -46,7 +46,7 @@ private:
     };
 
     static std::string file_type(File const& file);
-    llgl::opengl::Texture const* file_icon(size_t row) const;
+    llgl::Texture const* file_icon(size_t row) const;
 
     std::vector<File> m_files;
     std::vector<std::string> m_desired_extensions;

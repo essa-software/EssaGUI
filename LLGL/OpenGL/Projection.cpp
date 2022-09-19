@@ -4,7 +4,7 @@
 
 namespace llgl {
 
-Projection Projection::ortho(opengl::OrthoArgs ortho, Util::Recti viewport) {
+Projection Projection::ortho(OrthoArgs ortho, Util::Recti viewport) {
     float tx = -(ortho.right + ortho.left) / (ortho.right - ortho.left);
     float ty = -(ortho.top + ortho.bottom) / (ortho.top - ortho.bottom);
     float tz = -(ortho.far + ortho.near) / (ortho.far - ortho.near);
@@ -15,7 +15,7 @@ Projection Projection::ortho(opengl::OrthoArgs ortho, Util::Recti viewport) {
         viewport };
 }
 
-Projection Projection::perspective(opengl::PerspectiveArgs persp, Util::Recti viewport) {
+Projection Projection::perspective(PerspectiveArgs persp, Util::Recti viewport) {
     float f = 1.f / std::tan(persp.fov / 2);
     return { { static_cast<float>(f / persp.aspect), 0, 0, 0,
                  0, f, 0, 0,

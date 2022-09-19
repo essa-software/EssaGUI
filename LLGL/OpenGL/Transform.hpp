@@ -1,19 +1,11 @@
 #pragma once
 
+#include "OpenGL.hpp"
 #include <EssaUtil/Rect.hpp>
 
-#include <GL/glew.h>
-
-namespace llgl::opengl {
+namespace llgl {
 
 void set_viewport(Util::Recti);
-
-enum class MatrixMode {
-    Projection = GL_PROJECTION
-};
-void set_matrix_mode(MatrixMode);
-
-void load_identity();
 
 struct OrthoArgs {
     OrthoArgs() = default;
@@ -23,12 +15,10 @@ struct OrthoArgs {
         , bottom(rect.top + rect.height)
         , top(rect.top)
         , near(near_)
-        , far(far_)
-    {
+        , far(far_) {
     }
     double left, right, bottom, top, near, far;
 };
-void load_ortho(OrthoArgs);
 
 struct PerspectiveArgs {
     PerspectiveArgs() = default;
@@ -36,14 +26,9 @@ struct PerspectiveArgs {
         : fov(fov_)
         , aspect(aspect_)
         , near(near_)
-        , far(far_)
-    {
+        , far(far_) {
     }
     double fov, aspect, near, far;
 };
-void load_perspective(PerspectiveArgs);
-
-void push_matrix();
-void pop_matrix();
 
 }

@@ -25,7 +25,7 @@ public:
         No
     };
 
-    MenuEntry& add_entry(llgl::opengl::Texture const& image, Util::UString tooltip, Expandable = Expandable::Yes);
+    MenuEntry& add_entry(llgl::Texture const& image, Util::UString tooltip, Expandable = Expandable::Yes);
 
 private:
     virtual bool steals_focus() const override { return true; }

@@ -7,7 +7,7 @@
 #include <string>
 #include <utility>
 
-namespace llgl::opengl {
+namespace llgl {
 
 class Texture {
 public:
@@ -16,8 +16,7 @@ public:
     Texture(const Texture& other) = delete;
     Texture& operator=(const Texture& other) = delete;
 
-    Texture(Texture&& other)
-    {
+    Texture(Texture&& other) {
         *this = std::move(other);
     }
 

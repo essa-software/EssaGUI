@@ -1,8 +1,10 @@
 #pragma once
 
-#include <LLGL/Core/Vertex.hpp>
-#include <LLGL/Renderer/Transform.hpp>
+#include <EssaUtil/Color.hpp>
+#include <LLGL/Core/Transform.hpp>
 #include <vector>
+
+#include "Model.hpp"
 
 namespace Essa::Shapes {
 
@@ -13,6 +15,6 @@ struct CubeProperties {
     Util::Color color = Util::Colors::White;
 };
 
-void add_cube(std::vector<llgl::Vertex>& vertices, CubeProperties properties = {});
+void add_cube(std::vector<Model::Vertex>& vertices, CubeProperties properties = {});
 
 }

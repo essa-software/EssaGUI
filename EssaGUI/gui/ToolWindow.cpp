@@ -194,23 +194,23 @@ void ToolWindow::draw(GUI::Window& window) {
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };
 
-        std::array<llgl::Vertex, 4> varr;
+        std::array<Gfx::Vertex, 4> varr;
         Util::Color const CloseButtonColor { 200, 200, 200 };
-        varr[0] = llgl::Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
-        varr[1] = llgl::Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(5, 5), 0 }, .color = CloseButtonColor };
-        varr[2] = llgl::Vertex { .position = Util::Vector3f { button_center - Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
-        varr[3] = llgl::Vertex { .position = Util::Vector3f { button_center + Util::Vector2f(-5, 5), 0 }, .color = CloseButtonColor };
-        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, varr);
+        varr[0] = Gfx::Vertex { button_center - Util::Vector2f(5, 5), CloseButtonColor, {} };
+        varr[1] = Gfx::Vertex { button_center + Util::Vector2f(5, 5), CloseButtonColor, {} };
+        varr[2] = Gfx::Vertex { button_center - Util::Vector2f(-5, 5), CloseButtonColor, {} };
+        varr[3] = Gfx::Vertex { button_center + Util::Vector2f(-5, 5), CloseButtonColor, {} };
+        window.draw_vertices(llgl::PrimitiveType::Lines, varr);
 
         titlebar_button_position_x -= TitleBarSize;
     }
 
-    std::array<llgl::Vertex, 4> varr_border;
-    varr_border[0] = llgl::Vertex { .position = Util::Vector3f { position, 0 }, .color = titlebar_color };
-    varr_border[1] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(0, size.y() + 1), 0 }, .color = titlebar_color };
-    varr_border[2] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, size.y() + 1), 0 }, .color = titlebar_color };
-    varr_border[3] = llgl::Vertex { .position = Util::Vector3f { position + Util::Vector2f(size.x() + 1, 0), 0 }, .color = titlebar_color };
-    window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, varr_border);
+    std::array<Gfx::Vertex, 4> varr_border;
+    varr_border[0] = Gfx::Vertex { { position }, titlebar_color, {} };
+    varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(0, size.y() + 1) }, titlebar_color, {} };
+    varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y() + 1) }, titlebar_color, {} };
+    varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
+    window.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
         Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Override);
         WidgetTreeRoot::draw(window);

@@ -25,7 +25,7 @@ concept Resource = requires() {
 };
 
 using Font = llgl::TTFFont;
-using Texture = llgl::opengl::Texture;
+using Texture = llgl::Texture;
 
 template<>
 struct ResourceTraits<Font> {

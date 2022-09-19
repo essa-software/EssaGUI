@@ -1,5 +1,7 @@
 #include "Camera.hpp"
 
+#include <LLGL/Core/Transform.hpp>
+
 namespace llgl {
 
 Camera Camera::translate(Util::Vector3f vector) const {

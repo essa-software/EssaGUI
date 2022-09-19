@@ -20,7 +20,7 @@ void SettingsMenu::on_init() {
     m_settings_container->set_layout<BasicLayout>();
 }
 
-SettingsMenu::MenuEntry& SettingsMenu::add_entry(llgl::opengl::Texture const& image, Util::UString tooltip, Expandable expandable) {
+SettingsMenu::MenuEntry& SettingsMenu::add_entry(llgl::Texture const& image, Util::UString tooltip, Expandable expandable) {
     auto button = m_buttons_container->add_widget<ImageButton>();
     button->set_image(&image);
     button->set_tooltip_text(std::move(tooltip));

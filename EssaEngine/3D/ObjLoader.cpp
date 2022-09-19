@@ -1,7 +1,6 @@
 #include "ObjLoader.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
-#include <LLGL/Core/Vertex.hpp>
 
 #include <filesystem>
 #include <fstream>
@@ -117,7 +116,7 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
     }
 
     for (auto const& face : m_faces) {
-        std::vector<llgl::Vertex> resolved_face;
+        std::vector<Model::Vertex> resolved_face;
 
         for (auto const& vertex : face) {
             if (vertex.position >= m_positions.size()) {
@@ -138,7 +137,7 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
             }
             auto normal = vertex.normal ? m_normals[*vertex.normal] : Util::Vector3f {};
 
-            resolved_face.push_back(llgl::Vertex { .position = position, .color = Util::Colors::White, .tex_coord = tex_coord, .normal = normal });
+            resolved_face.push_back(Model::Vertex { position, Util::Colors::White, tex_coord, normal });
         }
 
         output.add_face(resolved_face);

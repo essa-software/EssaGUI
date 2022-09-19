@@ -1,18 +1,17 @@
 #pragma once
 
-#include <EssaUtil/Rect.hpp>
-#include <EssaUtil/UString.hpp>
-
+#include "DefaultGUIShader.hpp"
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Matrix.hpp>
-#include <LLGL/Core/Vertex.hpp>
+#include <EssaUtil/Rect.hpp>
+#include <EssaUtil/UString.hpp>
+#include <LLGL/OpenGL/PrimitiveType.hpp>
 #include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
-#include <LLGL/OpenGL/VAO.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/Renderer/DrawState.hpp>
+#include <LLGL/OpenGL/VertexArray.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 #include <LLGL/Window/Window.hpp>
 #include <span>
@@ -22,7 +21,7 @@ namespace GUI {
 struct DrawOptions {
     Util::Color fill_color = Util::Colors::White;
     Util::Color outline_color = Util::Colors::White;
-    llgl::opengl::Texture const* texture = nullptr;
+    llgl::Texture const* texture = nullptr;
     Util::Rectu texture_rect;
     float outline_thickness = 0;
 };
@@ -51,45 +50,13 @@ public:
     void set_projection(llgl::Projection p) { m_projection = p; }
     llgl::Projection projection() const { return m_projection; }
 
-    void set_texture(llgl::opengl::Texture const* tex) { m_texture = tex; }
-
-    // If shader is nullptr, the default shader is used.
-    // Uniforms set:
-    // - texture : sampler2D     Texture to use, only if useTexture == true
-    // - useTexture : bool       Whether texture is set
-    // - projectionMatrix : mat4 The matrix from view()
-    // - viewMatrix : mat4       The view matrix (from view_matrix())
-    // - modelMatrix : mat4      The model matrix (from model_matrix())
-    // Attributes:
-    // 0 - position, 1 - color, 2 - tex coord
-    void set_shader(llgl::opengl::Shader* shader) { m_shader = shader; }
-
-    void set_model_matrix(Util::Matrix4x4f matrix) { m_model_matrix = matrix; }
-    Util::Matrix4x4f model_matrix() const { return m_model_matrix; }
-    void set_view_matrix(Util::Matrix4x4f matrix) { m_view_matrix = matrix; }
-    Util::Matrix4x4f view_matrix() const { return m_view_matrix; }
-
-    class ModelScope {
-    public:
-        ModelScope(Window& wnd, Util::Matrix4x4f mat)
-            : m_window(wnd)
-            , m_old_matrix(wnd.model_matrix()) {
-            wnd.set_model_matrix(mat);
-        }
-        ~ModelScope() {
-            m_window.set_model_matrix(m_old_matrix);
-        }
-
-    private:
-        Window& m_window;
-        Util::Matrix4x4f m_old_matrix;
-    };
+    void set_texture(llgl::Texture const* tex) { m_texture = tex; }
 
     void clear(Util::Color = Util::Colors::Black);
 
-    void draw_vertices(llgl::opengl::PrimitiveType mode, std::span<llgl::Vertex const>);
-    void draw_outline(std::span<Util::Vector3f const>, Util::Color color, float thickness);
-    void draw_indexed_vertices(llgl::opengl::PrimitiveType mode, std::span<llgl::Vertex const>, std::span<unsigned const> indices);
+    void draw_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const>);
+    void draw_outline(std::span<Util::Vector2f const>, Util::Color color, float thickness);
+    void draw_indexed_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const>, std::span<unsigned const> indices);
 
     void draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
     void draw_text(Util::UString const&, llgl::TTFFont const&, Util::Vector2f position, TextDrawOptions const& = {});
@@ -102,15 +69,12 @@ public:
 
 private:
     void apply_states();
-    llgl::DrawState draw_state() const;
 
-    llgl::opengl::VAO m_temporary_vao;
+    llgl::VertexArray<Gfx::DefaultGUIShader::Vertex> m_temporary_vao;
 
     llgl::Projection m_projection;
-    Util::Matrix4x4f m_model_matrix;
-    Util::Matrix4x4f m_view_matrix;
-    llgl::opengl::Shader* m_shader = nullptr;
-    llgl::opengl::Texture const* m_texture = nullptr;
+    llgl::Texture const* m_texture = nullptr;
+    Gfx::DefaultGUIShader m_default_shader;
 };
 
 }

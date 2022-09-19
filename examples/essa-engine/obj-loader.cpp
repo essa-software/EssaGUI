@@ -1,14 +1,14 @@
 #include <EssaEngine/3D/Model.hpp>
 #include <EssaEngine/3D/ObjLoader.hpp>
+#include <EssaEngine/3D/Shaders/Basic.hpp>
+#include <EssaEngine/3D/Shaders/Lighting.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Color.hpp>
+#include <LLGL/Core/Transform.hpp>
+#include <LLGL/OpenGL/OpenGL.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
-#include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
-#include <LLGL/OpenGL/Shaders/ShadeFlat.hpp>
-#include <LLGL/OpenGL/Utils.hpp>
-#include <LLGL/Renderer/BatchRenderer.hpp>
-#include <LLGL/Renderer/Renderer.hpp>
-#include <LLGL/Renderer/Transform.hpp>
+#include <LLGL/OpenGL/Transform.hpp>
 #include <LLGL/Window/Keyboard.hpp>
 #include <LLGL/Window/Window.hpp>
 #include <iostream>
@@ -16,10 +16,11 @@
 int main() {
     llgl::Window window { { 500, 500 }, "OBJ loader", { 3, 2 } };
 
-    llgl::opengl::enable(llgl::opengl::Feature::DepthTest);
-    llgl::opengl::set_clear_color(Util::Color { 255, 128, 128 });
+    // TODO: Port to llgl, especially clear color.
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(1, 0.5, 0.5, 1);
 
-    auto object = Essa::ObjLoader::load_object_from_file("../examples/llgl/ladyball.obj");
+    auto object = Essa::ObjLoader::load_object_from_file("../examples/essa-engine/ladyball.obj");
     if (!object.has_value()) {
         std::cerr << "FAILED TO READ :((" << std::endl;
         return 1;
@@ -28,7 +29,7 @@ int main() {
     llgl::Transform model_transform;
     model_transform = model_transform.translate({ -1.5, -1.5, -5 }).rotate_y(Util::deg_to_rad(45));
 
-    llgl::opengl::shaders::ShadeFlat shader;
+    Essa::Shaders::Lighting lighting_shader;
 
     double light_angle = 0;
 
@@ -75,9 +76,12 @@ int main() {
                 break;
             }
         }
-        llgl::opengl::clear(llgl::opengl::ClearMask::Color | llgl::opengl::ClearMask::Depth);
 
-        window.renderer().apply_projection(llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()));
+        // TODO: Port to llgl.
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        llgl::set_viewport(window.rect());
+
         model_transform = model_transform.rotate_x(0.05);
 
         if (a_pressed)
@@ -92,24 +96,22 @@ int main() {
         view_transform = view_transform.rotate_y(yaw).rotate_x(pitch).translate(camera_position);
 
         light_angle += 0.01;
-        shader.set_light_position({ static_cast<float>(std::sin(light_angle)), 5, static_cast<float>(std::cos(light_angle)) });
+        lighting_shader.set_light_position({ static_cast<float>(std::sin(light_angle)), 5, static_cast<float>(std::cos(light_angle)) });
 
         {
-            shader.set_light_color(Util::Colors::Red * 0.8);
-            window.renderer().render_object(object.value(), {
-                                                                .shader = &shader,
-                                                                .model_matrix = model_transform.matrix(),
-                                                                .view_matrix = view_transform.matrix(),
-                                                            });
+            lighting_shader.set_transform(model_transform.matrix(),
+                view_transform.matrix(),
+                llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix());
+            lighting_shader.set_light_color(Util::Colors::Red * 0.8);
+            object->render(window.renderer(), lighting_shader);
         }
 
         {
-            shader.set_light_color(Util::Colors::Green * 0.8);
-            window.renderer().render_object(object.value(), {
-                                                                .shader = &shader,
-                                                                .model_matrix = model_transform.translate({ 3, 0, 0 }).matrix(),
-                                                                .view_matrix = view_transform.matrix(),
-                                                            });
+            lighting_shader.set_transform(model_transform.translate({ 3, 0, 0 }).matrix(),
+                view_transform.matrix(),
+                llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix());
+            lighting_shader.set_light_color(Util::Colors::Blue * 0.8);
+            object->render(window.renderer(), lighting_shader);
         }
 
         window.display();

@@ -6,7 +6,7 @@ namespace llgl {
 
 GlyphCache::GlyphCache(int font_size)
     : m_font_size(font_size)
-    , m_atlas(opengl::Texture::create_empty({ 1024, 1024 })) {
+    , m_atlas(Texture::create_empty({ 1024, 1024 })) {
 }
 
 GlyphCache::Glyph GlyphCache::ensure_glyph(TTFFont const& font, uint32_t codepoint) {
@@ -35,7 +35,7 @@ GlyphCache::Glyph GlyphCache::ensure_glyph(TTFFont const& font, uint32_t codepoi
     }
 
     Util::Rectu texture_rect { m_current_atlas_position, rendered_glyph->size() };
-    m_atlas.update(texture_rect.position(), texture_rect.size(), std::span<Util::Color const> { rendered_glyph->pixels() }, opengl::Texture::Format::RGBA);
+    m_atlas.update(texture_rect.position(), texture_rect.size(), std::span<Util::Color const> { rendered_glyph->pixels() }, Texture::Format::RGBA);
 
     m_current_atlas_position.x() += rendered_glyph->size().x();
     m_max_row_height = std::max<int>(rendered_glyph->size().y(), m_max_row_height);

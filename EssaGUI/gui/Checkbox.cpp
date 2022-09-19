@@ -4,7 +4,6 @@
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <LLGL/Core/Vertex.hpp>
 #include <array>
 #include <cstddef>
 #include <span>
@@ -26,42 +25,42 @@ void Checkbox::draw(GUI::Window& window) const {
     if (is_active()) {
         switch (m_style) {
         case Style::CROSS: {
-            std::array<llgl::Vertex, 2> vertex_arr;
-            llgl::Vertex vert;
-            vert.color = theme().placeholder;
+            std::array<Gfx::Vertex, 2> vertex_arr;
+            Gfx::Vertex vert;
+            vert.color() = theme().placeholder;
 
-            vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .2f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .2f);
             vertex_arr[0] = vert;
 
-            vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .8f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .8f);
             vertex_arr[1] = vert;
 
-            window.draw_vertices(llgl::opengl::PrimitiveType::Lines, vertex_arr);
+            window.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
 
-            vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .8f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .8f);
             vertex_arr[0] = vert;
 
-            vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .2f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .2f);
             vertex_arr[1] = vert;
 
-            window.draw_vertices(llgl::opengl::PrimitiveType::Lines, vertex_arr);
+            window.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
             break;
         }
         case Style::MARK: {
-            std::array<llgl::Vertex, 3> vertex_arr;
-            llgl::Vertex vert;
-            vert.color = theme().placeholder;
+            std::array<Gfx::Vertex, 3> vertex_arr;
+            Gfx::Vertex vert;
+            vert.color() = theme().placeholder;
 
-            vert.position = Util::Vector3f(box.left + box.width * .2f, box.top + box.height * .4f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .4f);
             vertex_arr[0] = vert;
 
-            vert.position = Util::Vector3f(box.left + box.width * .5f, box.top + box.height * .7f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .5f, box.top + box.height * .7f);
             vertex_arr[1] = vert;
 
-            vert.position = Util::Vector3f(box.left + box.width * .8f, box.top + box.height * .2f, 0);
+            vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .2f);
             vertex_arr[2] = vert;
 
-            window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, vertex_arr);
+            window.draw_vertices(llgl::PrimitiveType::LineStrip, vertex_arr);
 
             break;
         }
@@ -91,13 +90,14 @@ Theme::ButtonColors Checkbox::default_button_colors() const {
 
 EML::EMLErrorOr<void> Checkbox::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
-    
-    m_caption = TRY(object.get_property("caption", Util::UString{}).to_string());
+
+    m_caption = TRY(object.get_property("caption", Util::UString {}).to_string());
     auto mark_type = TRY(object.get_property("box_type", Util::UString("cross")).to_string());
 
-    if(mark_type == "cross"){
+    if (mark_type == "cross") {
         m_style = Style::CROSS;
-    }else if(mark_type == "mark"){
+    }
+    else if (mark_type == "mark") {
         m_style = Style::MARK;
     }
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Widget.hpp"
+#include <LLGL/Core/Camera.hpp>
 #include <LLGL/OpenGL/Projection.hpp>
-#include <LLGL/Renderer/Camera.hpp>
 
 namespace GUI {
 
@@ -38,7 +38,6 @@ class WorldView : public Widget {
 private:
     friend WorldDrawScope;
 
-    virtual llgl::Camera camera() const = 0;
     virtual void draw(GUI::Window&) const = 0;
 };
 

@@ -7,7 +7,7 @@
 
 namespace GUI {
 
-using Variant = std::variant<Util::UString, llgl::opengl::Texture const*>;
+using Variant = std::variant<Util::UString, llgl::Texture const*>;
 
 class Model {
 public:

@@ -10,7 +10,7 @@ class ImageButton : public Button {
 public:
     virtual void draw(GUI::Window& window) const override;
 
-    CREATE_VALUE(llgl::opengl::Texture const*, image, nullptr)
+    CREATE_VALUE(llgl::Texture const*, image, nullptr)
 
 private:
     virtual LengthVector initial_size() const override;

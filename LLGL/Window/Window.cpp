@@ -2,7 +2,7 @@
 
 #include "Impls/SDLWindow.hpp"
 #include "Impls/WindowImpl.hpp"
-#include <LLGL/Renderer/CoreRenderer.hpp>
+
 #include <fmt/format.h>
 #include <iostream>
 
@@ -10,7 +10,6 @@ namespace llgl {
 
 Window::Window(Util::Vector2i size, Util::UString const& title, ContextSettings const& settings)
     : m_impl { std::make_unique<SDLWindowImpl>() } {
-    m_renderer = std::make_unique<CoreRenderer>(*this);
     create(size, title, settings);
 }
 

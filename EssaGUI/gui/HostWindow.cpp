@@ -1,5 +1,4 @@
 #include "HostWindow.hpp"
-#include "LLGL/OpenGL/Utils.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
@@ -92,7 +91,7 @@ void HostWindow::handle_events() {
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
     window().clear();
-    llgl::opengl::clear(llgl::opengl::ClearMask::Depth);
+    glClear(GL_DEPTH_BUFFER_BIT);
     WidgetTreeRoot::draw(window());
     for (auto& overlay : m_overlays)
         overlay->draw(window());

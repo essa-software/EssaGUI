@@ -11,7 +11,7 @@ class TextButton : public Button {
 public:
     CREATE_VALUE(Util::UString, content, "")
     CREATE_VALUE(Util::UString, active_content, "")
-    CREATE_VALUE(llgl::opengl::Texture const*, image, nullptr)
+    CREATE_VALUE(llgl::Texture const*, image, nullptr)
     CREATE_VALUE(size_t, font_size, 20)
     CREATE_VALUE(Align, alignment, Align::Center)
 

@@ -6,12 +6,12 @@
 
 namespace Gfx {
 
-char const VertexShader[] = R"~~~(// Default GUI VS
+static std::string_view VertexShader = R"~~~(// Default GUI VS
 #version 330 core
 
-layout (location = 1) in vec4 position;
-layout (location = 2) in vec4 color;
-layout (location = 3) in vec2 texCoords;
+layout (location = 0) in vec2 position;
+layout (location = 1) in vec4 color;
+layout (location = 2) in vec2 texCoords;
 
 uniform mat4 projectionMatrix;
 
@@ -21,11 +21,11 @@ out vec2 fTexCoords;
 void main() {
     fColor = color;
     fTexCoords = texCoords;
-    gl_Position = projectionMatrix * position;
+    gl_Position = projectionMatrix * vec4(position, 0, 1);
 }
 )~~~";
 
-char const FragmentShader[] = R"~~~(// Default GUI FS
+static std::string_view FragmentShader = R"~~~(// Default GUI FS
 #version 330 core
 
 in vec4 fColor;
@@ -39,27 +39,14 @@ void main() {
 }
 )~~~";
 
-static Util::DelayedInit<llgl::opengl::Program> s_shader;
-
-llgl::opengl::Program& default_gui_shader() {
-    if (!s_shader.is_initialized()) {
-        std::cerr << "EssaGUI: Loading GUI shader" << std::endl;
-        auto objects = {
-            llgl::opengl::ShaderObject { VertexShader, llgl::opengl::ShaderObject::Type::Vertex },
-            llgl::opengl::ShaderObject { FragmentShader, llgl::opengl::ShaderObject::Type::Fragment }
-        };
-        s_shader.construct(objects);
-        if (!s_shader->valid()) {
-            std::cerr << "EssaGUI: Failed to load GUI Shader." << std::endl;
-            exit(-1);
-        }
+std::string_view DefaultGUIShader::source(llgl::ShaderType type) const {
+    switch (type) {
+    case llgl::ShaderType::Vertex:
+        return VertexShader;
+    case llgl::ShaderType::Fragment:
+        return FragmentShader;
     }
-    return *s_shader;
-}
-
-void DefaultGUIShader::on_bind(llgl::opengl::ShaderScope&) const {
-    // Nothing to do, everything we need is handled by LLGL :)
-    return;
+    ESSA_UNREACHABLE;
 }
 
 }

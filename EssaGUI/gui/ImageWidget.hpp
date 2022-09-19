@@ -6,7 +6,7 @@ namespace GUI {
 
 class ImageWidget : public Widget {
 public:
-    CREATE_VALUE(llgl::opengl::Texture const*, image, nullptr)
+    CREATE_VALUE(llgl::Texture const*, image, nullptr)
 
 private:
     virtual void draw(GUI::Window& window) const override;

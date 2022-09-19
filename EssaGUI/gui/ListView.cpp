@@ -86,7 +86,7 @@ void ListView::draw(GUI::Window& wnd) const {
                             text.fill_color = c % 2 == 0 ? list_even.text : list_odd.text;
                             wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font(), text);
                         },
-                        [&](llgl::opengl::Texture const* data) {
+                        [&](llgl::Texture const* data) {
                             RectangleDrawOptions rect;
                             rect.texture = data;
                             wnd.draw_rectangle({ { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } }, rect);

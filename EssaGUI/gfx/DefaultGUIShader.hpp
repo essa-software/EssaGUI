@@ -1,20 +1,30 @@
 #pragma once
 
+#include "Vertex.hpp"
+
 #include <LLGL/OpenGL/Shader.hpp>
+#include <LLGL/OpenGL/ShaderBases/Texture.hpp>
+#include <LLGL/OpenGL/ShaderBases/Transform.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
 
 namespace Gfx {
 
-llgl::opengl::Program& default_gui_shader();
-
-class DefaultGUIShader : public llgl::opengl::Shader {
+class DefaultGUIShader : public llgl::Shader
+    , public llgl::ShaderBases::Texture
+    , public llgl::ShaderBases::Transform {
 public:
-    DefaultGUIShader()
-        : llgl::opengl::Shader(Gfx::default_gui_shader()) { }
+    using Vertex = Gfx::Vertex;
 
-    virtual llgl::opengl::AttributeMapping attribute_mapping() const override { return { 1, 2, 3, 0 }; }
+    auto uniforms() {
+        return llgl::UniformList { m_projection_matrix } + llgl::ShaderBases::Texture::uniforms();
+    }
+
+    void set_projection_matrix(Util::Matrix4x4f mat) { m_projection_matrix = mat; }
+
+    std::string_view source(llgl::ShaderType type) const;
 
 private:
-    virtual void on_bind(llgl::opengl::ShaderScope&) const override;
+    llgl::Uniform<Util::Matrix4x4f> m_projection_matrix { "projectionMatrix" };
 };
 
 }

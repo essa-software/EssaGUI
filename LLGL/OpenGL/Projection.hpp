@@ -8,8 +8,8 @@ namespace llgl {
 
 class Projection {
 public:
-    static Projection ortho(opengl::OrthoArgs, Util::Recti viewport);
-    static Projection perspective(opengl::PerspectiveArgs, Util::Recti viewport);
+    static Projection ortho(OrthoArgs, Util::Recti viewport);
+    static Projection perspective(PerspectiveArgs, Util::Recti viewport);
 
     Projection() = default;
 

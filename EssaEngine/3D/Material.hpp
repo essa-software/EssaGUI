@@ -9,7 +9,7 @@ namespace Essa {
 struct Material {
     struct Component {
         Util::Color color;
-        llgl::opengl::Texture* texture = nullptr;
+        llgl::Texture* texture = nullptr;
     };
 
     Component diffuse;

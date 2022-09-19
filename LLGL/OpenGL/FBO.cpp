@@ -1,7 +1,7 @@
 #include "FBO.hpp"
 #include "LLGL/OpenGL/Texture.hpp"
 
-#include <GL/gl.h>
+
 #include <iostream>
 
 namespace llgl::opengl {

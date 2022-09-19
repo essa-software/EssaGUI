@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 
 #include <EssaUtil/Vector.hpp>
-#include <GL/gl.h>
+
 #include <LLGL/OpenGL/Texture.hpp>
 #include <string>
 

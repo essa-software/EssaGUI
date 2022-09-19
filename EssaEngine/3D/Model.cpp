@@ -5,21 +5,18 @@
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/Renderer/Renderer.hpp>
 #include <iostream>
-
-#define OBJECT3D_DEBUG 0
 
 namespace Essa {
 
 void Model::add_face(Face face) {
     if constexpr (OBJECT3D_DEBUG) {
-        m_normal_vertexes.push_back(llgl::Vertex { .position = face.v1.position });
-        m_normal_vertexes.push_back(llgl::Vertex { .position = face.v1.position + face.v1.normal });
-        m_normal_vertexes.push_back(llgl::Vertex { .position = face.v2.position });
-        m_normal_vertexes.push_back(llgl::Vertex { .position = face.v2.position + face.v2.normal });
-        m_normal_vertexes.push_back(llgl::Vertex { .position = face.v3.position });
-        m_normal_vertexes.push_back(llgl::Vertex { .position = face.v3.position + face.v3.normal });
+        m_normal_vertexes.push_back({ face.v1.value<0>(), Util::Colors::White, {} });
+        m_normal_vertexes.push_back({ face.v1.value<0>() + face.v1.value<3>(), Util::Colors::White, {} });
+        m_normal_vertexes.push_back({ face.v2.value<0>(), Util::Colors::White, {} });
+        m_normal_vertexes.push_back({ face.v2.value<0>() + face.v2.value<3>(), Util::Colors::White, {} });
+        m_normal_vertexes.push_back({ face.v3.value<0>(), Util::Colors::White, {} });
+        m_normal_vertexes.push_back({ face.v3.value<0>() + face.v3.value<3>(), Util::Colors::White, {} });
     }
     m_vertexes.push_back(std::move(face.v1));
     m_vertexes.push_back(std::move(face.v2));
@@ -27,7 +24,7 @@ void Model::add_face(Face face) {
     m_needs_update = true;
 }
 
-void Model::add_face(std::span<llgl::Vertex> face) {
+void Model::add_face(std::span<Vertex> face) {
     if (face.size() < 3)
         return;
     for (size_t s = 0; s < face.size() - 2; s++) {
@@ -36,35 +33,15 @@ void Model::add_face(std::span<llgl::Vertex> face) {
         m_vertexes.push_back(face[s + 2]);
 
         if constexpr (OBJECT3D_DEBUG) {
-            m_normal_vertexes.push_back(llgl::Vertex { .position = face[0].position });
-            m_normal_vertexes.push_back(llgl::Vertex { .position = face[0].position + face[0].normal });
-            m_normal_vertexes.push_back(llgl::Vertex { .position = face[s + 1].position });
-            m_normal_vertexes.push_back(llgl::Vertex { .position = face[s + 1].position + face[s + 1].normal });
-            m_normal_vertexes.push_back(llgl::Vertex { .position = face[s + 2].position });
-            m_normal_vertexes.push_back(llgl::Vertex { .position = face[s + 2].position + face[s + 2].normal });
+            m_normal_vertexes.push_back({ face[0].value<0>(), Util::Colors::White, {} });
+            m_normal_vertexes.push_back({ face[0].value<0>() + face[0].value<3>(), Util::Colors::White, {} });
+            m_normal_vertexes.push_back({ face[s + 1].value<0>(), Util::Colors::White, {} });
+            m_normal_vertexes.push_back({ face[s + 1].value<0>() + face[s + 1].value<3>(), Util::Colors::White, {} });
+            m_normal_vertexes.push_back({ face[s + 2].value<0>(), Util::Colors::White, {} });
+            m_normal_vertexes.push_back({ face[s + 2].value<0>() + face[s + 2].value<3>(), Util::Colors::White, {} });
         }
     }
-    for (auto& v : m_normal_vertexes)
-        std::cout << v.position << std::endl;
     m_needs_update = true;
-}
-
-void Model::render(llgl::Renderer& renderer, llgl::DrawState state) const {
-    if (m_needs_update) {
-        std::cerr << "needs update!" << std::endl;
-        m_vao.load_vertexes(m_vertexes);
-        if constexpr (OBJECT3D_DEBUG)
-            m_normals_vao.load_vertexes(m_normal_vertexes);
-        m_needs_update = false;
-    }
-
-    if (m_material && m_material->diffuse.texture)
-        state.texture = m_material->diffuse.texture;
-
-    renderer.draw_vao(m_vao, llgl::opengl::PrimitiveType::Triangles, state);
-
-    if constexpr (OBJECT3D_DEBUG)
-        renderer.draw_vao(m_normals_vao, llgl::opengl::PrimitiveType::Triangles, state);
 }
 
 }
