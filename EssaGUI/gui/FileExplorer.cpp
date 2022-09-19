@@ -336,7 +336,7 @@ FileExplorer::FileExplorer(HostWindow& window)
         open_path(m_current_path.parent_path());
     };
 
-    open_path("../worlds");
+    open_path(".");
 
     auto open_folder_container = container.add_widget<GUI::Container>();
     open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
