@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LLGL/OpenGL/Extensions.hpp"
+#include "Extensions.hpp"
 #include "OpenGL.hpp"
 #include "PrimitiveType.hpp"
 #include "Vertex.hpp"

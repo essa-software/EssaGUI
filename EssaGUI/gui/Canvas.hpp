@@ -1,8 +1,9 @@
 #pragma once
 
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/sprites/Sprite.hpp"
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/sprites/Sprite.hpp>
 #include <vector>
+
 namespace GUI {
 
 class Canvas : public Container {
@@ -19,11 +20,11 @@ public:
         return sprite.get();
     }
 
-    void draw_rect(LengthVector pos, LengthVector size );
+    void draw_rect(LengthVector pos, LengthVector size);
 
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
-    
+
     std::vector<Sprite*> m_sprites;
 };
 

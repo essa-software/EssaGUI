@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EssaGUI/gui/Container.hpp"
+#include <EssaGUI/gui/Container.hpp>
 
 namespace GUI {
 

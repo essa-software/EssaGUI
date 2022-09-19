@@ -1,6 +1,7 @@
 #include "Listbox.hpp"
-#include "EssaGUI/gui/NotifyUser.hpp"
-#include "EssaGUI/gui/TextButton.hpp"
+
+#include <EssaGUI/gui/NotifyUser.hpp>
+#include <EssaGUI/gui/TextButton.hpp>
 #include <EssaUtil/UString.hpp>
 #include <algorithm>
 #include <cstddef>
@@ -54,7 +55,7 @@ void Listbox::add(const Util::UString& label) {
             }
         }
         else {
-            if(i == m_index_vector.front()){
+            if (i == m_index_vector.front()) {
                 return;
             }
 

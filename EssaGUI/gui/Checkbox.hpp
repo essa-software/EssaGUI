@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Button.hpp"
-#include "EssaGUI/gui/Widget.hpp"
+#include <EssaGUI/gui/Widget.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
 
@@ -12,7 +12,7 @@ public:
     virtual void on_init() override { set_toggleable(true); }
 
     virtual void draw(GUI::Window& window) const override;
-    
+
     CREATE_VALUE(Util::UString, caption, "")
 
     virtual Theme::ButtonColors default_button_colors() const override;

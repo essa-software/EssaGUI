@@ -1,5 +1,6 @@
 #include "RectangleShape.hpp"
-#include "EssaGUI/gfx/Window.hpp"
+
+#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 

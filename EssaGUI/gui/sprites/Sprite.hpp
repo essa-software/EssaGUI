@@ -1,11 +1,12 @@
 #pragma once
 
-#include "EssaGUI/gfx/Window.hpp"
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/Widget.hpp"
+#include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/Widget.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <functional>
+
 namespace GUI {
 
 class Sprite : public Widget {

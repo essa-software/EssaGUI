@@ -1,9 +1,8 @@
 #include "SDLWindow.hpp"
 
 #include "../Event.hpp"
-#include "LLGL/Window/Mouse.hpp"
-
 #include <EssaUtil/UString.hpp>
+#include <LLGL/Window/Mouse.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_hints.h>
@@ -34,7 +33,7 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Cont
         std::cout << "SDLWindow: Failed to load GL library" << std::endl;
         exit(1);
     }
-    
+
     initialized = true;
 
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Button.hpp"
-#include "EssaGUI/gui/Widget.hpp"
-#include "LLGL/OpenGL/Texture.hpp"
+#include <EssaGUI/gui/Widget.hpp>
+#include <LLGL/OpenGL/Texture.hpp>
 
 namespace GUI {
 

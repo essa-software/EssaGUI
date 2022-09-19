@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EssaGUI/util/ConfigFile.hpp"
+#include <EssaGUI/util/ConfigFile.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 #include <compare>

@@ -1,6 +1,7 @@
 #pragma once
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/TextButton.hpp"
+
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/TextButton.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
 #include <cstddef>

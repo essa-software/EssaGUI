@@ -1,8 +1,8 @@
 #pragma once
 
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/RadioButton.hpp"
-#include "EssaGUI/gui/Widget.hpp"
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/RadioButton.hpp>
+#include <EssaGUI/gui/Widget.hpp>
 #include <EssaUtil/UString.hpp>
 #include <functional>
 #include <vector>
@@ -17,7 +17,7 @@ public:
     void set_index(size_t index);
     size_t get_index() const { return m_index; }
     virtual void do_update() override;
-    
+
     CREATE_VALUE(Length, row_height, 15.0_px)
 
     std::function<void(size_t)> on_change;

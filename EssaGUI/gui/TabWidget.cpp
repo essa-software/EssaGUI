@@ -2,10 +2,9 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
-#include "EssaGUI/gui/NotifyUser.hpp"
-
 #include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/NotifyUser.hpp>
 #include <cassert>
 #include <iostream>
 

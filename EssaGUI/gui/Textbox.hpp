@@ -1,9 +1,8 @@
 #pragma once
 
-#include "EssaGUI/gui/Widget.hpp"
 #include "NotifyUser.hpp"
 #include "TextEditor.hpp"
-
+#include <EssaGUI/gui/Widget.hpp>
 #include <functional>
 #include <limits>
 #include <string>
@@ -18,7 +17,7 @@ public:
     };
 
     virtual void on_init() override { set_multiline(false); }
-    
+
     CREATE_VALUE(double, min, std::numeric_limits<double>::min())
     CREATE_VALUE(double, max, std::numeric_limits<double>::max())
     CREATE_VALUE(size_t, limit, 1024)

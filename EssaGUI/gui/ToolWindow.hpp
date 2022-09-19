@@ -1,8 +1,8 @@
 #pragma once
 
-#include "EssaGUI/gfx/Window.hpp"
-#include "EssaGUI/gui/Widget.hpp"
 #include "Overlay.hpp"
+#include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/Widget.hpp>
 
 namespace GUI {
 

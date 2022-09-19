@@ -1,7 +1,8 @@
 #include "Parser.hpp"
-#include "EssaGUI/eml/AST.hpp"
-#include "EssaGUI/eml/Lexer.hpp"
-#include "EssaGUI/gfx/ResourceManager.hpp"
+
+#include <EssaGUI/eml/AST.hpp>
+#include <EssaGUI/eml/Lexer.hpp>
+#include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/GenericParser.hpp>
@@ -112,7 +113,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
         return error("Unexpected EOF in value");
     }
     switch (token->type()) {
-    case TokenType::Hash:{
+    case TokenType::Hash: {
         get();
         return TRY(parse_hexcolor());
     }
@@ -206,24 +207,25 @@ Util::ParseErrorOr<Util::Color> Parser::parse_hexcolor() {
     auto color_token = peek();
     std::string str = "";
 
-    while(color_token->type() == TokenType::Identifier || color_token->type() == TokenType::Number){
+    while (color_token->type() == TokenType::Identifier || color_token->type() == TokenType::Number) {
         str += color_token->value();
         get();
         color_token = peek();
     }
 
-    if(str.size() != 6 && str.size() != 8){
+    if (str.size() != 6 && str.size() != 8) {
         return error_in_already_read("Not valid hexadecimal number");
     }
 
     unsigned color = 0;
 
-    for(const auto& c : str){
-        if(c >= '0' && c <= '9')
+    for (const auto& c : str) {
+        if (c >= '0' && c <= '9')
             color += c - 48;
-        else if(c >= 'A' && c <= 'F'){
+        else if (c >= 'A' && c <= 'F') {
             color += c - 55;
-        }else{
+        }
+        else {
             return error_in_already_read("Not valid hexadecimal number");
         }
         color <<= 4;

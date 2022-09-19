@@ -1,8 +1,8 @@
 #include "Console.hpp"
 
 #include "Application.hpp"
-#include "EssaGUI/eml/EMLError.hpp"
-#include "EssaGUI/eml/Loader.hpp"
+#include <EssaGUI/eml/EMLError.hpp>
+#include <EssaGUI/eml/Loader.hpp>
 
 #include <sstream>
 

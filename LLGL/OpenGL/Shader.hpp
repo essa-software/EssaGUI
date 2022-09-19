@@ -1,10 +1,9 @@
 #pragma once
 
-#include "LLGL/OpenGL/Extensions.hpp"
+#include "Extensions.hpp"
 #include "OpenGL.hpp"
 #include "Texture.hpp"
 #include <EssaUtil/Matrix.hpp>
-#include <bits/utility.h>
 #include <concepts>
 #include <fmt/core.h>
 #include <string_view>

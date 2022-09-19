@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Button.hpp"
-#include "EssaGUI/gui/Widget.hpp"
+#include <EssaGUI/gui/Widget.hpp>
 #include <EssaUtil/UString.hpp>
 
 namespace GUI {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Button.hpp"
-#include "EssaGUI/gui/Widget.hpp"
+#include <EssaGUI/gui/Widget.hpp>
 #include <EssaUtil/Color.hpp>
 
 namespace GUI {
@@ -9,14 +9,14 @@ namespace GUI {
 class ColorPicker : public Button {
 public:
     virtual void on_init() override;
-    
+
     CREATE_VALUE(Util::Color, color, Util::Colors::Black)
 
     std::function<void(Util::Color)> on_change;
 
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
-    
+
     virtual Theme::ButtonColors default_button_colors() const override {
         return theme().text_button;
     }

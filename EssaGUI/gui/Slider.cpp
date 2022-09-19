@@ -1,7 +1,7 @@
 #include "Slider.hpp"
 
-#include "EssaGUI/eml/Loader.hpp"
 #include "NotifyUser.hpp"
+#include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <cmath>
 #include <iostream>
@@ -86,7 +86,6 @@ void Slider::draw(GUI::Window& window) const {
 double Slider::value_clamped_to_min_max() const {
     return std::min(std::max(value(), m_min), m_max);
 }
-
 
 EML::EMLErrorOr<void> Slider::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));

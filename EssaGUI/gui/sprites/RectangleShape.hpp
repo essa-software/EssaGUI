@@ -1,9 +1,9 @@
 #pragma once
 
-#include "EssaGUI/gfx/Window.hpp"
-#include "EssaGUI/gui/Container.hpp"
-#include "EssaGUI/gui/Widget.hpp"
-#include "EssaGUI/gui/sprites/Sprite.hpp"
+#include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/Widget.hpp>
+#include <EssaGUI/gui/sprites/Sprite.hpp>
 
 namespace GUI {
 
@@ -25,7 +25,7 @@ public:
 
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
-    
+
     float m_border_radius[4] { 0 };
 };
 

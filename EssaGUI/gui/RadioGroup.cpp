@@ -1,4 +1,5 @@
-#include "EssaGUI/gui/RadioGroup.hpp"
+#include "RadioGroup.hpp"
+
 #include "RadioButton.hpp"
 
 namespace GUI {

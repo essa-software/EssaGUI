@@ -1,7 +1,8 @@
 #include "Progressbar.hpp"
-#include "EssaGUI/gfx/Window.hpp"
-#include "EssaGUI/gui/Application.hpp"
-#include "EssaGUI/gui/TextAlign.hpp"
+
+#include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
 #include <cstddef>
