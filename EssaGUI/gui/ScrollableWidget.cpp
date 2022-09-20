@@ -78,7 +78,13 @@ void ScrollableWidget::scroll_to_bottom() {
 }
 
 Util::Vector2f ScrollableWidget::scroll_area_size() const {
-    return raw_size() - Util::Vector2f { 5, 5 };
+    auto size = raw_size();
+    // We need to make place for scrollbars if content overflows
+    if (content_size().y() > size.y())
+        size.x() -= 5;
+    if (content_size().x() > size.x())
+        size.y() -= 5;
+    return size;
 }
 
 }
