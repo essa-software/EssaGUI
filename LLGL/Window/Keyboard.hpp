@@ -45,6 +45,8 @@ namespace llgl {
     K(Enter, SDLK_RETURN)              \
     K(Home, SDLK_HOME)                 \
     K(Space, SDLK_SPACE)               \
+    K(LShift, SDLK_LSHIFT)             \
+    K(RShift, SDLK_RSHIFT)             \
     K(Tab, SDLK_TAB)                   \
     K(Tilde, SDLK_BACKQUOTE)
 
@@ -66,5 +68,6 @@ constexpr std::string_view to_string(KeyCode key) {
 }
 
 bool is_key_pressed(KeyCode key);
+inline bool is_shift_pressed() { return is_key_pressed(KeyCode::LShift) || is_key_pressed(KeyCode::RShift); }
 
 }
