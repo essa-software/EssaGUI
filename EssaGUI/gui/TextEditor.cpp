@@ -26,8 +26,9 @@ float TextEditor::left_margin() const {
     return m_multiline ? GutterWidth + Margin : Margin;
 }
 
-float TextEditor::content_height() const {
-    return m_lines.size() * line_height() + 5;
+Util::Vector2f TextEditor::content_size() const {
+    // TODO: Implement x scroll
+    return { 0, m_lines.size() * line_height() + 5 };
 }
 
 LengthVector TextEditor::initial_size() const {
@@ -48,12 +49,16 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (line >= m_lines.size())
         return { .line = std::max<size_t>(1, m_lines.size()) - 1, .column = std::max<size_t>(1, m_lines.back().size() + 1) - 1 };
 
+    float character_width = this->character_width();
+    auto cursor = (delta.x() - scroll_offset().x() - left_margin()) / character_width;
+    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
+}
+
+float TextEditor::character_width() const {
     // We can just check the offset of 1st character because we use
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
-    float character_width = Window::find_character_position(1, "test", GUI::Application::the().fixed_width_font(), get_text_options());
-    auto cursor = (delta.x() - scroll_offset().x() - left_margin()) / character_width;
-    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
+    return Window::find_character_position(1, "test", GUI::Application::the().fixed_width_font(), get_text_options());
 }
 
 Util::UString TextEditor::content() const {
@@ -96,13 +101,14 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
     if (extend_selection == SetCursorSelectionBehavior::Clear || (extend_selection != SetCursorSelectionBehavior::DontTouch && !m_shift_pressed))
         m_selection_start = m_cursor;
 
-    // TODO: Handle X scroll
+    // TODO: Implement scroll X
+
     auto y_offset = m_cursor.line * line_height() + scroll_offset().y();
     auto max_y = raw_size().y() - line_height() - 8;
     if (y_offset < 0)
-        set_scroll(scroll() + y_offset);
+        set_scroll_y(scroll().y() + y_offset);
     else if (y_offset > max_y)
-        set_scroll(scroll() + (y_offset - max_y));
+        set_scroll_y(scroll().y() + (y_offset - max_y));
 
     // TODO
     // m_cursor_clock.restart();

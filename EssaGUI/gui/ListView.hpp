@@ -31,7 +31,8 @@ public:
     Util::Vector2f row_position(unsigned) const;
 
 private:
-    virtual float content_height() const override;
+    virtual Util::Vector2f content_size() const override;
+    float row_width() const;
     Util::Vector2f cell_size(size_t row, size_t column) const;
 
     std::unique_ptr<Model> m_model;

@@ -16,6 +16,7 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 void ListView::draw(GUI::Window& wnd) const {
     auto row_height = theme().line_height;
+    auto row_width = this->row_width();
 
     assert(m_model);
 
@@ -25,14 +26,11 @@ void ListView::draw(GUI::Window& wnd) const {
     size_t first_row = -scroll_offset().y() / row_height;
     if (first_row > 0)
         first_row--;
-    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_height()) / row_height);
+    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_size().y()) / row_height);
     if (last_row < rows - 1)
         last_row++;
 
     float current_x_pos = 0;
-    // TODO: Limit display to widget raw_size
-    // TODO: Scrolling
-    // TODO: Many more things...
 
     auto list_odd = theme().list_odd;
     auto list_even = theme().list_even;
@@ -42,7 +40,7 @@ void ListView::draw(GUI::Window& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
-            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (r + 1) } + scroll_offset(), { raw_size().x(), row_height } }, rs);
+            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (r + 1) } + scroll_offset(), { row_width, row_height } }, rs);
         }
     }
 
@@ -50,7 +48,7 @@ void ListView::draw(GUI::Window& wnd) const {
     {
         RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
-        wnd.draw_rectangle({ scroll_offset(), { raw_size().x(), row_height } }, rs);
+        wnd.draw_rectangle({ scroll_offset(), { row_width, row_height } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
@@ -137,8 +135,16 @@ void ListView::handle_event(Event& event) {
     }
 }
 
-float ListView::content_height() const {
-    return (m_model->row_count() + 1) * theme().line_height;
+Util::Vector2f ListView::content_size() const {
+    return { row_width(), (m_model->row_count() + 1) * theme().line_height };
+}
+
+float ListView::row_width() const {
+    float width = 0;
+    for (size_t c = 0; c < m_model->column_count(); c++) {
+        width += m_model->column(c).width;
+    }
+    return width;
 }
 
 }

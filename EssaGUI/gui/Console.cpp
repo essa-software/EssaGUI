@@ -12,11 +12,7 @@ constexpr float LINE_SPACING = 20;
 
 void Console::append_line(LogLine line) {
     m_lines.push_back(line);
-    if (raw_size().y() != 0) {
-        double bottom_content = m_lines.size() * LINE_SPACING - scroll_area_height();
-        if (bottom_content > 0)
-            set_scroll(bottom_content);
-    }
+    scroll_to_bottom();
 }
 
 void Console::append_content(LogLine content) {
@@ -48,8 +44,8 @@ void Console::draw(GUI::Window& window) const {
     ScrollableWidget::draw_scrollbar(window);
 }
 
-float Console::content_height() const {
-    return m_lines.size() * LINE_SPACING + 10;
+Util::Vector2f Console::content_size() const {
+    return { 1000, m_lines.size() * LINE_SPACING + 10 };
 }
 EML::EMLErrorOr<void> Console::load_from_eml_object(EML::Object const& object, EML::Loader&) {
     for (auto const& line : object.properties) {

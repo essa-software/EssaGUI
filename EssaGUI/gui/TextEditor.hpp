@@ -66,7 +66,8 @@ private:
 
     float line_height() const;
     float left_margin() const;
-    virtual float content_height() const override;
+    float character_width() const;
+    virtual Util::Vector2f content_size() const override;
     virtual LengthVector initial_size() const override;
 
     // sf::Clock m_cursor_clock;
