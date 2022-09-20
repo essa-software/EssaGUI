@@ -11,6 +11,7 @@ add_library(EssaGUI SHARED
     gfx/ResourceManager.cpp
     gfx/Window.cpp
 
+    gui/AbstractListView.cpp
     gui/Application.cpp
     gui/ArrowButton.cpp
     gui/Border.cpp
@@ -33,6 +34,7 @@ add_library(EssaGUI SHARED
     gui/Listbox.cpp
     gui/ListView.cpp
     gui/MessageBox.cpp
+    gui/Model.cpp
     gui/Progressbar.cpp
     gui/Prompt.cpp
     gui/RadioButton.cpp
@@ -49,6 +51,7 @@ add_library(EssaGUI SHARED
     gui/Theme.cpp
     gui/ToolWindow.cpp
     gui/Tooltip.cpp
+    gui/TreeView.cpp
     gui/ValueSlider.cpp
     gui/Widget.cpp
     gui/WidgetTreeRoot.cpp

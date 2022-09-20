@@ -16,16 +16,21 @@ namespace GUI {
 
 class FileModel : public Model {
 public:
-    virtual size_t row_count() const override {
-        return m_files.size();
+    virtual size_t children_count(Model::Node const* node) const override {
+        return node ? 0 : m_files.size();
     }
+
     virtual size_t column_count() const override {
         return 5;
     }
 
-    virtual Variant data(size_t row, size_t column) const override;
+    virtual Variant data(Model::Node const& node, size_t column) const override;
 
-    virtual Column column(size_t column) const override;
+    virtual ModelColumn column(size_t column) const override;
+
+    virtual Node child(Node const*, size_t idx) const override {
+        return Node { .type = 0, .data = &m_files[idx] };
+    }
 
     std::filesystem::path get_path(size_t row) const {
         return m_files[row].path;
@@ -46,7 +51,7 @@ private:
     };
 
     static std::string file_type(File const& file);
-    llgl::Texture const* file_icon(size_t row) const;
+    llgl::Texture const* file_icon(File const& file) const;
 
     std::vector<File> m_files;
     std::vector<std::string> m_desired_extensions;

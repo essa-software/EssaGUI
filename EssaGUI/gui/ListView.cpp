@@ -18,15 +18,15 @@ void ListView::draw(GUI::Window& wnd) const {
     auto row_height = theme().line_height;
     auto row_width = this->row_width();
 
-    assert(m_model);
+    auto& model = this->model();
 
-    size_t rows = m_model->row_count();
-    size_t columns = m_model->column_count();
+    size_t rows = model.row_count();
+    size_t columns = model.column_count();
 
     size_t first_row = -scroll_offset().y() / row_height;
     if (first_row > 0)
         first_row--;
-    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_size().y()) / row_height);
+    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_size().y()) / row_height + 1);
     if (last_row < rows - 1)
         last_row++;
 
@@ -40,19 +40,19 @@ void ListView::draw(GUI::Window& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
-            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (r + 1) } + scroll_offset(), { row_width, row_height } }, rs);
+            wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset(), { row_width, row_height } }, rs);
         }
     }
 
     // Column names
-    {
+    if (display_header()) {
         RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
         wnd.draw_rectangle({ scroll_offset(), { row_width, row_height } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
-            auto column = m_model->column(c);
+            auto column = model.column(c);
             TextDrawOptions text;
             text.font_size = 16;
             wnd.draw_text(column.name, Application::the().bold_font(), Util::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
@@ -63,11 +63,13 @@ void ListView::draw(GUI::Window& wnd) const {
     // Data
     if (rows > 0) {
         for (size_t c = 0; c < columns; c++) {
-            auto column = m_model->column(c);
+            auto column = model.column(c);
 
             for (size_t r = first_row; r < last_row; r++) {
-                auto data = m_model->data(r, c);
-                Util::Vector2f cell_position { current_x_pos, (r + 1) * row_height };
+                auto data = model.root_data(r, c);
+                Util::Vector2f cell_position { current_x_pos, r * row_height };
+                if (display_header())
+                    cell_position.y() += row_height;
                 cell_position += scroll_offset();
                 auto cell_size = this->cell_size(r, c);
 
@@ -99,18 +101,10 @@ void ListView::draw(GUI::Window& wnd) const {
     ScrollableWidget::draw_scrollbar(wnd);
 }
 
-Util::Vector2f ListView::row_position(unsigned row) const {
-    return Util::Vector2f { raw_position().x(), raw_position().y() + theme().line_height * (row + 1) } + scroll_offset();
-}
-
-Util::Vector2f ListView::cell_size(size_t, size_t column) const {
-    return { m_model->column(column).width, theme().line_height };
-}
-
 void ListView::handle_event(Event& event) {
     ScrollableWidget::handle_event(event);
 
-    size_t rows = m_model->row_count();
+    size_t rows = model().root_row_count();
     if (event.type() == llgl::Event::Type::MouseButtonPress) {
         auto mouse_pos = event.mouse_position();
 
@@ -133,18 +127,6 @@ void ListView::handle_event(Event& event) {
             }
         }
     }
-}
-
-Util::Vector2f ListView::content_size() const {
-    return { row_width(), (m_model->row_count() + 1) * theme().line_height };
-}
-
-float ListView::row_width() const {
-    float width = 0;
-    for (size_t c = 0; c < m_model->column_count(); c++) {
-        width += m_model->column(c).width;
-    }
-    return width;
 }
 
 }

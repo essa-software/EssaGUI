@@ -26,7 +26,7 @@
 
 namespace GUI {
 
-Model::Column FileModel::column(size_t column) const {
+ModelColumn FileModel::column(size_t column) const {
     switch (column) {
     case 0:
         return { .width = 30, .name = "" };
@@ -42,12 +42,12 @@ Model::Column FileModel::column(size_t column) const {
     return {};
 }
 
-Variant FileModel::data(size_t row, size_t column) const {
-    auto const& file = m_files[row];
+Variant FileModel::data(Node const& row, size_t column) const {
+    auto const& file = *static_cast<File const*>(row.data);
 
     switch (column) {
     case 0:
-        return file_icon(row);
+        return file_icon(file);
     case 1:
         return Util::UString { file.path.filename().string() };
     case 2: {
@@ -159,7 +159,7 @@ std::string FileModel::file_type(File const& file) {
     return it->second;
 }
 
-llgl::Texture const* FileModel::file_icon(size_t row) const {
+llgl::Texture const* FileModel::file_icon(File const& file) const {
     static llgl::Texture& directory_icon = GUI::Application::the().resource_manager().require_texture("gui/directory.png");
     static llgl::Texture& regular_file_icon = GUI::Application::the().resource_manager().require_texture("gui/regularFile.png");
     static llgl::Texture& block_device_icon = GUI::Application::the().resource_manager().require_texture("gui/blockDevice.png");
@@ -167,7 +167,7 @@ llgl::Texture const* FileModel::file_icon(size_t row) const {
     static llgl::Texture& socket_icon = GUI::Application::the().resource_manager().require_texture("gui/socket.png");
     static llgl::Texture& executable_file_icon = GUI::Application::the().resource_manager().require_texture("gui/executableFile.png");
 
-    switch (m_files[row].type) {
+    switch (file.type) {
     case std::filesystem::file_type::directory:
         return &directory_icon;
     case std::filesystem::file_type::block:
@@ -177,7 +177,7 @@ llgl::Texture const* FileModel::file_icon(size_t row) const {
     case std::filesystem::file_type::socket:
         return &socket_icon;
     default:
-        if (m_files[row].is_executable)
+        if (file.is_executable)
             return &executable_file_icon;
         return &regular_file_icon;
     }
