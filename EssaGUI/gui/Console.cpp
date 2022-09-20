@@ -45,7 +45,7 @@ void Console::draw(GUI::Window& window) const {
 }
 
 Util::Vector2f Console::content_size() const {
-    return { 1000, m_lines.size() * LINE_SPACING + 10 };
+    return { 0, m_lines.size() * LINE_SPACING + 10 };
 }
 EML::EMLErrorOr<void> Console::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
