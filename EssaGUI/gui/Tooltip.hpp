@@ -10,12 +10,10 @@ class Widget;
 
 struct Tooltip {
     Util::UString text;
-    Widget* owner = nullptr;
     Util::Vector2f position;
 
-    Tooltip(Util::UString t, Widget* o, Util::Vector2f p)
+    Tooltip(Util::UString t, Util::Vector2f p)
         : text(std::move(t))
-        , owner(o)
         , position(p) { }
 };
 
