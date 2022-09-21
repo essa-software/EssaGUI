@@ -197,6 +197,15 @@ protected:
 
     virtual void focus_first_child_or_self();
 
+    // Returns whether tooltip should be displayed at specified widget-relative position.
+    virtual bool should_display_tooltip(Util::Vector2f const&) const { return !m_tooltip_text.is_empty(); }
+
+    // Called when tooltip is first shown up. Position is widget-relative.
+    virtual Util::UString create_tooltip(Util::Vector2f const&) const { return m_tooltip_text; }
+
+    // Called every tick when tooltip is shown. Position is widget-relative.
+    virtual void update_tooltip(Util::Vector2f const&, Util::UString&) const { }
+
     void set_needs_relayout();
 
 private:

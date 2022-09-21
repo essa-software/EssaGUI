@@ -30,6 +30,9 @@ public:
 
     void set_position(Util::Vector2f p) { m_tooltip.position = p; }
 
+    void set_text(Util::UString t) { m_tooltip.text = std::move(t); }
+    Util::UString text() const { return m_tooltip.text; }
+
 private:
     virtual void draw(GUI::Window&) override;
 

@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
+#include "LLGL/Window/Mouse.hpp"
 #include "Tooltip.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
 #include <EssaUtil/Color.hpp>
@@ -24,24 +25,37 @@ bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
 }
 
 void Widget::update() {
-    if (!m_tooltip_text.is_empty()) {
-        if (m_tooltip_counter > 0)
-            m_tooltip_counter--;
-        if (m_tooltip_counter == 0) {
-            // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
-            if (m_tooltip) {
-                m_tooltip->close();
-                m_tooltip = nullptr;
-            }
-            else {
-                m_tooltip = &host_window().add_tooltip(Tooltip { m_tooltip_text, {} });
-            }
-            m_tooltip_counter = -1;
+    Util::Vector2f tooltip_position { m_tooltip_position };
+    Util::Vector2f widget_relative_mouse_position { llgl::mouse_position() };
+    widget_relative_mouse_position -= widget_tree_root().position() + raw_position();
+
+    bool should_display = should_display_tooltip(widget_relative_mouse_position);
+    if (m_tooltip && !should_display) {
+        m_tooltip->close();
+        m_tooltip = nullptr;
+        return;
+    }
+
+    if (m_tooltip_counter > 0)
+        m_tooltip_counter--;
+    if (m_tooltip_counter == 0) {
+        // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
+        if (m_tooltip) {
+            m_tooltip->close();
+            m_tooltip = nullptr;
         }
+        else if (should_display) {
+            m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(tooltip_position), {} });
+        }
+        m_tooltip_counter = -1;
     }
 
     if (m_tooltip) {
-        m_tooltip->set_position(m_widget_tree_root->position() + Util::Vector2f { m_tooltip_position } + Util::Vector2f { 32, 32 });
+        // You will soon see why the API here is so twisted...
+        auto text = m_tooltip->text();
+        update_tooltip(widget_relative_mouse_position, text);
+        m_tooltip->set_text(text);
+        m_tooltip->set_position(m_widget_tree_root->position() + tooltip_position + Util::Vector2f { 32, 32 });
     }
 }
 
@@ -91,11 +105,10 @@ void Widget::handle_event(Event& event) {
             break;
         }
         case TooltipMode::Realtime: {
+            m_tooltip_position = mouse_position;
             if (m_hover) {
                 if (!m_tooltip)
                     m_tooltip_counter = 0;
-                else
-                    m_tooltip_position = mouse_position;
             }
             else if (m_tooltip) {
                 m_tooltip_counter = 0;
