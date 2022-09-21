@@ -205,8 +205,11 @@ private:
     WidgetTreeRoot* m_widget_tree_root = nullptr;
     LengthVector m_expected_pos;
     LengthVector m_input_size { Length::Initial, Length::Initial };
+
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
+    Util::Vector2i m_tooltip_position;
+
     bool m_hover = false;
     bool m_visible = true;
 };

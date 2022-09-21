@@ -7,6 +7,7 @@
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/Is.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <cassert>
 #include <iostream>
 #include <typeinfo>
@@ -24,22 +25,17 @@ bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
 
 void Widget::update() {
     if (!m_tooltip_text.is_empty()) {
-        // std::cout << this << ": " << m_tooltip_counter << std::endl;
         if (m_tooltip_counter > 0)
             m_tooltip_counter--;
-        if (m_hover) {
-            if (m_tooltip_counter == 0 && !m_tooltip) {
-                // TODO: Use mouse position;
-                m_tooltip = &host_window().add_tooltip(Tooltip { m_tooltip_text, raw_position() + m_widget_tree_root->position() });
-                // std::cout << m_tooltip << std::endl;
-                m_tooltip_counter = -1;
-            }
-        }
-        else if (m_tooltip_counter == 0) {
+        if (m_tooltip_counter == 0) {
             // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
             if (m_tooltip) {
                 m_tooltip->close();
                 m_tooltip = nullptr;
+            }
+            else {
+                m_tooltip = &host_window().add_tooltip(Tooltip { m_tooltip_text,
+                    m_widget_tree_root->position() + Util::Vector2f { m_tooltip_position } + Util::Vector2f { 32, 32 } });
             }
             m_tooltip_counter = -1;
         }
@@ -75,16 +71,19 @@ bool Widget::are_all_parents_enabled() const {
 
 void Widget::handle_event(Event& event) {
     if (event.type() == llgl::Event::Type::MouseMove) {
-        Util::Vector2i mouse_pos = event.event().mouse_move.position;
-        bool previous_hover = m_hover;
-        m_hover = is_mouse_over(mouse_pos);
-        if (previous_hover != m_hover) {
-            if (m_tooltip)
-                m_tooltip_counter = 30;
-            else
-                m_tooltip_counter = 90;
-            event.set_seen();
+        auto mouse_position = event.mouse_position();
+        m_hover = is_mouse_over(mouse_position);
+        if (m_hover && !m_tooltip) {
+            m_tooltip_counter = 40;
+            m_tooltip_position = mouse_position;
         }
+        if (!m_hover) {
+            if (m_tooltip)
+                m_tooltip_counter = 0;
+            else
+                m_tooltip_counter = -1;
+        }
+        event.set_seen();
     }
     else if (event.type() == llgl::Event::Type::MouseButtonPress) {
         Util::Vector2i mouse_pos = event.event().mouse_button.position;
@@ -172,5 +171,4 @@ EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EM
     m_visible = TRY(object.get_property("visible", true).to_bool());
     return {};
 }
-
 }
