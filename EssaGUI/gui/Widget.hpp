@@ -150,7 +150,14 @@ public:
 
     Container* parent() const { return m_parent; }
 
+    // FIXME: The names are not the best.
+    enum class TooltipMode {
+        Hint,     // Shows only if mouse is standing still, after delay, and doesn't move
+        Realtime, // Shows always when widget is hovered and follows mouse
+    };
+
     CREATE_VALUE(Util::UString, tooltip_text, "")
+    CREATE_VALUE(TooltipMode, tooltip_mode, TooltipMode::Hint)
     CREATE_VALUE(std::string, id, "")
     CREATE_VALUE(std::string, class_name, "")
     CREATE_VALUE(Util::Color, background_color, Util::Colors::Transparent)

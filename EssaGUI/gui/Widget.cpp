@@ -34,11 +34,14 @@ void Widget::update() {
                 m_tooltip = nullptr;
             }
             else {
-                m_tooltip = &host_window().add_tooltip(Tooltip { m_tooltip_text,
-                    m_widget_tree_root->position() + Util::Vector2f { m_tooltip_position } + Util::Vector2f { 32, 32 } });
+                m_tooltip = &host_window().add_tooltip(Tooltip { m_tooltip_text, {} });
             }
             m_tooltip_counter = -1;
         }
+    }
+
+    if (m_tooltip) {
+        m_tooltip->set_position(m_widget_tree_root->position() + Util::Vector2f { m_tooltip_position } + Util::Vector2f { 32, 32 });
     }
 }
 
@@ -73,15 +76,32 @@ void Widget::handle_event(Event& event) {
     if (event.type() == llgl::Event::Type::MouseMove) {
         auto mouse_position = event.mouse_position();
         m_hover = is_mouse_over(mouse_position);
-        if (m_hover && !m_tooltip) {
-            m_tooltip_counter = 40;
-            m_tooltip_position = mouse_position;
+        switch (m_tooltip_mode) {
+        case TooltipMode::Hint: {
+            if (m_hover && !m_tooltip) {
+                m_tooltip_counter = 40;
+                m_tooltip_position = mouse_position;
+            }
+            if (!m_hover) {
+                if (m_tooltip)
+                    m_tooltip_counter = 0;
+                else
+                    m_tooltip_counter = -1;
+            }
+            break;
         }
-        if (!m_hover) {
-            if (m_tooltip)
+        case TooltipMode::Realtime: {
+            if (m_hover) {
+                if (!m_tooltip)
+                    m_tooltip_counter = 0;
+                else
+                    m_tooltip_position = mouse_position;
+            }
+            else if (m_tooltip) {
                 m_tooltip_counter = 0;
-            else
-                m_tooltip_counter = -1;
+            }
+            break;
+        }
         }
         event.set_seen();
     }
@@ -162,6 +182,7 @@ void Widget::dump(unsigned depth) {
 EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
     m_id = object.id;
     m_tooltip_text = TRY(object.get_property("tooltip_text", Util::UString {}).to_string());
+    // TODO: Tooltip mode
     m_input_size.x = TRY(object.get_property("width", Length { Length::Initial }).to_length());
     m_input_size.y = TRY(object.get_property("height", Length { Length::Initial }).to_length());
     m_expected_pos.x = TRY(object.get_property("left", Length { Length::Initial }).to_length());

@@ -28,6 +28,8 @@ public:
     // TODO (Do we actually need that, this doesn't take any events!)
     virtual Util::Vector2f size() const override { return {}; }
 
+    void set_position(Util::Vector2f p) { m_tooltip.position = p; }
+
 private:
     virtual void draw(GUI::Window&) override;
 
