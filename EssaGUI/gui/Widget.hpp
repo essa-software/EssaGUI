@@ -102,7 +102,7 @@ public:
 
     virtual ~Widget();
 
-    bool is_hover() const { return m_hover; }
+    HostWindow& host_window() const;
 
     virtual void do_handle_event(Event& event);
     virtual void do_update();
@@ -139,6 +139,7 @@ public:
     }
 
     bool is_visible() const { return m_visible; }
+    bool is_hover() const { return m_hover; }
 
     CREATE_BOOLEAN(enabled, true);
     CREATE_BOOLEAN(initialized, false);
@@ -178,7 +179,6 @@ protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
-    HostWindow& host_window() const;
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }
