@@ -21,7 +21,6 @@ void RadioGroup::do_update() {
             radio->set_active(false);
         }
 
-        radio->set_size({ Length::Auto, m_row_height });
         i++;
     }
 
