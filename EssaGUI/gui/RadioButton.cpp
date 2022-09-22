@@ -32,7 +32,7 @@ void RadioButton::draw(GUI::Window& window) const {
         window.draw_ellipse(circle_pos, circle_size, circle_opt);
     }
 
-    Util::Rectf text_rect(raw_position().x() + raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
+    Util::Rectf text_rect(raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
     TextDrawOptions text_opt;
     text_opt.text_align = Align::CenterLeft;
     text_opt.fill_color = theme().label.text;
