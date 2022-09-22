@@ -8,7 +8,7 @@ void RadioGroup::on_init() {
     set_layout<VerticalBoxLayout>().set_spacing(5);
 }
 
-void RadioGroup::do_update() {
+void RadioGroup::update() {
     size_t i = 0;
     size_t temp = m_index;
 

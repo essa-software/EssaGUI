@@ -16,7 +16,7 @@ public:
     void add_radio(Util::UString const& caption);
     void set_index(size_t index);
     size_t get_index() const { return m_index; }
-    virtual void do_update() override;
+    virtual void update() override;
 
     CREATE_VALUE(Length, row_height, 15.0_px)
 
