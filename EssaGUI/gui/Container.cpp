@@ -167,6 +167,8 @@ void BasicLayout::run(Container& container) {
     }
 }
 
+EML_REGISTER_CLASS(BasicLayout);
+
 void Container::do_relayout() {
     Widget::do_relayout();
     for (auto const& w : m_widgets) {
