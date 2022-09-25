@@ -35,6 +35,10 @@ public:
 
     using AttributePack = ParameterPack<Attributes...>;
 
+    constexpr Vertex() {
+        emplace_values<0>(Attributes {}...);
+    }
+
     constexpr Vertex(Attributes... attrs) {
         emplace_values<0>(std::forward<Attributes>(attrs)...);
     }
