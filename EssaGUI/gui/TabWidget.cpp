@@ -15,13 +15,13 @@ class TabButton : public TextButton {
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
 
-    virtual void draw(GUI::Window&) const override;
+    virtual void draw(Gfx::Painter&) const override;
 };
 
-void TabButton::draw(GUI::Window& window) const {
+void TabButton::draw(Gfx::Painter& window) const {
     auto colors = colors_for_state();
 
-    RectangleDrawOptions rect;
+    Gfx::RectangleDrawOptions rect;
     rect.set_border_radius(10);
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;

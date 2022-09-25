@@ -9,7 +9,7 @@ namespace GUI {
 
 class RectangleShape : public Sprite {
 public:
-    virtual void draw(Window& window) const override;
+    virtual void draw(Gfx::Painter&) const override;
 
     enum class RectangleVertex {
         TOPLEFT,

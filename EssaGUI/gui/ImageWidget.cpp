@@ -1,14 +1,13 @@
 #include "ImageWidget.hpp"
 
 #include <EssaGUI/gfx/ResourceManager.hpp>
-#include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
-void ImageWidget::draw(GUI::Window& window) const {
+void ImageWidget::draw(Gfx::Painter& painter) const {
     if (!m_image)
         return;
-    // TODO: Move this logic to SFMLWindow (e.g draw_best_fit_image)
+    // TODO: Move this logic to Painter (e.g draw_best_fit_image)
     auto image_size = m_image->size();
     float aspect = raw_size().x() / raw_size().y();
     float image_aspect = static_cast<float>(image_size.x()) / image_size.y();
@@ -18,9 +17,9 @@ void ImageWidget::draw(GUI::Window& window) const {
     else
         rect_size = { raw_size().x(), raw_size().x() / image_aspect };
 
-    RectangleDrawOptions rect;
+    Gfx::RectangleDrawOptions rect;
     rect.texture = m_image;
-    window.draw_rectangle({ raw_size() / 2.f - rect_size / 2.f, rect_size }, rect);
+    painter.draw_rectangle({ raw_size() / 2.f - rect_size / 2.f, rect_size }, rect);
 }
 
 EML::EMLErrorOr<void> ImageWidget::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

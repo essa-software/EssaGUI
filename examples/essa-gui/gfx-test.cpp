@@ -8,15 +8,21 @@ int main() {
 
     llgl::TTFFont font = llgl::TTFFont::open_from_file("../assets/fonts/SourceCodePro-Regular.otf");
 
+    Gfx::Painter painter { wnd.renderer() };
     while (true) {
+        painter.reset();
         llgl::Event e;
         while (wnd.poll_event(e)) {
         }
+
+        painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { wnd.rect() } }, wnd.rect()));
+
         wnd.clear(Util::Color { 100, 100, 100 });
         Gfx::Text text { "/home/sppmacd #T3$%abcdefghijklmnopqurtsdhstrhstyjstr6", font };
         text.set_position({ 50, 200 });
         text.set_font_size(75);
-        text.draw(wnd);
+        text.draw(painter);
+        painter.render();
         wnd.display();
     }
 

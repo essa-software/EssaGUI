@@ -10,7 +10,7 @@ namespace GUI {
 
 class Progressbar : public Widget {
 public:
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 
     enum class Labelling {
         PERCENTAGE,

@@ -29,7 +29,7 @@ public:
     void set_index(unsigned index);
 
 private:
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
     virtual void handle_event(Event& event) override;
 
     std::vector<std::pair<Util::UString, State>> m_states;

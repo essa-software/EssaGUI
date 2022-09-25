@@ -11,7 +11,7 @@ namespace GUI {
 
 class Sprite : public Widget {
 public:
-    virtual void draw(Window& window) const override = 0;
+    virtual void draw(Gfx::Painter&) const override = 0;
 
     void move_by_vec(Util::Vector2f const& vec) { set_raw_position(raw_position() + vec); }
 

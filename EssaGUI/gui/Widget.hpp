@@ -3,14 +3,15 @@
 #include <EssaGUI/eml/AST.hpp>
 #include <EssaGUI/eml/EMLObject.hpp>
 #include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/Painter.hpp>
 #include <EssaGUI/gfx/ResourceManager.hpp>
-#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Theme.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Orientation.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <LLGL/Window/Event.hpp>
 #include <cassert>
 #include <string>
 #include <string_view>
@@ -106,7 +107,7 @@ public:
 
     virtual void do_handle_event(Event& event);
     virtual void do_update();
-    virtual void draw(GUI::Window&) const { }
+    virtual void draw(Gfx::Painter&) const { }
 
     CREATE_VALUE(Util::Vector2f, raw_position, Util::Vector2f())
     CREATE_VALUE(Util::Vector2f, raw_size, Util::Vector2f())
@@ -129,7 +130,7 @@ public:
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
-    virtual void do_draw(GUI::Window&) const;
+    virtual void do_draw(Gfx::Painter&) const;
 
     void set_visible(bool visible) {
         if (m_visible != visible) {
@@ -218,7 +219,7 @@ private:
     virtual LengthVector initial_size() const { return LengthVector {}; }
 
     Container* m_parent = nullptr;
-WidgetTreeRoot* m_widget_tree_root = nullptr;
+    WidgetTreeRoot* m_widget_tree_root = nullptr;
     LengthVector m_expected_pos;
     LengthVector m_input_size { Util::Length::Initial, Util::Length::Initial };
 

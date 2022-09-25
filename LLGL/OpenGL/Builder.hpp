@@ -1,6 +1,5 @@
 #pragma once
 
-#include "LLGL/OpenGL/PrimitiveType.hpp"
 #include <LLGL/OpenGL/MappedVertex.hpp>
 #include <LLGL/OpenGL/Renderer.hpp>
 #include <LLGL/OpenGL/VertexArray.hpp>
@@ -25,7 +24,7 @@ public:
     virtual ~Builder() = default;
 
     void add(std::initializer_list<Vertex> v) {
-        m_vertices.insert(m_vertices.begin(), v.begin(), v.end());
+        m_vertices.insert(m_vertices.end(), v.begin(), v.end());
         set_modified();
     }
 
@@ -38,14 +37,15 @@ public:
         if (m_was_modified) {
             m_vao.upload_vertices(m_vertices);
         }
-        if (m_ranges.empty()) {
-            render_range(renderer, m_vao, { 0, m_vertices.size(), llgl::PrimitiveType::Triangles });
+        for (auto const& range : m_ranges) {
+            render_range(renderer, m_vao, range);
         }
-        else {
-            for (auto const& range : m_ranges) {
-                render_range(renderer, m_vao, range);
-            }
-        }
+    }
+
+    void reset() {
+        m_vertices.clear();
+        m_ranges.clear();
+        set_modified();
     }
 
 protected:

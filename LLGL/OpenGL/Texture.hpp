@@ -35,7 +35,8 @@ public:
     static Texture create_from_color_array(Util::Vector2u size, std::span<T const> array, Format = Format::RGBA);
 
     static Texture create_empty(Util::Vector2u size, Format = Format::RGBA);
-    static Texture create_from_id(int);
+
+    Image copy_to_image() const;
 
     template<class T>
     void update(Util::Vector2u dst_pos, Util::Vector2u src_size, std::span<T const> array, Format format);

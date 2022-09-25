@@ -522,24 +522,24 @@ Util::Vector2f TextEditor::calculate_cursor_position() const {
     return position;
 }
 
-void TextEditor::draw(GUI::Window& window) const {
+void TextEditor::draw(Gfx::Painter& window) const {
     auto theme_colors = theme().textbox.value(*this);
 
-    RectangleDrawOptions background_rect;
+    Gfx::RectangleDrawOptions background_rect;
     background_rect.fill_color = theme_colors.background;
     background_rect.outline_color = (is_focused() && !is_multiline()) ? theme().focus_frame : theme_colors.foreground;
     background_rect.outline_thickness = -1;
     window.draw_rectangle(local_rect(), background_rect);
 
     if (m_multiline) {
-        RectangleDrawOptions gutter_rect;
+        Gfx::RectangleDrawOptions gutter_rect;
         gutter_rect.fill_color = theme().gutter.background;
         window.draw_rectangle({ {}, Util::Vector2f { GutterWidth, raw_size().y() } }, gutter_rect);
     }
 
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_selection_start != m_cursor) {
-        RectangleDrawOptions selected_rect;
+        Gfx::RectangleDrawOptions selected_rect;
         selected_rect.fill_color = theme().selection.value(*this);
         auto selection_start = std::min(m_selection_start, m_cursor);
         auto selection_end = std::max(m_selection_start, m_cursor);
@@ -604,7 +604,7 @@ void TextEditor::draw(GUI::Window& window) const {
     if (is_focused()) {
         // if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
         auto position = calculate_cursor_position();
-        RectangleDrawOptions cursor;
+        Gfx::RectangleDrawOptions cursor;
         cursor.fill_color = theme_colors.text;
         window.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
             cursor);

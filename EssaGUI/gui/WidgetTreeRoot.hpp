@@ -2,8 +2,8 @@
 
 #include "EventLoop.hpp"
 #include "Widget.hpp"
-
 #include <EssaGUI/eml/EMLObject.hpp>
+#include <EssaGUI/gfx/Painter.hpp>
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <list>
@@ -55,7 +55,7 @@ public:
 
     CREATE_VALUE(std::string, id, "")
 
-    virtual void draw(Window&);
+    virtual void draw(Gfx::Painter&);
     virtual void handle_event(llgl::Event);
     virtual void handle_events();
     virtual void update() {

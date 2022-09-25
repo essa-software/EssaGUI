@@ -20,7 +20,7 @@ public:
         No
     };
 
-    explicit WorldDrawScope(WorldView const& view, ClearDepth = ClearDepth::No);
+    explicit WorldDrawScope(Gfx::Painter const& view, ClearDepth = ClearDepth::No);
     ~WorldDrawScope();
 
     static void verify();
@@ -29,7 +29,6 @@ public:
 private:
     static WorldDrawScope const* s_current;
 
-    WorldView const& m_world_view;
     WorldDrawScope const* m_parent = nullptr;
     llgl::Projection m_previous_projection;
 };
@@ -38,7 +37,7 @@ class WorldView : public Widget {
 private:
     friend WorldDrawScope;
 
-    virtual void draw(GUI::Window&) const = 0;
+    virtual void draw(Gfx::Painter&) const = 0;
 };
 
 }

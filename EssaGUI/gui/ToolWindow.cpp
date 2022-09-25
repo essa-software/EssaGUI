@@ -163,39 +163,39 @@ void ToolWindow::center_on_screen() {
     m_position = Util::Vector2f(window.size().x() / 2, window.size().y() / 2) - m_size / 2.f;
 }
 
-void ToolWindow::draw(GUI::Window& window) {
+void ToolWindow::draw(Gfx::Painter& painter) {
     Util::Vector2f position { std::round(this->position().x()), std::round(this->position().y()) };
     Util::Vector2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
-    RectangleDrawOptions background;
+    Gfx::RectangleDrawOptions background;
     background.fill_color = { 50, 50, 50, 220 };
-    window.draw_rectangle({ position, size }, background);
+    painter.draw_rectangle({ position, size }, background);
 
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
     auto titlebar_color = host_window().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
 
-    RectangleDrawOptions rs_titlebar;
+    Gfx::RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = 5;
     rs_titlebar.border_radius_top_right = 5;
     rs_titlebar.fill_color = titlebar_color;
-    window.draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
+    painter.draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
 
     Gfx::Text text { title(), Application::the().bold_font() };
     text.set_position({ position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) });
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(Util::Colors::White);
-    text.draw(window);
+    text.draw(painter);
 
     float titlebar_button_position_x = position.x() + size.x() - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {
         // FIXME: For now, there is only a close button. If this becomes not
         //        a case anymore, find a better place for this rendering code.
         //        (And make it more generic)
-        RectangleDrawOptions tbb_background;
+        Gfx::RectangleDrawOptions tbb_background;
         tbb_background.border_radius_top_right = 5;
         tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
-        window.draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
+        painter.draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };
 
@@ -205,7 +205,7 @@ void ToolWindow::draw(GUI::Window& window) {
         varr[1] = Gfx::Vertex { button_center + Util::Vector2f(5, 5), CloseButtonColor, {} };
         varr[2] = Gfx::Vertex { button_center - Util::Vector2f(-5, 5), CloseButtonColor, {} };
         varr[3] = Gfx::Vertex { button_center + Util::Vector2f(-5, 5), CloseButtonColor, {} };
-        window.draw_vertices(llgl::PrimitiveType::Lines, varr);
+        painter.draw_vertices(llgl::PrimitiveType::Lines, varr);
 
         titlebar_button_position_x -= TitleBarSize;
     }
@@ -215,10 +215,10 @@ void ToolWindow::draw(GUI::Window& window) {
     varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(0, size.y() + 1) }, titlebar_color, {} };
     varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y() + 1) }, titlebar_color, {} };
     varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
-    window.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
+    painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
-        Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Override);
-        WidgetTreeRoot::draw(window);
+        Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, rect(), Gfx::ClipViewScope::Mode::Override);
+        WidgetTreeRoot::draw(painter);
     }
 }
 

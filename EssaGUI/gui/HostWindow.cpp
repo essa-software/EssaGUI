@@ -91,11 +91,19 @@ void HostWindow::handle_events() {
 
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
+    window().set_active();
     window().clear();
     glClear(GL_DEPTH_BUFFER_BIT);
-    WidgetTreeRoot::draw(window());
+    m_painter.reset();
+
+    Util::Rectf viewport { {}, size() };
+    m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, Util::Vector2d { size() } } }, Util::Recti { viewport }));
+
+    WidgetTreeRoot::draw(m_painter);
     for (auto& overlay : m_overlays)
-        overlay->draw(window());
+        overlay->draw(m_painter);
+
+    m_painter.render();
     window().display();
 }
 
@@ -106,7 +114,7 @@ void HostWindow::draw_notification(Notification const& notification, float y) {
     Util::Vector2f text_position { window().size().x() - text_bounds.x() - 20, y + 20 };
     text.set_position(text_position);
 
-    RectangleDrawOptions rs;
+    Gfx::RectangleDrawOptions rs;
     rs.set_border_radius(10);
     switch (notification.level) {
     case NotificationLevel::Error:
@@ -114,9 +122,8 @@ void HostWindow::draw_notification(Notification const& notification, float y) {
         break;
     }
 
-    window().draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
-
-    text.draw(window());
+    m_painter.draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
+    text.draw(m_painter);
 }
 
 void HostWindow::spawn_notification(Util::UString message, NotificationLevel level) {

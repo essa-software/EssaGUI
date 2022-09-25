@@ -21,7 +21,7 @@ public:
 private:
     virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
-    virtual void draw(GUI::Window&) const override;
+    virtual void draw(Gfx::Painter&) const override;
 };
 
 }

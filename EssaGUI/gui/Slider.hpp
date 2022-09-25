@@ -40,7 +40,7 @@ public:
     void set_value(double val, NotifyUser = NotifyUser::Yes);
 
     virtual void handle_event(Event&) override;
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 
     std::function<void(double)> on_change;
 

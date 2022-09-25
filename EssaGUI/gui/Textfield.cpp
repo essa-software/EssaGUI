@@ -8,10 +8,10 @@
 
 namespace GUI {
 
-void Textfield::draw(GUI::Window& window) const {
+void Textfield::draw(Gfx::Painter& window) const {
     auto theme_colors = theme().label;
 
-    RectangleDrawOptions rect;
+    Gfx::RectangleDrawOptions rect;
     rect.fill_color = theme_colors.background;
     window.draw_rectangle(local_rect(), rect);
 

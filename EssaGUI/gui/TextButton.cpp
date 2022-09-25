@@ -8,16 +8,16 @@
 
 namespace GUI {
 
-void TextButton::draw(GUI::Window& window) const {
+void TextButton::draw(Gfx::Painter& window) const {
     auto colors = colors_for_state();
 
-    RectangleDrawOptions rect;
+    Gfx::RectangleDrawOptions rect;
     rect.fill_color = colors.background;
     window.draw_rectangle(local_rect(), rect);
 
     double text_offset = 0;
     if (m_image) {
-        RectangleDrawOptions image;
+        Gfx::RectangleDrawOptions image;
         image.texture = m_image;
         if (m_content.is_empty()) {
             window.draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,

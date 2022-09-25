@@ -18,7 +18,7 @@ protected:
 
     Util::Vector2f scroll_area_size() const;
     Util::Vector2f scroll_offset() const;
-    void draw_scrollbar(GUI::Window&) const;
+    void draw_scrollbar(Gfx::Painter&) const;
     void scroll_to_bottom();
 
 private:

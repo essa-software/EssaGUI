@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gfx/Painter.hpp>
 
 namespace Gfx {
 
@@ -11,13 +11,13 @@ public:
         Intersect // current = old ∩ new
     };
 
-    ClipViewScope(GUI::Window& target, Util::Rectf rect, Mode);
+    ClipViewScope(Gfx::Painter& target, Util::Vector2u host_window_size, Util::Rectf rect, Mode);
     ~ClipViewScope();
 
 private:
-    llgl::Projection create_clip_view(Util::Rectf const&, Util::Vector2f offset_position) const;
+    llgl::Projection create_clip_view(Util::Rectf const&, Util::Vector2f offset_position, Util::Vector2u host_window_size) const;
 
-    GUI::Window& m_target;
+    Gfx::Painter& m_target;
     llgl::Projection m_old_projection;
 };
 

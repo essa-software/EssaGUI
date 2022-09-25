@@ -10,7 +10,7 @@ class RadioButton : public Button {
 public:
     virtual void on_init() override { set_toggleable(true); }
 
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 
     CREATE_VALUE(Util::UString, caption, "")
 

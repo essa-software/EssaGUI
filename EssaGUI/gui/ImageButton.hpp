@@ -8,7 +8,7 @@ namespace GUI {
 
 class ImageButton : public Button {
 public:
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 
     CREATE_VALUE(llgl::Texture const*, image, nullptr)
 

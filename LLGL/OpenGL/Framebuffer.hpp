@@ -1,19 +1,18 @@
 #pragma once
 
-#include "DrawState.hpp"
-#include "Renderer.hpp"
-#include "Shader.hpp"
-#include "Vertex.hpp"
-#include "VertexArray.hpp"
-
+#include <LLGL/OpenGL/DrawState.hpp>
 #include <LLGL/OpenGL/FBO.hpp>
+#include <LLGL/OpenGL/Renderer.hpp>
+#include <LLGL/OpenGL/Shader.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
+#include <LLGL/OpenGL/VertexArray.hpp>
 
 namespace llgl {
 
 class Framebuffer {
 public:
-    explicit Framebuffer(Util::Vector2i size)
+    explicit Framebuffer(Util::Vector2u size)
         : m_fbo(size)
         , m_renderer(m_fbo.id()) { }
 
@@ -26,7 +25,7 @@ public:
         m_renderer.draw_vertices(vbo, draw_state);
     }
 
-    void resize(Util::Vector2i size) {
+    void resize(Util::Vector2u size) {
         m_fbo.resize(size);
     }
 
