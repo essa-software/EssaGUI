@@ -21,7 +21,7 @@ int main() {
 
     auto check1 = container1.add_widget<GUI::Checkbox>();
     check1->set_caption("Sample checkbox");
-    check1->set_size({ Length::Auto, 15.0_px });
+    check1->set_size({ Util::Length::Auto, 15.0_px });
 
     check1->on_change = [](bool state) {
         if (state)
@@ -32,7 +32,7 @@ int main() {
 
     auto check2 = container1.add_widget<GUI::Checkbox>();
     check2->set_caption("Sample checkbox");
-    check2->set_size({ Length::Auto, 15.0_px });
+    check2->set_size({ Util::Length::Auto, 15.0_px });
     check2->set_style(GUI::Checkbox::Style::MARK);
 
     check2->on_change = [](bool state) {

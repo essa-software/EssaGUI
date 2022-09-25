@@ -24,7 +24,7 @@ void Datebox::on_init() {
     set_layout<VerticalBoxLayout>().set_spacing(10);
     auto main_container = add_widget<Container>();
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    main_container->set_size({ Length::Auto, 30.0_px });
+    main_container->set_size({ Util::Length::Auto, 30.0_px });
     m_date_textfield = main_container->add_widget<Textfield>();
 
     // TODO: Make Dates support UString natively
@@ -33,7 +33,7 @@ void Datebox::on_init() {
     m_date_textfield->set_content(Util::UString { str.str() });
 
     m_toggle_container_button = main_container->add_widget<TextButton>();
-    m_toggle_container_button->set_size({ 50.0_px, Length::Auto });
+    m_toggle_container_button->set_size({ 50.0_px, Util::Length::Auto });
     m_toggle_container_button->set_alignment(Align::Center);
     m_toggle_container_button->set_toggleable(true);
     m_toggle_container_button->set_content("Show");
@@ -45,9 +45,9 @@ void Datebox::on_init() {
         m_calendar_container->set_visible(state);
         update_calendar();
         if (state)
-            set_size({ Length::Auto, 280.0_px });
+            set_size({ Util::Length::Auto, 280.0_px });
         else
-            set_size({ Length::Auto, 30.0_px });
+            set_size({ Util::Length::Auto, 30.0_px });
     };
 
     m_calendar_container->set_visible(false);
@@ -79,7 +79,7 @@ void Datebox::create_container() {
 
     auto century_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     century_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    century_toggle_container->set_size({ Length::Auto, 20.0_px });
+    century_toggle_container->set_size({ Util::Length::Auto, 20.0_px });
     auto left_century_arrow_btn = century_toggle_container->add_widget<ArrowButton>();
     left_century_arrow_btn->set_arrow_size(10.0_px);
     left_century_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
@@ -92,7 +92,7 @@ void Datebox::create_container() {
 
     auto year_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     year_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    year_toggle_container->set_size({ Length::Auto, 20.0_px });
+    year_toggle_container->set_size({ Util::Length::Auto, 20.0_px });
     auto left_year_arrow_btn = year_toggle_container->add_widget<ArrowButton>();
     left_year_arrow_btn->set_arrow_size(10.0_px);
     left_year_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
@@ -105,7 +105,7 @@ void Datebox::create_container() {
 
     auto month_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     month_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    month_toggle_container->set_size({ Length::Auto, 20.0_px });
+    month_toggle_container->set_size({ Util::Length::Auto, 20.0_px });
     auto left_month_arrow_btn = month_toggle_container->add_widget<ArrowButton>();
     left_month_arrow_btn->set_arrow_size(10.0_px);
     left_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
@@ -121,7 +121,7 @@ void Datebox::create_container() {
     for (unsigned i = 0; i < 6; i++) {
         auto row = day_selection_container->add_widget<Container>();
         row->set_layout<HorizontalBoxLayout>().set_spacing(2);
-        row->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
+        row->set_size({ Util::Length::Auto, { 100.0 / 6, Util::Length::Percent } });
         m_calendar_rows.push_back(row);
         for (unsigned i = 0; i < 7; i++)
             m_calendar_contents.push_back({ create_calendar_button(*row), {} });
@@ -129,7 +129,7 @@ void Datebox::create_container() {
 
     auto daytime_container = m_calendar_container->add_widget<Container>();
     daytime_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(5);
-    daytime_container->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
+    daytime_container->set_size({ Util::Length::Auto, { 100.0 / 6, Util::Length::Percent } });
     auto hours = daytime_container->add_widget<Textbox>();
     hours->set_limit(2);
     hours->set_min(0);

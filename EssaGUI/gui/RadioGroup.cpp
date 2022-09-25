@@ -54,7 +54,7 @@ void RadioGroup::set_index(size_t index) {
 
 void RadioGroup::add_radio(const Util::UString& caption) {
     m_buttons.push_back(add_widget<RadioButton>());
-    m_buttons.back()->set_size({ Length::Auto, m_row_height });
+    m_buttons.back()->set_size({ Util::Length::Auto, m_row_height });
     m_buttons.back()->set_caption(caption);
 }
 

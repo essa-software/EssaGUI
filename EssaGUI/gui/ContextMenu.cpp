@@ -62,7 +62,7 @@ void MenuWidget::handle_event(Event& event) {
 
 class Separator : public Widget {
 private:
-    virtual LengthVector initial_size() const override { return { Length::Auto, 10.0_px }; }
+    virtual LengthVector initial_size() const override { return { Util::Length::Auto, 10.0_px }; }
 
     virtual void draw(Window& window) const override {
         RectangleDrawOptions rect;
@@ -81,7 +81,7 @@ ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_m
 
     if (!context_menu.title().is_empty()) {
         auto title_textfield = container.add_widget<Textfield>();
-        title_textfield->set_size({ Length::Auto, 30.0_px });
+        title_textfield->set_size({ Util::Length::Auto, 30.0_px });
         title_textfield->set_content(context_menu.title());
         title_textfield->set_padding(10);
         title_textfield->set_font_size(18);

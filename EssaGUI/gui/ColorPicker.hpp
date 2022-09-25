@@ -21,7 +21,7 @@ private:
         return theme().text_button;
     }
     virtual void draw(GUI::Window& window) const override;
-    virtual LengthVector initial_size() const override { return { Length::Auto, 30.0_px }; }
+    virtual LengthVector initial_size() const override { return { Util::Length::Auto, 30.0_px }; }
 };
 
 }

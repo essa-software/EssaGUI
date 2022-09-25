@@ -21,11 +21,11 @@ Prompt::Prompt(HostWindow& window, Util::UString help_text, Util::UString window
 
     auto input_container = container.add_widget<GUI::Container>();
     input_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-    input_container->set_size({ Length::Auto, 30.0_px });
+    input_container->set_size({ Util::Length::Auto, 30.0_px });
 
     {
         auto label = input_container->add_widget<GUI::Textfield>();
-        label->set_size({ 150.0_px, Length::Auto });
+        label->set_size({ 150.0_px, Util::Length::Auto });
         label->set_content(help_text);
     }
     auto input = input_container->add_widget<GUI::Textbox>();
@@ -37,7 +37,7 @@ Prompt::Prompt(HostWindow& window, Util::UString help_text, Util::UString window
     // FIXME: Also, why buttons are red by default?
     auto button_container = container.add_widget<GUI::Container>();
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-    button_container->set_size({ Length::Auto, 30.0_px });
+    button_container->set_size({ Util::Length::Auto, 30.0_px });
     {
         auto cancel_button = button_container->add_widget<GUI::TextButton>();
         cancel_button->set_alignment(GUI::Align::Center);

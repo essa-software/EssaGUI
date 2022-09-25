@@ -29,7 +29,7 @@ int main() {
 
     auto container2 = container1.add_widget<GUI::Container>();
     container2->set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
-    container2->set_size({ 250.0_px, Length::Auto });
+    container2->set_size({ 250.0_px, Util::Length::Auto });
 
     auto btn1 = container2->add_widget<GUI::TextButton>();
     btn1->set_alignment(GUI::Align::Center);

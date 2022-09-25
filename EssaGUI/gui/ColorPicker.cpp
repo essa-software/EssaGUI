@@ -113,10 +113,10 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
         submit_container_layout.set_spacing(10);
         submit_container_layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
 
-        submit_container->set_size({ Length::Auto, 30.0_px });
+        submit_container->set_size({ Util::Length::Auto, 30.0_px });
 
         auto ok_button = submit_container->add_widget<TextButton>();
-        ok_button->set_size({ 80.0_px, Length::Auto });
+        ok_button->set_size({ 80.0_px, Util::Length::Auto });
         ok_button->set_content("OK");
         ok_button->on_click = [this]() {
             m_ok_clicked = true;
@@ -124,7 +124,7 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
         };
 
         auto cancel_button = submit_container->add_widget<TextButton>();
-        cancel_button->set_size({ 80.0_px, Length::Auto });
+        cancel_button->set_size({ 80.0_px, Util::Length::Auto });
         cancel_button->set_content("Cancel");
         cancel_button->on_click = [this]() {
             close();

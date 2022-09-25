@@ -38,8 +38,8 @@ public:
     }
     bool allow_multichoose() const { return m_allow_multichoose; }
 
-    void set_row_height(Length const& height);
-    Length get_row_height() const { return m_row_height; }
+    void set_row_height(Util::Length const& height);
+    Util::Length get_row_height() const { return m_row_height; }
 
     std::function<void(size_t, bool)> on_change;
 
@@ -54,7 +54,7 @@ public:
 private:
     bool m_sort_list = false;
     bool m_allow_multichoose = false;
-    Length m_row_height = 15.0_px;
+    Util::Length m_row_height = 15.0_px;
 
     std::vector<size_t> m_index_vector;
 

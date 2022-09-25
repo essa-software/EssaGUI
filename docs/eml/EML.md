@@ -83,7 +83,7 @@ Widget size component with unit.
 ```qml
 width: 100px    // 50.0_perc or Length{50, Length::Unit::Perc}
 width: 50%      // 50.0_perc or Length{50, Length::Unit::Perc}
-width: auto     // Length::Auto
+width: auto     // Util::Length::Auto
 width: initial  // Length::Initial
 ```
 

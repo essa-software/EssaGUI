@@ -32,7 +32,7 @@ void Listbox::add(const Util::UString& label) {
     btn->set_content(label);
     btn->set_active_content(label);
     btn->set_alignment(Align::Center);
-    btn->set_size({ Length::Auto, m_row_height });
+    btn->set_size({ Util::Length::Auto, m_row_height });
     btn->set_toggleable(true);
 
     if (!m_allow_multichoose && m_index_vector.size() == 0) {
@@ -89,11 +89,11 @@ void Listbox::remove(const Util::UString& label) {
     m_index_vector = std::move(new_indexes);
 }
 
-void Listbox::set_row_height(const Length& height) {
+void Listbox::set_row_height(Util::Length const& height) {
     m_row_height = height;
 
     for (const auto& btn : m_list_buttons) {
-        btn->set_size({ Length::Auto, m_row_height });
+        btn->set_size({ Util::Length::Auto, m_row_height });
     }
 }
 

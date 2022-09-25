@@ -22,7 +22,7 @@ void Grid::set_height(size_t height) {
     for (size_t i = m_height; i < height; i++) {
         auto line = add_widget<Container>();
         line->set_layout<HorizontalBoxLayout>().set_spacing(m_spacing);
-        line->set_size({ Length::Auto, { m_line_height, Length::Px } });
+        line->set_size({ Util::Length::Auto, { m_line_height, Util::Length::Px } });
 
         m_cells[i].resize(m_width);
 
@@ -77,7 +77,7 @@ void Grid::set_line_height(float height) {
     m_line_height = height;
 
     for (auto& line : m_widgets) {
-        line->set_size({ Length::Auto, { m_line_height, Length::Px } });
+        line->set_size({ Util::Length::Auto, { m_line_height, Util::Length::Px } });
     }
 }
 

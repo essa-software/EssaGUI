@@ -24,7 +24,7 @@ void ValueSlider::on_init() {
     auto& layout = set_layout<HorizontalBoxLayout>();
     layout.set_spacing(5);
     m_name_textfield = add_widget<Textfield>();
-    m_name_textfield->set_size({ 100.0_px, Length::Auto });
+    m_name_textfield->set_size({ 100.0_px, Util::Length::Auto });
     m_slider = add_widget<Slider>();
     m_slider->on_change = [this](double value) {
         m_textbox->set_content(serialize_value(value, m_slider->step()), NotifyUser::No);
@@ -48,7 +48,7 @@ void ValueSlider::on_init() {
         }
     };
     m_unit_textfield = add_widget<Textfield>();
-    m_unit_textfield->set_size({ 50.0_px, Length::Auto });
+    m_unit_textfield->set_size({ 50.0_px, Util::Length::Auto });
 }
 
 double ValueSlider::value() const {

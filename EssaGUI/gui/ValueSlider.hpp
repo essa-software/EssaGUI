@@ -18,8 +18,8 @@ public:
     double step() const { return m_slider->step(); }
     void set_step(double step) { m_slider->set_step(step); }
 
-    void set_name_textfield_size(Length l) { m_name_textfield->set_size({ l, Length::Auto }); }
-    void set_unit_textfield_size(Length l) { m_unit_textfield->set_size({ l, Length::Auto }); }
+    void set_name_textfield_size(Util::Length l) { m_name_textfield->set_size({ l, Util::Length::Auto }); }
+    void set_unit_textfield_size(Util::Length l) { m_unit_textfield->set_size({ l, Util::Length::Auto }); }
 
     void set_name(Util::UString name) { m_name_textfield->set_content(std::move(name)); }
     void set_unit(Util::UString unit) { m_unit_textfield->set_content(std::move(unit)); }
@@ -32,7 +32,7 @@ public:
     std::function<void(double)> on_change;
 
 private:
-    virtual LengthVector initial_size() const override { return { Length::Auto, { static_cast<float>(theme().line_height), Length::Unit::Px } }; }
+    virtual LengthVector initial_size() const override { return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } }; }
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 

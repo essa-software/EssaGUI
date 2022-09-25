@@ -125,11 +125,11 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
             return error("Expected unit, got EOF");
         if (maybe_unit->type() == TokenType::PercentSign) {
             get();
-            return Length { static_cast<float>(number), Length::Percent };
+            return Util::Length { static_cast<float>(number), Util::Length::Percent };
         }
         if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px") {
             get();
-            return Length { static_cast<float>(number), Length::Px };
+            return Util::Length { static_cast<float>(number), Util::Length::Px };
         }
         if (maybe_unit->type() == TokenType::DoubleDot) {
             get();
@@ -141,9 +141,9 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
     case TokenType::Identifier: {
         get();
         if (token->value() == "auto")
-            return Length { Length::Auto };
+            return Util::Length { Util::Length::Auto };
         if (token->value() == "initial")
-            return Length { Length::Initial };
+            return Util::Length { Util::Length::Initial };
         if (token->value() == "true")
             return true;
         if (token->value() == "false")

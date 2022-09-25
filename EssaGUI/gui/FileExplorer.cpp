@@ -192,11 +192,11 @@ FileExplorer::FileExplorer(HostWindow& window)
     auto& container = set_main_widget<GUI::Container>();
     container.set_layout<VerticalBoxLayout>().set_spacing(1);
 
-    Length toolbar_height = { static_cast<float>(theme().line_height), Length::Unit::Px };
+    Util::Length toolbar_height = { static_cast<float>(theme().line_height), Util::Length::Unit::Px };
 
     auto toolbar = container.add_widget<Container>();
     toolbar->set_layout<HorizontalBoxLayout>();
-    toolbar->set_size({ Length::Auto, toolbar_height });
+    toolbar->set_size({ Util::Length::Auto, toolbar_height });
 
     m_path_textbox = toolbar->add_widget<Textbox>();
     m_path_textbox->set_type(Textbox::Type::TEXT);
@@ -206,13 +206,13 @@ FileExplorer::FileExplorer(HostWindow& window)
     parent_directory_button->set_image(&parent_directory_icon);
     parent_directory_button->set_tooltip_text("Parent");
     parent_directory_button->set_alignment(Align::Center);
-    parent_directory_button->set_size({ toolbar_height, Length::Auto });
+    parent_directory_button->set_size({ toolbar_height, Util::Length::Auto });
 
     auto create_directory_button = toolbar->add_widget<TextButton>();
     create_directory_button->set_image(&new_folder_icon);
     create_directory_button->set_tooltip_text("Create folder");
     create_directory_button->set_alignment(Align::Center);
-    create_directory_button->set_size({ toolbar_height, Length::Auto });
+    create_directory_button->set_size({ toolbar_height, Util::Length::Auto });
     create_directory_button->on_click = [&]() {
         auto path = GUI::prompt(host_window(), "Folder name: ", "Create folder");
         if (path.has_value()) {
@@ -232,7 +232,7 @@ FileExplorer::FileExplorer(HostWindow& window)
     create_file_button->set_image(&new_file_icon);
     create_file_button->set_tooltip_text("Create file");
     create_file_button->set_alignment(Align::Center);
-    create_file_button->set_size({ 30.0_px, Length::Auto });
+    create_file_button->set_size({ 30.0_px, Util::Length::Auto });
     create_file_button->on_click = [&]() {
         auto file_name = GUI::prompt(host_window(), "File name with extension: ", "Create file");
         if (file_name.has_value()) {
@@ -246,7 +246,7 @@ FileExplorer::FileExplorer(HostWindow& window)
 
     auto find = toolbar->add_widget<Textbox>();
     find->set_placeholder("Find file or directory");
-    find->set_size({ { 25.0, Length::Percent }, Length::Auto });
+    find->set_size({ { 25.0, Util::Length::Percent }, Util::Length::Auto });
     find->set_type(Textbox::Type::TEXT);
     find->on_change = [&](Util::UString const& content) {
         // FIXME: The encode() hack
@@ -283,7 +283,7 @@ FileExplorer::FileExplorer(HostWindow& window)
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(1);
 
     auto sidebar = main_container->add_widget<Container>();
-    sidebar->set_size({ { 20.0, Length::Percent }, Length::Auto });
+    sidebar->set_size({ { 20.0, Util::Length::Percent }, Util::Length::Auto });
     sidebar->set_layout<GUI::VerticalBoxLayout>();
     sidebar->set_background_color(theme().sidebar);
 
@@ -337,12 +337,12 @@ FileExplorer::FileExplorer(HostWindow& window)
 
     auto open_folder_container = container.add_widget<GUI::Container>();
     open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    open_folder_container->set_size({ Length::Auto, 40.0_px });
+    open_folder_container->set_size({ Util::Length::Auto, 40.0_px });
     open_folder_container->set_background_color(theme().sidebar);
     auto footer_text = open_folder_container->add_widget<GUI::Textfield>();
     footer_text->set_content("Choose folder to open: ");
     footer_text->set_alignment(GUI::Align::CenterRight);
-    footer_text->set_size({ { 70.0, Length::Percent }, Length::Auto });
+    footer_text->set_size({ { 70.0, Util::Length::Percent }, Util::Length::Auto });
 
     auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
     open_directory_btn->set_content("Open folder");

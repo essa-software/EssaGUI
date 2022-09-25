@@ -35,7 +35,7 @@ LengthVector Textfield::initial_size() const {
     text.font_size = m_font_size;
     text.text_align = m_alignment;
     auto size = Window::calculate_text_size(m_content, Application::the().font(), text);
-    return { { static_cast<float>(size.x() + m_padding * 2), Length::Px }, { static_cast<float>(size.y() + m_padding * 2), Length::Px } };
+    return { { static_cast<float>(size.x() + m_padding * 2), Util::Length::Px }, { static_cast<float>(size.y() + m_padding * 2), Util::Length::Px } };
 }
 
 EML::EMLErrorOr<void> Textfield::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

@@ -17,7 +17,7 @@ public:
         m_widgets.clear();
 
         auto child = add_widget<T>(std::forward<Args>(args)...);
-        child->set_size({ Length::Auto, Length::Auto });
+        child->set_size({ Util::Length::Auto, Util::Length::Auto });
 
         return child;
     }

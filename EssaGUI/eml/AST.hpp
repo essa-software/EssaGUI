@@ -5,8 +5,8 @@
 
 #include <EssaGUI/gfx/ResourceManager.hpp>
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/Length.hpp>
 #include <EssaUtil/UString.hpp>
-#include <EssaUtil/Units.hpp>
 #include <cstdint>
 #include <list>
 #include <variant>
@@ -85,7 +85,7 @@ private:
     std::vector<Value> m_values;
 };
 
-using ValueVariant = std::variant<double, bool, Util::UString, Object, Length, Gfx::ResourceId, Range, Array, Util::Color>;
+using ValueVariant = std::variant<double, bool, Util::UString, Object, Util::Length, Gfx::ResourceId, Range, Array, Util::Color>;
 
 #define VALUE_TYPE(Type, camel_case)                                                                              \
     Value(Type v)                                                                                                 \
@@ -106,7 +106,7 @@ public:
     VALUE_TYPE(bool, bool)
     VALUE_TYPE(Util::UString, string)
     VALUE_TYPE(Object, object)
-    VALUE_TYPE(Length, length)
+    VALUE_TYPE(Util::Length, length)
     VALUE_TYPE(Gfx::ResourceId, resource_id)
     VALUE_TYPE(Range, range)
     VALUE_TYPE(Array, array)

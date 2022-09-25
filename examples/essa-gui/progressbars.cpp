@@ -30,7 +30,7 @@ int main() {
         auto prog1 = con.add_widget<GUI::Progressbar>();
         prog1->set_max(100);
         prog1->set_content(content);
-        prog1->set_size({ Length::Auto, 30.0_px });
+        prog1->set_size({ Util::Length::Auto, 30.0_px });
         prog1->set_progressbar_color(color);
         prog1->set_labelling(label);
         // prog1->set_step(1);

@@ -12,7 +12,7 @@ void SettingsMenu::on_init() {
     layout.set_spacing(10);
     m_buttons_container = add_widget<Container>();
     {
-        m_buttons_container->set_size({ 72.0_px, Length::Auto });
+        m_buttons_container->set_size({ 72.0_px, Util::Length::Auto });
         auto& buttons_container_layout = m_buttons_container->set_layout<VerticalBoxLayout>();
         buttons_container_layout.set_spacing(10);
     }

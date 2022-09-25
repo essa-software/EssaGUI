@@ -15,10 +15,10 @@ void SelectWidget<T>::on_init() {
     // m_textfield->set_display_attributes(Util::Color(220, 220, 220), Util::Color(120, 120, 120), Util::Color(30, 30, 30));
 
     m_elements_container->set_layout<VerticalBoxLayout>();
-    m_elements_container->set_size({ Length::Auto, 0.0_px });
+    m_elements_container->set_size({ Util::Length::Auto, 0.0_px });
 
     m_expand_button->on_change = [this]() {
-        this->m_elements_container->set_size({ Length::Auto, this->m_contents.size() });
+        this->m_elements_container->set_size({ Util::Length::Auto, this->m_contents.size() });
     };
 }
 

@@ -35,19 +35,19 @@ void BoxLayout::run(Container& container) {
 
         float raw_size = 0;
         switch (w->size().main(m_orientation).unit()) {
-        case Length::Px:
-        case Length::PxOtherSide:
+        case Util::Length::Px:
+        case Util::Length::PxOtherSide:
             // std::cout << "test" << std::endl;
             raw_size = w->size().main(m_orientation).value();
             break;
-        case Length::Percent:
+        case Util::Length::Percent:
             // std::cout << raw_size << std::endl;
             raw_size = w->size().main(m_orientation).value() * (container.raw_size().main(m_orientation) - total_spacing_size) / 100.0;
             break;
-        case Length::Auto:
+        case Util::Length::Auto:
             raw_size = 0;
             break;
-        case Length::Initial:
+        case Util::Length::Initial:
             ESSA_UNREACHABLE;
         }
         w->set_raw_size(Util::Vector2f::from_main_cross(
@@ -62,7 +62,7 @@ void BoxLayout::run(Container& container) {
     for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
-        if (w->size().main(m_orientation).unit() == Length::Auto)
+        if (w->size().main(m_orientation).unit() == Util::Length::Auto)
             autosized_widget_count++;
         else
             available_size_for_autosized_widgets -= w->raw_size().main(m_orientation) + m_spacing;
@@ -79,7 +79,7 @@ void BoxLayout::run(Container& container) {
         for (auto& w : container.widgets()) {
             if (!w->is_visible())
                 continue;
-            if (w->size().main(m_orientation).unit() == Length::Auto) {
+            if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
                 w->set_raw_size(Util::Vector2f::from_main_cross(
                     m_orientation,
                     autosized_widget_size,
@@ -99,7 +99,7 @@ void BoxLayout::run(Container& container) {
             auto& w = *it;
             if (!w->is_visible())
                 continue;
-            if (w->size().main(m_orientation).unit() == Length::Auto) {
+            if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
                 w->set_raw_size(Util::Vector2f::from_main_cross(
                     m_orientation,
                     autosized_widget_size,
@@ -133,25 +133,25 @@ EML_REGISTER_CLASS(HorizontalBoxLayout);
 EML_REGISTER_CLASS(VerticalBoxLayout);
 
 void BasicLayout::run(Container& container) {
-    auto resolve_position = [&](double container_size, double widget_size, Length const& input_position) -> float {
+    auto resolve_position = [&](double container_size, double widget_size, Util::Length const& input_position) -> float {
         switch (input_position.unit()) {
-        case Length::Px:
+        case Util::Length::Px:
             return input_position.value();
-        case Length::PxOtherSide:
+        case Util::Length::PxOtherSide:
             return container_size - widget_size - input_position.value();
-        case Length::Percent:
+        case Util::Length::Percent:
             return widget_size * container_size / 100.0;
         default:
             return 0;
         }
     };
 
-    auto resolve_size = [&](double container_size, Length const& size) -> float {
+    auto resolve_size = [&](double container_size, Util::Length const& size) -> float {
         switch (size.unit()) {
-        case Length::Px:
-        case Length::PxOtherSide:
+        case Util::Length::Px:
+        case Util::Length::PxOtherSide:
             return size.value();
-        case Length::Percent:
+        case Util::Length::Percent:
             return size.value() * container_size / 100.0;
         default:
             return 0;
@@ -290,9 +290,9 @@ void Container::relayout() {
         return;
     for (auto& w : m_widgets) {
         auto initial_size = w->initial_size();
-        if (w->m_input_size.x == Length::Initial)
+        if (w->m_input_size.x == Util::Length::Initial)
             w->m_input_size.x = initial_size.x;
-        if (w->m_input_size.y == Length::Initial)
+        if (w->m_input_size.y == Util::Length::Initial)
             w->m_input_size.y = initial_size.y;
     }
     if (!m_layout) {

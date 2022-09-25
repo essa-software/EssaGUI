@@ -67,7 +67,7 @@ void TabSelectWidget::switch_to_tab(size_t index) {
 void TabWidget::on_init() {
     set_layout<VerticalBoxLayout>();
     m_tab_select = add_widget<TabSelectWidget>();
-    m_tab_select->set_size({ Length::Auto, 30.0_px });
+    m_tab_select->set_size({ Util::Length::Auto, 30.0_px });
     m_tab_container = add_widget<Container>();
     m_tab_container->set_layout<BasicLayout>();
 }
@@ -89,7 +89,7 @@ void TabWidget::switch_to_tab(size_t index) {
 
 void TabWidget::setup_tab(Util::UString caption, Container* tab) {
     tab->set_background_color(theme().tab_button.active.unhovered.background);
-    tab->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    tab->set_size({ { 100, Util::Length::Percent }, { 100, Util::Length::Percent } });
     tab->set_visible(m_tabs.size() == 0);
     m_tab_select->add_button(std::move(caption), m_tabs.size());
     m_tabs.push_back(tab);

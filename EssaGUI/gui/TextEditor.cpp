@@ -32,7 +32,7 @@ Util::Vector2f TextEditor::content_size() const {
 }
 
 LengthVector TextEditor::initial_size() const {
-    return m_multiline ? LengthVector {} : LengthVector { Length::Auto, 30.0_px };
+    return m_multiline ? LengthVector {} : LengthVector { Util::Length::Auto, 30.0_px };
 }
 
 TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {

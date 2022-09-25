@@ -18,7 +18,7 @@ public:
     size_t get_index() const { return m_index; }
     virtual void update() override;
 
-    CREATE_VALUE(Length, row_height, 15.0_px)
+    CREATE_VALUE(Util::Length, row_height, 15.0_px)
 
     std::function<void(size_t)> on_change;
 

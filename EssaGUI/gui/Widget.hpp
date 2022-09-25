@@ -39,16 +39,16 @@ class TooltipOverlay;
 class WidgetTreeRoot;
 
 struct LengthVector {
-    Length x;
-    Length y;
+    Util::Length x;
+    Util::Length y;
 
-    Length main(Util::Orientation o) const {
+    Util::Length main(Util::Orientation o) const {
         if (o == Util::Orientation::Horizontal)
             return x;
         return y;
     }
 
-    Length cross(Util::Orientation o) const {
+    Util::Length cross(Util::Orientation o) const {
         if (o == Util::Orientation::Vertical)
             return x;
         return y;
@@ -218,9 +218,9 @@ private:
     virtual LengthVector initial_size() const { return LengthVector {}; }
 
     Container* m_parent = nullptr;
-    WidgetTreeRoot* m_widget_tree_root = nullptr;
+WidgetTreeRoot* m_widget_tree_root = nullptr;
     LengthVector m_expected_pos;
-    LengthVector m_input_size { Length::Initial, Length::Initial };
+    LengthVector m_input_size { Util::Length::Initial, Util::Length::Initial };
 
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;

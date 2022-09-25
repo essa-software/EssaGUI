@@ -24,11 +24,11 @@ FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UStrin
 
     auto input_container = container.add_widget<Container>();
     input_container->set_layout<HorizontalBoxLayout>().set_spacing(20);
-    input_container->set_size({ Length::Auto, 30.0_px });
+    input_container->set_size({ Util::Length::Auto, 30.0_px });
 
     {
         auto label = input_container->add_widget<Textfield>();
-        label->set_size({ 160.0_px, Length::Auto });
+        label->set_size({ 160.0_px, Util::Length::Auto });
         label->set_content(help_text);
     }
     auto input = input_container->add_widget<Textbox>();
@@ -57,7 +57,7 @@ FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UStrin
     // FIXME: Also, why buttons are red by default?
     auto button_container = container.add_widget<Container>();
     button_container->set_layout<HorizontalBoxLayout>().set_spacing(20);
-    button_container->set_size({ Length::Auto, 30.0_px });
+    button_container->set_size({ Util::Length::Auto, 30.0_px });
     {
         auto cancel_button = button_container->add_widget<TextButton>();
         cancel_button->set_alignment(Align::Center);
