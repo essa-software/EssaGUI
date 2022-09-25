@@ -1,7 +1,6 @@
 #include "Progressbar.hpp"
 
 #include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaUtil/Rect.hpp>
@@ -22,10 +21,10 @@ Util::UString Progressbar::get_content_with_labelling() const {
     return m_content;
 }
 
-void Progressbar::draw(GUI::Window& window) const {
+void Progressbar::draw(Gfx::Painter& window) const {
     auto theme_colors = theme().textbox.value(*this);
 
-    RectangleDrawOptions background_rect;
+    Gfx::RectangleDrawOptions background_rect;
     background_rect.fill_color = theme_colors.background;
     background_rect.outline_color = is_focused() ? theme().focus_frame : theme_colors.foreground;
     background_rect.outline_thickness = -1;
@@ -36,7 +35,7 @@ void Progressbar::draw(GUI::Window& window) const {
     completed_rect.height -= 4;
     completed_rect.left = 2;
     completed_rect.top = 2;
-    RectangleDrawOptions completed_opt;
+    Gfx::RectangleDrawOptions completed_opt;
     completed_opt.fill_color = m_progressbar_color;
     window.draw_rectangle(completed_rect, completed_opt);
 

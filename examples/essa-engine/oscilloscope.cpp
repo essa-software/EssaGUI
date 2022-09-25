@@ -129,8 +129,8 @@ int main() {
         renderer.clear();
 
         blur_shader.set_framebuffer_size(Util::Vector2f { window.size() });
-        pass1.resize(window.size());
-        accum.resize(window.size());
+        pass1.resize(Util::Vector2u { window.size() });
+        accum.resize(Util::Vector2u { window.size() });
 
         {
             // Draw the first (non-blurred) pass

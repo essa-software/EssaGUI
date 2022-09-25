@@ -15,20 +15,18 @@ WorldDrawScope const* WorldDrawScope::current() {
     return s_current;
 }
 
-WorldDrawScope::WorldDrawScope(WorldView const& view, ClearDepth clear_depth)
-    : m_world_view(view)
-    , m_previous_projection(view.host_window().window().projection()) {
+WorldDrawScope::WorldDrawScope(Gfx::Painter const& painter, ClearDepth clear_depth)
+    : m_previous_projection(painter.builder().projection()) {
 
     if (current())
         return;
-
-    auto& window = view.host_window().window();
-    window.set_active();
 
     glEnable(GL_DEPTH_TEST);
 
     if (clear_depth == ClearDepth::Yes)
         glClear(GL_DEPTH_BUFFER_BIT);
+
+    llgl::set_viewport(m_previous_projection.viewport());
 
     m_parent = current();
     s_current = this;

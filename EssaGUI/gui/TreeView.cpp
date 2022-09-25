@@ -12,7 +12,7 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 constexpr float IndentSize = 24;
 
-void TreeView::draw(GUI::Window& wnd) const {
+void TreeView::draw(Gfx::Painter& wnd) const {
     auto& model = this->model();
 
     auto row_height = theme().line_height;
@@ -34,7 +34,7 @@ void TreeView::draw(GUI::Window& wnd) const {
     // Background
     if (rows > 0) {
         for (size_t r = first_row; r < last_row; r++) {
-            RectangleDrawOptions rs;
+            Gfx::RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
             wnd.draw_rectangle({ Util::Vector2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset(), { row_width, row_height } }, rs);
         }
@@ -43,7 +43,7 @@ void TreeView::draw(GUI::Window& wnd) const {
     // Column names
     float current_y_pos = 0;
     if (display_header()) {
-        RectangleDrawOptions rs;
+        Gfx::RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
         wnd.draw_rectangle({ scroll_offset(), { row_width, row_height } }, rs);
 
@@ -66,7 +66,7 @@ void TreeView::draw(GUI::Window& wnd) const {
     ScrollableWidget::draw_scrollbar(wnd);
 }
 
-void TreeView::render_rows(GUI::Window& window, float& current_y_pos, size_t depth, Model::Node const* parent) const {
+void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, size_t depth, Model::Node const* parent) const {
     auto& model = this->model();
     auto columns = model.column_count();
 
@@ -84,19 +84,19 @@ void TreeView::render_rows(GUI::Window& window, float& current_y_pos, size_t dep
 
         auto child = model.child(parent, r);
 
-        RectangleDrawOptions line_rect;
+        Gfx::RectangleDrawOptions line_rect;
         line_rect.fill_color = theme().placeholder;
         Util::Vector2f line_position { depth * IndentSize - IndentSize / 2, current_y_pos + row_height / 2.f };
         line_position += scroll_offset();
-        window.draw_rectangle({ line_position, { IndentSize / 2, 1 } }, line_rect);
+        painter.draw_rectangle({ line_position, { IndentSize / 2, 1 } }, line_rect);
 
         auto icon = model.icon(child);
         if (icon) {
-            RectangleDrawOptions rect;
+            Gfx::RectangleDrawOptions rect;
             rect.texture = icon;
             Util::Vector2f icon_position { depth * IndentSize + 6, current_y_pos + row_height / 2.f - 8 };
             icon_position += scroll_offset();
-            window.draw_rectangle({ icon_position, { 16, 16 } }, rect);
+            painter.draw_rectangle({ icon_position, { 16, 16 } }, rect);
         }
 
         float first_column_position = depth * IndentSize;
@@ -120,12 +120,12 @@ void TreeView::render_rows(GUI::Window& window, float& current_y_pos, size_t dep
                         text.set_font_size(theme().label_font_size);
                         text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
                         text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
-                        text.draw(window);
+                        text.draw(painter);
                     },
                     [&](llgl::Texture const* data) {
-                        RectangleDrawOptions rect;
+                        Gfx::RectangleDrawOptions rect;
                         rect.texture = data;
-                        window.draw_rectangle({ { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } }, rect);
+                        painter.draw_rectangle({ { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } }, rect);
                     } },
                 data);
 
@@ -135,15 +135,15 @@ void TreeView::render_rows(GUI::Window& window, float& current_y_pos, size_t dep
         current_y_pos += row_height;
 
         lines_end_y = current_y_pos - row_height / 2.f;
-        render_rows(window, current_y_pos, depth + 1, &child);
+        render_rows(painter, current_y_pos, depth + 1, &child);
     }
 
     if (children_count > 0) {
-        RectangleDrawOptions line_rect;
+        Gfx::RectangleDrawOptions line_rect;
         line_rect.fill_color = theme().placeholder;
         Util::Vector2f line_position { depth * IndentSize - IndentSize / 2, lines_start_y };
         line_position += scroll_offset();
-        window.draw_rectangle({ line_position, { 1, lines_end_y - lines_start_y + 1 } }, line_rect);
+        painter.draw_rectangle({ line_position, { 1, lines_end_y - lines_start_y + 1 } }, line_rect);
     }
 };
 

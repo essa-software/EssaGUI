@@ -2,7 +2,6 @@
 
 #include "Application.hpp"
 #include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gfx/Window.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
@@ -13,17 +12,17 @@
 
 namespace GUI {
 
-void Checkbox::draw(GUI::Window& window) const {
+void Checkbox::draw(Gfx::Painter& painter) const {
     auto colors = colors_for_state();
 
     Util::Rectf box(2, 2, raw_size().y() - 4, raw_size().y() - 4);
-    RectangleDrawOptions box_opt;
+    Gfx::RectangleDrawOptions box_opt;
     box_opt.outline_thickness = 1;
     box_opt.outline_color = colors.foreground;
     box_opt.fill_color = colors.background;
+    painter.draw_rectangle(box, box_opt);
 
-    window.draw_rectangle(box, box_opt);
-
+    // TODO: Take advantage of GUIBuilder
     if (is_active()) {
         switch (m_style) {
         case Style::CROSS: {
@@ -37,7 +36,7 @@ void Checkbox::draw(GUI::Window& window) const {
             vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .8f);
             vertex_arr[1] = vert;
 
-            window.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
+            painter.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
 
             vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .8f);
             vertex_arr[0] = vert;
@@ -45,7 +44,7 @@ void Checkbox::draw(GUI::Window& window) const {
             vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .2f);
             vertex_arr[1] = vert;
 
-            window.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
+            painter.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
             break;
         }
         case Style::MARK: {
@@ -62,7 +61,7 @@ void Checkbox::draw(GUI::Window& window) const {
             vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .2f);
             vertex_arr[2] = vert;
 
-            window.draw_vertices(llgl::PrimitiveType::LineStrip, vertex_arr);
+            painter.draw_vertices(llgl::PrimitiveType::LineStrip, vertex_arr);
 
             break;
         }
@@ -75,7 +74,7 @@ void Checkbox::draw(GUI::Window& window) const {
     text.set_fill_color(theme().label.text);
     text.set_font_size(theme().label_font_size);
     text.align(GUI::Align::CenterLeft, text_rect);
-    text.draw(window);
+    text.draw(painter);
 }
 
 Theme::ButtonColors Checkbox::default_button_colors() const {

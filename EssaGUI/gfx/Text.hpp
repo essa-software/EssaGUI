@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EssaGUI/gfx/Window.hpp>
+#include "Painter.hpp"
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaUtil/UString.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
@@ -20,7 +20,7 @@ public:
     void set_position(Util::Vector2f position) { m_position = position; }
     void align(GUI::Align align, Util::Rectf rect);
 
-    void draw(GUI::Window&) const;
+    void draw(Gfx::Painter&) const;
     Util::Vector2u calculate_text_size() const;
     float find_character_position(size_t index) const;
 

@@ -21,11 +21,11 @@ public:
 private:
     Util::Color m_color;
 
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 };
 
-void ColorField::draw(GUI::Window& window) const {
-    RectangleDrawOptions options;
+void ColorField::draw(Gfx::Painter& window) const {
+    Gfx::RectangleDrawOptions options;
     options.fill_color = m_color;
     window.draw_rectangle(local_rect(), options);
 }
@@ -178,16 +178,16 @@ void ColorPicker::on_init() {
     };
 }
 
-void ColorPicker::draw(GUI::Window& window) const {
+void ColorPicker::draw(Gfx::Painter& window) const {
     auto theme_colors = theme().textbox.value(*this);
 
-    RectangleDrawOptions background_rect;
+    Gfx::RectangleDrawOptions background_rect;
     background_rect.fill_color = theme_colors.background;
     background_rect.outline_color = theme_colors.foreground;
     background_rect.outline_thickness = -1;
     window.draw_rectangle(local_rect(), background_rect);
 
-    RectangleDrawOptions color_rect;
+    Gfx::RectangleDrawOptions color_rect;
     color_rect.fill_color = m_color;
     window.draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
 

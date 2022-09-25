@@ -10,11 +10,11 @@
 
 class WorldView : public GUI::WorldView {
 private:
-    virtual void draw(GUI::Window& window) const override {
+    virtual void draw(Gfx::Painter& window) const override {
         Gfx::GUIBuilder builder;
         builder.set_projection(llgl::Projection::ortho({ Util::Rectd { 0, 0, 220 * raw_size().x() / raw_size().y(), 220 } }, Util::Recti { rect() }));
-        builder.add_rectangle({ 25, 25, 50, 50 }, Util::Colors::Red);
-        builder.add_rectangle({ 145, 145, 50, 50 }, Util::Colors::Green);
+        builder.add_rectangle({ 25, 25, 50, 50 }, { .fill_color = Util::Colors::Red });
+        builder.add_rectangle({ 145, 145, 50, 50 }, { .fill_color = Util::Colors::Green });
         builder.add_regular_polygon({ 110, 110 }, 25, 5, Util::Colors::LightBlue);
         builder.add_regular_polygon({ 50, 160 }, 25, 3, Util::Colors::LightYellow);
         builder.add_regular_polygon({ 160, 50 }, 25, 30, Util::Colors::DarkSlateGray);

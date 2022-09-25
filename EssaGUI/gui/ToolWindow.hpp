@@ -28,7 +28,7 @@ public:
 
 protected:
     virtual void handle_event(llgl::Event) override;
-    virtual void draw(GUI::Window&) override;
+    virtual void draw(Gfx::Painter&) override;
 
 private:
     virtual void update() override {

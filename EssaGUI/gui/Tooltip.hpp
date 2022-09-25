@@ -34,7 +34,7 @@ public:
     Util::UString text() const { return m_tooltip.text; }
 
 private:
-    virtual void draw(GUI::Window&) override;
+    virtual void draw(Gfx::Painter&) override;
 
     Tooltip m_tooltip;
 };

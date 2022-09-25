@@ -6,8 +6,9 @@ add_library(EssaGUI SHARED
     eml/Loader.cpp
     eml/Parser.cpp
 
-    gfx/DefaultGUIShader.cpp
     gfx/ClipViewScope.cpp
+    gfx/DefaultGUIShader.cpp
+    gfx/Painter.cpp
     gfx/ResourceManager.cpp
     gfx/Text.cpp
     gfx/Window.cpp

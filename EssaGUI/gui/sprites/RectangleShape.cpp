@@ -4,8 +4,8 @@
 
 namespace GUI {
 
-void RectangleShape::draw(Window& window) const {
-    RectangleDrawOptions options;
+void RectangleShape::draw(Gfx::Painter& painter) const {
+    Gfx::RectangleDrawOptions options;
     options.fill_color = background_color();
     options.outline_color = foreground_color();
     options.outline_thickness = outline_thickness();
@@ -14,7 +14,7 @@ void RectangleShape::draw(Window& window) const {
     options.border_radius_bottom_left = m_border_radius[2];
     options.border_radius_top_right = m_border_radius[3];
 
-    window.draw_rectangle(rect(), options);
+    painter.draw_rectangle(rect(), options);
 }
 
 void RectangleShape::set_border_radius(RectangleVertex vert, float value) {

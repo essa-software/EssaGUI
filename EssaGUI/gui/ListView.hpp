@@ -13,7 +13,7 @@ namespace GUI {
 
 class ListView : public AbstractListView {
 public:
-    virtual void draw(GUI::Window&) const override;
+    virtual void draw(Gfx::Painter&) const override;
     virtual void handle_event(Event&) override;
 
     std::function<void(unsigned)> on_click;

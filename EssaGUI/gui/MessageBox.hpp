@@ -2,8 +2,6 @@
 
 #include "ToolWindow.hpp"
 
-#include <EssaGUI/gfx/Window.hpp>
-
 namespace GUI {
 
 class Button;

@@ -7,7 +7,6 @@
 #include "Vertex.hpp"
 #include "VertexArray.hpp"
 
-
 namespace llgl {
 
 class Renderer {

@@ -1,17 +1,16 @@
 #include "ArrowButton.hpp"
 
-#include <EssaGUI/gfx/Window.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <iostream>
 
 namespace GUI {
 
-void ArrowButton::draw(GUI::Window& window) const {
+void ArrowButton::draw(Gfx::Painter& painter) const {
     auto colors = colors_for_state();
 
-    RectangleDrawOptions options;
+    Gfx::RectangleDrawOptions options;
     options.fill_color = colors.background;
-    window.draw_rectangle({ {}, raw_size() }, options);
+    painter.draw_rectangle({ {}, raw_size() }, options);
 
     const Util::Vector2f midpoint = raw_size() / 2.f;
 
@@ -56,7 +55,8 @@ void ArrowButton::draw(GUI::Window& window) const {
         arrow[2] = Gfx::Vertex { points[7], arrow_color, {} };
         break;
     }
-    window.draw_vertices(llgl::PrimitiveType::Triangles, arrow);
+    // TODO: Take advantage of GUIBuilder
+    painter.draw_vertices(llgl::PrimitiveType::Triangles, arrow);
 }
 
 EML::EMLErrorOr<void> ArrowButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

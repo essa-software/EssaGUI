@@ -28,7 +28,7 @@ struct TextPosition {
 class TextEditor : public ScrollableWidget {
 public:
     virtual void handle_event(Event&) override;
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 
     Util::UString content() const;
     void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);

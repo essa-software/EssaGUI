@@ -5,7 +5,6 @@
 #include "Textfield.hpp"
 #include "Widget.hpp"
 #include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gfx/Window.hpp>
 #include <LLGL/Window/Mouse.hpp>
 
 namespace GUI {
@@ -25,7 +24,7 @@ Util::Rectf MenuWidget::item_rect(size_t index) const {
     return { 0, index * MenuItemHeight, MenuWidth, MenuItemHeight };
 }
 
-void MenuWidget::draw(Window& window) const {
+void MenuWidget::draw(Gfx::Painter& painter) const {
     Gfx::Text text { "", Application::the().font() };
     text.set_font_size(14);
     text.set_fill_color(theme().menu.text);
@@ -38,13 +37,13 @@ void MenuWidget::draw(Window& window) const {
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
         if (background_rect.contains(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - raw_position())) {
-            RectangleDrawOptions hovered_background;
+            Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
-            window.draw_rectangle(background_rect, hovered_background);
+            painter.draw_rectangle(background_rect, hovered_background);
         }
         text.set_string(action);
         text.align(Align::CenterLeft, text_align_rect);
-        text.draw(window);
+        text.draw(painter);
         index++;
     }
 }
@@ -65,10 +64,10 @@ class Separator : public Widget {
 private:
     virtual LengthVector initial_size() const override { return { Util::Length::Auto, 10.0_px }; }
 
-    virtual void draw(Window& window) const override {
-        RectangleDrawOptions rect;
+    virtual void draw(Gfx::Painter& painter) const override {
+        Gfx::RectangleDrawOptions rect;
         rect.fill_color = theme().menu.foreground;
-        window.draw_rectangle({ 10, raw_size().y() / 2, raw_size().x() - 20, 1 }, rect);
+        painter.draw_rectangle({ 10, raw_size().y() / 2, raw_size().x() - 20, 1 }, rect);
     }
 };
 
@@ -120,14 +119,14 @@ void ContextMenuOverlay::handle_event(llgl::Event event) {
     }
 }
 
-void ContextMenuOverlay::draw(Window& window) {
-    RectangleDrawOptions background;
+void ContextMenuOverlay::draw(Gfx::Painter& painter) {
+    Gfx::RectangleDrawOptions background;
     background.fill_color = theme().menu.background;
     background.outline_color = theme().menu.foreground;
     background.outline_thickness = -1;
-    window.draw_rectangle(rect(), background);
+    painter.draw_rectangle(rect(), background);
 
-    WidgetTreeRoot::draw(window);
+    WidgetTreeRoot::draw(painter);
 }
 
 }

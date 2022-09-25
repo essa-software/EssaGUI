@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Overlay.hpp"
-#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Widget.hpp>
 #include <EssaUtil/UString.hpp>
 
@@ -18,7 +17,7 @@ private:
     std::vector<Util::UString> m_actions;
 
     Util::Rectf item_rect(size_t index) const;
-    virtual void draw(Window&) const override;
+    virtual void draw(Gfx::Painter&) const override;
     virtual void handle_event(Event& event) override;
 };
 
@@ -45,7 +44,7 @@ public:
 
 private:
     virtual void handle_event(llgl::Event) override;
-    virtual void draw(Window&) override;
+    virtual void draw(Gfx::Painter&) override;
 
     MenuWidget* m_menu_widget = nullptr;
     ContextMenu m_context_menu;

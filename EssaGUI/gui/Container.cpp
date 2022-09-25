@@ -177,7 +177,7 @@ void Container::do_relayout() {
     }
 }
 
-void Container::do_draw(GUI::Window& window) const {
+void Container::do_draw(Gfx::Painter& window) const {
     Widget::do_draw(window);
     for (auto const& w : m_widgets) {
         if (w->is_visible())

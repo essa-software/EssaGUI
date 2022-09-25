@@ -1,19 +1,16 @@
 // lighting shader which takes light pos, light color and vertex pos+tex coord+normal
 
-struct MyLightingShader : public llgl::Shader {
+struct MyLightingShader : public llgl::GeneratedShader {
     llgl::Shader::Uniform<Vector3f> light_pos;
     llgl::Shader::Uniform<Color> light_color;
     llgl::Shader::UniformOptionalSampler2D<0> texture;
 
-    using Vertex = llgl::VertexFormat<llgl::Vertex::Position::XYZ, llgl::Vertex::TexCoord::UV, llgl::Vertex::Normal::XYZ>;
+    using Vertex = llgl::Vertex<llgl::Vertex::Position::XYZ, llgl::Vertex::TexCoord::UV, llgl::Vertex::Normal::XYZ>;
     
     constexpr MyLightingShader() {
         add(light_pos);
         add(light_color);
         add(texture);
-        add(position);
-        add(tex_coord);
-        add(normal);
 
         auto vert = vertex_shader().main();
         vert->set(Result::Position, Function::TransformLocalToClip{vertex().position});
@@ -26,7 +23,7 @@ struct MyLightingShader : public llgl::Shader {
 }
 
 
-llgl::VertexArray<> vertex_array {
+llgl::VertexArray<MyLightingShader::Vertex> vertex_array {
     {0,0,0}, {0, 0}, {0,0,0}
 };
 

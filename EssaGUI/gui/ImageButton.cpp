@@ -1,25 +1,24 @@
 #include "ImageButton.hpp"
 
-#include <EssaGUI/gfx/Window.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
 #include <array>
 
 namespace GUI {
 
-void ImageButton::draw(GUI::Window& window) const {
+void ImageButton::draw(Gfx::Painter& painter) const {
     auto colors = colors_for_state();
 
-    DrawOptions cs_bg;
+    Gfx::DrawOptions cs_bg;
     cs_bg.fill_color = colors.background;
     cs_bg.outline_color = colors.foreground;
     cs_bg.outline_thickness = -0.05;
-    window.draw_ellipse(raw_size() / 2.f, raw_size(), cs_bg);
+    painter.draw_ellipse(raw_size() / 2.f, raw_size(), cs_bg);
 
     if (!m_image)
         return;
-    RectangleDrawOptions sprite;
+    Gfx::RectangleDrawOptions sprite;
     sprite.texture = m_image;
-    window.draw_rectangle(local_rect(), sprite);
+    painter.draw_rectangle(local_rect(), sprite);
 }
 
 LengthVector ImageButton::initial_size() const {

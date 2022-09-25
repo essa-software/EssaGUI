@@ -13,23 +13,30 @@ namespace Gfx {
 
 struct GUIBuilderRenderRange : public llgl::RenderRange {
     llgl::Projection projection;
+    llgl::Texture const* texture = nullptr;
 };
 
 // Builder optimized for generating 2D GUI components, widgets etc.
 class GUIBuilder : public llgl::Builder<Vertex, GUIBuilderRenderRange> {
 public:
-    void add_rectangle(Util::Rectf const& rect, Util::Colorf const& color = Util::Colors::White, Util::Rectf const& texture_rect = {}) {
+    struct RectangleDrawOptions {
+        llgl::Texture const* texture = nullptr;
+        Util::Rectf texture_rect;
+        Util::Colorf fill_color;
+    };
+
+    void add_rectangle(Util::Rectf const& rect, RectangleDrawOptions const& options) {
         add({
-            create_vertex(Util::Vector3f { rect.left, rect.top, 0 }, color,
-                Util::Vector2f { texture_rect.left, texture_rect.top }, Util::Vector3f {}),
-            create_vertex(Util::Vector3f { rect.left + rect.width, rect.top, 0 }, color,
-                Util::Vector2f { texture_rect.left + texture_rect.width, texture_rect.top }, Util::Vector3f {}),
-            create_vertex(Util::Vector3f { rect.left, rect.top + rect.height, 0 }, color,
-                Util::Vector2f { texture_rect.left, texture_rect.top + texture_rect.height }, Util::Vector3f {}),
-            create_vertex(Util::Vector3f { rect.left + rect.width, rect.top + rect.height, 0 }, color,
-                Util::Vector2f { texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height }, Util::Vector3f {}),
+            create_vertex(Util::Vector3f { rect.left, rect.top, 0 }, options.fill_color,
+                Util::Vector2f { options.texture_rect.left, options.texture_rect.top }, Util::Vector3f {}),
+            create_vertex(Util::Vector3f { rect.left + rect.width, rect.top, 0 }, options.fill_color,
+                Util::Vector2f { options.texture_rect.left + options.texture_rect.width, options.texture_rect.top }, Util::Vector3f {}),
+            create_vertex(Util::Vector3f { rect.left, rect.top + rect.height, 0 }, options.fill_color,
+                Util::Vector2f { options.texture_rect.left, options.texture_rect.top + options.texture_rect.height }, Util::Vector3f {}),
+            create_vertex(Util::Vector3f { rect.left + rect.width, rect.top + rect.height, 0 }, options.fill_color,
+                Util::Vector2f { options.texture_rect.left + options.texture_rect.width, options.texture_rect.top + options.texture_rect.height }, Util::Vector3f {}),
         });
-        add_render_range_for_last_vertices(4, llgl::PrimitiveType::TriangleStrip, m_projection);
+        add_render_range_for_last_vertices(4, llgl::PrimitiveType::TriangleStrip, m_projection, options.texture);
     }
 
     void add_regular_polygon(Util::Vector2f center, float radius, size_t vertices, Util::Colorf const& color = Util::Colors::White) {
@@ -42,7 +49,14 @@ public:
         add_render_range_for_last_vertices(vertices + 1, llgl::PrimitiveType::TriangleFan, m_projection);
     }
 
+    void add_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const> vertices, llgl::Texture const* texture) {
+        for (auto const& v : vertices)
+            add(v);
+        add_render_range_for_last_vertices(vertices.size(), mode, m_projection, texture);
+    }
+
     void set_projection(llgl::Projection projection) { m_projection = std::move(projection); }
+    auto projection() const { return m_projection; }
 
 private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::create_vertex;
@@ -50,12 +64,13 @@ private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add_render_range_for_last_vertices;
 
     virtual void render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override {
-        static Gfx::DefaultGUIShader shader;
-        shader.set_projection_matrix(m_projection.matrix());
-        llgl::set_viewport(m_projection.viewport());
-        renderer.draw_vertices(vao, llgl::DrawState { shader, range.type }, range.first, range.size);
+        m_shader.set_projection_matrix(range.projection.matrix());
+        m_shader.set_texture(range.texture);
+        llgl::set_viewport(range.projection.viewport());
+        renderer.draw_vertices(vao, llgl::DrawState { m_shader, range.type }, range.first, range.size);
     }
 
+    mutable Gfx::DefaultGUIShader m_shader;
     llgl::Projection m_projection;
 };
 

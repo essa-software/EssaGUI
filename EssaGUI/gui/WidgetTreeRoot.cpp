@@ -10,9 +10,7 @@
 
 namespace GUI {
 
-void WidgetTreeRoot::draw(Window& window) {
-    window.set_projection(llgl::Projection::ortho({ Util::Rectd { Util::Vector2d {}, Util::Vector2d { window.size() } } }, window.rect()));
-
+void WidgetTreeRoot::draw(Gfx::Painter& painter) {
     if (!m_main_widget)
         return;
     if (m_needs_relayout) {
@@ -23,7 +21,7 @@ void WidgetTreeRoot::draw(Window& window) {
         m_main_widget->dump(0);
         m_needs_relayout = false;
     }
-    m_main_widget->do_draw(window);
+    m_main_widget->do_draw(painter);
 }
 
 void WidgetTreeRoot::handle_event(llgl::Event event) {

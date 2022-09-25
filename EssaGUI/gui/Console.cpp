@@ -26,7 +26,7 @@ void Console::clear() {
     m_lines.clear();
 }
 
-void Console::draw(GUI::Window& window) const {
+void Console::draw(Gfx::Painter& painter) const {
     size_t s = 0;
     for (auto& line : m_lines) {
         auto position = Util::Vector2f { 5, s * LINE_SPACING + 19 } + scroll_offset();
@@ -39,11 +39,11 @@ void Console::draw(GUI::Window& window) const {
         text.set_fill_color(line.color);
         text.set_font_size(theme().label_font_size);
         text.set_position(position);
-        text.draw(window);
+        text.draw(painter);
         s++;
     }
 
-    ScrollableWidget::draw_scrollbar(window);
+    ScrollableWidget::draw_scrollbar(painter);
 }
 
 Util::Vector2f Console::content_size() const {

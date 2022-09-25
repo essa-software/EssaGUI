@@ -43,12 +43,12 @@ void ScrollableWidget::set_scroll(Util::Vector2f scroll) {
     m_scroll = scroll;
 }
 
-void ScrollableWidget::draw_scrollbar(GUI::Window& window) const {
+void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
     {
         float scroll_area_size = this->scroll_area_size().x();
         float content_size = this->content_size().x();
         if (content_size > scroll_area_size) {
-            RectangleDrawOptions scrollbar;
+            Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
             window.draw_rectangle({ { m_scroll.x() * scroll_area_size / content_size + 2, raw_size().y() - 5 }, { scroll_area_size / content_size * scroll_area_size - 4, 3 } }, scrollbar);
         }
@@ -57,7 +57,7 @@ void ScrollableWidget::draw_scrollbar(GUI::Window& window) const {
         float scroll_area_size = this->scroll_area_size().y();
         float content_size = this->content_size().y();
         if (content_size > scroll_area_size) {
-            RectangleDrawOptions scrollbar;
+            Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
             window.draw_rectangle({ { raw_size().x() - 5, m_scroll.y() * scroll_area_size / content_size + 2 }, { 3, scroll_area_size / content_size * scroll_area_size - 4 } }, scrollbar);
         }

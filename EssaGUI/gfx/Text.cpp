@@ -2,18 +2,18 @@
 
 namespace Gfx {
 
-void Text::draw(GUI::Window& window) const {
+void Text::draw(Gfx::Painter& painter) const {
     float line_y = 0;
     auto cache = m_font.cache(m_font_size);
     if (!cache)
         return;
-    m_string.for_each_line([this, &window, &line_y, cache](std::span<uint32_t const> span) {
+    m_string.for_each_line([this, &painter, &line_y, cache](std::span<uint32_t const> span) {
         auto line_position = m_position;
         line_position.y() -= m_font.ascent(m_font_size);
         line_position.y() += line_y;
         line_y += m_font.line_height(m_font_size);
 
-        GUI::RectangleDrawOptions text_rect;
+        RectangleDrawOptions text_rect;
         text_rect.texture = &cache->atlas();
         text_rect.fill_color = m_fill_color;
 
@@ -22,7 +22,8 @@ void Text::draw(GUI::Window& window) const {
         for (auto codepoint : span) {
             auto glyph = cache->ensure_glyph(m_font, codepoint);
             text_rect.texture_rect = glyph.texture_rect;
-            window.draw_rectangle({ x_position + line_position.x(), line_position.y(), static_cast<float>(glyph.texture_rect.width), static_cast<float>(glyph.texture_rect.height) }, text_rect);
+            // TODO: Take (better) advantage of GUIBuilder
+            painter.draw_rectangle({ x_position + line_position.x(), line_position.y(), static_cast<float>(glyph.texture_rect.width), static_cast<float>(glyph.texture_rect.height) }, text_rect);
             x_position += glyph.texture_rect.width + m_font.kerning(m_font_size, previous_codepoint, codepoint);
             previous_codepoint = codepoint;
         }

@@ -51,18 +51,18 @@ void StateTextButton<T>::handle_event(Event& event) {
 }
 
 template<typename T>
-void StateTextButton<T>::draw(GUI::Window& window) const {
-    GUI::RectangleDrawOptions bg;
+void StateTextButton<T>::draw(Gfx::Painter& painter) const {
+    Gfx::RectangleDrawOptions bg;
     bg.fill_color = get_element_from_index(m_index).second.bg_color;
     bg.outline_color = get_element_from_index(m_index).second.fg_color;
     bg.outline_thickness = 3;
-    window.draw_rectangle(local_rect(), bg);
+    painter.draw_rectangle(local_rect(), bg);
 
     Gfx::Text text { get_element_from_index(m_index).first, Application::the().font() };
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(get_element_from_index(m_index).second.text_color);
     text.align(Align::Center, local_rect());
-    text.draw(window);
+    text.draw(painter);
 }
 
 }

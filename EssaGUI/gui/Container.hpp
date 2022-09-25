@@ -139,7 +139,7 @@ public:
     virtual void do_update() override;
     virtual void do_handle_event(Event&) override;
     virtual void do_relayout() override;
-    virtual void do_draw(GUI::Window& window) const override;
+    virtual void do_draw(Gfx::Painter& window) const override;
 
     void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 

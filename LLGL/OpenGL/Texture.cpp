@@ -4,7 +4,6 @@
 
 #include <GL/glew.h>
 
-
 #include <cassert>
 #include <iostream>
 
@@ -59,6 +58,13 @@ static auto gl_format(Texture::Format format) {
         return GL_RGB;
     }
     return 0;
+}
+
+Image Texture::copy_to_image() const {
+    TextureBinder binder(*this);
+    Image image = Image::create_uninitialized(m_size);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels().data());
+    return image;
 }
 
 void Texture::ensure_initialized(Format format) {

@@ -20,7 +20,7 @@ private:
     virtual Theme::ButtonColors default_button_colors() const override {
         return theme().text_button;
     }
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
     virtual LengthVector initial_size() const override { return { Util::Length::Auto, 30.0_px }; }
 };
 

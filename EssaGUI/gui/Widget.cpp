@@ -134,15 +134,16 @@ void Widget::handle_event(Event& event) {
         set_needs_relayout();
 }
 
-void Widget::do_draw(GUI::Window& window) const {
+void Widget::do_draw(Gfx::Painter& painter) const {
     // std::cout << "do_draw "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
-    Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
+    auto rect = this->rect();
+    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, rect, Gfx::ClipViewScope::Mode::Intersect);
 
-    RectangleDrawOptions background;
+    Gfx::RectangleDrawOptions background;
     background.fill_color = m_background_color;
-    window.draw_rectangle(local_rect(), background);
+    painter.draw_rectangle(local_rect(), background);
 
-    this->draw(window);
+    this->draw(painter);
 }
 
 Util::Rectf Widget::rect() const {

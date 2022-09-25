@@ -12,7 +12,7 @@ public:
     std::function<void()> on_click;
 
     virtual void handle_event(Event&) override;
-    virtual void draw(GUI::Window& window) const override = 0;
+    virtual void draw(Gfx::Painter& window) const override = 0;
 
     bool is_active() const { return m_active; }
 

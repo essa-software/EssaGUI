@@ -8,7 +8,7 @@
 
 namespace GUI {
 
-void RadioButton::draw(GUI::Window& window) const {
+void RadioButton::draw(Gfx::Painter& window) const {
     Util::Vector2f circle_size(raw_size().y(), raw_size().y());
     Util::Vector2f circle_pos = circle_size / 2;
 
@@ -16,7 +16,7 @@ void RadioButton::draw(GUI::Window& window) const {
 
     auto colors = colors_for_state();
 
-    DrawOptions circle_opt;
+    Gfx::DrawOptions circle_opt;
     circle_opt.outline_color = colors.foreground;
     circle_opt.outline_thickness = 2;
     circle_opt.fill_color = colors.background;
