@@ -4,6 +4,7 @@
 #include <LLGL/OpenGL/ShaderBases/Texture.hpp>
 #include <LLGL/OpenGL/ShaderBases/Transform.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
+#include <LLGL/OpenGL/VertexMapping.hpp>
 
 namespace Essa::Shaders {
 
@@ -22,3 +23,10 @@ public:
 };
 
 }
+
+template<>
+struct llgl::VertexMapping<Essa::Shaders::Basic::Vertex> {
+    static constexpr size_t position = 0;
+    static constexpr size_t color = 1;
+    static constexpr size_t tex_coord = 2;
+};

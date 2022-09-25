@@ -3,6 +3,7 @@
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
+#include <LLGL/OpenGL/VertexMapping.hpp>
 
 namespace Gfx {
 
@@ -25,3 +26,10 @@ public:
 };
 
 }
+
+template<>
+struct llgl::VertexMapping<Gfx::Vertex> {
+    static inline constexpr size_t position = 0;
+    static inline constexpr size_t color = 1;
+    static inline constexpr size_t tex_coord = 2;
+};
