@@ -24,6 +24,7 @@ add_example("essa-gui/text-editor")
 add_example("essa-gui/theme-ini")
 add_example("essa-gui/tooltips")
 add_example("essa-gui/tree-view")
+add_example("essa-gui/gui-builder")
 
 add_example("llgl/experimental-shadergen")
 
