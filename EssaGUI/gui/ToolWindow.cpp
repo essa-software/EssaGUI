@@ -184,6 +184,7 @@ void ToolWindow::draw(GUI::Window& window) {
     Gfx::Text text { title(), Application::the().bold_font() };
     text.set_position({ position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) });
     text.set_font_size(theme().label_font_size);
+    text.set_fill_color(Util::Colors::White);
     text.draw(window);
 
     float titlebar_button_position_x = position.x() + size.x() - TitleBarSize + 1;

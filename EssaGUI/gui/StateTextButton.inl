@@ -61,7 +61,7 @@ void StateTextButton<T>::draw(GUI::Window& window) const {
     Gfx::Text text { get_element_from_index(m_index).first, Application::the().font() };
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(get_element_from_index(m_index).second.text_color);
-    text.align(Align::CenterLeft, local_rect());
+    text.align(Align::Center, local_rect());
     text.draw(window);
 }
 
