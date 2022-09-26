@@ -6,6 +6,7 @@
 #include "Vertex.hpp"
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <cassert>
 #include <fmt/ostream.h>
 #include <type_traits>
 #include <utility>
@@ -127,6 +128,13 @@ public:
             glDrawElements(static_cast<GLenum>(type), m_vertex_count, GL_UNSIGNED_INT, nullptr);
         else
             glDrawArrays(static_cast<GLenum>(type), 0, m_vertex_count);
+    }
+
+    void draw(llgl::PrimitiveType type, size_t first, size_t size) const {
+        // fmt::print("VAO: Drawing {} vertices with pt={}\n", m_vertex_count, static_cast<int>(type));
+        bind();
+        assert(!m_index_buffer);
+        glDrawArrays(static_cast<GLenum>(type), first, size);
     }
 
 private:

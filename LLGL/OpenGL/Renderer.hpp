@@ -30,6 +30,13 @@ public:
         vbo.draw(draw_state.primitive_type());
     }
 
+    template<class VertT, class DSS>
+    requires(IsSameVertexLayout<typename DSS::Vertex, VertT>) void draw_vertices(VertexArray<VertT> const& vbo, DrawState<DSS> const& draw_state, size_t first, size_t size) {
+        bind_if_not_bound(m_fbo);
+        draw_state.apply();
+        vbo.draw(draw_state.primitive_type(), first, size);
+    }
+
 private:
     static void bind_if_not_bound(unsigned fbo);
 
