@@ -1,8 +1,9 @@
 #include "Textfield.hpp"
+
 #include "Application.hpp"
 #include "TextAlign.hpp"
-
 #include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
@@ -14,11 +15,11 @@ void Textfield::draw(GUI::Window& window) const {
     rect.fill_color = theme_colors.background;
     window.draw_rectangle(local_rect(), rect);
 
-    TextDrawOptions text;
-    text.fill_color = theme_colors.text;
-    text.font_size = m_font_size;
-    text.text_align = m_alignment;
-    window.draw_text_aligned_in_rect(m_content, text_rect(), Application::the().font(), text);
+    Gfx::Text text { m_content, Application::the().font() };
+    text.set_fill_color(theme_colors.text);
+    text.set_font_size(m_font_size);
+    text.align(m_alignment, text_rect());
+    text.draw(window);
 }
 
 Util::Rectf Textfield::text_rect() const {
@@ -31,10 +32,9 @@ Util::Rectf Textfield::text_rect() const {
 }
 
 LengthVector Textfield::initial_size() const {
-    TextDrawOptions text;
-    text.font_size = m_font_size;
-    text.text_align = m_alignment;
-    auto size = Window::calculate_text_size(m_content, Application::the().font(), text);
+    Gfx::Text text { m_content, Application::the().font() };
+    text.set_font_size(m_font_size);
+    auto size = text.calculate_text_size();
     return { { static_cast<float>(size.x() + m_padding * 2), Util::Length::Px }, { static_cast<float>(size.y() + m_padding * 2), Util::Length::Px } };
 }
 

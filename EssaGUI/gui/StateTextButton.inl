@@ -6,6 +6,7 @@
 #endif
 
 #include "Widget.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
@@ -57,12 +58,11 @@ void StateTextButton<T>::draw(GUI::Window& window) const {
     bg.outline_thickness = 3;
     window.draw_rectangle(local_rect(), bg);
 
-    GUI::TextDrawOptions text_options {
-        .font_size = theme().label_font_size,
-        .text_align = m_alignment,
-    };
-    text_options.fill_color = get_element_from_index(m_index).second.text_color;
-    window.draw_text_aligned_in_rect(get_element_from_index(m_index).first, local_rect(), Application::the().font(), text_options);
+    Gfx::Text text { get_element_from_index(m_index).first, Application::the().font() };
+    text.set_font_size(theme().label_font_size);
+    text.set_fill_color(get_element_from_index(m_index).second.text_color);
+    text.align(Align::CenterLeft, local_rect());
+    text.draw(window);
 }
 
 }

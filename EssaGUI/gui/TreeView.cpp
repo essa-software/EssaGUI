@@ -1,6 +1,7 @@
 #include "TreeView.hpp"
 
 #include "Application.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaUtil/Vector.hpp>
 
 namespace GUI {
@@ -49,9 +50,11 @@ void TreeView::draw(GUI::Window& wnd) const {
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
             auto column = model.column(c);
-            TextDrawOptions text;
-            text.font_size = 16;
-            wnd.draw_text(column.name, Application::the().bold_font(), Util::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
+
+            Gfx::Text text { column.name, Application::the().bold_font() };
+            text.set_font_size(16);
+            text.set_position(Util::Vector2f { x_pos + 5, 20 } + scroll_offset());
+            text.draw(wnd);
 
             x_pos += cell_size(0, c).x();
         }
@@ -113,11 +116,11 @@ void TreeView::render_rows(GUI::Window& window, float& current_y_pos, size_t dep
             std::visit(
                 overloaded {
                     [&](Util::UString const& data) {
-                        TextDrawOptions text;
-                        text.font_size = theme().label_font_size;
-                        text.text_align = Align::CenterLeft;
-                        text.fill_color = c % 2 == 0 ? list_even.text : list_odd.text;
-                        window.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font(), text);
+                        Gfx::Text text { data, Application::the().bold_font() };
+                        text.set_font_size(theme().label_font_size);
+                        text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
+                        text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
+                        text.draw(window);
                     },
                     [&](llgl::Texture const* data) {
                         RectangleDrawOptions rect;

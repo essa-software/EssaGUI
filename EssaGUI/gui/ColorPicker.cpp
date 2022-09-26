@@ -3,6 +3,7 @@
 #include "Container.hpp"
 #include "Textfield.hpp"
 #include "ToolWindow.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
@@ -190,11 +191,11 @@ void ColorPicker::draw(GUI::Window& window) const {
     color_rect.fill_color = m_color;
     window.draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
 
-    TextDrawOptions html_display;
-    html_display.fill_color = theme_colors.text;
-    html_display.text_align = Align::CenterLeft;
-    html_display.font_size = theme().label_font_size;
-    window.draw_text_aligned_in_rect(Util::UString { m_color.to_html_string() }, { raw_size().y(), 4, raw_size().x() - raw_size().y(), raw_size().y() - 8 }, resource_manager().fixed_width_font(), html_display);
+    Gfx::Text html_display { Util::UString { m_color.to_html_string() }, resource_manager().fixed_width_font() };
+    html_display.set_fill_color(theme_colors.text);
+    html_display.set_font_size(theme().label_font_size);
+    html_display.align(GUI::Align::CenterLeft, { raw_size().y(), 4, raw_size().x() - raw_size().y(), raw_size().y() - 8 });
+    html_display.draw(window);
 }
 
 EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

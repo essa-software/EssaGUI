@@ -9,6 +9,7 @@ add_library(EssaGUI SHARED
     gfx/DefaultGUIShader.cpp
     gfx/ClipViewScope.cpp
     gfx/ResourceManager.cpp
+    gfx/Text.cpp
     gfx/Window.cpp
 
     gui/AbstractListView.cpp

@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/ContextMenu.hpp>
 #include <EssaGUI/gui/ScrollableWidget.hpp>
@@ -53,9 +54,10 @@ void ListView::draw(GUI::Window& wnd) const {
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
             auto column = model.column(c);
-            TextDrawOptions text;
-            text.font_size = 16;
-            wnd.draw_text(column.name, Application::the().bold_font(), Util::Vector2f { x_pos + 5, 20 } + scroll_offset(), text);
+            Gfx::Text text { column.name, Application::the().bold_font() };
+            text.set_font_size(16);
+            text.set_position(Util::Vector2f { x_pos + 5, 20 } + scroll_offset());
+            text.draw(wnd);
             x_pos += column.width;
         }
     }
@@ -80,11 +82,11 @@ void ListView::draw(GUI::Window& wnd) const {
                 std::visit(
                     overloaded {
                         [&](Util::UString const& data) {
-                            TextDrawOptions text;
-                            text.font_size = theme().label_font_size;
-                            text.text_align = Align::CenterLeft;
-                            text.fill_color = c % 2 == 0 ? list_even.text : list_odd.text;
-                            wnd.draw_text_aligned_in_rect(data, { cell_position + Util::Vector2f(5, 0), cell_size }, Application::the().bold_font(), text);
+                            Gfx::Text text { data, Application::the().bold_font() };
+                            text.set_font_size(theme().label_font_size);
+                            text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
+                            text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
+                            text.draw(wnd);
                         },
                         [&](llgl::Texture const* data) {
                             RectangleDrawOptions rect;

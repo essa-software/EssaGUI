@@ -1,3 +1,4 @@
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FileExplorer.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
@@ -12,7 +13,10 @@ int main() {
         while (wnd.poll_event(e)) {
         }
         wnd.clear(Util::Color { 100, 100, 100 });
-        wnd.draw_text("/home/sppmacd #T3$%abcdefghijklmnopqurtsdhstrhstyjstr6", font, { 50, 200 }, { .font_size = 100 });
+        Gfx::Text text { "/home/sppmacd #T3$%abcdefghijklmnopqurtsdhstrhstyjstr6", font };
+        text.set_position({ 50, 200 });
+        text.set_font_size(75);
+        text.draw(wnd);
         wnd.display();
     }
 

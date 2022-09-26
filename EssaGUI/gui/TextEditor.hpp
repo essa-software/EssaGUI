@@ -60,7 +60,6 @@ private:
     void erase_selected_text();
     virtual bool accepts_focus() const override { return true; }
     virtual bool steals_focus() const override { return m_multiline; }
-    TextDrawOptions get_text_options() const;
     virtual bool can_insert_codepoint(uint32_t) const { return true; }
     virtual void on_content_change() { }
 

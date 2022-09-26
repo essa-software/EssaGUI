@@ -162,64 +162,6 @@ void Window::draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& opti
     draw_outline(outline_positions, options.outline_color, options.outline_thickness);
 }
 
-void Window::draw_text(Util::UString const& text, llgl::TTFFont const& font, Util::Vector2f position, TextDrawOptions const& options) {
-    float line_y = 0;
-    auto cache = font.cache(options.font_size);
-    if (!cache)
-        return;
-    text.for_each_line([&font, &options, position, &line_y, cache, this](std::span<uint32_t const> span) {
-        auto line_position = position;
-        line_position.y() -= font.ascent(options.font_size);
-        line_position.y() += line_y;
-        line_y += font.line_height(options.font_size);
-
-        RectangleDrawOptions text_rect;
-        text_rect.texture = &cache->atlas();
-        text_rect.fill_color = options.fill_color;
-
-        float x_position = 0;
-        uint32_t previous_codepoint = 0;
-        for (auto codepoint : span) {
-            auto glyph = cache->ensure_glyph(font, codepoint);
-            text_rect.texture_rect = glyph.texture_rect;
-            draw_rectangle({ x_position + line_position.x(), line_position.y(), static_cast<float>(glyph.texture_rect.width), static_cast<float>(glyph.texture_rect.height) }, text_rect);
-            x_position += glyph.texture_rect.width + font.kerning(options.font_size, previous_codepoint, codepoint);
-            previous_codepoint = codepoint;
-        }
-    });
-}
-
-void Window::draw_text_aligned_in_rect(Util::UString const& text, Util::Rectf rect, llgl::TTFFont const& font, TextDrawOptions const& options) {
-    auto text_size = calculate_text_size(text, font, options);
-
-    Util::Vector2f size { rect.width, rect.height };
-    Util::Vector2f offset;
-
-    switch (options.text_align) {
-    case Align::Top:
-        offset = Util::Vector2f(std::round(size.x() / 2 - text_size.x() / 2.f), 0);
-        break;
-    case Align::TopRight:
-        offset = Util::Vector2f(std::round(size.x() - text_size.x()), 0);
-        break;
-    case Align::CenterLeft:
-        offset = Util::Vector2f(0, std::round(size.y() / 2 - text_size.y() / 2.f));
-        break;
-    case Align::Center:
-        offset = Util::Vector2f(std::round(size.x() / 2 - text_size.x() / 2.f), std::round(size.y() / 2 - text_size.y() / 2.f));
-        break;
-    case Align::CenterRight:
-        offset = Util::Vector2f(std::round(size.x() - text_size.x()), std::round(size.y() / 2 - text_size.y() / 2.f));
-        break;
-    default:
-        // TODO: Handle other alignments
-        offset = {};
-    }
-
-    // TODO:  font.getGlyph('x', options.font_size, false).bounds.height
-    draw_text(text, font, Util::Vector2f { rect.left, rect.top + font.ascent(options.font_size) } + offset, options);
-}
-
 void Window::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& options) {
     constexpr int VertexCount = 30;
 
@@ -260,25 +202,6 @@ void Window::draw_outline(std::span<Util::Vector2f const> positions, Util::Color
         vertices.push_back(Gfx::Vertex { C, color, {} });
     }
     draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);
-}
-
-Util::Vector2u Window::calculate_text_size(Util::UString const& text, llgl::TTFFont const& font, TextDrawOptions const& options) {
-    Util::Vector2u text_size;
-    text.for_each_line([&font, &options, &text_size](std::span<uint32_t const> span) {
-        auto text = Util::UString { span };
-        auto line_size = font.calculate_text_size(text, options.font_size);
-        text_size.x() = std::max(text_size.x(), line_size.x());
-        if (text_size.y() == 0)
-            text_size.y() = line_size.y();
-        else
-            text_size.y() += font.line_height(options.font_size);
-    });
-    return text_size;
-}
-
-float Window::find_character_position(size_t index, Util::UString const& string, llgl::TTFFont const& font, TextDrawOptions const& options) {
-    // FIXME: Make this work for multiline strings
-    return calculate_text_size(string.substring(0, index), font, options).x();
 }
 
 }

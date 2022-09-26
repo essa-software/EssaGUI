@@ -2,17 +2,16 @@
 
 #include "Application.hpp"
 
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
 
 void TooltipOverlay::draw(GUI::Window& window) {
-    TextDrawOptions text;
-    text.font_size = theme().label_font_size;
-    text.fill_color = theme().tooltip.text;
-    text.text_align = Align::Center;
-
-    auto bounds = window.calculate_text_size(m_tooltip.text, Application::the().font(), text);
+    Gfx::Text text { m_tooltip.text, Application::the().font() };
+    text.set_font_size(theme().label_font_size);
+    text.set_fill_color(theme().tooltip.text);
+    auto bounds = text.calculate_text_size();
 
     RectangleDrawOptions background;
     background.fill_color = theme().tooltip.background;
@@ -28,7 +27,8 @@ void TooltipOverlay::draw(GUI::Window& window) {
     window.draw_rectangle(bounds_rect, background);
 
     // FIXME: Text size is calculated 2x
-    window.draw_text_aligned_in_rect(m_tooltip.text, bounds_rect, Application::the().font(), text);
+    text.align(Align::Center, bounds_rect);
+    text.draw(window);
 }
 
 }

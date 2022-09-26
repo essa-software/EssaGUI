@@ -4,7 +4,7 @@
 #include "Container.hpp"
 #include "Textfield.hpp"
 #include "Widget.hpp"
-
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <LLGL/Window/Mouse.hpp>
 
@@ -26,10 +26,9 @@ Util::Rectf MenuWidget::item_rect(size_t index) const {
 }
 
 void MenuWidget::draw(Window& window) const {
-    TextDrawOptions text;
-    text.text_align = Align::CenterLeft;
-    text.font_size = 14;
-    text.fill_color = theme().menu.text;
+    Gfx::Text text { "", Application::the().font() };
+    text.set_font_size(14);
+    text.set_fill_color(theme().menu.text);
 
     size_t index = 0;
     for (auto const& action : m_actions) {
@@ -43,7 +42,9 @@ void MenuWidget::draw(Window& window) const {
             hovered_background.fill_color = theme().selection.value(*this);
             window.draw_rectangle(background_rect, hovered_background);
         }
-        window.draw_text_aligned_in_rect(action, text_align_rect, Application::the().font(), text);
+        text.set_string(action);
+        text.align(Align::CenterLeft, text_align_rect);
+        text.draw(window);
         index++;
     }
 }

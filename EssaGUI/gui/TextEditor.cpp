@@ -1,6 +1,7 @@
 #include "TextEditor.hpp"
 
 #include "Application.hpp"
+#include "EssaGUI/gfx/Text.hpp"
 #include "ScrollableWidget.hpp"
 #include "Widget.hpp"
 
@@ -58,7 +59,9 @@ float TextEditor::character_width() const {
     // We can just check the offset of 1st character because we use
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
-    return Window::find_character_position(1, "test", GUI::Application::the().fixed_width_font(), get_text_options());
+    Gfx::Text text { "test", GUI::Application::the().fixed_width_font() };
+    text.set_font_size(theme().label_font_size);
+    return text.find_character_position(1);
 }
 
 Util::UString TextEditor::content() const {
@@ -507,8 +510,9 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
 }
 
 Util::Vector2f TextEditor::calculate_cursor_position() const {
-    auto options = get_text_options();
-    auto character_position = Window::find_character_position(m_cursor.column, m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font(), options);
+    Gfx::Text text { m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font() };
+    text.set_font_size(theme().label_font_size);
+    auto character_position = text.find_character_position(m_cursor.column);
     auto position = Util::Vector2f { character_position, 0 } + scroll_offset();
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_multiline)
@@ -516,18 +520,6 @@ Util::Vector2f TextEditor::calculate_cursor_position() const {
     else
         position.y() = raw_size().y() / 2 - cursor_height / 2;
     return position;
-}
-
-TextDrawOptions TextEditor::get_text_options() const {
-    auto theme_colors = theme().textbox.value(*this);
-
-    TextDrawOptions options;
-    options.font_size = theme().label_font_size;
-    options.fill_color = theme_colors.text;
-
-    if (!is_focused() && m_lines.empty())
-        options.fill_color = theme().placeholder;
-    return options;
 }
 
 void TextEditor::draw(GUI::Window& window) const {
@@ -546,48 +538,49 @@ void TextEditor::draw(GUI::Window& window) const {
     }
 
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
-
     if (m_selection_start != m_cursor) {
         RectangleDrawOptions selected_rect;
         selected_rect.fill_color = theme().selection.value(*this);
         auto selection_start = std::min(m_selection_start, m_cursor);
         auto selection_end = std::max(m_selection_start, m_cursor);
         for (size_t s = selection_start.line; s <= selection_end.line; s++) {
-            float start = window.find_character_position(s == selection_start.line ? selection_start.column : 0, m_lines[s],
-                Application::the().fixed_width_font(),
-                get_text_options());
-            float end = window.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size(), m_lines[s],
-                Application::the().fixed_width_font(),
-                get_text_options());
+            Gfx::Text text { m_lines[s], Application::the().fixed_width_font() };
+            text.set_font_size(theme().label_font_size);
+            float start = text.find_character_position(s == selection_start.line ? selection_start.column : 0);
+            float end = text.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size());
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : raw_size().y() / 2 - cursor_height / 2;
             window.draw_rectangle({ Util::Vector2f { start + left_margin(), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
 
+    Gfx::Text text { "", GUI::Application::the().fixed_width_font() };
+    bool should_draw_placeholder = is_empty();
+    text.set_fill_color(should_draw_placeholder ? theme().placeholder : theme_colors.text);
+    text.set_font_size(theme().label_font_size);
     {
-        TextDrawOptions text_options = get_text_options();
         Util::Vector2f position = scroll_offset();
         position.x() += left_margin();
-        bool should_draw_placeholder = is_empty();
         if (!m_multiline) {
             position.y() += line_height();
             Util::Rectf align_rect { Margin, 0, raw_size().x(), raw_size().y() };
-            text_options.text_align = Align::CenterLeft;
-            if (should_draw_placeholder)
-                text_options.fill_color = theme().placeholder;
+            text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
             assert(should_draw_placeholder || m_lines.size() > 0);
-            window.draw_text_aligned_in_rect(should_draw_placeholder ? m_placeholder : m_lines[0], align_rect, Application::the().fixed_width_font(), text_options);
+            text.align(Align::CenterLeft, align_rect);
+            text.draw(window);
         }
         else {
             if (should_draw_placeholder) {
                 position.y() += line_height();
-                text_options.fill_color = theme().placeholder;
-                window.draw_text(m_placeholder, Application::the().fixed_width_font(), position, text_options);
+                text.set_string(m_placeholder);
+                text.set_position(position);
+                text.draw(window);
             }
             else {
                 for (auto& line : m_lines) {
                     position.y() += line_height();
-                    window.draw_text(line, Application::the().fixed_width_font(), position, text_options);
+                    text.set_string(line);
+                    text.set_position(position);
+                    text.draw(window);
                 }
             }
         }
@@ -595,15 +588,15 @@ void TextEditor::draw(GUI::Window& window) const {
 
     // Line numbers
     if (m_multiline) {
-        TextDrawOptions line_numbers;
+        Gfx::Text text { "", GUI::Application::the().fixed_width_font() };
         Util::Vector2f position = scroll_offset();
         position.y() += 5;
-        line_numbers.fill_color = theme().gutter.text;
-        line_numbers.font_size = theme().label_font_size;
-        line_numbers.text_align = Align::CenterRight;
+        text.set_fill_color(theme().gutter.text);
+        text.set_font_size(theme().label_font_size);
         for (size_t s = 0; s < m_lines.size(); s++) {
-            window.draw_text_aligned_in_rect(Util::UString { std::to_string(s + 1) }, { position, { GutterWidth - 10, line_height() } },
-                GUI::Application::the().fixed_width_font(), line_numbers);
+            text.set_string(Util::UString { std::to_string(s + 1) });
+            text.align(Align::CenterRight, { position, { GutterWidth - 10, line_height() } });
+            text.draw(window);
             position.y() += line_height();
         }
     }

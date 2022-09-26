@@ -1,6 +1,7 @@
 #include "ToolWindow.hpp"
 
 #include <EssaGUI/gfx/ClipViewScope.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Widget.hpp>
@@ -180,7 +181,10 @@ void ToolWindow::draw(GUI::Window& window) {
     rs_titlebar.fill_color = titlebar_color;
     window.draw_rectangle({ position - Util::Vector2f(1, TitleBarSize), { size.x() + 2, TitleBarSize } }, rs_titlebar);
 
-    window.draw_text(title(), Application::the().bold_font(), { position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) }, { .font_size = theme().label_font_size });
+    Gfx::Text text { title(), Application::the().bold_font() };
+    text.set_position({ position + Util::Vector2f(10, -TitleBarSize / 2.f + 5) });
+    text.set_font_size(theme().label_font_size);
+    text.draw(window);
 
     float titlebar_button_position_x = position.x() + size.x() - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {

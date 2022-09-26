@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Container.hpp"
 #include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <cassert>
@@ -30,11 +31,12 @@ void TabButton::draw(GUI::Window& window) const {
     Util::Vector2f text_position;
     if (!is_active())
         text_position.y() = 2;
-    TextDrawOptions text;
-    text.fill_color = colors.text;
-    text.font_size = theme().label_font_size;
-    text.text_align = Align::Center;
-    window.draw_text_aligned_in_rect(is_active() ? content() : active_content(), { text_position, raw_size() }, Application::the().font(), text);
+
+    Gfx::Text text { is_active() ? content() : active_content(), Application::the().font() };
+    text.set_fill_color(colors.text);
+    text.set_font_size(theme().label_font_size);
+    text.align(Align::Center, { text_position, raw_size() });
+    text.draw(window);
 }
 
 void TabSelectWidget::on_init() {

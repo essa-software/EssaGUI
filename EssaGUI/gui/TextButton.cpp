@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Button.hpp"
 #include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 
 namespace GUI {
@@ -33,19 +34,21 @@ void TextButton::draw(GUI::Window& window) const {
         }
     }
 
-    TextDrawOptions text;
-    text.font_size = theme().label_font_size;
-    text.fill_color = colors.text;
-    text.text_align = m_alignment;
+    Gfx::Text text { "", Application::the().font() };
+    text.set_font_size(theme().label_font_size);
+    text.set_fill_color(colors.text);
 
     auto text_rect = local_rect();
     text_rect.left += text_offset;
     text_rect.width -= text_offset;
 
     if (is_active())
-        window.draw_text_aligned_in_rect(m_active_content, local_rect(), Application::the().font(), text);
+        text.set_string(m_active_content);
     else
-        window.draw_text_aligned_in_rect(m_content, local_rect(), Application::the().font(), text);
+        text.set_string(m_content);
+
+    text.align(GUI::Align::Center, text_rect);
+    text.draw(window);
 }
 
 EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

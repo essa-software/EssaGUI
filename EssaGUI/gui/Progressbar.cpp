@@ -1,5 +1,6 @@
 #include "Progressbar.hpp"
 
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
@@ -39,11 +40,11 @@ void Progressbar::draw(GUI::Window& window) const {
     completed_opt.fill_color = m_progressbar_color;
     window.draw_rectangle(completed_rect, completed_opt);
 
-    TextDrawOptions text_opt;
-    text_opt.text_align = Align::Center;
-    text_opt.font_size = raw_size().y() - 2;
-    text_opt.fill_color = theme_colors.text;
-    window.draw_text_aligned_in_rect(get_content_with_labelling(), local_rect(), Application::the().font(), text_opt);
+    Gfx::Text text_opt { get_content_with_labelling(), Application::the().font() };
+    text_opt.set_font_size(raw_size().y() - 2);
+    text_opt.set_fill_color(theme_colors.text);
+    text_opt.align(Align::Center, local_rect());
+    text_opt.draw(window);
 }
 
 void Progressbar::step_by() {

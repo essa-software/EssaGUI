@@ -26,11 +26,6 @@ struct DrawOptions {
     float outline_thickness = 0;
 };
 
-struct TextDrawOptions : public DrawOptions {
-    uint32_t font_size = 30;
-    Align text_align = Align::TopLeft;
-};
-
 struct RectangleDrawOptions : public DrawOptions {
     float border_radius_top_left = 0;
     float border_radius_top_right = 0;
@@ -59,13 +54,7 @@ public:
     void draw_indexed_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const>, std::span<unsigned const> indices);
 
     void draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
-    void draw_text(Util::UString const&, llgl::TTFFont const&, Util::Vector2f position, TextDrawOptions const& = {});
-    void draw_text_aligned_in_rect(Util::UString const&, Util::Rectf rect, llgl::TTFFont const&, TextDrawOptions const& = {});
     void draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& = {});
-
-    // FIXME: This is not a proper place for these functions. Add some class like sf::Text.
-    static Util::Vector2u calculate_text_size(Util::UString const&, llgl::TTFFont const&, TextDrawOptions const& = {});
-    static float find_character_position(size_t index, Util::UString const&, llgl::TTFFont const&, TextDrawOptions const& = {});
 
 private:
     void apply_states();

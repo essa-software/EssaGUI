@@ -5,6 +5,7 @@
 #include "TextButton.hpp"
 #include "Textfield.hpp"
 #include "ToolWindow.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 
 namespace GUI {
 
@@ -23,9 +24,9 @@ MessageBox::MessageBox(HostWindow& window, Util::UString message, Util::UString 
     prompt_text->set_alignment(GUI::Align::Center);
 
     {
-        TextDrawOptions text_options;
-        text_options.font_size = prompt_text->font_size();
-        auto text_size = Window::calculate_text_size(prompt_text->content(), GUI::Application::the().font(), text_options);
+        Gfx::Text text { prompt_text->content(), GUI::Application::the().font() };
+        text.set_font_size(prompt_text->font_size());
+        auto text_size = text.calculate_text_size();
         Util::Vector2f total_size { 40 + text_size.x(), 110 + text_size.y() };
         set_size(total_size);
         center_on_screen();

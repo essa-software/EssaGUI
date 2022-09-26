@@ -1,5 +1,6 @@
 #include "HostWindow.hpp"
 
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 
@@ -99,10 +100,11 @@ void HostWindow::do_draw() {
 }
 
 void HostWindow::draw_notification(Notification const& notification, float y) {
-    TextDrawOptions text;
-    text.font_size = theme().label_font_size;
-    auto text_bounds = window().calculate_text_size(notification.message, GUI::Application::the().font(), text);
+    Gfx::Text text { notification.message, GUI::Application::the().font() };
+    text.set_font_size(theme().label_font_size);
+    auto text_bounds = text.calculate_text_size();
     Util::Vector2f text_position { window().size().x() - text_bounds.x() - 20, y + 20 };
+    text.set_position(text_position);
 
     RectangleDrawOptions rs;
     rs.set_border_radius(10);
@@ -113,7 +115,8 @@ void HostWindow::draw_notification(Notification const& notification, float y) {
     }
 
     window().draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
-    window().draw_text(notification.message, GUI::Application::the().font(), { window().size().x() - text_bounds.x() - 20, y + 20 });
+
+    text.draw(window());
 }
 
 void HostWindow::spawn_notification(Util::UString message, NotificationLevel level) {

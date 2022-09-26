@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include <EssaGUI/eml/EMLError.hpp>
 #include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 
 #include <sstream>
 
@@ -34,10 +35,11 @@ void Console::draw(GUI::Window& window) const {
             continue;
         }
 
-        TextDrawOptions options;
-        options.fill_color = line.color;
-        options.font_size = theme().label_font_size;
-        window.draw_text(line.text, Application::the().fixed_width_font(), position, options);
+        Gfx::Text text { line.text, Application::the().fixed_width_font() };
+        text.set_fill_color(line.color);
+        text.set_font_size(theme().label_font_size);
+        text.set_position(position);
+        text.draw(window);
         s++;
     }
 

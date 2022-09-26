@@ -1,6 +1,7 @@
 #include "Checkbox.hpp"
 
 #include "Application.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
@@ -69,12 +70,12 @@ void Checkbox::draw(GUI::Window& window) const {
     }
 
     Util::Rectf text_rect(raw_position().x() + raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
-    TextDrawOptions text_opt;
-    text_opt.text_align = Align::CenterLeft;
-    text_opt.fill_color = theme().label.text;
-    text_opt.font_size = theme().label_font_size;
 
-    window.draw_text_aligned_in_rect(m_caption, text_rect, Application::the().font(), text_opt);
+    Gfx::Text text { m_caption, Application::the().font() };
+    text.set_fill_color(theme().label.text);
+    text.set_font_size(theme().label_font_size);
+    text.align(GUI::Align::CenterLeft, text_rect);
+    text.draw(window);
 }
 
 Theme::ButtonColors Checkbox::default_button_colors() const {

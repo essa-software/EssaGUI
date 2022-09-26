@@ -1,6 +1,7 @@
 #include "RadioButton.hpp"
-#include "Application.hpp"
 
+#include "Application.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
@@ -33,12 +34,11 @@ void RadioButton::draw(GUI::Window& window) const {
     }
 
     Util::Rectf text_rect(raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
-    TextDrawOptions text_opt;
-    text_opt.text_align = Align::CenterLeft;
-    text_opt.fill_color = theme().label.text;
-    text_opt.font_size = raw_size().y() - 2;
-
-    window.draw_text_aligned_in_rect(m_caption, text_rect, Application::the().font(), text_opt);
+    Gfx::Text text_opt { m_caption, Application::the().font() };
+    text_opt.set_fill_color(theme().label.text);
+    text_opt.set_font_size(theme().label_font_size);
+    text_opt.align(Align::CenterLeft, text_rect);
+    text_opt.draw(window);
 }
 
 Theme::ButtonColors RadioButton::default_button_colors() const {
