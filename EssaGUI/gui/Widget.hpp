@@ -120,6 +120,31 @@ public:
         set_needs_relayout();
     }
 
+    // Alignment is applicably only for BasicLayout.
+    enum class Alignment {
+        Start,
+        Center,
+        End
+    };
+    // Set horizontal alignment of widget in the container (aka align-self)
+    void set_horizontal_alignment(Alignment a) {
+        m_horizontal_alignment = a;
+        set_needs_relayout();
+    }
+    // Set vertical alignment of widget in the container (aka align-self)
+    void set_vertical_alignment(Alignment a) {
+        m_vertical_alignment = a;
+        set_needs_relayout();
+    }
+    // Set alignment of widget in the container (aka align-self)
+    void set_alignments(Alignment h, Alignment v) {
+        m_horizontal_alignment = h;
+        m_vertical_alignment = v;
+        set_needs_relayout();
+    }
+    Alignment horizontal_alignment() const { return m_horizontal_alignment; }
+    Alignment vertical_alignment() const { return m_vertical_alignment; }
+
     void set_size(LengthVector l) {
         m_input_size = l;
         set_needs_relayout();
@@ -222,6 +247,8 @@ private:
     WidgetTreeRoot* m_widget_tree_root = nullptr;
     LengthVector m_expected_pos;
     LengthVector m_input_size { Util::Length::Initial, Util::Length::Initial };
+    Alignment m_horizontal_alignment = Alignment::Start;
+    Alignment m_vertical_alignment = Alignment::Start;
 
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;

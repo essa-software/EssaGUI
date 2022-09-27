@@ -36,7 +36,6 @@ void BoxLayout::run(Container& container) {
         float raw_size = 0;
         switch (w->size().main(m_orientation).unit()) {
         case Util::Length::Px:
-        case Util::Length::PxOtherSide:
             // std::cout << "test" << std::endl;
             raw_size = w->size().main(m_orientation).value();
             break;
@@ -137,8 +136,6 @@ void BasicLayout::run(Container& container) {
         switch (input_position.unit()) {
         case Util::Length::Px:
             return input_position.value();
-        case Util::Length::PxOtherSide:
-            return container_size - widget_size - input_position.value();
         case Util::Length::Percent:
             return widget_size * container_size / 100.0;
         default:
@@ -149,7 +146,6 @@ void BasicLayout::run(Container& container) {
     auto resolve_size = [&](double container_size, Util::Length const& size) -> float {
         switch (size.unit()) {
         case Util::Length::Px:
-        case Util::Length::PxOtherSide:
             return size.value();
         case Util::Length::Percent:
             return size.value() * container_size / 100.0;
@@ -158,11 +154,29 @@ void BasicLayout::run(Container& container) {
         }
     };
 
+    auto handle_alignment = [](float& v, float child_size, float container_size, Widget::Alignment alignment) {
+        switch (alignment) {
+        case Widget::Alignment::Start:
+            break;
+        case Widget::Alignment::Center:
+            v += container_size / 2;
+            v -= child_size / 2;
+            break;
+        case Widget::Alignment::End:
+            v = container_size - v - child_size;
+            break;
+        }
+    };
+
     for (auto& w : container.widgets()) {
         auto input_position = w->position();
         w->set_raw_size({ resolve_size(container.raw_size().x(), w->size().x), resolve_size(container.raw_size().y(), w->size().y) });
         auto x = resolve_position(container.raw_size().x(), w->raw_size().x(), input_position.x);
         auto y = resolve_position(container.raw_size().y(), w->raw_size().y(), input_position.y);
+
+        handle_alignment(x, w->raw_size().x(), container.raw_size().x(), w->horizontal_alignment());
+        handle_alignment(y, w->raw_size().y(), container.raw_size().y(), w->vertical_alignment());
+
         w->set_raw_position({ x + container.raw_position().x(), y + container.raw_position().y() });
     }
 }
