@@ -6,12 +6,7 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Vector2u host_window_si
     : m_target(target)
     , m_old_projection(target.builder().projection()) {
 
-    fmt::print("cvs {}:{} {}\n", fmt::streamed(rect.position()), fmt::streamed(rect.size()), mode == Mode::Intersect ? "intersect" : "override");
-    fmt::print("     - ovp = {}\n", fmt::streamed(m_old_projection.viewport().position()));
-    fmt::print("     - hs = {}\n", fmt::streamed(host_window_size));
-
     auto old_viewport = m_old_projection.viewport();
-    fmt::print("{} {} {}\n", host_window_size.y(), old_viewport.top, old_viewport.height);
     old_viewport.top = host_window_size.y() - old_viewport.top - old_viewport.height;
     auto clip_rect = [&]() {
         switch (mode) {
@@ -23,9 +18,6 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Vector2u host_window_si
         }
         __builtin_unreachable();
     }();
-
-    fmt::print("     - ov = {}:{}\n", fmt::streamed(old_viewport.position()), fmt::streamed(old_viewport.size()));
-    fmt::print("     - cr = {}:{}\n", fmt::streamed(clip_rect.position()), fmt::streamed(clip_rect.size()));
 
     Util::Vector2f offset_position = (mode == Mode::Intersect ? Util::Vector2f { clip_rect.left - rect.left, clip_rect.top - rect.top } : Util::Vector2f {});
 
