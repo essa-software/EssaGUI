@@ -6,6 +6,7 @@ function(add_example filename)
 endfunction()
 
 add_example("essa-gui/arrow-buttons")
+add_example("essa-gui/basic-layout")
 add_example("essa-gui/canvas")
 add_example("essa-gui/checkboxes")
 add_example("essa-gui/color-picker")
