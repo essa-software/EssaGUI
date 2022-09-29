@@ -65,7 +65,6 @@ class Uniform {
 public:
     Uniform(std::string name, T&& initial_value = {})
         : m_value(std::move(initial_value))
-        , m_default_value(m_value)
         , m_name(std::move(name)) { }
 
     Uniform& operator=(T const& value) {
@@ -80,8 +79,6 @@ public:
         Detail::set_uniform(*m_location, m_value);
     }
 
-    void reset() { m_value = m_default_value; }
-
     auto& operator*() { return m_value; }
     auto* operator->() { return &m_value; }
     auto const& operator*() const { return m_value; }
@@ -89,7 +86,6 @@ public:
 
 private:
     T m_value;
-    T m_default_value;
     mutable std::optional<unsigned> m_location;
     std::string m_name;
 };
