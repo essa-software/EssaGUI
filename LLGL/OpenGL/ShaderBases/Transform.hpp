@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Shader.hpp"
+#include <EssaUtil/Matrix.hpp>
 
 namespace llgl::ShaderBases {
 
@@ -11,6 +12,10 @@ public:
         m_view_matrix = view;
         m_projection_matrix = projection;
     }
+
+    void set_model(Util::Matrix4x4f m) { m_model_matrix = m; }
+    void set_view(Util::Matrix4x4f m) { m_view_matrix = m; }
+    void set_projection(Util::Matrix4x4f m) { m_projection_matrix = m; }
 
     auto uniforms() {
         return llgl::UniformList {
