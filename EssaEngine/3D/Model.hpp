@@ -4,6 +4,7 @@
 #include "Shaders/Basic.hpp"
 
 #include <EssaGUI/gfx/ResourceManager.hpp>
+#include <EssaUtil/NonCopyable.hpp>
 #include <LLGL/OpenGL/PrimitiveType.hpp>
 #include <LLGL/OpenGL/Renderer.hpp>
 #include <vector>
@@ -12,7 +13,7 @@
 
 namespace Essa {
 
-class Model {
+class Model : public Util::NonCopyable {
 public:
     // position (xyz), color (rgba), tex coord (st), normal (xyz)
     using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f, Util::Vector3f>;
@@ -36,8 +37,16 @@ public:
 
         static Essa::Shaders::Basic basic_shader;
 
-        if (m_material && m_material->diffuse.texture)
-            shader.set_texture(m_material->diffuse.texture);
+        if constexpr (requires() { shader.set_material(*m_material); }) {
+            if (m_material)
+                shader.set_material(*m_material);
+            else
+                shader.set_material(Material {
+                    .ambient = { .color = Util::Colors::Gray },
+                    .diffuse = { .color = Util::Colors::White },
+                    .emission { .color = Util::Colors::Black },
+                });
+        }
 
         renderer.draw_vertices(m_vao, llgl::DrawState { shader, llgl::PrimitiveType::Triangles });
 

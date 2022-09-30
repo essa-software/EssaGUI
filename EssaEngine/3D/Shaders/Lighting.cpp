@@ -42,22 +42,30 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPosition;
 uniform vec4 lightColor;
 
+uniform vec4 ambientColor;
+uniform vec4 diffuseColor;
+uniform vec4 emissionColor;
+
 void main()
 {
     vec3 lightPosVS = vec3(inverse(viewMatrix * modelMatrix) * vec4(lightPosition, 1));
-    float ambientStrength = 0.2; // TODO: Make it configurable
-    vec4 ambient = ambientStrength * lightColor;
+    // TODO: Make all the factors configurable and not picked up from nowhere
+    const float AmbientAmount = 0.2;
+    const float MinDiffuse = 0.3;
+
+    vec4 ambient = AmbientAmount * ambientColor * lightColor;
   	
     // diffuse 
     vec3 norm = normalize(f_normal);
     vec3 lightDir = normalize(lightPosVS - f_position);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec4 diffuse = diff * lightColor;
+    float diff = min(max((dot(norm, lightDir) + 1) / 2, MinDiffuse), 1);
+    vec4 diffuse = diff * diffuseColor * lightColor;
         
     vec4 result = (ambient + diffuse) * f_color;
+    result += emissionColor;
     if (textureSet)
         result *= texture2D(texture, f_texCoord);
-    gl_FragColor = vec4(result.xyz, 1.0);
+    gl_FragColor = vec4(result.rgb, 1.0);
 }
 )~~~";
 
