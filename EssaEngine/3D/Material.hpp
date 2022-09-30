@@ -12,7 +12,9 @@ struct Material {
         llgl::Texture* texture = nullptr;
     };
 
+    Component ambient;
     Component diffuse;
+    Component emission;
 };
 
 }

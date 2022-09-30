@@ -189,6 +189,37 @@ bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& b
         &current_material->second;                 \
     })
 
+#define HANDLE_K_COMPONENT(name, target)                                                                                     \
+    else if (command == "K" name) {                                                                                          \
+        auto& material = REQUIRE_CURRENT_MATERIAL();                                                                         \
+        float r;                                                                                                             \
+        if (!(mtl_in >> r)) {                                                                                                \
+            error("mtl: failed to read r component in K" name);                                                              \
+            return false;                                                                                                    \
+        }                                                                                                                    \
+        float g;                                                                                                             \
+        if (!(mtl_in >> g)) {                                                                                                \
+            error("mtl: failed to read r component in K" name);                                                              \
+            return false;                                                                                                    \
+        }                                                                                                                    \
+        float b;                                                                                                             \
+        if (!(mtl_in >> b)) {                                                                                                \
+            error("mtl: failed to read r component in K" name);                                                              \
+            return false;                                                                                                    \
+        }                                                                                                                    \
+        target.color = Util::Colorf { r, g, b };                                                                             \
+    }                                                                                                                        \
+    else if (command == "map_K" name) {                                                                                      \
+        auto& material = REQUIRE_CURRENT_MATERIAL();                                                                         \
+        std::string path;                                                                                                    \
+        if (!(mtl_in >> path)) {                                                                                             \
+            error("mtl: failed to read path in map_K" name);                                                                 \
+            return false;                                                                                                    \
+        }                                                                                                                    \
+        auto absolute_path = std::filesystem::absolute(std::filesystem::path { base_directory } / path);                     \
+        target.texture = &GUI::Application::the().resource_manager().require_external<Gfx::Texture>(absolute_path.string()); \
+    }
+
     while (true) {
         std::string command;
         if (!(mtl_in >> command)) {
@@ -215,9 +246,7 @@ bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& b
             current_material = std::make_pair(name, Material {});
         }
         else if (command == "Ns"
-            || command == "Ka"
             || command == "Ks"
-            || command == "Ke"
             || command == "Ni"
             || command == "d"
             || command == "illum") {
@@ -225,36 +254,9 @@ bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& b
             mtl_in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
-        else if (command == "Kd") {
-            auto& material = REQUIRE_CURRENT_MATERIAL();
-            float r;
-            if (!(mtl_in >> r)) {
-                error("mtl: failed to read r component in Kd");
-                return false;
-            }
-            float g;
-            if (!(mtl_in >> g)) {
-                error("mtl: failed to read r component in Kd");
-                return false;
-            }
-            float b;
-            if (!(mtl_in >> b)) {
-                error("mtl: failed to read r component in Kd");
-                return false;
-            }
-            material.diffuse.color = Util::Colorf { r, g, b };
-        }
-        else if (command == "map_Kd") {
-            auto& material = REQUIRE_CURRENT_MATERIAL();
-            std::string path;
-            if (!(mtl_in >> path)) {
-                error("mtl: failed to read path in map_Kd");
-                return false;
-            }
-
-            auto absolute_path = std::filesystem::absolute(std::filesystem::path { base_directory } / path);
-            material.diffuse.texture = &GUI::Application::the().resource_manager().require_external<Gfx::Texture>(absolute_path.string());
-        }
+        HANDLE_K_COMPONENT("a", material.ambient)
+        HANDLE_K_COMPONENT("d", material.diffuse)
+        HANDLE_K_COMPONENT("e", material.emission)
         else {
             // std::cerr << "ObjLoader: Unknown command: " << command << std::endl;
             std::string line;
