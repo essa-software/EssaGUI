@@ -21,6 +21,11 @@ public:
     using MappedVertex = llgl::MappedVertex<Vertex>;
     using StoredRenderRange = RR;
 
+    // C++ moment: it doesn't see VAO's move constructors
+    // for some reason
+    Builder() = default;
+    Builder(Builder&&) = default;
+
     virtual ~Builder() = default;
 
     void add(std::initializer_list<Vertex> v) {
@@ -67,7 +72,7 @@ protected:
 
     template<class... Args>
     void add_render_range_for_last_vertices(size_t count, llgl::PrimitiveType pt, Args&&... args) {
-        m_ranges.push_back(StoredRenderRange { m_vertices.size() - count, count, pt, std::forward<Args>(args)... });
+        m_ranges.push_back(StoredRenderRange { { m_vertices.size() - count, count, pt }, std::forward<Args>(args)... });
     }
 
 private:
