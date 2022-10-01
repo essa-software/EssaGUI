@@ -2,65 +2,89 @@
 
 #include "Material.hpp"
 #include "Shaders/Basic.hpp"
-
 #include <EssaGUI/gfx/ResourceManager.hpp>
+#include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/NonCopyable.hpp>
+#include <LLGL/OpenGL/Builder.hpp>
 #include <LLGL/OpenGL/PrimitiveType.hpp>
 #include <LLGL/OpenGL/Renderer.hpp>
+#include <functional>
 #include <vector>
 
 #define OBJECT3D_DEBUG 0
 
 namespace Essa {
 
-class Model : public Util::NonCopyable {
+using ModelVertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f, Util::Vector3f>;
+
+}
+
+template<>
+struct llgl::VertexMapping<Essa::ModelVertex> {
+    static constexpr size_t position = 0;
+    static constexpr size_t color = 1;
+    static constexpr size_t tex_coord = 2;
+    static constexpr size_t normal = 3;
+};
+
+namespace Essa {
+
+struct ModelRenderRange : public llgl::RenderRange {
+    std::optional<Material> material;
+};
+
+class ModelBuilder : public llgl::Builder<ModelVertex, ModelRenderRange> {
 public:
-    // position (xyz), color (rgba), tex coord (st), normal (xyz)
-    using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f, Util::Vector3f>;
+    using RangeRenderer = std::function<void(llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range)>;
 
-    struct Face {
-        Vertex v1, v2, v3;
-    };
+    void set_range_renderer(RangeRenderer rr) { m_renderer = std::move(rr); }
 
-    void add_face(Face face);
-    void add_face(std::span<Vertex>);
-    void set_material(Material mat) { m_material = std::move(mat); }
-
-    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader) const {
-        if (m_needs_update) {
-            std::cerr << "needs update!" << std::endl;
-            m_vao.upload_vertices(m_vertexes);
-            if constexpr (OBJECT3D_DEBUG)
-                m_normals_vao.upload_vertices(m_normal_vertexes);
-            m_needs_update = false;
+    void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) {
+        for (auto const& vertex : vertices) {
+            add(vertex);
         }
-
-        static Essa::Shaders::Basic basic_shader;
-
-        if constexpr (requires() { shader.set_material(*m_material); }) {
-            if (m_material)
-                shader.set_material(*m_material);
-            else
-                shader.set_material(Material {
-                    .ambient = { .color = Util::Colors::Gray },
-                    .diffuse = { .color = Util::Colors::White },
-                    .emission { .color = Util::Colors::Black },
-                });
-        }
-
-        renderer.draw_vertices(m_vao, llgl::DrawState { shader, llgl::PrimitiveType::Triangles });
-
-        if constexpr (OBJECT3D_DEBUG)
-            renderer.draw_vertices(m_normals_vao, llgl::DrawState { basic_shader, llgl::PrimitiveType::Triangles });
+        add_render_range_for_last_vertices(vertices.size(), llgl::PrimitiveType::Triangles, std::move(material));
     }
 
 private:
-    std::optional<Material> m_material;
-    std::vector<Vertex> m_vertexes;
-    std::vector<Shaders::Basic::Vertex> m_normal_vertexes;
-    mutable llgl::VertexArray<Vertex> m_vao;
-    mutable llgl::VertexArray<Shaders::Basic::Vertex> m_normals_vao;
-    mutable bool m_needs_update { true };
+    virtual void render_range(llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) const override {
+        m_renderer(renderer, vao, range);
+    }
+    RangeRenderer m_renderer;
+};
+
+class Model : public Util::NonCopyable {
+public:
+    // position (xyz), color (rgba), tex coord (st), normal (xyz)
+    using Vertex = ModelVertex;
+
+    void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) {
+        m_builder.add_range(vertices, material);
+    }
+
+    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader) const {
+        auto range_renderer = [&shader](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
+            if constexpr (requires() { shader.set_material(*range.material); }) {
+                if (range.material) {
+                    shader.set_material(*range.material);
+                }
+                else {
+                    shader.set_material(Material {
+                        .ambient = { .color = Util::Colors::Gray },
+                        .diffuse = { .color = Util::Colors::White },
+                        .emission { .color = Util::Colors::Black },
+                    });
+                }
+            }
+
+            renderer.draw_vertices(vao, llgl::DrawState { shader, range.type }, range.first, range.size);
+        };
+        m_builder.set_range_renderer(std::move(range_renderer));
+        m_builder.render(renderer);
+    }
+
+private:
+    mutable ModelBuilder m_builder;
 };
 
 }

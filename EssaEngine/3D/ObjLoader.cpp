@@ -7,6 +7,7 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <stddef.h>
 
 namespace Essa {
 
@@ -24,6 +25,10 @@ static inline void error(std::string_view message) {
 
 std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory) {
     Model output;
+
+    std::map<Material*, std::vector<std::vector<Vertex>>> faces_by_material;
+
+    Material* current_material = nullptr;
 
     while (true) {
         std::string command;
@@ -88,7 +93,7 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
                     return {};
                 face.push_back(*vertex);
             }
-            m_faces.push_back(face);
+            faces_by_material[current_material].push_back(std::move(face));
         }
         else if (command == "mtllib") {
             std::string path;
@@ -106,7 +111,13 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
                 error("expected material name after 'usemtl'");
                 return {};
             }
-            output.set_material(m_materials[name]);
+            auto material = m_materials.find(name);
+            if (material == m_materials.end()) {
+                current_material = nullptr;
+            }
+            else {
+                current_material = &material->second;
+            }
         }
         else {
             // std::cerr << "ObjLoader: Unknown command: " << command << std::endl;
@@ -115,32 +126,43 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
         }
     }
 
-    for (auto const& face : m_faces) {
-        std::vector<Model::Vertex> resolved_face;
+    for (auto const& faces : faces_by_material) {
+        std::vector<Model::Vertex> vertices;
 
-        for (auto const& vertex : face) {
-            if (vertex.position >= m_positions.size()) {
-                error("vertex position out of range");
-                return {};
+        // Resolve vertex components
+        for (auto const& face : faces.second) {
+            std::vector<Model::Vertex> resolved_face;
+            for (auto const& vertex : face) {
+                if (vertex.position >= m_positions.size()) {
+                    error("vertex position out of range");
+                    return {};
+                }
+                auto position = m_positions[vertex.position];
+
+                if (vertex.tex_coord && *vertex.tex_coord >= m_tex_coords.size()) {
+                    error("vertex tex coord out of range");
+                    return {};
+                }
+                auto tex_coord = vertex.tex_coord ? m_tex_coords[*vertex.tex_coord] : Util::Vector2f {};
+
+                if (vertex.normal && *vertex.normal >= m_normals.size()) {
+                    error("vertex normal out of range");
+                    return {};
+                }
+                auto normal = vertex.normal ? m_normals[*vertex.normal] : Util::Vector3f {};
+
+                resolved_face.push_back(Model::Vertex { position, Util::Colors::White, tex_coord, normal });
             }
-            auto position = m_positions[vertex.position];
 
-            if (vertex.tex_coord && *vertex.tex_coord >= m_tex_coords.size()) {
-                error("vertex tex coord out of range");
-                return {};
+            // Triangulate
+            for (size_t s = 0; s < resolved_face.size() - 2; s++) {
+                vertices.push_back(resolved_face[0]);
+                vertices.push_back(resolved_face[s + 1]);
+                vertices.push_back(resolved_face[s + 2]);
             }
-            auto tex_coord = vertex.tex_coord ? m_tex_coords[*vertex.tex_coord] : Util::Vector2f {};
-
-            if (vertex.normal && *vertex.normal >= m_normals.size()) {
-                error("vertex normal out of range");
-                return {};
-            }
-            auto normal = vertex.normal ? m_normals[*vertex.normal] : Util::Vector3f {};
-
-            resolved_face.push_back(Model::Vertex { position, Util::Colors::White, tex_coord, normal });
         }
 
-        output.add_face(resolved_face);
+        output.add_range(vertices, faces.first ? *faces.first : std::optional<Material> {});
     }
     return output;
 }
@@ -265,5 +287,4 @@ bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& b
     }
 #undef REQUIRE_CURRENT_MATERIAL
 }
-
 }

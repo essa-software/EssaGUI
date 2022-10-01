@@ -32,7 +32,6 @@ private:
     std::vector<Util::Vector3f> m_positions;
     std::vector<Util::Vector2f> m_tex_coords;
     std::vector<Util::Vector3f> m_normals;
-    std::vector<std::vector<Vertex>> m_faces;
 
     std::map<std::string, Material> m_materials;
 };

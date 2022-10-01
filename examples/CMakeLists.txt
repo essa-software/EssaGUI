@@ -30,6 +30,8 @@ add_example("essa-gui/gui-builder")
 
 add_example("llgl/experimental-shadergen")
 
+add_example("essa-engine/multiple-materials")
+target_link_libraries(essa-engine-multiple-materials EssaEngine-3D)
 add_example("essa-engine/obj-loader")
 target_link_libraries(essa-engine-obj-loader EssaEngine-3D)
 add_example("essa-engine/obj-loader-resource-manager")
