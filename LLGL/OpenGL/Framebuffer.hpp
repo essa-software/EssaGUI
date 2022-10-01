@@ -35,6 +35,8 @@ public:
 
     auto const& color_texture() const { return m_fbo.color_texture(); }
 
+    Renderer& renderer() { return m_renderer; }
+
 private:
     llgl::opengl::FBO m_fbo;
     Renderer m_renderer;
