@@ -47,6 +47,9 @@ void DraggableView2D::handle_event(Event& event) {
         }
     }
     else if (event.type() == llgl::Event::Type::MouseButtonPress) {
+        if (!is_hover()) {
+            return;
+        }
         m_drag_start_mouse = event.mouse_position();
         m_drag_start_offset = m_offset;
         m_dragging = true;
