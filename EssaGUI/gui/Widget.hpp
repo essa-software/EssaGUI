@@ -77,7 +77,10 @@ public:
     llgl::Event::Type type() const { return m_event.type; }
 
     bool is_mouse_related() const {
-        return m_event.type == llgl::Event::Type::MouseMove || m_event.type == llgl::Event::Type::MouseButtonPress || m_event.type == llgl::Event::Type::MouseButtonRelease;
+        return m_event.type == llgl::Event::Type::MouseMove
+            || m_event.type == llgl::Event::Type::MouseButtonPress
+            || m_event.type == llgl::Event::Type::MouseButtonRelease
+            || m_event.type == llgl::Event::Type::MouseScroll;
     }
 
     Util::Vector2i mouse_position() const {
@@ -86,6 +89,8 @@ public:
             return m_event.mouse_move.position;
         if (m_event.type == llgl::Event::Type::MouseButtonPress || m_event.type == llgl::Event::Type::MouseButtonRelease)
             return m_event.mouse_button.position;
+        if (m_event.type == llgl::Event::Type::MouseScroll)
+            return m_event.mouse_scroll.position;
         __builtin_unreachable();
     }
 
