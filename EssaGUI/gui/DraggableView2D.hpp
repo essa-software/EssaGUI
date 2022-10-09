@@ -17,9 +17,10 @@ public:
     Util::Vector2f screen_to_world(Util::Vector2i) const;
     Util::Vector2i world_to_screen(Util::Vector2f) const;
 
-private:
+protected:
     virtual void handle_event(Event&) override;
 
+private:
     float m_zoom = 1;
     Util::Vector2f m_offset;
 
