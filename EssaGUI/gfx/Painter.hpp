@@ -4,6 +4,7 @@
 #include "GUIBuilder.hpp"
 #include "Vertex.hpp"
 #include <EssaGUI/gui/TextAlign.hpp>
+#include <EssaUtil/NonCopyable.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
 
 namespace Gfx {
@@ -56,6 +57,28 @@ private:
 
     GUIBuilder m_builder;
     llgl::Renderer& m_renderer;
+};
+
+class PainterTransformScope {
+public:
+    PainterTransformScope(PainterTransformScope const&) = delete;
+    PainterTransformScope& operator=(PainterTransformScope const&) = delete;
+    PainterTransformScope(PainterTransformScope&&) = delete;
+    PainterTransformScope& operator=(PainterTransformScope&&) = delete;
+
+    PainterTransformScope(Gfx::Painter& painter, llgl::Transform const& transform)
+        : m_painter(painter)
+        , m_old_transform(painter.builder().model()) {
+        painter.builder().set_model(transform);
+    }
+
+    ~PainterTransformScope() {
+        m_painter.builder().set_model(m_old_transform);
+    }
+
+private:
+    Gfx::Painter& m_painter;
+    llgl::Transform m_old_transform;
 };
 
 }
