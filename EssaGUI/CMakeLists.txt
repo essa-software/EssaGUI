@@ -27,6 +27,7 @@ add_library(EssaGUI SHARED
     gui/Container.cpp
     gui/ContextMenu.cpp
     gui/Datebox.cpp
+    gui/DraggableView2D.cpp
     gui/EventLoop.cpp
     gui/FileExplorer.cpp
     gui/FilePrompt.cpp
