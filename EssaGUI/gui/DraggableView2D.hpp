@@ -16,6 +16,7 @@ public:
     Util::Rectf visible_area() const;
     Util::Vector2f screen_to_world(Util::Vector2i) const;
     Util::Vector2i world_to_screen(Util::Vector2f) const;
+    bool dragging() const { return m_dragging; }
 
 protected:
     virtual void handle_event(Event&) override;
