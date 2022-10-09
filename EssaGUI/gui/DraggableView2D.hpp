@@ -11,6 +11,7 @@ public:
 
     float zoom() const { return m_zoom; }
     auto offset() const { return m_offset; }
+    Util::Rectf visible_area() const;
 
 private:
     virtual void handle_event(Event&) override;
