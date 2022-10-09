@@ -1,5 +1,4 @@
 #include <EssaEngine/3D/Shaders/Basic.hpp>
-#include <EssaEngine/Util/VAOBuilder.hpp>
 #include <EssaGUI/gfx/GUIBuilder.hpp>
 #include <EssaGUI/gfx/Vertex.hpp>
 #include <EssaGUI/gui/Application.hpp>
