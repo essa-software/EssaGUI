@@ -17,6 +17,7 @@ public:
     Util::Vector2f screen_to_world(Util::Vector2i) const;
     Util::Vector2i world_to_screen(Util::Vector2f) const;
     bool dragging() const { return m_dragging; }
+    bool actually_dragging() const { return m_actually_dragging; }
 
 protected:
     virtual void handle_event(Event&) override;
@@ -28,6 +29,7 @@ private:
     Util::Vector2i m_drag_start_mouse;
     Util::Vector2f m_drag_start_offset;
     bool m_dragging = false;
+    bool m_actually_dragging = false;
 };
 
 }

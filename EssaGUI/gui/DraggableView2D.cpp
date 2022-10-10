@@ -56,10 +56,14 @@ void DraggableView2D::handle_event(Event& event) {
     }
     else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
         m_dragging = false;
+        m_actually_dragging = false;
     }
     else if (event.type() == llgl::Event::Type::MouseMove) {
-        if (m_dragging) {
-            auto delta = event.mouse_position() - m_drag_start_mouse;
+        auto delta = event.mouse_position() - m_drag_start_mouse;
+        if (m_dragging && delta.length_squared() > 400) {
+            m_actually_dragging = true;
+        }
+        if (m_actually_dragging) {
             m_offset = m_drag_start_offset - Util::Vector2f { delta } / m_zoom;
         }
     }
