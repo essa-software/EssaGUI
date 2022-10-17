@@ -2,6 +2,7 @@
 
 #include "Widget.hpp"
 #include <LLGL/Core/Transform.hpp>
+#include <LLGL/Window/Mouse.hpp>
 
 namespace GUI {
 
@@ -18,6 +19,7 @@ public:
     Util::Vector2i world_to_screen(Util::Vector2f) const;
     bool dragging() const { return m_dragging; }
     bool actually_dragging() const { return m_actually_dragging; }
+    void set_pan_button(llgl::MouseButton button) { m_pan_button = button; }
 
 protected:
     virtual void handle_event(Event&) override;
@@ -30,6 +32,7 @@ private:
     Util::Vector2f m_drag_start_offset;
     bool m_dragging = false;
     bool m_actually_dragging = false;
+    llgl::MouseButton m_pan_button = llgl::MouseButton::Middle;
 };
 
 }

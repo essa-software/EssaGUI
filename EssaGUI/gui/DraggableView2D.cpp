@@ -50,11 +50,17 @@ void DraggableView2D::handle_event(Event& event) {
         if (!is_hover()) {
             return;
         }
+        if (event.event().mouse_button.button != m_pan_button) {
+            return;
+        }
         m_drag_start_mouse = event.mouse_position();
         m_drag_start_offset = m_offset;
         m_dragging = true;
     }
     else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
+        if (event.event().mouse_button.button != m_pan_button) {
+            return;
+        }
         m_dragging = false;
         m_actually_dragging = false;
     }
