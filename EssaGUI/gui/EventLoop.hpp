@@ -13,11 +13,14 @@ public:
 
     bool is_running() const { return m_running; }
 
+    void set_tps_limit(int l) { m_tps_limit = l; }
+
 private:
     virtual void tick() = 0;
 
     bool m_running = true;
     float m_tps = 0;
+    int m_tps_limit = 0;
 };
 
 }
