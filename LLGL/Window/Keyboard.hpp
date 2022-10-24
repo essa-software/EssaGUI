@@ -1,73 +1,64 @@
 #pragma once
 
-#include <SDL2/SDL_keycode.h>
-#include <string>
-
+#include <EssaUtil/Enum.hpp>
 #include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_keycode.h>
+#include <fmt/format.h>
+#include <string>
 
 namespace llgl {
 
-#define ENUMERATE_KEYBOARD_KEYCODES(K) \
-    K(A, SDLK_a)                       \
-    K(B, SDLK_b)                       \
-    K(C, SDLK_c)                       \
-    K(D, SDLK_d)                       \
-    K(E, SDLK_e)                       \
-    K(F, SDLK_f)                       \
-    K(G, SDLK_g)                       \
-    K(H, SDLK_h)                       \
-    K(I, SDLK_i)                       \
-    K(J, SDLK_j)                       \
-    K(K, SDLK_k)                       \
-    K(L, SDLK_l)                       \
-    K(M, SDLK_m)                       \
-    K(N, SDLK_n)                       \
-    K(O, SDLK_o)                       \
-    K(P, SDLK_p)                       \
-    K(Q, SDLK_q)                       \
-    K(R, SDLK_r)                       \
-    K(S, SDLK_s)                       \
-    K(T, SDLK_t)                       \
-    K(U, SDLK_u)                       \
-    K(V, SDLK_v)                       \
-    K(W, SDLK_w)                       \
-    K(X, SDLK_x)                       \
-    K(Y, SDLK_y)                       \
-    K(Z, SDLK_z)                       \
-    K(Up, SDLK_UP)                     \
-    K(Down, SDLK_DOWN)                 \
-    K(Left, SDLK_LEFT)                 \
-    K(Right, SDLK_RIGHT)               \
-    K(Backspace, SDLK_BACKSPACE)       \
-    K(Delete, SDLK_DELETE)             \
-    K(Escape, SDLK_ESCAPE)             \
-    K(End, SDLK_END)                   \
-    K(Enter, SDLK_RETURN)              \
-    K(Home, SDLK_HOME)                 \
-    K(Space, SDLK_SPACE)               \
-    K(LShift, SDLK_LSHIFT)             \
-    K(RShift, SDLK_RSHIFT)             \
-    K(Tab, SDLK_TAB)                   \
-    K(Tilde, SDLK_BACKQUOTE)
+// clang-format off
+#define ENUMERATE_KEYBOARD_KEYCODES(Ex) \
+    Ex(A, SDLK_a)                       \
+    Ex(B, SDLK_b)                       \
+    Ex(C, SDLK_c)                       \
+    Ex(D, SDLK_d)                       \
+    Ex(E, SDLK_e)                       \
+    Ex(F, SDLK_f)                       \
+    Ex(G, SDLK_g)                       \
+    Ex(H, SDLK_h)                       \
+    Ex(I, SDLK_i)                       \
+    Ex(J, SDLK_j)                       \
+    Ex(K, SDLK_k)                       \
+    Ex(L, SDLK_l)                       \
+    Ex(M, SDLK_m)                       \
+    Ex(N, SDLK_n)                       \
+    Ex(O, SDLK_o)                       \
+    Ex(P, SDLK_p)                       \
+    Ex(Q, SDLK_q)                       \
+    Ex(R, SDLK_r)                       \
+    Ex(S, SDLK_s)                       \
+    Ex(T, SDLK_t)                       \
+    Ex(U, SDLK_u)                       \
+    Ex(V, SDLK_v)                       \
+    Ex(W, SDLK_w)                       \
+    Ex(X, SDLK_x)                       \
+    Ex(Y, SDLK_y)                       \
+    Ex(Z, SDLK_z)                       \
+    Ex(Up, SDLK_UP)                     \
+    Ex(Down, SDLK_DOWN)                 \
+    Ex(Left, SDLK_LEFT)                 \
+    Ex(Right, SDLK_RIGHT)               \
+    Ex(Backspace, SDLK_BACKSPACE)       \
+    Ex(Delete, SDLK_DELETE)             \
+    Ex(Escape, SDLK_ESCAPE)             \
+    Ex(End, SDLK_END)                   \
+    Ex(Enter, SDLK_RETURN)              \
+    Ex(Home, SDLK_HOME)                 \
+    Ex(Space, SDLK_SPACE)               \
+    Ex(LShift, SDLK_LSHIFT)             \
+    Ex(RShift, SDLK_RSHIFT)             \
+    Ex(Tab, SDLK_TAB)                   \
+    Ex(Tilde, SDLK_BACKQUOTE)
+// clang-format on
 
-enum class KeyCode {
-#define __ENUMERATE_KEY(key, value) key = value,
-    ENUMERATE_KEYBOARD_KEYCODES(__ENUMERATE_KEY)
-#undef __ENUMERATE_KEY
-};
-
-constexpr std::string_view to_string(KeyCode key) {
-    switch (key) {
-#define __ENUMERATE_KEY(key, value) \
-    case KeyCode::key:              \
-        return #key;
-        ENUMERATE_KEYBOARD_KEYCODES(__ENUMERATE_KEY)
-#undef __ENUMERATE_KEY
-    }
-    return "Unknown";
-}
+ESSA_ENUM_WITH_VALUES(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
+ESSA_ENUM_TO_STRING(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
 
 bool is_key_pressed(KeyCode key);
 inline bool is_shift_pressed() { return is_key_pressed(KeyCode::LShift) || is_key_pressed(KeyCode::RShift); }
 
 }
+
+ESSA_ENUM_FMT_FORMATTER(llgl, KeyCode, ENUMERATE_KEYBOARD_KEYCODES)

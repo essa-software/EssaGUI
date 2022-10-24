@@ -38,6 +38,15 @@ struct Object : public Scope {
     EMLErrorOr<Value> require_property(std::string const& name) const;
     Value get_property(std::string const& name, Value&& fallback) const;
 
+    template<Util::Enum T>
+    using FromStringFunction = std::optional<T>(std::string_view);
+
+    template<Util::Enum T>
+    EMLErrorOr<T> get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const;
+
+    template<Util::Enum T>
+    EMLErrorOr<T> require_enum(std::string const& name, FromStringFunction<T> from_string) const;
+
     template<class T, class... Args>
     EMLErrorOr<std::unique_ptr<T>> require_and_construct_object(std::string const& name, Loader& loader, Args&&... args) const;
 
@@ -136,6 +145,28 @@ EMLErrorOr<std::array<T, S>> Array::to_static() const {
 template<class T, class... Args>
 EMLErrorOr<std::unique_ptr<T>> Object::require_and_construct_object(std::string const& name, Loader& loader, Args&&... args) const {
     return TRY(TRY(TRY(require_property(name)).to_object()).construct<T>(loader, std::forward<Args>(args)...));
+}
+
+template<Util::Enum T>
+EMLErrorOr<T> Object::get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const {
+    if (!properties.contains(name)) {
+        return fallback;
+    }
+    return require_enum(name, from_string);
+}
+
+template<Util::Enum T>
+EMLErrorOr<T> Object::require_enum(std::string const& name, FromStringFunction<T> from_string) const {
+    auto object = TRY(require_property(name));
+    if (!object.is_string()) {
+        // FIXME: Print which enum exactly caused the eror
+        return EMLError { fmt::format("Value for property '{}: {}' must be a string, {} given", name, typeid(T).name(), object.string()) };
+    }
+    auto value = from_string(object.as_string().encode());
+    if (!value) {
+        return EMLError { fmt::format("Invalid enum constant for property '{}: {}': ", name, typeid(T).name(), object.as_string().encode()) };
+    }
+    return *value;
 }
 
 struct ClassDefinition {

@@ -120,17 +120,21 @@ public:
     LengthVector position() const { return m_expected_pos; }
     LengthVector size() const { return m_input_size; }
 
+    // clang-format off
     void set_position(LengthVector l) {
         m_expected_pos = l;
         set_needs_relayout();
     }
 
     // Alignment is applicably only for BasicLayout.
-    enum class Alignment {
-        Start,
-        Center,
-        End
-    };
+    #define ESSAGUI_ENUMERATE_ALIGNMENTS(Ex)    \
+        Ex(Start)                               \
+        Ex(Center)                              \
+        Ex(End)
+    // clang-format on
+
+    ESSA_ENUM(Alignment, ESSAGUI_ENUMERATE_ALIGNMENTS)
+
     // Set horizontal alignment of widget in the container (aka align-self)
     void set_horizontal_alignment(Alignment a) {
         m_horizontal_alignment = a;
@@ -262,5 +266,7 @@ private:
     bool m_hover = false;
     bool m_visible = true;
 };
+
+ESSA_ENUM_FROM_STRING(Widget::Alignment, alignment, ESSAGUI_ENUMERATE_ALIGNMENTS);
 
 }
