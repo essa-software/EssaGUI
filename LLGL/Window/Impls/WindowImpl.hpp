@@ -22,6 +22,7 @@ public:
     virtual void set_mouse_position(Util::Vector2i) = 0;
     virtual bool is_focused() const = 0;
     virtual void set_active() = 0;
+    virtual void maximize() = 0;
 };
 
 }

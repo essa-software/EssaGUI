@@ -196,4 +196,7 @@ void SDLWindowImpl::set_active() {
     SDL_GL_MakeCurrent(m_window, s_context);
 }
 
+void SDLWindowImpl::maximize() {
+    SDL_MaximizeWindow(m_window);
+}
 }

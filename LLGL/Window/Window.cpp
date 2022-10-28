@@ -56,4 +56,8 @@ void Window::set_active() const {
     m_impl->set_active();
 }
 
+void Window::maximize() const {
+    m_impl->maximize();
+}
+
 }
