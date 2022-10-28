@@ -69,6 +69,10 @@ void SDLWindowImpl::set_size(Util::Vector2i size) {
     SDL_SetWindowSize(m_window, size.x(), size.y());
 }
 
+void SDLWindowImpl::set_position(Util::Vector2i position) {
+    SDL_SetWindowPosition(m_window, position.x(), position.y());
+}
+
 void SDLWindowImpl::display() {
     SDL_GL_SwapWindow(m_window);
 }
@@ -199,4 +203,11 @@ void SDLWindowImpl::set_active() {
 void SDLWindowImpl::maximize() {
     SDL_MaximizeWindow(m_window);
 }
+
+Util::Vector2i SDLWindowImpl::screen_size() {
+    SDL_DisplayMode mode;
+    SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_window), &mode);
+    return { mode.w, mode.h };
+}
+
 }

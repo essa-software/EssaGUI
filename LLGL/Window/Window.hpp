@@ -22,6 +22,7 @@ public:
     void close();
     void set_title(Util::UString const&);
     void set_size(Util::Vector2i);
+    void set_position(Util::Vector2i);
     void display();
     bool poll_event(Event&);
     void set_mouse_position(Util::Vector2i);
@@ -34,6 +35,8 @@ public:
     Util::Vector2f center() const { return Util::Vector2f { m_size } / 2.f; }
     float aspect() const { return (float)m_size.x() / m_size.y(); }
     Util::Recti rect() const { return { 0, 0, size().x(), size().y() }; }
+    
+    void center_on_screen() const;
 
 private:
     std::unique_ptr<WindowImpl> m_impl;

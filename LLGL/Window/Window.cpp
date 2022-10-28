@@ -31,6 +31,10 @@ void Window::set_size(Util::Vector2i size) {
     m_impl->set_size(size);
 }
 
+void Window::set_position(Util::Vector2i position) {
+    m_impl->set_position(position);
+}
+
 void Window::display() {
     m_impl->display();
 }
@@ -58,6 +62,11 @@ void Window::set_active() const {
 
 void Window::maximize() const {
     m_impl->maximize();
+}
+
+void Window::center_on_screen() const {
+    auto screen_size = m_impl->screen_size();
+    m_impl->set_position({ screen_size.x() / 2 - size().x() / 2, screen_size.y() / 2 - size().y() / 2 });
 }
 
 }

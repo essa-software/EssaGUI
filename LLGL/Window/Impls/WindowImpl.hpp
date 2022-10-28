@@ -17,12 +17,14 @@ public:
     virtual void close() = 0;
     virtual void set_title(Util::UString const&) = 0;
     virtual void set_size(Util::Vector2i) = 0;
+    virtual void set_position(Util::Vector2i) = 0;
     virtual void display() = 0;
     virtual bool poll_event(Event&) = 0;
     virtual void set_mouse_position(Util::Vector2i) = 0;
     virtual bool is_focused() const = 0;
     virtual void set_active() = 0;
     virtual void maximize() = 0;
+    virtual Util::Vector2i screen_size() = 0;
 };
 
 }

@@ -15,12 +15,14 @@ public:
     virtual void close() override;
     virtual void set_title(Util::UString const&) override;
     virtual void set_size(Util::Vector2i) override;
+    virtual void set_position(Util::Vector2i) override;
     virtual void display() override;
     virtual bool poll_event(Event&) override;
     virtual void set_mouse_position(Util::Vector2i) override;
     virtual bool is_focused() const override;
     virtual void set_active() override;
     virtual void maximize() override;
+    virtual Util::Vector2i screen_size() override;
 
 private:
     SDL_Window* m_window {};
