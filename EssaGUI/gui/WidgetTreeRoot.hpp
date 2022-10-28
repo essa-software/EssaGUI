@@ -25,6 +25,7 @@ public:
     void set_needs_relayout() { m_needs_relayout = true; }
 
     template<class T, class... Args>
+    requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
     auto& set_main_widget(Args&&... args) {
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         auto widget_ptr = widget.get();
