@@ -1,5 +1,7 @@
 #include "Painter.hpp"
-#include "LLGL/OpenGL/Transform.hpp"
+
+#include <LLGL/OpenGL/PrimitiveType.hpp>
+#include <LLGL/OpenGL/Transform.hpp>
 
 namespace Gfx {
 
@@ -106,6 +108,14 @@ void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptio
     }
     draw_vertices(llgl::PrimitiveType::TriangleFan, vertices);
     draw_outline(outline_positions, options.outline_color, options.outline_thickness);
+}
+
+void Painter::draw_line(std::span<Util::Vector2f const> positions, LineDrawOptions const& options) {
+    std::vector<Gfx::Vertex> vertices;
+    for (auto const& position : positions) {
+        vertices.push_back({ position, options.color, {} });
+    }
+    draw_vertices(llgl::PrimitiveType::LineStrip, vertices);
 }
 
 void Painter::draw_outline(std::span<Util::Vector2f const> positions, Util::Color color, float thickness) {

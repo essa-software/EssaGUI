@@ -22,6 +22,10 @@ int main() {
         text.set_position({ 50, 200 });
         text.set_font_size(75);
         text.draw(painter);
+
+        painter.draw_line({ 10, 10 }, { 80, 100 }, { .color = Util::Colors::Red });
+        painter.draw_line({ { 150, 10 }, { 110, 40 }, { 150, 70 }, { 110, 100 } }, { .color = Util::Colors::Lime });
+
         painter.render();
         wnd.display();
     }
