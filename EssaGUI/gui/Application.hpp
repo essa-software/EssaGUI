@@ -31,4 +31,32 @@ private:
     std::list<HostWindow> m_host_windows;
 };
 
+// An application with a single maximized by default window. This assumes
+// that main widget doesn't take any arguments.
+template<class W>
+requires(std::is_base_of_v<Widget, W>) class SimpleApplication : public Application {
+public:
+    template<class... Args>
+    requires std::is_constructible_v<W, Args...>
+    SimpleApplication(Util::UString const& title, Util::Vector2i window_size = {}, Args&&... args)
+        : m_window(create_host_window(window_size, title)) {
+        if (window_size == Util::Vector2i {}) {
+            m_window.window().maximize();
+        }
+        m_window.window().center_on_screen();
+        m_window.set_main_widget<W>(std::forward<Args>(args)...);
+    }
+
+    auto& window() { return m_window; }
+    W& main_widget() {
+        assert(m_window.main_widget());
+        return static_cast<W&>(*m_window.main_widget());
+    }
+
+private:
+    void setup();
+
+    GUI::HostWindow& m_window;
+};
+
 }
