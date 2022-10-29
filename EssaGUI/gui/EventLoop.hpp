@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 namespace GUI {
 
@@ -7,8 +8,15 @@ class EventLoop {
 public:
     virtual ~EventLoop() = default;
 
+    std::function<bool()> on_close;
+
     void run();
-    void quit() { m_running = false; }
+    void quit() { 
+        if(on_close)
+            m_running = !on_close();
+        else
+            m_running = false; 
+    }
     float tps() const { return m_tps; }
 
     bool is_running() const { return m_running; }
