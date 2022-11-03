@@ -69,6 +69,8 @@ private:
     virtual Util::Vector2f content_size() const override;
     virtual LengthVector initial_size() const override;
 
+    TextPosition real_cursor_position() const;
+
     // sf::Clock m_cursor_clock;
 
     enum class CursorDirection {

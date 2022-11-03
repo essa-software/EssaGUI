@@ -36,6 +36,17 @@ LengthVector TextEditor::initial_size() const {
     return m_multiline ? LengthVector {} : LengthVector { Util::Length::Auto, 30.0_px };
 }
 
+TextPosition TextEditor::real_cursor_position() const {
+    if (m_lines.empty()) {
+        return {};
+    }
+    TextPosition position = m_cursor;
+    if (position.column > m_lines[position.line].size()) {
+        position.column = m_lines[position.line].size();
+    }
+    return position;
+}
+
 TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     if (m_lines.size() == 0)
         return {};
@@ -102,11 +113,11 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
     if (extend_selection == SetCursorSelectionBehavior::Clear || (extend_selection != SetCursorSelectionBehavior::DontTouch && !m_shift_pressed))
-        m_selection_start = m_cursor;
+        m_selection_start = real_cursor_position();
 
     // TODO: Implement scroll X
 
-    auto y_offset = m_cursor.line * line_height() + scroll_offset().y();
+    auto y_offset = real_cursor_position().line * line_height() + scroll_offset().y();
     auto max_y = raw_size().y() - line_height() - 8;
     if (y_offset < 0)
         set_scroll_y(scroll().y() + y_offset);
@@ -156,8 +167,6 @@ void TextEditor::handle_event(Event& event) {
                     break;
                 if (m_cursor.line > 0)
                     m_cursor.line--;
-                if (m_cursor.column > m_lines[m_cursor.line].size())
-                    m_cursor.column = m_lines[m_cursor.line].size();
                 update_selection_after_set_cursor();
                 event.set_handled();
             } break;
@@ -166,8 +175,6 @@ void TextEditor::handle_event(Event& event) {
                     break;
                 if (m_cursor.line < m_lines.size() - 1)
                     m_cursor.line++;
-                if (m_cursor.column > m_lines[m_cursor.line].size())
-                    m_cursor.column = m_lines[m_cursor.line].size();
                 update_selection_after_set_cursor();
                 event.set_handled();
             } break;
@@ -198,7 +205,7 @@ void TextEditor::handle_event(Event& event) {
             case llgl::KeyCode::V: {
                 if (event.event().key.ctrl && llgl::Clipboard::has_string()) {
                     erase_selected_text();
-                    m_selection_start = m_cursor;
+                    m_selection_start = real_cursor_position();
                     for (auto codepoint : llgl::Clipboard::get_string())
                         insert_codepoint(codepoint);
                 }
@@ -227,11 +234,12 @@ void TextEditor::handle_event(Event& event) {
                     break;
                 do {
                     insert_codepoint(' ');
-                } while (m_cursor.column % 4 != 0);
+                } while (real_cursor_position().column % 4 != 0);
                 break;
             }
             case llgl::KeyCode::Backspace: {
                 if (m_lines.size() > 0) {
+                    m_cursor = real_cursor_position();
                     if (m_cursor == m_selection_start) {
                         if (m_cursor.column > 0) {
                             auto remove_character = [this]() {
@@ -267,6 +275,7 @@ void TextEditor::handle_event(Event& event) {
             }
             case llgl::KeyCode::Delete: {
                 if (m_lines.size() > 0) {
+                    m_cursor = real_cursor_position();
                     if (m_cursor == m_selection_start) {
                         if (m_cursor.column < m_lines[m_cursor.line].size())
                             m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
@@ -338,6 +347,7 @@ Util::UString TextEditor::selected_text() const {
 }
 
 void TextEditor::erase_selected_text() {
+    m_cursor = real_cursor_position();
     if (m_selection_start != m_cursor) {
         auto selection_start = std::min(m_selection_start, m_cursor);
         auto selection_end = std::max(m_selection_start, m_cursor);
@@ -360,6 +370,7 @@ void TextEditor::erase_selected_text() {
 }
 
 void TextEditor::move_cursor(CursorDirection direction) {
+    m_cursor = real_cursor_position();
     if (m_cursor != m_selection_start && !m_shift_pressed) {
         if ((direction == CursorDirection::Right) != (m_cursor < m_selection_start))
             m_selection_start = m_cursor;
@@ -473,6 +484,7 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
 void TextEditor::insert_codepoint(uint32_t codepoint) {
     if (!can_insert_codepoint(codepoint))
         return;
+    m_cursor = real_cursor_position();
     if ((codepoint == '\r' || codepoint == '\n')) {
         if (m_multiline) {
             if (m_lines.empty())
@@ -492,7 +504,6 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         }
     }
     else if (codepoint >= 0x20) {
-
         if (m_cursor != m_selection_start)
             erase_selected_text();
         if (m_lines.empty())
@@ -510,19 +521,21 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
 }
 
 Util::Vector2f TextEditor::calculate_cursor_position() const {
-    Gfx::Text text { m_lines.empty() ? "" : m_lines[m_cursor.line], GUI::Application::the().fixed_width_font() };
+    auto cursor = real_cursor_position();
+    Gfx::Text text { m_lines.empty() ? "" : m_lines[cursor.line], GUI::Application::the().fixed_width_font() };
     text.set_font_size(theme().label_font_size);
-    auto character_position = text.find_character_position(m_cursor.column);
+    auto character_position = text.find_character_position(cursor.column);
     auto position = Util::Vector2f { character_position, 0 } + scroll_offset();
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_multiline)
-        position.y() += line_height() / 2 - cursor_height / 4 + line_height() * m_cursor.line;
+        position.y() += line_height() / 2 - cursor_height / 4 + line_height() * cursor.line;
     else
         position.y() = raw_size().y() / 2 - cursor_height / 2;
     return position;
 }
 
 void TextEditor::draw(Gfx::Painter& window) const {
+    auto cursor = real_cursor_position();
     auto theme_colors = theme().textbox.value(*this);
 
     Gfx::RectangleDrawOptions background_rect;
@@ -538,11 +551,11 @@ void TextEditor::draw(Gfx::Painter& window) const {
     }
 
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
-    if (m_selection_start != m_cursor) {
+    if (m_selection_start != cursor) {
         Gfx::RectangleDrawOptions selected_rect;
         selected_rect.fill_color = theme().selection.value(*this);
-        auto selection_start = std::min(m_selection_start, m_cursor);
-        auto selection_end = std::max(m_selection_start, m_cursor);
+        auto selection_start = std::min(m_selection_start, cursor);
+        auto selection_end = std::max(m_selection_start, cursor);
         for (size_t s = selection_start.line; s <= selection_end.line; s++) {
             Gfx::Text text { m_lines[s], Application::the().fixed_width_font() };
             text.set_font_size(theme().label_font_size);
