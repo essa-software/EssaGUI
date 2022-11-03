@@ -219,6 +219,11 @@ void TextEditor::handle_event(Event& event) {
                     }
                     else {
                         insert_codepoint('\n');
+                        auto indent = m_lines[real_cursor_position().line - 1].indent();
+                        // Indent
+                        for (size_t s = 0; s < indent; s++) {
+                            insert_codepoint(' ');
+                        }
                     }
                 }
                 else {
