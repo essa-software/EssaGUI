@@ -619,11 +619,15 @@ void TextEditor::draw(Gfx::Painter& window) const {
 
     TextStyle const default_style { .color = theme_colors.text };
 
+    auto line_height = this->line_height();
+    size_t first_visible_line = m_lines.empty() ? 0 : std::min(static_cast<size_t>(-scroll_offset().y() / line_height), m_lines.size() - 1);
+    size_t last_visible_line = m_lines.empty() ? 0 : std::min(static_cast<size_t>((scroll_area_size().y() - scroll_offset().y()) / line_height), m_lines.size() - 1);
+
     {
         Util::Vector2f position = scroll_offset();
         position.x() += left_margin();
         if (!m_multiline) {
-            position.y() += line_height();
+            position.y() += line_height;
             Util::Rectf align_rect { Margin, 0, raw_size().x(), raw_size().y() };
             text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
             assert(should_draw_placeholder || line_count() > 0);
@@ -632,17 +636,26 @@ void TextEditor::draw(Gfx::Painter& window) const {
         }
         else {
             if (should_draw_placeholder) {
-                position.y() += line_height();
+                position.y() += line_height;
                 text.set_string(m_placeholder);
                 text.set_position(position);
                 text.draw(window);
             }
             else {
                 size_t character_index = 0;
+
+                for (size_t i = 0; i < first_visible_line; i++) {
+                    character_index += line(i).size() + 1;
+                }
+
                 auto character_width = this->character_width();
-                for (auto& line : m_lines) {
-                    position.x() = left_margin();
-                    position.y() += line_height();
+                auto left_margin = this->left_margin();
+                position.y() += line_height * first_visible_line;
+
+                for (size_t i = first_visible_line; i <= last_visible_line; i++) {
+                    auto const& line = m_lines[i];
+                    position.x() = left_margin;
+                    position.y() += line_height;
                     for (auto character : line) {
                         auto style_idx = m_styles_for_letter[character_index];
                         auto const& style = style_idx ? m_styles[*style_idx] : default_style;
@@ -653,6 +666,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
                         position.x() += character_width;
                         character_index++;
                     }
+                    character_index++; // Newline
                 }
             }
         }
@@ -663,13 +677,15 @@ void TextEditor::draw(Gfx::Painter& window) const {
         Gfx::Text text { "", GUI::Application::the().fixed_width_font() };
         Util::Vector2f position = scroll_offset();
         position.y() += 5;
+        position.y() += line_height * first_visible_line;
         text.set_fill_color(theme().gutter.text);
         text.set_font_size(theme().label_font_size);
-        for (size_t s = 0; s < line_count(); s++) {
-            text.set_string(Util::UString { std::to_string(s + 1) });
-            text.align(Align::CenterRight, { position, { GutterWidth - 10, line_height() } });
+
+        for (size_t i = first_visible_line; i <= last_visible_line; i++) {
+            text.set_string(Util::UString { std::to_string(i + 1) });
+            text.align(Align::CenterRight, { position, { GutterWidth - 10, line_height } });
             text.draw(window);
-            position.y() += line_height();
+            position.y() += line_height;
         }
     }
 
