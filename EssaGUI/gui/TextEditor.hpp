@@ -1,34 +1,24 @@
 #pragma once
 
-#include "NotifyUser.hpp"
-#include "ScrollableWidget.hpp"
 #include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/NotifyUser.hpp>
+#include <EssaGUI/gui/ScrollableWidget.hpp>
+#include <EssaGUI/gui/textediting/SyntaxHighlighter.hpp>
+#include <EssaGUI/gui/textediting/TextPosition.hpp>
 
 #include <functional>
 
 namespace GUI {
 
-struct TextPosition {
-    size_t line {};
-    size_t column {};
-
-    bool operator==(TextPosition const& other) const {
-        return line == other.line && column == other.column;
-    }
-
-    bool operator<(TextPosition const& other) const {
-        return line < other.line || (line == other.line && column < other.column);
-    }
-
-    bool operator>(TextPosition const& other) const {
-        return !(*this < other) && !(*this == other);
-    }
-};
-
 class TextEditor : public ScrollableWidget {
 public:
     virtual void handle_event(Event&) override;
     virtual void draw(Gfx::Painter& window) const override;
+
+    size_t line_count() const { return m_lines.size(); }
+    Util::UString const& line(size_t idx) const { return m_lines[idx]; }
+    Util::UString const& first_line() const { return m_lines.front(); }
+    Util::UString const& last_line() const { return m_lines.back(); }
 
     Util::UString content() const;
     void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);
@@ -51,6 +41,8 @@ public:
     // for multiline textboxes.
     std::function<void(Util::UString const&)> on_enter;
 
+    void set_syntax_highlighter(std::unique_ptr<SyntaxHighlighter> h) { m_syntax_highlighter = std::move(h); }
+
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
@@ -58,10 +50,12 @@ private:
     TextPosition m_character_pos_from_mouse(Event& event);
     Util::Vector2f calculate_cursor_position() const;
     void erase_selected_text();
+    virtual void update() override;
     virtual bool accepts_focus() const override { return true; }
     virtual bool steals_focus() const override { return m_multiline; }
     virtual bool can_insert_codepoint(uint32_t) const { return true; }
     virtual void on_content_change() { }
+    void did_content_change();
 
     float line_height() const;
     float left_margin() const;
@@ -85,11 +79,18 @@ private:
     // Set text cursor with updating scroll and selection if shift is pressed.
     void update_selection_after_set_cursor(SetCursorSelectionBehavior = SetCursorSelectionBehavior::Extend);
 
-    bool m_shift_pressed = false;
+    void regenerate_styles();
+
     std::vector<Util::UString> m_lines;
+    std::vector<std::optional<size_t>> m_styles_for_letter;
+    std::vector<TextStyle> m_styles;
+
+    bool m_shift_pressed = false;
     bool m_dragging = false;
     TextPosition m_cursor;
     TextPosition m_selection_start;
+    std::unique_ptr<SyntaxHighlighter> m_syntax_highlighter;
+    bool m_content_changed = false;
 };
 
 }

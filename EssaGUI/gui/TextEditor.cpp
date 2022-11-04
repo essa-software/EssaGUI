@@ -1,14 +1,15 @@
 #include "TextEditor.hpp"
 
-#include "Application.hpp"
-#include "EssaGUI/gfx/Text.hpp"
-#include "ScrollableWidget.hpp"
-#include "Widget.hpp"
-
 #include <EssaGUI/eml/Loader.hpp>
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
+#include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
+#include <EssaGUI/gui/ScrollableWidget.hpp>
+#include <EssaGUI/gui/Widget.hpp>
+#include <EssaGUI/gui/textediting/SyntaxHighlighter.hpp>
 #include <EssaUtil/CharacterType.hpp>
+#include <EssaUtil/UStringBuilder.hpp>
 #include <LLGL/Window/Clipboard.hpp>
 
 #include <sstream>
@@ -29,7 +30,7 @@ float TextEditor::left_margin() const {
 
 Util::Vector2f TextEditor::content_size() const {
     // TODO: Implement x scroll
-    return { 0, m_lines.size() * line_height() + 5 };
+    return { 0, line_count() * line_height() + 5 };
 }
 
 LengthVector TextEditor::initial_size() const {
@@ -41,14 +42,14 @@ TextPosition TextEditor::real_cursor_position() const {
         return {};
     }
     TextPosition position = m_cursor;
-    if (position.column > m_lines[position.line].size()) {
-        position.column = m_lines[position.line].size();
+    if (position.column > line(position.line).size()) {
+        position.column = line(position.line).size();
     }
     return position;
 }
 
 TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
-    if (m_lines.size() == 0)
+    if (line_count() == 0)
         return {};
 
     auto delta = Util::Vector2f { event.mouse_position() } - raw_position();
@@ -58,12 +59,12 @@ TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
     auto line = m_multiline ? (delta.y() - scroll_offset().y()) / line_height() : 0;
     if (line < 0)
         return {};
-    if (line >= m_lines.size())
-        return { .line = std::max<size_t>(1, m_lines.size()) - 1, .column = std::max<size_t>(1, m_lines.back().size() + 1) - 1 };
+    if (line >= line_count())
+        return { .line = std::max<size_t>(1, line_count()) - 1, .column = std::max<size_t>(1, last_line().size() + 1) - 1 };
 
     float character_width = this->character_width();
     auto cursor = (delta.x() - scroll_offset().x() - left_margin()) / character_width;
-    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), m_lines[line].size()) };
+    return { .line = static_cast<size_t>(line), .column = std::min(static_cast<size_t>(cursor), this->line(line).size()) };
 }
 
 float TextEditor::character_width() const {
@@ -77,13 +78,18 @@ float TextEditor::character_width() const {
 
 Util::UString TextEditor::content() const {
     // TODO: Implement UStringBuilder
-    Util::UString content;
-    for (size_t s = 0; s < m_lines.size(); s++) {
-        content = content + m_lines[s];
-        if (s != m_lines.size() - 1)
-            content = content + '\n';
+    Util::UStringBuilder builder;
+    size_t content_length = 0;
+    for (size_t s = 0; s < line_count(); s++) {
+        content_length += line(s).size();
     }
-    return content;
+    builder.reserve(content_length);
+    for (size_t s = 0; s < line_count(); s++) {
+        builder.append(line(s));
+        if (s != line_count() - 1)
+            builder.append('\n');
+    }
+    return builder.release_string();
 }
 
 void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
@@ -99,16 +105,17 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
             on_change(content);
     }
 
-    if (m_lines.size() > 0) {
-        if (m_cursor.line >= m_lines.size())
-            m_cursor.line = m_lines.size() - 1;
-        if (m_cursor.column > m_lines[m_cursor.line].size())
-            m_cursor.column = m_lines[m_cursor.line].size();
+    if (line_count() > 0) {
+        if (m_cursor.line >= line_count())
+            m_cursor.line = line_count() - 1;
+        if (m_cursor.column > line(m_cursor.line).size())
+            m_cursor.column = line(m_cursor.line).size();
     }
     else {
         m_cursor = {};
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+    m_content_changed = true;
 }
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
@@ -173,7 +180,7 @@ void TextEditor::handle_event(Event& event) {
             case llgl::KeyCode::Down: {
                 if (!m_multiline)
                     break;
-                if (m_cursor.line < m_lines.size() - 1)
+                if (m_cursor.line < line_count() - 1)
                     m_cursor.line++;
                 update_selection_after_set_cursor();
                 event.set_handled();
@@ -182,7 +189,7 @@ void TextEditor::handle_event(Event& event) {
                 if (event.event().key.ctrl) {
                     if (m_lines.empty())
                         break;
-                    m_cursor = { .line = m_lines.size() - 1, .column = m_lines[m_lines.size() - 1].size() };
+                    m_cursor = { .line = line_count() - 1, .column = line(line_count() - 1).size() };
                     m_selection_start = {};
                 }
                 break;
@@ -219,7 +226,7 @@ void TextEditor::handle_event(Event& event) {
                     }
                     else {
                         insert_codepoint('\n');
-                        auto indent = m_lines[real_cursor_position().line - 1].indent();
+                        auto indent = line(real_cursor_position().line - 1).indent();
                         // Indent
                         for (size_t s = 0; s < indent; s++) {
                             insert_codepoint(' ');
@@ -243,7 +250,7 @@ void TextEditor::handle_event(Event& event) {
                 break;
             }
             case llgl::KeyCode::Backspace: {
-                if (m_lines.size() > 0) {
+                if (line_count() > 0) {
                     m_cursor = real_cursor_position();
                     if (m_cursor == m_selection_start) {
                         if (m_cursor.column > 0) {
@@ -263,12 +270,13 @@ void TextEditor::handle_event(Event& event) {
                         else if (m_cursor.line != 0) {
                             m_cursor.line--;
                             size_t old_size = m_lines[m_cursor.line].size();
-                            if (m_cursor.line < m_lines.size())
+                            if (m_cursor.line < line_count())
                                 m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
                             m_lines.erase(m_lines.begin() + m_cursor.line + 1);
                             m_cursor.column = old_size;
                         }
                         update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+                        did_content_change();
                     }
                     else {
                         erase_selected_text();
@@ -279,12 +287,12 @@ void TextEditor::handle_event(Event& event) {
                 break;
             }
             case llgl::KeyCode::Delete: {
-                if (m_lines.size() > 0) {
+                if (line_count() > 0) {
                     m_cursor = real_cursor_position();
                     if (m_cursor == m_selection_start) {
                         if (m_cursor.column < m_lines[m_cursor.line].size())
                             m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
-                        else if (m_cursor.line < m_lines.size() - 1) {
+                        else if (m_cursor.line < line_count() - 1) {
                             m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
                             m_lines.erase(m_lines.begin() + m_cursor.line + 1);
                         }
@@ -396,7 +404,7 @@ void TextEditor::move_cursor(CursorDirection direction) {
         break;
     case CursorDirection::Right:
         if (m_cursor.column == m_lines[m_cursor.line].size()) {
-            if (m_cursor.line == m_lines.size() - 1)
+            if (m_cursor.line == line_count() - 1)
                 break;
             m_cursor.line++;
             m_cursor.column = 0;
@@ -410,7 +418,7 @@ void TextEditor::move_cursor(CursorDirection direction) {
 }
 
 void TextEditor::move_cursor_by_word(CursorDirection direction) {
-    if (m_lines.size() == 0)
+    if (line_count() == 0)
         return;
 
     // Trying to mimic vscode behavior in c++ source files.
@@ -522,7 +530,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         return;
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
-    on_content_change();
+    did_content_change();
 }
 
 Util::Vector2f TextEditor::calculate_cursor_position() const {
@@ -537,6 +545,39 @@ Util::Vector2f TextEditor::calculate_cursor_position() const {
     else
         position.y() = raw_size().y() / 2 - cursor_height / 2;
     return position;
+}
+
+void TextEditor::update() {
+    if (m_content_changed) {
+        regenerate_styles();
+        m_content_changed = false;
+    }
+}
+
+void TextEditor::regenerate_styles() {
+    auto content = this->content();
+
+    // Reset styles array to defaults
+    std::fill(m_styles_for_letter.begin(), m_styles_for_letter.end(), std::optional<size_t> {});
+    m_styles_for_letter.resize(content.size());
+
+    // Update styles with a syntax highlighter
+    if (m_syntax_highlighter) {
+        if (m_styles.empty()) {
+            m_styles = m_syntax_highlighter->styles();
+        }
+        auto highlighter_spans = m_syntax_highlighter->spans(content);
+        for (auto const& span : highlighter_spans) {
+            for (size_t s = 0; s < span.span_size; s++) {
+                m_styles_for_letter[span.span_start + s] = span.style_index;
+            }
+        }
+    }
+}
+
+void TextEditor::did_content_change() {
+    m_content_changed = true;
+    on_content_change();
 }
 
 void TextEditor::draw(Gfx::Painter& window) const {
@@ -575,6 +616,9 @@ void TextEditor::draw(Gfx::Painter& window) const {
     bool should_draw_placeholder = is_empty();
     text.set_fill_color(should_draw_placeholder ? theme().placeholder : theme_colors.text);
     text.set_font_size(theme().label_font_size);
+
+    TextStyle const default_style { .color = theme_colors.text };
+
     {
         Util::Vector2f position = scroll_offset();
         position.x() += left_margin();
@@ -582,7 +626,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
             position.y() += line_height();
             Util::Rectf align_rect { Margin, 0, raw_size().x(), raw_size().y() };
             text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
-            assert(should_draw_placeholder || m_lines.size() > 0);
+            assert(should_draw_placeholder || line_count() > 0);
             text.align(Align::CenterLeft, align_rect);
             text.draw(window);
         }
@@ -594,11 +638,21 @@ void TextEditor::draw(Gfx::Painter& window) const {
                 text.draw(window);
             }
             else {
+                size_t character_index = 0;
+                auto character_width = this->character_width();
                 for (auto& line : m_lines) {
+                    position.x() = left_margin();
                     position.y() += line_height();
-                    text.set_string(line);
-                    text.set_position(position);
-                    text.draw(window);
+                    for (auto character : line) {
+                        auto style_idx = m_styles_for_letter[character_index];
+                        auto const& style = style_idx ? m_styles[*style_idx] : default_style;
+                        text.set_string(Util::UString { character });
+                        text.set_fill_color(style.color);
+                        text.set_position(position);
+                        text.draw(window);
+                        position.x() += character_width;
+                        character_index++;
+                    }
                 }
             }
         }
@@ -611,7 +665,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
         position.y() += 5;
         text.set_fill_color(theme().gutter.text);
         text.set_font_size(theme().label_font_size);
-        for (size_t s = 0; s < m_lines.size(); s++) {
+        for (size_t s = 0; s < line_count(); s++) {
             text.set_string(Util::UString { std::to_string(s + 1) });
             text.align(Align::CenterRight, { position, { GutterWidth - 10, line_height() } });
             text.draw(window);
