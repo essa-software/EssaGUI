@@ -99,12 +99,6 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
         m_lines.push_back(Util::UString { span });
     });
 
-    if (notify_user == NotifyUser::Yes) {
-        on_content_change();
-        if (on_change)
-            on_change(content);
-    }
-
     if (line_count() > 0) {
         if (m_cursor.line >= line_count())
             m_cursor.line = line_count() - 1;
@@ -115,7 +109,15 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
         m_cursor = {};
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+
     m_content_changed = true;
+    if (notify_user == NotifyUser::Yes) {
+        on_content_change();
+        if (on_change)
+            on_change(content);
+        regenerate_styles();
+        m_content_changed = false;
+    }
 }
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
@@ -281,8 +283,6 @@ void TextEditor::handle_event(Event& event) {
                     else {
                         erase_selected_text();
                     }
-                    if (on_change)
-                        on_change(content());
                 }
                 break;
             }
@@ -300,8 +300,6 @@ void TextEditor::handle_event(Event& event) {
                     else {
                         erase_selected_text();
                     }
-                    if (on_change)
-                        on_change(content());
                 }
                 break;
             }
@@ -379,6 +377,7 @@ void TextEditor::erase_selected_text() {
         }
         m_cursor = selection_start;
     }
+    did_content_change();
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
 }
 
@@ -522,8 +521,6 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
         if (m_lines.empty())
             m_lines.push_back("");
         m_lines[m_cursor.line] = m_lines[m_cursor.line].insert(Util::UString { codepoint }, m_cursor.column);
-        if (on_change)
-            on_change(content());
         m_cursor.column++;
     }
     else {
@@ -550,6 +547,10 @@ Util::Vector2f TextEditor::calculate_cursor_position() const {
 void TextEditor::update() {
     if (m_content_changed) {
         regenerate_styles();
+        on_content_change();
+        if (on_change) {
+            on_change(content());
+        }
         m_content_changed = false;
     }
 }
@@ -577,7 +578,6 @@ void TextEditor::regenerate_styles() {
 
 void TextEditor::did_content_change() {
     m_content_changed = true;
-    on_content_change();
 }
 
 void TextEditor::draw(Gfx::Painter& window) const {
