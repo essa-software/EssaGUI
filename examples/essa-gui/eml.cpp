@@ -1,3 +1,4 @@
+#include <EssaGUI/eml/SyntaxHighlighter.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/MessageBox.hpp>
@@ -16,6 +17,7 @@ public:
             m_eml_container->shrink(0);
             (void)m_eml_container->load_from_eml_string(text.encode());
         };
+        eml_editor->set_syntax_highlighter(std::make_unique<EML::SyntaxHighlighter>());
         m_eml_container = add_widget<GUI::Container>();
     }
 

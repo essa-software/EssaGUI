@@ -5,6 +5,7 @@ add_library(EssaGUI SHARED
     eml/Lexer.cpp
     eml/Loader.cpp
     eml/Parser.cpp
+    eml/SyntaxHighlighter.cpp
 
     gfx/ClipViewScope.cpp
     gfx/DefaultGUIShader.cpp
