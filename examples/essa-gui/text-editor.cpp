@@ -7,8 +7,8 @@
 class TestSyntaxHighlighter : public GUI::SyntaxHighlighter {
     virtual std::vector<GUI::TextStyle> styles() const override {
         return {
-            GUI::TextStyle { .color = Util::Colors::IndianRed },
-            GUI::TextStyle { .color = Util::Colors::Lime },
+            GUI::TextStyle { .color = GUI::Application::the().theme().positive },
+            GUI::TextStyle { .color = GUI::Application::the().theme().negative },
         };
     }
 
