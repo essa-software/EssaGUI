@@ -28,6 +28,23 @@ private:
     void create_container();
     TextButton* create_calendar_button(Container& c);
     void update_calendar();
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
+
+    using Container::find_widgets_by_class_name;
+    using Container::find_widgets_by_class_name_recursively;
+    using Container::find_widgets_of_type_by_class_name;
+    using Container::find_widgets_of_type_by_class_name_recursively;
+    using Container::find_widget_by_id;
+    using Container::find_widget_by_id_recursively;
+    using Container::find_widget_of_type_by_id;
+    using Container::find_widget_of_type_by_id_recursively;
 };
 
 }

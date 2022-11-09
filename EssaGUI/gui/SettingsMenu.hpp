@@ -33,6 +33,14 @@ private:
     std::vector<std::unique_ptr<MenuEntry>> m_entries;
     Container* m_buttons_container {};
     Container* m_settings_container {};
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 }

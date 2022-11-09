@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaGUI/gui/Widget.hpp"
 #include <EssaGUI/gui/Container.hpp>
 
 namespace GUI {
@@ -22,8 +23,22 @@ public:
         return child;
     }
 
+    Widget* get_child(){
+        if(widgets().size() > 0)
+            return widgets().front().get();
+        return nullptr;
+    }
+
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 }

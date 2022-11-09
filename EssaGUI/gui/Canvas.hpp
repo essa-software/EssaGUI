@@ -26,6 +26,14 @@ private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     std::vector<Sprite*> m_sprites;
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 }

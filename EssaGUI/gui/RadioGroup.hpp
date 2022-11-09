@@ -26,6 +26,14 @@ private:
     size_t m_index = 0;
 
     std::vector<RadioButton*> m_buttons;
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 }

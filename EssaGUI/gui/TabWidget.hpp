@@ -17,6 +17,14 @@ public:
 
 private:
     std::vector<TextButton*> m_buttons;
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 class TabWidget : public Container {
@@ -44,6 +52,14 @@ private:
     TabSelectWidget* m_tab_select {};
     Container* m_tab_container {};
     std::vector<Container*> m_tabs;
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 }

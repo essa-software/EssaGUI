@@ -34,6 +34,14 @@ private:
     size_t m_width = 0, m_height = 0;
 
     std::vector<std::vector<Border*>> m_cells;
+
+protected:
+    using Container::add_widget;
+    using Container::add_created_widget;
+    using Container::clear_layout;
+    using Container::get_layout;
+    using Container::shrink;
+    using Container::widgets;
 };
 
 }
