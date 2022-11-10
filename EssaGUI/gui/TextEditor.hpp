@@ -12,6 +12,8 @@ namespace GUI {
 
 class TextEditor : public ScrollableWidget {
 public:
+    TextEditor();
+
     virtual void handle_event(Event&) override;
     virtual void draw(Gfx::Painter& window) const override;
 

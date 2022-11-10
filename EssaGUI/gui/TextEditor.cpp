@@ -17,6 +17,10 @@
 
 namespace GUI {
 
+TextEditor::TextEditor() {
+    m_lines.push_back("");
+}
+
 float TextEditor::line_height() const {
     return Application::the().fixed_width_font().line_height(theme().label_font_size);
 }
@@ -38,9 +42,6 @@ LengthVector TextEditor::initial_size() const {
 }
 
 TextPosition TextEditor::real_cursor_position() const {
-    if (m_lines.empty()) {
-        return {};
-    }
     TextPosition position = m_cursor;
     if (position.column > line(position.line).size()) {
         position.column = line(position.line).size();
@@ -189,8 +190,6 @@ void TextEditor::handle_event(Event& event) {
             } break;
             case llgl::KeyCode::A: {
                 if (event.event().key.ctrl) {
-                    if (m_lines.empty())
-                        break;
                     m_cursor = { .line = line_count() - 1, .column = line(line_count() - 1).size() };
                     m_selection_start = {};
                 }
@@ -228,10 +227,12 @@ void TextEditor::handle_event(Event& event) {
                     }
                     else {
                         insert_codepoint('\n');
-                        auto indent = line(real_cursor_position().line - 1).indent();
-                        // Indent
-                        for (size_t s = 0; s < indent; s++) {
-                            insert_codepoint(' ');
+                        if (real_cursor_position().line > 0) {
+                            auto indent = line(real_cursor_position().line - 1).indent();
+                            // Indent
+                            for (size_t s = 0; s < indent; s++) {
+                                insert_codepoint(' ');
+                            }
                         }
                     }
                 }
@@ -309,8 +310,6 @@ void TextEditor::handle_event(Event& event) {
                 break;
             }
             case llgl::KeyCode::End: {
-                if (m_lines.empty())
-                    break;
                 m_cursor.column = m_lines[m_cursor.line].size();
                 update_selection_after_set_cursor();
                 break;
@@ -499,17 +498,13 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
     m_cursor = real_cursor_position();
     if ((codepoint == '\r' || codepoint == '\n')) {
         if (m_multiline) {
-            if (m_lines.empty())
-                m_lines.push_back("");
-            else {
-                auto line = m_lines[m_cursor.line];
-                auto old_part = line.substring(0, m_cursor.column);
-                auto new_part = line.substring(m_cursor.column);
-                m_lines.insert(m_lines.begin() + m_cursor.line + 1, new_part);
-                m_lines[m_cursor.line] = old_part;
-                m_cursor.line++;
-                m_cursor.column = 0;
-            }
+            auto line = m_lines[m_cursor.line];
+            auto old_part = line.substring(0, m_cursor.column);
+            auto new_part = line.substring(m_cursor.column);
+            m_lines.insert(m_lines.begin() + m_cursor.line + 1, new_part);
+            m_lines[m_cursor.line] = old_part;
+            m_cursor.line++;
+            m_cursor.column = 0;
         }
         else {
             return;
@@ -518,8 +513,6 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
     else if (codepoint >= 0x20) {
         if (m_cursor != m_selection_start)
             erase_selected_text();
-        if (m_lines.empty())
-            m_lines.push_back("");
         m_lines[m_cursor.line] = m_lines[m_cursor.line].insert(Util::UString { codepoint }, m_cursor.column);
         m_cursor.column++;
     }
@@ -532,7 +525,7 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
 
 Util::Vector2f TextEditor::calculate_cursor_position() const {
     auto cursor = real_cursor_position();
-    Gfx::Text text { m_lines.empty() ? "" : m_lines[cursor.line], GUI::Application::the().fixed_width_font() };
+    Gfx::Text text { m_lines[cursor.line], GUI::Application::the().fixed_width_font() };
     text.set_font_size(theme().label_font_size);
     auto character_position = text.find_character_position(cursor.column);
     auto position = Util::Vector2f { character_position, 0 } + scroll_offset();
@@ -620,8 +613,8 @@ void TextEditor::draw(Gfx::Painter& window) const {
     TextStyle const default_style { .color = theme_colors.text };
 
     auto line_height = this->line_height();
-    size_t first_visible_line = m_lines.empty() ? 0 : std::min(static_cast<size_t>(-scroll_offset().y() / line_height), m_lines.size() - 1);
-    size_t last_visible_line = m_lines.empty() ? 0 : std::min(static_cast<size_t>((scroll_area_size().y() - scroll_offset().y()) / line_height), m_lines.size() - 1);
+    size_t first_visible_line = std::min(static_cast<size_t>(-scroll_offset().y() / line_height), m_lines.size() - 1);
+    size_t last_visible_line = std::min(static_cast<size_t>((scroll_area_size().y() - scroll_offset().y()) / line_height), m_lines.size() - 1);
 
     {
         Util::Vector2f position = scroll_offset();
