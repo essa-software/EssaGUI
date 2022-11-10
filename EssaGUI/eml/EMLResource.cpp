@@ -10,7 +10,8 @@ std::optional<EML::EMLResource> Gfx::ResourceTraits<EML::EMLResource>::load_from
 
     auto file = maybe_file.release_value();
 
-    auto maybe_buffer = Util::Reader { file }.read_while([](uint8_t) { return true; });
+    // TODO: Something like read_entire_file()
+    auto maybe_buffer = Util::BinaryReader { file }.read_while([](uint8_t) { return true; });
     if (maybe_buffer.is_error())
         return {};
 

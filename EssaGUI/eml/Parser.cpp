@@ -34,10 +34,10 @@ Util::ParseErrorOr<Object> Parser::parse_object() {
     TRY(expect(TokenType::At));
 
     Object object;
-    object.class_name = TRY(expect(TokenType::Identifier)).value();
+    object.class_name = TRY(expect(TokenType::Identifier)).value().encode();
 
     if (next_token_is(TokenType::Identifier)) {
-        object.id = get()->value();
+        object.id = get()->value().encode();
     }
 
     ignore_newlines_and_comments();
@@ -84,7 +84,7 @@ Util::ParseErrorOr<ClassDefinition> Parser::parse_class_definition() {
     TRY(expect(TokenType::KeywordDefine));
 
     ClassDefinition definition;
-    definition.class_name = TRY(expect(TokenType::Identifier)).value();
+    definition.class_name = TRY(expect(TokenType::Identifier)).value().encode();
     TRY(expect(TokenType::Colon));
     definition.base = TRY(parse_object());
     return definition;
@@ -102,7 +102,7 @@ Util::ParseErrorOr<Property> Parser::parse_property() {
     auto value = TRY(parse_value());
 
     return Property {
-        .name = name.value(),
+        .name = name.value().encode(),
         .value = value
     };
 }
@@ -119,7 +119,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
     }
     case TokenType::Number: {
         get();
-        auto number = std::stoi(token->value());
+        auto number = std::stoi(token->value().encode());
         auto maybe_unit = peek();
         if (!maybe_unit)
             return error("Expected unit, got EOF");
@@ -134,7 +134,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
         if (maybe_unit->type() == TokenType::DoubleDot) {
             get();
             auto range_max = TRY(expect(TokenType::Number));
-            return Range { static_cast<double>(number), std::stof(range_max.value()) };
+            return Range { static_cast<double>(number), std::stof(range_max.value().encode()) };
         }
         return static_cast<double>(number);
     }
@@ -165,7 +165,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
         return TRY(parse_resource_id());
     }
     default:
-        return error_in_already_read("Value cannot start with '" + token->value() + "'");
+        return error_in_already_read("Value cannot start with '" + token->value().encode() + "'");
     }
 }
 
@@ -195,10 +195,10 @@ Util::ParseErrorOr<Gfx::ResourceId> Parser::parse_resource_id() {
     auto path = TRY(expect(TokenType::String));
     TRY(expect(TokenType::ParenClose));
     if (keyword->type() == TokenType::KeywordAsset) {
-        return Gfx::ResourceId::asset(path.value());
+        return Gfx::ResourceId::asset(path.value().encode());
     }
     if (keyword->type() == TokenType::KeywordExternal) {
-        return Gfx::ResourceId::external(path.value());
+        return Gfx::ResourceId::external(path.value().encode());
     }
     return error_in_already_read("Expected 'asset' or 'external' in resource id");
 }
@@ -208,7 +208,7 @@ Util::ParseErrorOr<Util::Color> Parser::parse_hexcolor() {
     std::string str = "";
 
     while (color_token->type() == TokenType::Identifier || color_token->type() == TokenType::Number) {
-        str += color_token->value();
+        str += color_token->value().encode();
         get();
         color_token = peek();
     }

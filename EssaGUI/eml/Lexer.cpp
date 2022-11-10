@@ -107,7 +107,7 @@ Util::OsErrorOr<std::vector<Token>> Lexer::lex() {
             default:
                 TRY(consume());
                 fmt::print("GARBAGE!! '{:c}' @ {}\n", next, location().offset);
-                tokens.push_back(create_token(TokenType::Garbage, std::string { (char)next }, start));
+                tokens.push_back(create_token(TokenType::Garbage, Util::UString { next }, start));
                 break;
             }
         }
