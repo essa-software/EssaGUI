@@ -161,6 +161,14 @@ void print_model(GUI::Model const& model) {
     print_children(0, model, nullptr);
 }
 
+void print_model_flattened(GUI::TreeView const& view) {
+    auto row_count = view.displayed_row_count();
+    for (size_t s = 0; s < row_count; s++) {
+        auto node = view.displayed_row_at_index(s);
+        fmt::print("{}: {}\n", fmt::join(node.first, ", "), node.second.data ? std::get<Util::UString>(view.model().data(node.second, 0)).encode() : "NULL");
+    }
+}
+
 int main() {
     auto db_model = std::make_unique<DatabaseModel>();
 
@@ -184,7 +192,12 @@ int main() {
     GUI::Application app;
     auto& window = app.create_host_window({ 500, 500 }, "TreeView");
     auto& tv = window.set_main_widget<GUI::TreeView>();
+
     tv.set_model(std::move(db_model));
+    tv.expand({ 0 });
+    tv.expand({ 0, 1 });
+    tv.expand({ 1 });
+    print_model_flattened(tv);
     tv.set_display_header(false);
 
     app.run();

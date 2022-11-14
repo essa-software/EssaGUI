@@ -2,6 +2,7 @@
 
 #include <EssaUtil/UString.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
+#include <set>
 #include <string>
 #include <type_traits>
 #include <variant>

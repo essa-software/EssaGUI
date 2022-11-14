@@ -23,14 +23,15 @@ public:
 
     CREATE_VALUE(bool, display_header, true);
 
-protected:
-    virtual Util::Vector2f content_size() const override;
-    float row_width() const;
-    Util::Vector2f cell_size(size_t row, size_t column) const;
     Model& model() const {
         assert(m_model);
         return *m_model;
     }
+
+protected:
+    virtual Util::Vector2f content_size() const override;
+    float row_width() const;
+    Util::Vector2f cell_size(size_t row, size_t column) const;
 
 private:
     std::unique_ptr<Model> m_model;
