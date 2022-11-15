@@ -3,6 +3,8 @@
 #include "Application.hpp"
 #include "EssaGUI/gfx/Painter.hpp"
 #include <EssaGUI/gfx/Text.hpp>
+#include <EssaGUI/gui/AbstractListView.hpp>
+#include <EssaGUI/gui/ScrollableWidget.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/Window/Mouse.hpp>
 
@@ -11,8 +13,9 @@ namespace GUI {
 constexpr float IndentSize = 24;
 
 void TreeView::handle_event(GUI::Event& event) {
+    AbstractListView::handle_event(event);
     if (event.type() == llgl::Event::Type::MouseButtonPress && event.event().mouse_button.button == llgl::MouseButton::Left) {
-        size_t row = event.mouse_position().y() / theme().line_height;
+        size_t row = (event.mouse_position().y() - raw_position().y()) / theme().line_height;
         auto path = displayed_row_at_index(row);
         if (!path.first.empty()) {
             if (m_expanded_paths.contains(path.first)) {
