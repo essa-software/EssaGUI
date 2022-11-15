@@ -14,6 +14,7 @@ constexpr float LINE_SPACING = 20;
 void Console::append_line(LogLine line) {
     m_lines.push_back(line);
     scroll_to_bottom();
+    set_scroll_x(0);
 }
 
 void Console::append_content(LogLine content) {
@@ -47,7 +48,15 @@ void Console::draw(Gfx::Painter& painter) const {
 }
 
 Util::Vector2f Console::content_size() const {
-    return { 0, m_lines.size() * LINE_SPACING + 10 };
+    float width = 0;
+    auto character_size = Application::the().fixed_width_font().calculate_text_size("x", theme().label_font_size);
+    for (auto& line : m_lines) {
+        float line_width = line.text.size() * character_size.x();
+        if (line_width > width) {
+            width = line_width;
+        }
+    }
+    return { width + 10, m_lines.size() * LINE_SPACING + 10 };
 }
 EML::EMLErrorOr<void> Console::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
