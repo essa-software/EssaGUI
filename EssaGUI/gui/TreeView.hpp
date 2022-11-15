@@ -16,6 +16,7 @@ public:
     void expand(std::vector<size_t> path) { m_expanded_paths.insert(path); }
 
 private:
+    virtual Util::Vector2f content_size() const override;
     void render_rows(Gfx::Painter& window, float& current_y_pos, std::vector<size_t> path, Model::Node const* parent) const;
 
     size_t recursive_displayed_row_count(Model::Node const*, std::vector<size_t> path) const;

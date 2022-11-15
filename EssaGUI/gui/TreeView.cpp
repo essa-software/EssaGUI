@@ -232,6 +232,10 @@ std::pair<std::vector<size_t>, Model::Node> TreeView::recursive_displayed_row_at
     return {};
 }
 
+Util::Vector2f TreeView::content_size() const {
+    return { row_width(), (display_header() ? displayed_row_count() + 1 : displayed_row_count()) * theme().line_height };
+}
+
 bool TreeView::is_expanded(std::vector<size_t> const& path) const {
     return m_expanded_paths.contains(path);
 }
