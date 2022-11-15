@@ -10,6 +10,7 @@
 #include <EssaGUI/gui/Widget.hpp>
 #include <EssaGUI/gui/textediting/SyntaxHighlighter.hpp>
 #include <EssaUtil/CharacterType.hpp>
+#include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UStringBuilder.hpp>
 #include <LLGL/Window/Clipboard.hpp>
 
@@ -624,7 +625,10 @@ void TextEditor::draw(Gfx::Painter& window) const {
 
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_selection_start != cursor) {
-        Gfx::ClipViewScope scope { window, Util::Vector2u { host_window().size() }, clip_rect, Gfx::ClipViewScope::Mode::Intersect };
+        Util::DelayedInit<Gfx::ClipViewScope> scope;
+        if (m_multiline) {
+            scope.construct(window, Util::Vector2u { host_window().size() }, clip_rect, Gfx::ClipViewScope::Mode::Intersect);
+        }
 
         Gfx::RectangleDrawOptions selected_rect;
         selected_rect.fill_color = theme().selection.value(*this);
@@ -636,7 +640,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
             float start = text.find_character_position(s == selection_start.line ? selection_start.column : 0);
             float end = text.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size());
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : raw_size().y() / 2 - cursor_height / 2;
-            window.draw_rectangle({ Util::Vector2f { start, y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
+            window.draw_rectangle({ Util::Vector2f { start + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
 
