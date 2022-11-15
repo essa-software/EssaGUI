@@ -22,6 +22,13 @@ protected:
     void scroll_to_bottom();
 
 private:
+    // The rect that the scroll is applied to. Scrollbars are drawn on edges
+    // of that rect, and scroll_area_size() is related to this rect. By default,
+    // the whole widget is scrollable.
+    virtual Util::Rectf scrollable_rect() const { return local_rect(); }
+
+    // Size of the content that is scrolled over in the scrollable rect. If
+    // content size overflows scrollable rect, scrollbars will appear.
     virtual Util::Vector2f content_size() const = 0;
 
     Util::Vector2f m_scroll {};

@@ -44,13 +44,19 @@ void ScrollableWidget::set_scroll(Util::Vector2f scroll) {
 }
 
 void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
+    auto scrollable_rect = this->scrollable_rect();
     {
         float scroll_area_size = this->scroll_area_size().x();
         float content_size = this->content_size().x();
         if (content_size > scroll_area_size) {
             Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
-            window.draw_rectangle({ { m_scroll.x() * scroll_area_size / content_size + 2, raw_size().y() - 5 }, { scroll_area_size / content_size * scroll_area_size - 4, 3 } }, scrollbar);
+            window.draw_rectangle(
+                {
+                    { scrollable_rect.position().x() + m_scroll.x() * scroll_area_size / content_size + 2, scrollable_rect.position().y() + scrollable_rect.size().y() - 5 },
+                    { scroll_area_size / content_size * scroll_area_size - 4, 3 },
+                },
+                scrollbar);
         }
     }
     {
@@ -59,7 +65,12 @@ void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
         if (content_size > scroll_area_size) {
             Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
-            window.draw_rectangle({ { raw_size().x() - 5, m_scroll.y() * scroll_area_size / content_size + 2 }, { 3, scroll_area_size / content_size * scroll_area_size - 4 } }, scrollbar);
+            window.draw_rectangle(
+                {
+                    { scrollable_rect.position().x() + scrollable_rect.size().x() - 5, scrollable_rect.position().y() + m_scroll.y() * scroll_area_size / content_size + 2 },
+                    { 3, scroll_area_size / content_size * scroll_area_size - 4 },
+                },
+                scrollbar);
         }
     }
 }
@@ -78,7 +89,8 @@ void ScrollableWidget::scroll_to_bottom() {
 }
 
 Util::Vector2f ScrollableWidget::scroll_area_size() const {
-    auto size = raw_size();
+    auto scrollable_rect = this->scrollable_rect();
+    auto size = scrollable_rect.size();
     // We need to make place for scrollbars if content overflows
     if (content_size().y() > size.y())
         size.x() -= 5;
