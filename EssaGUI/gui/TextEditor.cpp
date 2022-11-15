@@ -459,18 +459,20 @@ void TextEditor::move_cursor_by_word(CursorDirection direction) {
         = State::Start;
     Util::CharacterType last_character_type = Util::CharacterType::Unknown;
 
-    if (direction == CursorDirection::Left && m_cursor.column == 0)
+    auto cursor = real_cursor_position();
+
+    if (direction == CursorDirection::Left && cursor.column == 0)
         move_cursor(CursorDirection::Left);
-    else if (direction == CursorDirection::Right && m_cursor.column == m_lines[m_cursor.line].size())
+    else if (direction == CursorDirection::Right && cursor.column == m_lines[cursor.line].size())
         move_cursor(CursorDirection::Right);
 
-    auto content = m_lines[m_cursor.line];
+    auto content = m_lines[cursor.line];
 
     auto is_in_range = [&](unsigned offset) {
         return (direction == CursorDirection::Left && offset > 0) || (direction == CursorDirection::Right && offset < content.size());
     };
 
-    auto new_cursor = m_cursor.column;
+    auto new_cursor = cursor.column;
     while (state != State::Done && is_in_range(new_cursor)) {
         auto next = [&]() -> uint32_t {
             if (direction == CursorDirection::Right && new_cursor + 1 == content.size())
