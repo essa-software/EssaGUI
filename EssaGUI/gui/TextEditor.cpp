@@ -1,4 +1,5 @@
 #include "TextEditor.hpp"
+#include "EssaGUI/gfx/ClipViewScope.hpp"
 
 #include <EssaGUI/eml/Loader.hpp>
 #include <EssaGUI/gfx/Text.hpp>
@@ -33,8 +34,26 @@ float TextEditor::left_margin() const {
 }
 
 Util::Vector2f TextEditor::content_size() const {
-    // TODO: Implement x scroll
-    return { 0, line_count() * line_height() + 5 };
+    auto line_height = this->line_height();
+    size_t first_visible_line = std::min(static_cast<size_t>(-scroll_offset().y() / line_height), m_lines.size() - 1);
+    size_t last_visible_line = std::min(static_cast<size_t>((raw_size().y() - scroll_offset().y()) / line_height), m_lines.size() - 1);
+
+    float width = 0;
+    for (size_t s = first_visible_line; s <= last_visible_line; s++) {
+        auto line_width = m_lines[s].size() * character_width();
+        if (line_width > width) {
+            width = line_width;
+        }
+    }
+
+    return { width + 10, line_count() * line_height + 5 };
+}
+
+Util::Rectf TextEditor::scrollable_rect() const {
+    auto rect = local_rect();
+    rect.left += left_margin();
+    rect.width -= left_margin();
+    return rect;
 }
 
 LengthVector TextEditor::initial_size() const {
@@ -126,13 +145,23 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
         m_selection_start = real_cursor_position();
 
     // TODO: Implement scroll X
+    auto x_offset = real_cursor_position().column * character_width() + scroll_offset().x();
+    auto max_x = scrollable_rect().width - character_width();
+    if (x_offset < 0) {
+        set_scroll_x(scroll().x() + x_offset);
+    }
+    else if (x_offset > max_x) {
+        set_scroll_x(scroll().x() + (x_offset - max_x));
+    }
 
     auto y_offset = real_cursor_position().line * line_height() + scroll_offset().y();
     auto max_y = raw_size().y() - line_height() - 8;
-    if (y_offset < 0)
+    if (y_offset < 0) {
         set_scroll_y(scroll().y() + y_offset);
-    else if (y_offset > max_y)
+    }
+    else if (y_offset > max_y) {
         set_scroll_y(scroll().y() + (y_offset - max_y));
+    }
 
     // TODO
     // m_cursor_clock.restart();
@@ -589,8 +618,14 @@ void TextEditor::draw(Gfx::Painter& window) const {
         window.draw_rectangle({ {}, Util::Vector2f { GutterWidth, raw_size().y() } }, gutter_rect);
     }
 
+    auto clip_rect = scrollable_rect();
+    clip_rect.left += raw_position().x();
+    clip_rect.top += raw_position().y();
+
     auto const cursor_height = std::min(raw_size().y() - 6, line_height());
     if (m_selection_start != cursor) {
+        Gfx::ClipViewScope scope { window, Util::Vector2u { host_window().size() }, clip_rect, Gfx::ClipViewScope::Mode::Intersect };
+
         Gfx::RectangleDrawOptions selected_rect;
         selected_rect.fill_color = theme().selection.value(*this);
         auto selection_start = std::min(m_selection_start, cursor);
@@ -601,7 +636,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
             float start = text.find_character_position(s == selection_start.line ? selection_start.column : 0);
             float end = text.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size());
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : raw_size().y() / 2 - cursor_height / 2;
-            window.draw_rectangle({ Util::Vector2f { start + left_margin(), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
+            window.draw_rectangle({ Util::Vector2f { start, y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
 
@@ -617,10 +652,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
     size_t last_visible_line = std::min(static_cast<size_t>((scroll_area_size().y() - scroll_offset().y()) / line_height), m_lines.size() - 1);
 
     {
-        Util::Vector2f position = scroll_offset();
-        position.x() += left_margin();
         if (!m_multiline) {
-            position.y() += line_height;
             Util::Rectf align_rect { Margin, 0, raw_size().x(), raw_size().y() };
             text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
             assert(should_draw_placeholder || line_count() > 0);
@@ -629,25 +661,29 @@ void TextEditor::draw(Gfx::Painter& window) const {
         }
         else {
             if (should_draw_placeholder) {
+                Util::Vector2f position = scroll_offset();
+                position.x() += left_margin();
                 position.y() += line_height;
                 text.set_string(m_placeholder);
                 text.set_position(position);
                 text.draw(window);
             }
             else {
-                size_t character_index = 0;
+                Gfx::ClipViewScope scope { window, Util::Vector2u { host_window().size() }, clip_rect, Gfx::ClipViewScope::Mode::Intersect };
 
+                size_t character_index = 0;
                 for (size_t i = 0; i < first_visible_line; i++) {
                     character_index += line(i).size() + 1;
                 }
 
                 auto character_width = this->character_width();
-                auto left_margin = this->left_margin();
+
+                Util::Vector2f position = scroll_offset();
                 position.y() += line_height * first_visible_line;
 
                 for (size_t i = first_visible_line; i <= last_visible_line; i++) {
                     auto const& line = m_lines[i];
-                    position.x() = left_margin;
+                    position.x() = scroll_offset().x();
                     position.y() += line_height;
                     for (auto character : line) {
                         auto style_idx = m_styles_for_letter[character_index];
@@ -668,9 +704,8 @@ void TextEditor::draw(Gfx::Painter& window) const {
     // Line numbers
     if (m_multiline) {
         Gfx::Text text { "", GUI::Application::the().fixed_width_font() };
-        Util::Vector2f position = scroll_offset();
-        position.y() += 5;
-        position.y() += line_height * first_visible_line;
+        Util::Vector2f position;
+        position.y() = 5 + scroll_offset().y() + line_height * first_visible_line;
         text.set_fill_color(theme().gutter.text);
         text.set_font_size(theme().label_font_size);
 

@@ -64,6 +64,7 @@ private:
     float character_width() const;
     virtual Util::Vector2f content_size() const override;
     virtual LengthVector initial_size() const override;
+    virtual Util::Rectf scrollable_rect() const override;
 
     TextPosition real_cursor_position() const;
 
