@@ -210,8 +210,7 @@ void Datebox::create_container() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        // TODO: Implement std::stoi as UString function
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, std::stoi(str.encode()), local_tm.tm_min, local_tm.tm_sec);
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, MUST(str.parse<int>()), local_tm.tm_min, local_tm.tm_sec);
         update_calendar();
     };
 
@@ -219,8 +218,7 @@ void Datebox::create_container() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        // TODO: Implement std::stoi as UString function
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, std::stoi(str.encode()), local_tm.tm_sec);
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, MUST(str.parse<int>()), local_tm.tm_sec);
         update_calendar();
     };
 
@@ -228,7 +226,7 @@ void Datebox::create_container() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, std::stoi(str.encode()));
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, MUST(str.parse<int>()));
         update_calendar();
     };
 }

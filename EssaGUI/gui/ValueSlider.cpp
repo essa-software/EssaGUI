@@ -37,14 +37,12 @@ void ValueSlider::on_init() {
     m_textbox->on_change = [this](Util::UString const& value) {
         if (value.is_empty())
             m_slider->set_value(0, NotifyUser::No);
-        try {
-            // Notify user so that they get on_change().
-            auto value_as_number = std::stod(value.encode());
+        // Notify user so that they get on_change().
+        if (auto maybe_value_as_number = value.parse<double>(); !maybe_value_as_number.is_error()) {
+            auto value_as_number = maybe_value_as_number.release_value();
             m_slider->set_value(value_as_number, NotifyUser::No);
             if (on_change)
                 on_change(value_as_number);
-        } catch (...) {
-            ;
         }
     };
     m_unit_textfield = add_widget<Textfield>();

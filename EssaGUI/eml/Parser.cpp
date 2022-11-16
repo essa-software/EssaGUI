@@ -119,7 +119,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
     }
     case TokenType::Number: {
         get();
-        auto number = std::stoi(token->value().encode());
+        auto number = MUST(token->value().parse<int>());
         auto maybe_unit = peek();
         if (!maybe_unit)
             return error("Expected unit, got EOF");
@@ -134,7 +134,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
         if (maybe_unit->type() == TokenType::DoubleDot) {
             get();
             auto range_max = TRY(expect(TokenType::Number));
-            return Range { static_cast<double>(number), std::stof(range_max.value().encode()) };
+            return Range { static_cast<double>(number), MUST(range_max.value().parse<float>()) };
         }
         return static_cast<double>(number);
     }
