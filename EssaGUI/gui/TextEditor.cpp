@@ -287,17 +287,24 @@ void TextEditor::handle_event(Event& event) {
                     m_cursor = real_cursor_position();
                     if (m_cursor == m_selection_start) {
                         if (m_cursor.column > 0) {
-                            auto remove_character = [this]() {
-                                m_cursor.column--;
-                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
-                            };
-                            if (isspace(m_lines[m_cursor.line].at(m_cursor.column - 1))) {
-                                do {
-                                    remove_character();
-                                } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
+                            if (event.event().key.ctrl) {
+                                auto old_cursor = m_cursor;
+                                move_cursor_by_word(CursorDirection::Left);
+                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column, old_cursor.column - m_cursor.column);
                             }
                             else {
-                                remove_character();
+                                auto remove_character = [this]() {
+                                    m_cursor.column--;
+                                    m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                                };
+                                if (isspace(m_lines[m_cursor.line].at(m_cursor.column - 1))) {
+                                    do {
+                                        remove_character();
+                                    } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
+                                }
+                                else {
+                                    remove_character();
+                                }
                             }
                         }
                         else if (m_cursor.line != 0) {
@@ -321,12 +328,22 @@ void TextEditor::handle_event(Event& event) {
                 if (line_count() > 0) {
                     m_cursor = real_cursor_position();
                     if (m_cursor == m_selection_start) {
-                        if (m_cursor.column < m_lines[m_cursor.line].size())
-                            m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                        if (m_cursor.column < m_lines[m_cursor.line].size()) {
+                            if (event.event().key.ctrl) {
+                                auto old_cursor = m_cursor;
+                                move_cursor_by_word(CursorDirection::Right);
+                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(old_cursor.column, m_cursor.column - old_cursor.column);
+                                m_cursor = old_cursor;
+                            }
+                            else {
+                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                            }
+                        }
                         else if (m_cursor.line < line_count() - 1) {
                             m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
                             m_lines.erase(m_lines.begin() + m_cursor.line + 1);
                         }
+                        update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
                     }
                     else {
                         erase_selected_text();
