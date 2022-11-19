@@ -44,11 +44,10 @@ public:
 
     void add_regular_polygon(Util::Vector2f center, float radius, size_t vertices, Util::Colorf const& color = Util::Colors::White) {
         for (size_t s = 0; s < vertices; s++) {
-            float angle = 6.28 * s / vertices;
-            Util::Vector2f vpos { radius * std::sin(angle), radius * std::cos(angle) };
-            add(create_vertex(Util::Vector3f(vpos + center, 0), color, Util::Vector2f {}, Util::Vector3f {}));
+            float angle = M_PI * 2 * s / vertices;
+            add(create_vertex(Util::Vector3f(Util::Vector2f::create_polar(angle, radius) + center, 0), color, Util::Vector2f {}, Util::Vector3f {}));
         }
-        add(create_vertex(Util::Vector3f(Util::Vector2f { 0, radius } + center, 0), color, Util::Vector2f {}, Util::Vector3f {}));
+        add(create_vertex(Util::Vector3f(Util::Vector2f { radius, 0 } + center, 0), color, Util::Vector2f {}, Util::Vector3f {}));
         add_render_range_for_last_vertices(vertices + 1, llgl::PrimitiveType::TriangleFan, m_projection, m_view, m_model);
     }
 
