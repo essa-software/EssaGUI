@@ -79,12 +79,12 @@ public:
 
     PainterTransformScope(Gfx::Painter& painter, llgl::Transform const& transform)
         : m_painter(painter)
-        , m_old_transform(painter.builder().model()) {
-        painter.builder().set_model(transform);
+        , m_old_transform(painter.builder().view()) {
+        painter.builder().set_view(transform);
     }
 
     ~PainterTransformScope() {
-        m_painter.builder().set_model(m_old_transform);
+        m_painter.builder().set_view(m_old_transform);
     }
 
 private:
