@@ -20,6 +20,9 @@ public:
     [[nodiscard]] Transform rotate_z(float angle) const;
 
     [[nodiscard]] Transform scale(float) const;
+    [[nodiscard]] Transform scale_x(float) const;
+    [[nodiscard]] Transform scale_y(float) const;
+    [[nodiscard]] Transform scale_z(float) const;
 
     Util::Matrix4x4f matrix() const { return m_matrix; }
 
