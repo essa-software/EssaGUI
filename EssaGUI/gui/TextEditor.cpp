@@ -612,6 +612,9 @@ void TextEditor::regenerate_styles() {
         auto highlighter_spans = m_syntax_highlighter->spans(content);
         for (auto const& span : highlighter_spans) {
             for (size_t s = 0; s < span.span_size; s++) {
+                if (span.span_start + s >= m_styles_for_letter.size()) {
+                    break;
+                }
                 m_styles_for_letter[span.span_start + s] = span.style_index;
             }
         }
