@@ -50,7 +50,9 @@ namespace llgl {
     Ex(LShift, SDLK_LSHIFT)             \
     Ex(RShift, SDLK_RSHIFT)             \
     Ex(Tab, SDLK_TAB)                   \
-    Ex(Tilde, SDLK_BACKQUOTE)
+    Ex(Tilde, SDLK_BACKQUOTE)           \
+    Ex(Period, SDLK_PERIOD)             \
+    Ex(Comma, SDLK_COMMA)               \
 // clang-format on
 
 ESSA_ENUM_WITH_VALUES(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
