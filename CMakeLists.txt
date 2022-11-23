@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 find_package(EssaUtil REQUIRED)
 
+option(ESSAGUI_EXAMPLES "Compile examples" ON)
+
 add_subdirectory(LLGL)
 add_subdirectory(EssaEngine)
 add_subdirectory(EssaGUI)
@@ -20,4 +22,6 @@ install(DIRECTORY LLGL/ DESTINATION include/LLGL FILES_MATCHING PATTERN "*.hpp" 
 install(DIRECTORY assets DESTINATION share/EssaGUI)
 install(EXPORT EssaGUI DESTINATION lib/cmake/EssaGUI NAMESPACE EssaGUI::)
 
-add_subdirectory(examples)
+if(ESSAGUI_EXAMPLES)
+    add_subdirectory(examples)
+endif()

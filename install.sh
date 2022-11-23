@@ -10,6 +10,6 @@ cd util
 ./install.sh || exit 1
 cd ..
 
-cmake .. -GNinja
+cmake .. -GNinja -DESSAGUI_EXAMPLES=0
 ninja
 sudo ninja install
