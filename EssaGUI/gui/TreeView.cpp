@@ -15,6 +15,9 @@ constexpr float IndentSize = 24;
 void TreeView::handle_event(GUI::Event& event) {
     AbstractListView::handle_event(event);
     if (event.type() == llgl::Event::Type::MouseButtonPress && event.event().mouse_button.button == llgl::MouseButton::Left) {
+        if (!is_mouse_over(event.mouse_position())) {
+            return;
+        }
         size_t row = (event.mouse_position().y() - raw_position().y() - scroll_offset().y()) / theme().line_height;
         auto path = displayed_row_at_index(row);
         if (!path.first.empty()) {
