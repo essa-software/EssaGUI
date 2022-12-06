@@ -25,7 +25,6 @@ void TreeView::handle_event(GUI::Event& event) {
                 expand(path.first);
             }
         }
-        fmt::print("{}\n", fmt::join(path.first, ", "));
     }
 }
 
