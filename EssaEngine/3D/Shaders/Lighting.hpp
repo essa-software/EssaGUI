@@ -13,6 +13,10 @@ class Lighting : public llgl::Shader
     , public llgl::ShaderBases::Transform
     , public llgl::ShaderBases::Texture {
 public:
+    Lighting() {
+        set_material(Material { .ambient = {}, .diffuse = { Util::Colors::White }, .emission = {} });
+    }
+
     using Vertex = Model::Vertex;
 
     void set_light_position(Util::Vector3f lp) { m_light_position = lp; }
