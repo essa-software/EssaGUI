@@ -1,10 +1,10 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Overlays/MessageBox.hpp>
-#include <EssaGUI/Widgets/RadioButton.hpp>
-#include <EssaGUI/Widgets/RadioGroup.hpp>
-#include <EssaGUI/Widgets/TextEditor.hpp>
-#include <EssaGUI/Widgets/Textbox.hpp>
-#include <EssaGUI/Widgets/Widget.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/Widgets/RadioButton.hpp>
+#include <Essa/GUI/Widgets/RadioGroup.hpp>
+#include <Essa/GUI/Widgets/TextEditor.hpp>
+#include <Essa/GUI/Widgets/Textbox.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>

@@ -1,5 +1,5 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Overlays/FileExplorer.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlays/FileExplorer.hpp>
 
 int main() {
     GUI::Application app;

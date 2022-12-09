@@ -1,6 +1,6 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/ColorPicker.hpp>
-#include <EssaGUI/Widgets/Container.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/ColorPicker.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
 
 int main() {
     GUI::Application app;

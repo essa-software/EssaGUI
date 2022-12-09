@@ -1,5 +1,5 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/Textfield.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 
 int main() {
     GUI::SimpleApplication<GUI::Textfield> app { "Simple app", { 500, 500 } };

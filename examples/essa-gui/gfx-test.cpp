@@ -1,7 +1,7 @@
-#include <EssaGUI/Graphics/Text.hpp>
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Overlays/FileExplorer.hpp>
-#include <LLGL/Resources/TTFFont.hpp>
+#include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlays/FileExplorer.hpp>
+#include <Essa/LLGL/Resources/TTFFont.hpp>
 
 int main() {
     GUI::Window wnd { { 1000, 1000 }, "Gfx test" };

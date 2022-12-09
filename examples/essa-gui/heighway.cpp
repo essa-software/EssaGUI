@@ -1,9 +1,9 @@
-#include <EssaGUI/Graphics/Painter.hpp>
-#include <EssaGUI/Graphics/Text.hpp>
-#include <EssaGUI/Application.hpp>
+#include <Essa/GUI/Graphics/Painter.hpp>
+#include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/Application.hpp>
 #include <EssaUtil/Clock.hpp>
 #include <EssaUtil/Random.hpp>
-#include <LLGL/OpenGL/Framebuffer.hpp>
+#include <Essa/LLGL/OpenGL/Framebuffer.hpp>
 
 using namespace std::chrono_literals;
 
