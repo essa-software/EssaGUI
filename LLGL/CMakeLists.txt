@@ -7,7 +7,6 @@ function(add_llgl_library TARGET_NAME LIB_NAME)
 endfunction()
 
 add_subdirectory(Core)
-add_subdirectory(EventLoop)
 add_subdirectory(OpenGL)
 add_subdirectory(Resources)
 add_subdirectory(Window)
