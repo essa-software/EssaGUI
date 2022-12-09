@@ -1,11 +1,11 @@
 #include <EssaEngine/3D/Model.hpp>
 #include <EssaEngine/3D/Shaders/Lighting.hpp>
-#include <EssaGUI/gfx/Window.hpp>
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/Textfield.hpp>
-#include <EssaGUI/gui/WidgetTreeRoot.hpp>
-#include <EssaGUI/gui/WorldView.hpp>
+#include <EssaGUI/Graphics/Window.hpp>
+#include <EssaGUI/GUI/Application.hpp>
+#include <EssaGUI/GUI/Container.hpp>
+#include <EssaGUI/GUI/Textfield.hpp>
+#include <EssaGUI/GUI/WidgetTreeRoot.hpp>
+#include <EssaGUI/GUI/WorldView.hpp>
 #include <LLGL/Core/Transform.hpp>
 
 class WorldView : public GUI::WorldView {

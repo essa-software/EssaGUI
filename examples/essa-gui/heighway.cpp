@@ -1,6 +1,6 @@
-#include <EssaGUI/gfx/Painter.hpp>
-#include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/Graphics/Painter.hpp>
+#include <EssaGUI/Graphics/Text.hpp>
+#include <EssaGUI/GUI/Application.hpp>
 #include <EssaUtil/Clock.hpp>
 #include <EssaUtil/Random.hpp>
 #include <LLGL/OpenGL/Framebuffer.hpp>

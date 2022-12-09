@@ -1,8 +1,8 @@
 #include <EssaEngine/3D/Shaders/Basic.hpp>
-#include <EssaGUI/gfx/GUIBuilder.hpp>
-#include <EssaGUI/gfx/Vertex.hpp>
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/WorldView.hpp>
+#include <EssaGUI/Graphics/GUIBuilder.hpp>
+#include <EssaGUI/Graphics/Vertex.hpp>
+#include <EssaGUI/GUI/Application.hpp>
+#include <EssaGUI/GUI/WorldView.hpp>
 #include <LLGL/Core/Transform.hpp>
 #include <LLGL/OpenGL/PrimitiveType.hpp>
 #include <fmt/ostream.h>

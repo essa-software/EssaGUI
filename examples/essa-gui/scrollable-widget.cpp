@@ -1,7 +1,7 @@
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/Console.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/ToolWindow.hpp>
+#include <EssaGUI/GUI/Application.hpp>
+#include <EssaGUI/GUI/Console.hpp>
+#include <EssaGUI/GUI/Container.hpp>
+#include <EssaGUI/GUI/ToolWindow.hpp>
 
 int main() {
     GUI::Application app;

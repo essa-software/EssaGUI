@@ -1,8 +1,8 @@
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaGUI/gui/TextEditor.hpp>
-#include <EssaGUI/gui/Textbox.hpp>
-#include <EssaGUI/gui/textediting/SyntaxHighlighter.hpp>
+#include <EssaGUI/GUI/Application.hpp>
+#include <EssaGUI/GUI/MessageBox.hpp>
+#include <EssaGUI/GUI/TextEditor.hpp>
+#include <EssaGUI/GUI/Textbox.hpp>
+#include <EssaGUI/GUI/TextEditing/SyntaxHighlighter.hpp>
 
 class TestSyntaxHighlighter : public GUI::SyntaxHighlighter {
     virtual std::vector<GUI::TextStyle> styles() const override {

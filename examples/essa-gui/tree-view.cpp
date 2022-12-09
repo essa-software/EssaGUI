@@ -1,7 +1,7 @@
 #include "LLGL/OpenGL/Texture.hpp"
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/Model.hpp>
-#include <EssaGUI/gui/TreeView.hpp>
+#include <EssaGUI/GUI/Application.hpp>
+#include <EssaGUI/GUI/Model.hpp>
+#include <EssaGUI/GUI/TreeView.hpp>
 #include <EssaUtil/Config.hpp>
 #include <cassert>
 #include <fmt/core.h>

@@ -2,7 +2,7 @@
 
 #include "Material.hpp"
 #include "Shaders/Basic.hpp"
-#include <EssaGUI/gfx/ResourceManager.hpp>
+#include <EssaGUI/Graphics/ResourceManager.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/NonCopyable.hpp>
 #include <LLGL/OpenGL/Builder.hpp>
