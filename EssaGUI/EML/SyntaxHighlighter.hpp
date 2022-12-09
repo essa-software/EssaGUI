@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EssaGUI/GUI/TextEditing/SyntaxHighlighter.hpp>
+#include <EssaGUI/TextEditing/SyntaxHighlighter.hpp>
 
 namespace EML {
 

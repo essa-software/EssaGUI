@@ -1,9 +1,9 @@
 #include <EssaGUI/EML/SyntaxHighlighter.hpp>
-#include <EssaGUI/GUI/Application.hpp>
-#include <EssaGUI/GUI/Container.hpp>
-#include <EssaGUI/GUI/MessageBox.hpp>
-#include <EssaGUI/GUI/TextButton.hpp>
-#include <EssaGUI/GUI/TextEditor.hpp>
+#include <EssaGUI/Application.hpp>
+#include <EssaGUI/Widgets/Container.hpp>
+#include <EssaGUI/Overlays/MessageBox.hpp>
+#include <EssaGUI/Widgets/TextButton.hpp>
+#include <EssaGUI/Widgets/TextEditor.hpp>
 #include <EssaUtil/Error.hpp>
 #include <EssaUtil/GenericParser.hpp>
 

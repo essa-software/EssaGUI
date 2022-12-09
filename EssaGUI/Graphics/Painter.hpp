@@ -3,7 +3,7 @@
 #include "DefaultGUIShader.hpp"
 #include "GUIBuilder.hpp"
 #include "Vertex.hpp"
-#include <EssaGUI/GUI/TextAlign.hpp>
+#include <EssaGUI/TextAlign.hpp>
 #include <EssaUtil/NonCopyable.hpp>
 #include <LLGL/OpenGL/Texture.hpp>
 

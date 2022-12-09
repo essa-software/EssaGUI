@@ -1,5 +1,5 @@
 #include "Fragments.hpp"
-#include "EssaGUI/GUI/Application.hpp"
+#include "EssaGUI/Application.hpp"
 
 namespace Gfx::RichTextFragments {
 

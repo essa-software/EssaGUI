@@ -1,6 +1,6 @@
 #include <EssaGUI/Graphics/Text.hpp>
-#include <EssaGUI/GUI/Application.hpp>
-#include <EssaGUI/GUI/FileExplorer.hpp>
+#include <EssaGUI/Application.hpp>
+#include <EssaGUI/Overlays/FileExplorer.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 
 int main() {

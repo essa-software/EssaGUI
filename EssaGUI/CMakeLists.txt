@@ -1,4 +1,11 @@
 add_library(EssaGUI SHARED
+    Application.cpp
+    EventLoop.cpp
+    HostWindow.cpp
+    Model.cpp
+    Theme.cpp
+    WidgetTreeRoot.cpp
+
     EML/AST.cpp
     EML/EMLObject.cpp
     EML/EMLResource.cpp
@@ -12,61 +19,56 @@ add_library(EssaGUI SHARED
     Graphics/Painter.cpp
     Graphics/ResourceManager.cpp
     Graphics/RichText.cpp
+    Graphics/RichText/Fragments.cpp
     Graphics/Text.cpp
     Graphics/Window.cpp
-    Graphics/RichText/Fragments.cpp
-
-    GUI/AbstractListView.cpp
-    GUI/Application.cpp
-    GUI/ArrowButton.cpp
-    GUI/Border.cpp
-    GUI/Button.cpp
-    GUI/Canvas.cpp
-    GUI/Checkbox.cpp
-    GUI/ColorPicker.cpp
-    GUI/Console.cpp
-    GUI/Container.cpp
-    GUI/ContextMenu.cpp
-    GUI/Datebox.cpp
-    GUI/DraggableView2D.cpp
-    GUI/EventLoop.cpp
-    GUI/FileExplorer.cpp
-    GUI/FilePrompt.cpp
-    GUI/Frame.cpp
-    GUI/Grid.cpp
-    GUI/HostWindow.cpp
-    GUI/ImageButton.cpp
-    GUI/ImageWidget.cpp
-    GUI/Listbox.cpp
-    GUI/ListView.cpp
-    GUI/MessageBox.cpp
-    GUI/Model.cpp
-    GUI/Progressbar.cpp
-    GUI/Prompt.cpp
-    GUI/RadioButton.cpp
-    GUI/RadioGroup.cpp
-    GUI/ScrollableWidget.cpp
-    GUI/SettingsMenu.cpp
-    GUI/SelectWidget.cpp
-    GUI/Slider.cpp
-    GUI/TabWidget.cpp
-    GUI/TextButton.cpp
-    GUI/TextEditor.cpp
-    GUI/Textbox.cpp
-    GUI/Textfield.cpp
-    GUI/Theme.cpp
-    GUI/ToolWindow.cpp
-    GUI/Tooltip.cpp
-    GUI/TreeView.cpp
-    GUI/ValueSlider.cpp
-    GUI/Widget.cpp
-    GUI/WidgetTreeRoot.cpp
-    GUI/WorldView.cpp
-
-    GUI/Sprites/RectangleShape.cpp
-    GUI/Sprites/Sprite.cpp
     
+    Overlays/ContextMenu.cpp
+    Overlays/FileExplorer.cpp
+    Overlays/FilePrompt.cpp
+    Overlays/MessageBox.cpp
+    Overlays/Prompt.cpp
+    Overlays/Tooltip.cpp
+    Overlays/ToolWindow.cpp
+
+    Sprites/RectangleShape.cpp
+    Sprites/Sprite.cpp
+
     Util/ConfigFile.cpp
+    
+    Widgets/AbstractListView.cpp
+    Widgets/ArrowButton.cpp
+    Widgets/Border.cpp
+    Widgets/Button.cpp
+    Widgets/Canvas.cpp
+    Widgets/Checkbox.cpp
+    Widgets/ColorPicker.cpp
+    Widgets/Console.cpp
+    Widgets/Container.cpp
+    Widgets/Datebox.cpp
+    Widgets/DraggableView2D.cpp
+    Widgets/Frame.cpp
+    Widgets/Grid.cpp
+    Widgets/ImageButton.cpp
+    Widgets/ImageWidget.cpp
+    Widgets/Listbox.cpp
+    Widgets/ListView.cpp
+    Widgets/Progressbar.cpp
+    Widgets/RadioButton.cpp
+    Widgets/RadioGroup.cpp
+    Widgets/ScrollableWidget.cpp
+    Widgets/SelectWidget.cpp
+    Widgets/SettingsMenu.cpp
+    Widgets/Slider.cpp
+    Widgets/TabWidget.cpp
+    Widgets/Textbox.cpp
+    Widgets/TextButton.cpp
+    Widgets/TextEditor.cpp
+    Widgets/Textfield.cpp
+    Widgets/TreeView.cpp
+    Widgets/ValueSlider.cpp
+    Widgets/Widget.cpp
+    Widgets/WorldView.cpp
 )
 
 set_target_properties(EssaGUI PROPERTIES OUTPUT_NAME "essa-gui")
