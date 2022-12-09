@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Essa/GUI/Widgets/Container.hpp>
 #include "ImageButton.hpp"
+#include <Essa/GUI/Widgets/Container.hpp>
 #include <vector>
 
 namespace GUI {
@@ -35,8 +35,8 @@ private:
     Container* m_settings_container {};
 
 protected:
-    using Container::add_widget;
     using Container::add_created_widget;
+    using Container::add_widget;
     using Container::clear_layout;
     using Container::get_layout;
     using Container::shrink;

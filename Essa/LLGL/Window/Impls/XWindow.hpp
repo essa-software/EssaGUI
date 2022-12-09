@@ -2,14 +2,12 @@
 
 #include <Essa/LLGL/Core/Size.hpp>
 
-#include <string>
 #include <X11/Xlib.h>
+#include <string>
 
-namespace llgl
-{
+namespace llgl {
 
-class XWindow
-{
+class XWindow {
 public:
     ~XWindow();
     void set_title(std::string const&);

@@ -4,9 +4,9 @@
 #include "Event.hpp"
 #include "Impls/WindowImpl.hpp"
 
+#include <Essa/LLGL/OpenGL/Renderer.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <Essa/LLGL/OpenGL/Renderer.hpp>
 
 #include <memory>
 #include <string>
@@ -35,7 +35,7 @@ public:
     Util::Vector2f center() const { return Util::Vector2f { m_size } / 2.f; }
     float aspect() const { return (float)m_size.x() / m_size.y(); }
     Util::Recti rect() const { return { 0, 0, size().x(), size().y() }; }
-    
+
     void center_on_screen() const;
 
 private:

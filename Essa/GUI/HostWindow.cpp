@@ -1,7 +1,7 @@
 #include "HostWindow.hpp"
 
-#include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 
 #include <cassert>

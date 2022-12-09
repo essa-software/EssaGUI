@@ -1,9 +1,9 @@
 #pragma once
 
-#include <EssaUtil/Color.hpp>
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <Essa/LLGL/OpenGL/VertexMapping.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Vector.hpp>
 
 namespace Gfx {
 

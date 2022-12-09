@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
 
 namespace GUI {
 

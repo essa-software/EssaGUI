@@ -1,8 +1,8 @@
 #pragma once
 
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/Window/Keyboard.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
+#include <EssaUtil/Vector.hpp>
 
 namespace llgl {
 

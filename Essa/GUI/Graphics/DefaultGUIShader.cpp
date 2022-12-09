@@ -1,7 +1,7 @@
 #include "DefaultGUIShader.hpp"
 
-#include <EssaUtil/DelayedInit.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
+#include <EssaUtil/DelayedInit.hpp>
 #include <iostream>
 
 namespace Gfx {

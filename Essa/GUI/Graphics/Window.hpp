@@ -2,10 +2,6 @@
 
 #include "DefaultGUIShader.hpp"
 #include <Essa/GUI/TextAlign.hpp>
-#include <EssaUtil/Color.hpp>
-#include <EssaUtil/Matrix.hpp>
-#include <EssaUtil/Rect.hpp>
-#include <EssaUtil/UString.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Projection.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
@@ -14,6 +10,10 @@
 #include <Essa/LLGL/OpenGL/VertexArray.hpp>
 #include <Essa/LLGL/Resources/TTFFont.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Matrix.hpp>
+#include <EssaUtil/Rect.hpp>
+#include <EssaUtil/UString.hpp>
 #include <span>
 
 namespace GUI {

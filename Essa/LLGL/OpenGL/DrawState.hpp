@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Shader.hpp"
 #include "PrimitiveType.hpp"
+#include "Shader.hpp"
 
 namespace llgl {
 

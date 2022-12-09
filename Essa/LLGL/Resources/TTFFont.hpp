@@ -1,11 +1,11 @@
 #pragma once
 
-#include <EssaUtil/NonCopyable.hpp>
-#include <EssaUtil/Rect.hpp>
-#include <EssaUtil/UString.hpp>
 #include <Essa/LLGL/Core/Image.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
 #include <Essa/LLGL/Resources/GlyphCache.hpp>
+#include <EssaUtil/NonCopyable.hpp>
+#include <EssaUtil/Rect.hpp>
+#include <EssaUtil/UString.hpp>
 #include <SDL2/SDL_ttf.h>
 #include <map>
 

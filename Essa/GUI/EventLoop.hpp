@@ -11,11 +11,11 @@ public:
     std::function<bool()> on_close;
 
     void run();
-    void quit() { 
-        if(on_close)
+    void quit() {
+        if (on_close)
             m_running = !on_close();
         else
-            m_running = false; 
+            m_running = false;
     }
     float tps() const { return m_tps; }
 

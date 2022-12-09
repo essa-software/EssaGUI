@@ -1,7 +1,7 @@
 #pragma once
 
-#include <EssaUtil/Color.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
+#include <EssaUtil/Color.hpp>
 #include <vector>
 
 #include "Model.hpp"

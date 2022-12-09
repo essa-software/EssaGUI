@@ -3,11 +3,9 @@
 #include <SDL2/SDL_keyboard.h>
 #include <cassert>
 
-namespace llgl
-{
+namespace llgl {
 
-bool is_key_pressed(KeyCode key)
-{
+bool is_key_pressed(KeyCode key) {
     int numkeys {};
     auto state = SDL_GetKeyboardState(&numkeys);
     auto scancode = SDL_GetScancodeFromKey(static_cast<SDL_Scancode>(key));

@@ -14,8 +14,8 @@ private:
     virtual bool steals_focus() const override { return true; }
 
 protected:
-    using Container::add_widget;
     using Container::add_created_widget;
+    using Container::add_widget;
     using Container::clear_layout;
     using Container::get_layout;
     using Container::shrink;

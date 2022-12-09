@@ -1,7 +1,6 @@
 #pragma once
 
-namespace llgl::opengl
-{
+namespace llgl::opengl {
 
 void ensure_glew();
 

@@ -36,8 +36,8 @@ public:
         BgFgTextColors value(Widget const& w) const;
 
         void set_colors(Util::Color const& color) {
-            unhovered = {.background = color, .foreground = {}, .text = Util::Colors::White};
-            hovered = {.background = color + Util::Color{20,20,20}, .foreground = {}, .text = Util::Colors::White};
+            unhovered = { .background = color, .foreground = {}, .text = Util::Colors::White };
+            hovered = { .background = color + Util::Color { 20, 20, 20 }, .foreground = {}, .text = Util::Colors::White };
         }
     };
 
@@ -56,7 +56,7 @@ public:
 
         BgFgTextColors value(Widget const& w) const;
     };
-    
+
     struct SelectionColors {
         Util::Color focused;
         Util::Color unfocused;

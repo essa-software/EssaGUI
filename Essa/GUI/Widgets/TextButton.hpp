@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Button.hpp"
-#include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/TextAlign.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
 #include <EssaUtil/UString.hpp>
 
 namespace GUI {

@@ -2,8 +2,8 @@
 
 #include "Painter.hpp"
 #include <Essa/GUI/TextAlign.hpp>
-#include <EssaUtil/UString.hpp>
 #include <Essa/LLGL/Resources/TTFFont.hpp>
+#include <EssaUtil/UString.hpp>
 #include <cstdint>
 
 namespace Gfx {

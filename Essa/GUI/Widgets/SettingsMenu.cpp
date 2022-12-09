@@ -1,7 +1,7 @@
 #include "SettingsMenu.hpp"
 
-#include <Essa/GUI/Widgets/Container.hpp>
 #include "Frame.hpp"
+#include <Essa/GUI/Widgets/Container.hpp>
 
 #include <iostream>
 

@@ -2,9 +2,9 @@
 
 #include "ObjLoader.hpp"
 
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <iostream>
 
 std::optional<Essa::Model> Gfx::ResourceTraits<Essa::Model>::load_from_file(std::string const& path) {

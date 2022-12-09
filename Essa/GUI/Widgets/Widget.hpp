@@ -6,12 +6,12 @@
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Theme.hpp>
+#include <Essa/LLGL/Window/Event.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Orientation.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <Essa/LLGL/Window/Event.hpp>
 #include <cassert>
 #include <string>
 #include <string_view>

@@ -1,10 +1,8 @@
 #pragma once
 
-namespace llgl
-{
+namespace llgl {
 
-struct ContextSettings
-{
+struct ContextSettings {
     int major_version = 3;
     int minor_version = 2;
 };

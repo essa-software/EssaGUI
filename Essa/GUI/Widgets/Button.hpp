@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
 #include <functional>
 #include <optional>
 

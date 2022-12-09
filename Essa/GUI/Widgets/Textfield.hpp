@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/TextAlign.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
 #include <EssaUtil/Units.hpp>
 
 namespace GUI {

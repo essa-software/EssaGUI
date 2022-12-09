@@ -1,8 +1,8 @@
 #include "SDLWindow.hpp"
 
 #include "../Event.hpp"
-#include <EssaUtil/UString.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
+#include <EssaUtil/UString.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_hints.h>
