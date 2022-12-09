@@ -1,5 +1,5 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/TextButton.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/TextButton.hpp>
 
 int main() {
     GUI::Application app;

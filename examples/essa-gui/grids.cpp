@@ -1,8 +1,8 @@
 
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/Container.hpp>
-#include <EssaGUI/Widgets/Grid.hpp>
-#include <EssaGUI/Widgets/Textfield.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/Grid.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 
 int main() {
     GUI::Application app;

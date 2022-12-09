@@ -1,6 +1,6 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/Container.hpp>
-#include <EssaGUI/Widgets/TextButton.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/TextButton.hpp>
 #include <fmt/ostream.h>
 
 class TooltipHostWidget : public GUI::TextButton {

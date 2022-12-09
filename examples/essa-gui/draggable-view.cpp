@@ -1,8 +1,8 @@
-#include <EssaGUI/Graphics/Painter.hpp>
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/Container.hpp>
-#include <EssaGUI/Widgets/DraggableView2D.hpp>
-#include <EssaGUI/Widgets/Textfield.hpp>
+#include <Essa/GUI/Graphics/Painter.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/DraggableView2D.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 #include <EssaUtil/Length.hpp>
 
 class MyView : public GUI::DraggableView2D {

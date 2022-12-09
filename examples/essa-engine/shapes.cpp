@@ -1,11 +1,11 @@
-#include <EssaEngine/3D/Cube.hpp>
-#include <EssaEngine/3D/Shaders/Lighting.hpp>
-#include <EssaEngine/3D/Sphere.hpp>
+#include <Essa/Engine/3D/Cube.hpp>
+#include <Essa/Engine/3D/Shaders/Lighting.hpp>
+#include <Essa/Engine/3D/Sphere.hpp>
 #include <EssaUtil/Angle.hpp>
-#include <LLGL/Core/Camera.hpp>
-#include <LLGL/Core/Transform.hpp>
-#include <LLGL/OpenGL/Transform.hpp>
-#include <LLGL/Window/Window.hpp>
+#include <Essa/LLGL/Core/Camera.hpp>
+#include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/Transform.hpp>
+#include <Essa/LLGL/Window/Window.hpp>
 
 int main() {
     llgl::Window window { { 500, 500 }, "Primitive Shapes" };

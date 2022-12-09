@@ -1,6 +1,6 @@
-#include <EssaGUI/Application.hpp>
-#include <EssaGUI/Widgets/ArrowButton.hpp>
-#include <EssaGUI/Widgets/Container.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/ArrowButton.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
 
 int main() {
     GUI::Application app;
