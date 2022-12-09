@@ -1,7 +1,7 @@
 #include "TextButton.hpp"
 
-#include <Essa/GUI/Application.hpp>
 #include "Button.hpp"
+#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>

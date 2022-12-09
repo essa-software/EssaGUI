@@ -3,11 +3,11 @@
 #include "Material.hpp"
 #include "Shaders/Basic.hpp"
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
-#include <EssaUtil/Matrix.hpp>
-#include <EssaUtil/NonCopyable.hpp>
 #include <Essa/LLGL/OpenGL/Builder.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
+#include <EssaUtil/Matrix.hpp>
+#include <EssaUtil/NonCopyable.hpp>
 #include <functional>
 #include <vector>
 

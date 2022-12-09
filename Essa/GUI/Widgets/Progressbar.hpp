@@ -18,7 +18,6 @@ public:
         NONE
     };
 
-
     Util::UString get_content_with_labelling() const;
     void step_by();
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <EssaUtil/Color.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
+#include <EssaUtil/Color.hpp>
 #include <string>
 
 namespace Essa {

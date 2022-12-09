@@ -2,19 +2,16 @@
 
 #include <SDL2/SDL_mouse.h>
 
-namespace llgl
-{
+namespace llgl {
 
-Util::Vector2i mouse_position()
-{
+Util::Vector2i mouse_position() {
     int x;
     int y;
     SDL_GetMouseState(&x, &y);
     return { x, y };
 }
 
-bool is_mouse_button_pressed(MouseButton button)
-{
+bool is_mouse_button_pressed(MouseButton button) {
     int x;
     int y;
     int buttons = SDL_GetMouseState(&x, &y);

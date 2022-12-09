@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Essa/GUI/Widgets/Container.hpp>
 #include "TextButton.hpp"
+#include <Essa/GUI/Widgets/Container.hpp>
 #include <functional>
 
 namespace GUI {
@@ -19,8 +19,8 @@ private:
     std::vector<TextButton*> m_buttons;
 
 protected:
-    using Container::add_widget;
     using Container::add_created_widget;
+    using Container::add_widget;
     using Container::clear_layout;
     using Container::get_layout;
     using Container::shrink;
@@ -54,8 +54,8 @@ private:
     std::vector<Container*> m_tabs;
 
 protected:
-    using Container::add_widget;
     using Container::add_created_widget;
+    using Container::add_widget;
     using Container::clear_layout;
     using Container::get_layout;
     using Container::shrink;

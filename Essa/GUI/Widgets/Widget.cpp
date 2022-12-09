@@ -4,11 +4,11 @@
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/LLGL/Window/Mouse.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/Is.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <Essa/LLGL/Window/Mouse.hpp>
 #include <cassert>
 #include <iostream>
 #include <typeinfo>

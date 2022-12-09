@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Model.hpp"
-#include <EssaUtil/Color.hpp>
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/OpenGL/OpenGL.hpp>
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <vector>
 
 namespace Essa {

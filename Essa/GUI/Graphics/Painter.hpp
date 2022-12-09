@@ -4,8 +4,8 @@
 #include "GUIBuilder.hpp"
 #include "Vertex.hpp"
 #include <Essa/GUI/TextAlign.hpp>
-#include <EssaUtil/NonCopyable.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
+#include <EssaUtil/NonCopyable.hpp>
 
 namespace Gfx {
 

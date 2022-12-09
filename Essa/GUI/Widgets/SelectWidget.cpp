@@ -1,7 +1,7 @@
 #include "SelectWidget.hpp"
 
-#include <Essa/GUI/Widgets/Container.hpp>
 #include "Textfield.hpp"
+#include <Essa/GUI/Widgets/Container.hpp>
 #include <EssaUtil/Units.hpp>
 
 namespace GUI {

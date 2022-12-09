@@ -1,9 +1,8 @@
 #pragma once
 
+#include <Essa/LLGL/OpenGL/Projection.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <Essa/LLGL/OpenGL/Projection.hpp>
-
 
 namespace llgl {
 

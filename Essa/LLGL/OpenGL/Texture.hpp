@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Essa/LLGL/Core/Image.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Rect.hpp>
-#include <Essa/LLGL/Core/Image.hpp>
 #include <span>
 #include <string>
 #include <utility>

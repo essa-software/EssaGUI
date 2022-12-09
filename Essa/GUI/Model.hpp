@@ -1,7 +1,7 @@
 #pragma once
 
-#include <EssaUtil/UString.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
+#include <EssaUtil/UString.hpp>
 #include <set>
 #include <string>
 #include <type_traits>

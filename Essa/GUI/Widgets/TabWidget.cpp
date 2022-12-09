@@ -1,11 +1,11 @@
 #include "TabWidget.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
 #include <cassert>
 #include <iostream>
 

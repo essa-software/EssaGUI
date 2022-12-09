@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ResourceManager.hpp"
-#include <EssaUtil/Rect.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
+#include <EssaUtil/Rect.hpp>
 
 namespace Gfx {
 

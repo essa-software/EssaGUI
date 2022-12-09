@@ -1,8 +1,8 @@
 #include "ResourceManager.hpp"
 
 #include <Essa/GUI/Util/ConfigFile.hpp>
-#include <EssaUtil/NonCopyable.hpp>
 #include <Essa/LLGL/Resources/ImageLoader.hpp>
+#include <EssaUtil/NonCopyable.hpp>
 #include <filesystem>
 #include <type_traits>
 #include <unistd.h>

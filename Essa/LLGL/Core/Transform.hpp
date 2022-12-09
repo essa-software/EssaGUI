@@ -8,8 +8,7 @@ namespace llgl {
 class Transform {
 public:
     explicit Transform(Util::Matrix4x4f matrix = Util::Matrix4x4f::identity())
-        : m_matrix(matrix)
-    {
+        : m_matrix(matrix) {
     }
 
     [[nodiscard]] Transform translate(Util::Vector3f vector) const;

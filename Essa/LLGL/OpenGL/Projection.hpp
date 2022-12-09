@@ -1,7 +1,7 @@
 #pragma once
 
-#include <EssaUtil/Matrix.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
+#include <EssaUtil/Matrix.hpp>
 #include <cassert>
 
 namespace llgl {

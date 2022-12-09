@@ -1,10 +1,10 @@
 #include "Textfield.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/TextAlign.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/GUI/TextAlign.hpp>
 
 namespace GUI {
 
