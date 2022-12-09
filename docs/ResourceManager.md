@@ -13,7 +13,7 @@ All the resources are placed in the resource directory, that is detected by the 
     - `gui` - default EssaGUI textures
     - ... all the fonts
 - `Config.ini` - the config file
-- `Theme.ini` - the theme file (see [the implementation](/EssaGUI/gui/Theme.cpp))
+- `Theme.ini` - the theme file (see [the implementation](/EssaGUI/GUI/Theme.cpp))
 
 ## Searching for resource directory
 

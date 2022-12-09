@@ -1,7 +1,7 @@
-#include <EssaGUI/gfx/RichText.hpp>
-#include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/FileExplorer.hpp>
+#include <EssaGUI/Graphics/RichText.hpp>
+#include <EssaGUI/Graphics/Text.hpp>
+#include <EssaGUI/GUI/Application.hpp>
+#include <EssaGUI/GUI/FileExplorer.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 
 class RichTextWidget : public GUI::Widget {

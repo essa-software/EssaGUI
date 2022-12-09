@@ -1,6 +1,6 @@
 #include "ObjLoader.hpp"
 
-#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/GUI/Application.hpp>
 
 #include <filesystem>
 #include <fstream>
