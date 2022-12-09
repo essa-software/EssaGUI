@@ -1,7 +1,7 @@
 #include "SyntaxHighlighter.hpp"
 
 #include <EssaGUI/EML/Lexer.hpp>
-#include <EssaGUI/GUI/TextEditing/SyntaxHighlighter.hpp>
+#include <EssaGUI/TextEditing/SyntaxHighlighter.hpp>
 #include <EssaUtil/Stream/MemoryStream.hpp>
 
 namespace EML {

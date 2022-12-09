@@ -1,6 +1,6 @@
-#include <EssaGUI/GUI/Application.hpp>
-#include <EssaGUI/GUI/Container.hpp>
-#include <EssaGUI/GUI/TextButton.hpp>
+#include <EssaGUI/Application.hpp>
+#include <EssaGUI/Widgets/Container.hpp>
+#include <EssaGUI/Widgets/TextButton.hpp>
 
 int main() {
     GUI::Application app;

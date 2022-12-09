@@ -1,6 +1,6 @@
 #include <EssaGUI/Graphics/Window.hpp>
-#include <EssaGUI/GUI/Application.hpp>
-#include <EssaGUI/GUI/MessageBox.hpp>
+#include <EssaGUI/Application.hpp>
+#include <EssaGUI/Overlays/MessageBox.hpp>
 
 int main() {
     GUI::Application app;

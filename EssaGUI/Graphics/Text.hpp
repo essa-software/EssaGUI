@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Painter.hpp"
-#include <EssaGUI/GUI/TextAlign.hpp>
+#include <EssaGUI/TextAlign.hpp>
 #include <EssaUtil/UString.hpp>
 #include <LLGL/Resources/TTFFont.hpp>
 #include <cstdint>

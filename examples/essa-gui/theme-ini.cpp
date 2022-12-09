@@ -1,8 +1,8 @@
-#include <EssaGUI/GUI/Application.hpp>
-#include <EssaGUI/GUI/Console.hpp>
-#include <EssaGUI/GUI/Container.hpp>
-#include <EssaGUI/GUI/Theme.hpp>
-#include <EssaGUI/GUI/ToolWindow.hpp>
+#include <EssaGUI/Application.hpp>
+#include <EssaGUI/Widgets/Console.hpp>
+#include <EssaGUI/Widgets/Container.hpp>
+#include <EssaGUI/Theme.hpp>
+#include <EssaGUI/Overlays/ToolWindow.hpp>
 
 int main() {
     GUI::Theme theme;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DefaultGUIShader.hpp"
-#include <EssaGUI/GUI/TextAlign.hpp>
+#include <EssaGUI/TextAlign.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/Rect.hpp>
