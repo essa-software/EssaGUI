@@ -53,7 +53,7 @@ int TTFFont::kerning(int font_size, uint32_t previous, uint32_t current) const {
     auto font_face = load_font_if_needed(font_size);
     if (!font_face)
         return {};
-    return TTF_GetFontKerningSizeGlyphs(font_face->sdl_font, previous, current);
+    return TTF_GetFontKerningSizeGlyphs32(font_face->sdl_font, previous, current);
 }
 
 std::optional<llgl::Image> TTFFont::render_text(Util::UString const& text, int font_size) const {
