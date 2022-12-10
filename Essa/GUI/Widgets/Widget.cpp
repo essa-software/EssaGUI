@@ -135,7 +135,6 @@ void Widget::handle_event(Event& event) {
 }
 
 void Widget::do_draw(Gfx::Painter& painter) const {
-    // std::cout << "do_draw "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
     auto rect = this->rect();
     Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, rect, Gfx::ClipViewScope::Mode::Intersect);
 
