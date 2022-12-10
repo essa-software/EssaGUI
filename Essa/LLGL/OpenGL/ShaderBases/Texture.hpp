@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Shader.hpp"
+#include <Essa/LLGL/OpenGL/Shader.hpp>
 
 namespace llgl::ShaderBases {
 
