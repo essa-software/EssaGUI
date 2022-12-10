@@ -28,7 +28,7 @@ Application::Application() {
 Theme const& Application::theme() const {
     if (!m_cached_theme) {
         m_cached_theme = Theme {};
-        m_cached_theme->load_ini(m_resource_manager.require_lookup_resource(Gfx::ResourceId::asset("Theme.ini"), "")).release_value();
+        m_cached_theme->load_ini(m_resource_manager.require_lookup_resource({ Gfx::ResourceId::asset("Theme.ini"), "" })).release_value();
     }
     return *m_cached_theme;
 }

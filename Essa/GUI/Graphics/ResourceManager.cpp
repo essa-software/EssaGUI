@@ -11,26 +11,26 @@ namespace Gfx {
 
 ResourceManager::ResourceManager()
     : m_config {
-        (find_resource_roots(), Util::ConfigFile::open_ini(require_lookup_resource(ResourceId::asset("Config.ini"), "")).release_value())
+        (find_resource_roots(), Util::ConfigFile::open_ini(require_lookup_resource({ ResourceId::asset("Config.ini"), "" })).release_value())
     } { }
 
-std::optional<std::string> ResourceManager::lookup_resource(ResourceId path, std::string_view base) const {
-    if (path.type() == ResourceId::Type::External) {
-        return std::filesystem::absolute(path.path());
+std::optional<std::string> ResourceManager::lookup_resource(ResourceIdAndBase const& id_and_base) const {
+    if (id_and_base.id.type() == ResourceId::Type::External) {
+        return std::filesystem::absolute(id_and_base.id.path());
     }
 
     for (auto const& root : m_resource_roots) {
-        auto filesystem_path = std::filesystem::path { root } / base / path.path();
+        auto filesystem_path = std::filesystem::path { root } / id_and_base.base / id_and_base.id.path();
         if (std::filesystem::exists(filesystem_path))
             return filesystem_path;
     }
     return {};
 }
 
-std::string ResourceManager::require_lookup_resource(ResourceId path, std::string_view base) const {
-    auto fs_path = lookup_resource(path, base);
+std::string ResourceManager::require_lookup_resource(ResourceIdAndBase const& id_and_base) const {
+    auto fs_path = lookup_resource(id_and_base);
     if (!fs_path) {
-        std::cout << "ResourceManager: Failed to lookup required resource '" << path << std::endl;
+        std::cout << "ResourceManager: Failed to lookup required resource '" << id_and_base << "'" << std::endl;
         exit(1);
     }
     return *fs_path;

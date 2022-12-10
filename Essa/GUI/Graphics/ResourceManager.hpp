@@ -73,7 +73,6 @@ private:
     std::string m_path;
 };
 
-namespace Detail {
 struct ResourceIdAndBase {
     ResourceId id;
     std::string_view base;
@@ -86,6 +85,7 @@ struct ResourceIdAndBase {
     }
 };
 
+namespace Detail {
 struct ResourceWrapperBase {
     virtual ~ResourceWrapperBase() = default;
 };
@@ -105,13 +105,13 @@ public:
 
     Util::ConfigFile const& config() const { return m_config; }
 
-    std::optional<std::string> lookup_resource(ResourceId, std::string_view base) const;
-    std::string require_lookup_resource(ResourceId, std::string_view base) const;
+    std::optional<std::string> lookup_resource(ResourceIdAndBase const&) const;
+    std::string require_lookup_resource(ResourceIdAndBase const&) const;
 
     template<Resource T>
     T* get(ResourceId const& id) const {
         using Traits = ResourceTraits<T>;
-        Detail::ResourceIdAndBase id_and_base { id, Traits::base_path() };
+        ResourceIdAndBase id_and_base { id, Traits::base_path() };
 
         auto cached_resource = m_cached_resources.find(id_and_base);
         if (cached_resource != m_cached_resources.end()) {
@@ -121,7 +121,7 @@ public:
             return &static_cast<Detail::ResourceWrapper<T>*>(cached_resource->second.get())->resource;
         }
 
-        auto fs_path = lookup_resource(id_and_base.id, id_and_base.base);
+        auto fs_path = lookup_resource(id_and_base);
         if (!fs_path) {
             std::cout << "ResourceManager: Failed to lookup resource (" << typeid(T).name() << ") '" << id_and_base << "'" << std::endl;
             return nullptr;
@@ -176,7 +176,7 @@ private:
     std::vector<std::string> m_resource_roots;
     Util::ConfigFile m_config;
 
-    mutable std::map<Detail::ResourceIdAndBase, std::unique_ptr<Detail::ResourceWrapperBase>> m_cached_resources;
+    mutable std::map<ResourceIdAndBase, std::unique_ptr<Detail::ResourceWrapperBase>> m_cached_resources;
 };
 
 }
