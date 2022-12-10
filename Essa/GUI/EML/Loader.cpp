@@ -32,7 +32,6 @@ ClassDefinition const* Loader::find_class_definition(std::string const& name) co
 static std::map<std::string, std::unique_ptr<EMLObjectConstructorBase>> s_constructor_registry;
 
 void Loader::register_constructor(std::string const& name, std::unique_ptr<EMLObjectConstructorBase> constructor) {
-    std::cout << "register constructor " << name << std::endl;
     s_constructor_registry.insert({ name, std::move(constructor) });
 }
 
