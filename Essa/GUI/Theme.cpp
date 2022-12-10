@@ -125,6 +125,8 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(negative); // "Red" / the "bad" thing like removing objects
         DEFINE_THEME_OPTION(neutral);  // "Blue"
 
+        DEFINE_THEME_OPTION(modal_backdrop);
+
         DEFINE_THEME_OPTION(label_font_size);
         DEFINE_THEME_OPTION(line_height);
 

@@ -87,6 +87,8 @@ public:
     Util::Color negative; // "Red" / the "bad" thing like removing objects
     Util::Color neutral;  // "Blue"
 
+    Util::Color modal_backdrop;
+
     uint32_t label_font_size;
 
     uint32_t line_height; // Default height of buttons, textboxes etc.

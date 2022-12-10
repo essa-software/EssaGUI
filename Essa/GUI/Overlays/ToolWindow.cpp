@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
+#include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
@@ -174,6 +175,12 @@ void ToolWindow::center_on_screen() {
 }
 
 void ToolWindow::draw(Gfx::Painter& painter) {
+    if (is_modal()) {
+        Gfx::RectangleDrawOptions modal_backdrop;
+        modal_backdrop.fill_color = theme().modal_backdrop;
+        painter.draw_rectangle(host_window().rect(), modal_backdrop);
+    }
+
     Util::Vector2f position { std::round(this->position().x()), std::round(this->position().y()) };
     Util::Vector2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
@@ -181,8 +188,6 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     background.fill_color = { 50, 50, 50, 220 };
     painter.draw_rectangle({ position, size }, background);
 
-    // FIXME: Add some graphical indication that there is
-    //        modal window opened now
     auto titlebar_color = host_window().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
 
     Gfx::RectangleDrawOptions rs_titlebar;
