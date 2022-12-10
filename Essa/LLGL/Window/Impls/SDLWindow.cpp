@@ -106,6 +106,7 @@ bool SDLWindowImpl::poll_event(Event& event) {
             return false;
 
         if (sdl_event->type == SDL_WINDOWEVENT) {
+            bool should_continue = false;
             switch (sdl_event->window.event) {
             case SDL_WINDOWEVENT_RESIZED:
                 event.type = Event::Type::Resize;
@@ -125,7 +126,10 @@ bool SDLWindowImpl::poll_event(Event& event) {
             }
             default:
                 std::cout << "SDLWindow: Unhandled window event (type=" << (int)sdl_event->window.event << ")" << std::endl;
-                return false;
+                should_continue = true;
+            }
+            if (should_continue) {
+                continue;
             }
             return true;
         }
@@ -184,7 +188,7 @@ bool SDLWindowImpl::poll_event(Event& event) {
         }
         // TODO
         std::cout << "SDLWindow: Unhandled event (type=" << sdl_event->type << ")" << std::endl;
-        return false;
+        continue;
     }
 }
 
