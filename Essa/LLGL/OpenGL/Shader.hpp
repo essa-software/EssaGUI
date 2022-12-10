@@ -12,8 +12,10 @@
 
 namespace llgl {
 
-enum class ShaderType { Fragment,
-    Vertex };
+enum class ShaderType {
+    Fragment,
+    Vertex
+};
 
 struct TextureUnit {
     int id = 0;
