@@ -17,13 +17,20 @@ void Text::draw(Gfx::Painter& painter) const {
         text_rect.texture = &cache->atlas();
         text_rect.fill_color = m_fill_color;
 
-        float x_position = 0;
+        int x_position = 0;
         uint32_t previous_codepoint = 0;
         for (auto codepoint : span) {
             auto glyph = cache->ensure_glyph(m_font, codepoint);
             text_rect.texture_rect = glyph.texture_rect;
             // TODO: Take (better) advantage of GUIBuilder
-            painter.draw_rectangle({ x_position + line_position.x(), line_position.y(), static_cast<float>(glyph.texture_rect.width), static_cast<float>(glyph.texture_rect.height) }, text_rect);
+            painter.draw_rectangle(
+                {
+                    std::floor(x_position + line_position.x()),
+                    std::floor(line_position.y()),
+                    static_cast<float>(std::floor(glyph.texture_rect.width)),
+                    static_cast<float>(std::floor(glyph.texture_rect.height)),
+                },
+                text_rect);
             x_position += glyph.texture_rect.width + m_font.kerning(m_font_size, previous_codepoint, codepoint);
             previous_codepoint = codepoint;
         }
