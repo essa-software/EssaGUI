@@ -2,6 +2,7 @@ set(SOURCES
     Cube.cpp
     Model.cpp
     ObjLoader.cpp
+    ShaderResource.cpp
     Shapes.cpp
     Sphere.cpp
 
