@@ -69,7 +69,7 @@ public:
     Util::Rectf rect() const { return { position(), size() }; }
 
     // The rect that the WidgetTreeRoot should consume events from. For
-    // ToolWindows, it is content + titlebar.
+    // ToolWindows, it is content + titlebar + resize rect.
     virtual Util::Rectf full_rect() const { return rect(); }
 
 protected:

@@ -7,6 +7,7 @@
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
+#include <EssaUtil/Config.hpp>
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -28,50 +29,10 @@ void ToolWindow::handle_event(llgl::Event event) {
     auto& window = host_window().window();
 
     Event gui_event { event };
+    bool should_pass_event_to_widgets = true;
     if (gui_event.is_mouse_related()) {
         auto mouse_position = gui_event.mouse_position();
         mouse_position += Util::Vector2i { position() };
-
-        if (event.type == llgl::Event::Type::MouseMove) {
-            // TODO
-            // bool bottom = mouse_position.y() > position().y() + size().y() - ResizeRadius;
-            // bool is_in_window_x_range = mouse_position.x() > position().x() - ResizeRadius && mouse_position.x() < position().x() + size().x() + ResizeRadius;
-            // bool is_in_window_y_range = mouse_position.y() > position().y() + TitleBarSize - ResizeRadius && mouse_position.y() < position().y() + size().y() + ResizeRadius;
-
-            // sf::Cursor cursor;
-            // if (std::fabs(mouse_position.x() - position().x()) < ResizeRadius && is_in_window_y_range) {
-            //     if (bottom && is_in_window_x_range) {
-            //         m_resize_mode = Resize::LEFTBOTTOM;
-            //         // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
-            //         cursor.loadFromSystem(sf::Cursor::SizeAll);
-            //     }
-            //     else {
-            //         m_resize_mode = Resize::LEFT;
-            //         cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-            //     }
-            // }
-            // else if (std::fabs(mouse_position.x() - position().x() - size().x()) < ResizeRadius && is_in_window_y_range) {
-            //     if (bottom && is_in_window_x_range) {
-            //         m_resize_mode = Resize::RIGHTBOTTOM;
-            //         // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
-            //         cursor.loadFromSystem(sf::Cursor::SizeAll);
-            //     }
-            //     else {
-            //         m_resize_mode = Resize::RIGHT;
-            //         cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-            //     }
-            // }
-            // else if (bottom && is_in_window_y_range && is_in_window_x_range) {
-            //     m_resize_mode = Resize::BOTTOM;
-            //     cursor.loadFromSystem(sf::Cursor::SizeVertical);
-            // }
-            // else {
-            //     m_resize_mode = Resize::DEFAULT;
-            //     cursor.loadFromSystem(sf::Cursor::Arrow);
-            // }
-            // std::cout << "TODO: set mouse cursor" << std::endl;
-            // window().setMouseCursor(cursor);
-        }
 
         float titlebar_button_position_x = position().x() + size().x() - TitleBarSize;
         for (auto& button : m_titlebar_buttons) {
@@ -98,23 +59,39 @@ void ToolWindow::handle_event(llgl::Event event) {
         }
 
         if (event.type == llgl::Event::Type::MouseButtonPress) {
-            if (m_resize_mode != Resize::DEFAULT)
-                m_resizing = true;
-            else if (titlebar_rect().contains(mouse_position)) {
-                m_dragging = true;
+            auto start_dragging = [&]() {
                 m_drag_position = mouse_position;
-                return;
+                should_pass_event_to_widgets = false;
+                m_initial_dragging_position = m_position;
+                m_initial_dragging_size = m_size;
+            };
+
+            if (titlebar_rect().contains(mouse_position)) {
+                m_moving = true;
+                start_dragging();
+            }
+
+            size_t i = 0;
+            for (auto direction : { ResizeDirection::Top, ResizeDirection::Right, ResizeDirection::Bottom, ResizeDirection::Left }) {
+                auto resize_rect = this->resize_rect(direction);
+                if (resize_rect.contains(mouse_position)) {
+                    assert(i < m_resize_directions.size());
+                    m_resize_directions[i++] = direction;
+                    start_dragging();
+                }
             }
         }
         else if (event.type == llgl::Event::Type::MouseMove) {
             Util::Vector2i mouse_position = event.mouse_move.position;
             mouse_position += Util::Vector2i { position() };
 
-            if (m_dragging) {
-                auto delta = mouse_position - m_drag_position;
-                m_position += Util::Vector2f { delta };
-                m_drag_position = mouse_position;
+            auto is_resizing = std::any_of(m_resize_directions.begin(), m_resize_directions.end(), [](std::optional<ResizeDirection> r) {
+                return r.has_value();
+            });
 
+            auto delta = mouse_position - m_drag_position;
+
+            auto constrain_position = [this, &window]() {
                 if (m_position.y() < TitleBarSize)
                     m_position.y() = TitleBarSize;
                 if (m_position.y() > window.size().y())
@@ -123,39 +100,72 @@ void ToolWindow::handle_event(llgl::Event event) {
                     m_position.x() = -size().x() + TitleBarSize;
                 if (m_position.x() > window.size().x() - TitleBarSize)
                     m_position.x() = window.size().x() - TitleBarSize;
+            };
 
+            if (m_moving) {
+                m_position = m_initial_dragging_position + Util::Vector2f { delta };
+                constrain_position();
                 return;
             }
-            else if (m_resizing) {
-                // sf::Cursor cursor;
-                switch (m_resize_mode) {
-                case Resize::LEFT:
-
-                    break;
-                case Resize::LEFTBOTTOM:
-
-                    break;
-                case Resize::BOTTOM:
-
-                    break;
-                case Resize::RIGHTBOTTOM:
-
-                    break;
-                case Resize::RIGHT:
-
-                    break;
-                case Resize::DEFAULT:
-
-                    break;
+            if (is_resizing) {
+                for (auto direction : m_resize_directions) {
+                    if (!direction) {
+                        break;
+                    }
+                    switch (*direction) {
+                    case ResizeDirection::Left:
+                        if (m_initial_dragging_size.x() - delta.x() < MinSize) {
+                            delta.x() = m_initial_dragging_size.x() - MinSize;
+                        }
+                        if (m_initial_dragging_position.x() + delta.x() < 0) {
+                            delta.x() = -m_initial_dragging_position.x();
+                        }
+                        m_size.x() = m_initial_dragging_size.x() - delta.x();
+                        m_position.x() = m_initial_dragging_position.x() + delta.x();
+                        break;
+                    case ResizeDirection::Top:
+                        if (m_initial_dragging_size.y() - delta.y() < MinSize) {
+                            delta.y() = m_initial_dragging_size.y() - MinSize;
+                        }
+                        if (m_initial_dragging_position.y() + delta.y() < TitleBarSize) {
+                            delta.y() = -m_initial_dragging_position.y() + TitleBarSize;
+                        }
+                        m_size.y() = m_initial_dragging_size.y() - delta.y();
+                        m_position.y() = m_initial_dragging_position.y() + delta.y();
+                        break;
+                    case ResizeDirection::Right:
+                        if (m_initial_dragging_size.x() + delta.x() < MinSize) {
+                            delta.x() = MinSize - m_initial_dragging_size.x();
+                        }
+                        m_size.x() = m_initial_dragging_size.x() + delta.x();
+                        break;
+                    case ResizeDirection::Bottom:
+                        if (m_initial_dragging_size.y() + delta.y() < MinSize) {
+                            delta.y() = MinSize - m_initial_dragging_size.y();
+                        }
+                        m_size.y() = m_initial_dragging_size.y() + delta.y();
+                        break;
+                    }
                 }
+
+                // constrain_position();
+
+                llgl::Event event;
+                event.type = llgl::Event::Type::Resize;
+                event.resize.size = { static_cast<int>(m_size.x()), static_cast<int>(m_size.y()) };
+                WidgetTreeRoot::handle_event(event);
+                return;
             }
         }
         else if (event.type == llgl::Event::Type::MouseButtonRelease) {
-            m_dragging = false;
-            m_resizing = false;
+            m_moving = false;
+            m_resize_directions = {};
         }
     }
-    WidgetTreeRoot::handle_event(event);
+
+    if (should_pass_event_to_widgets) {
+        WidgetTreeRoot::handle_event(event);
+    }
 }
 
 void ToolWindow::center_on_screen() {
@@ -220,6 +230,20 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, rect(), Gfx::ClipViewScope::Mode::Override);
         WidgetTreeRoot::draw(painter);
     }
+}
+
+Util::Rectf ToolWindow::resize_rect(ResizeDirection direction) const {
+    switch (direction) {
+    case ResizeDirection::Top:
+        return full_rect().take_top(ResizeBorderWidth);
+    case ResizeDirection::Right:
+        return full_rect().take_right(ResizeBorderWidth);
+    case ResizeDirection::Bottom:
+        return full_rect().take_bottom(ResizeBorderWidth);
+    case ResizeDirection::Left:
+        return full_rect().take_left(ResizeBorderWidth);
+    }
+    ESSA_UNREACHABLE;
 }
 
 EML::EMLErrorOr<void> ToolWindow::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

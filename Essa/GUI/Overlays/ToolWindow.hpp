@@ -12,7 +12,7 @@ public:
 
     static constexpr auto TitleBarSize = 28;
     static constexpr auto MinSize = 50;
-    static constexpr auto ResizeRadius = 20;
+    static constexpr auto ResizeBorderWidth = 10;
 
     virtual Util::Vector2f position() const override { return m_position; }
     void set_position(Util::Vector2f position) { m_position = position; }
@@ -23,8 +23,20 @@ public:
 
     CREATE_VALUE(Util::UString, title, "")
 
-    virtual Util::Rectf full_rect() const override { return { position() - Util::Vector2f(0, TitleBarSize), size() + Util::Vector2f(0, TitleBarSize) }; }
+    virtual Util::Rectf full_rect() const override {
+        return Util::Rect { position() - Util::Vector2f(0, TitleBarSize), size() + Util::Vector2f(0, TitleBarSize) }
+            .inflated(ResizeBorderWidth / 2);
+    }
     Util::Rectf titlebar_rect() const { return { position() - Util::Vector2f(0, TitleBarSize), { size().x(), TitleBarSize } }; }
+
+    enum class ResizeDirection {
+        Top,
+        Right,
+        Bottom,
+        Left
+    };
+
+    Util::Rectf resize_rect(ResizeDirection direction) const;
 
 protected:
     virtual void handle_event(llgl::Event) override;
@@ -38,20 +50,12 @@ private:
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
-    enum class Resize {
-        LEFT,
-        LEFTBOTTOM,
-        BOTTOM,
-        RIGHTBOTTOM,
-        RIGHT,
-        DEFAULT
-    };
-    Resize m_resize_mode = Resize::DEFAULT;
-
     Util::Vector2f m_position;
     Util::Vector2f m_size;
-    bool m_dragging = false;
-    bool m_resizing = false;
+    bool m_moving = false;
+    std::array<std::optional<ResizeDirection>, 2> m_resize_directions;
+    Util::Vector2f m_initial_dragging_position;
+    Util::Vector2f m_initial_dragging_size;
     Util::Vector2i m_drag_position;
     bool m_first_tick = true;
 
