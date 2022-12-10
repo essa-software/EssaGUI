@@ -51,7 +51,7 @@ FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UStrin
             input->set_content(Util::UString { path.string() });
         };
 
-        file_explorer_wnd.run();
+        file_explorer_wnd.show_modal();
     };
 
     // FIXME: Also, why buttons are red by default?
@@ -78,9 +78,7 @@ FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UStrin
 
 FilePrompt* file_prompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
     auto& prompt = window.open_overlay<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
-
-    prompt.run();
-
+    prompt.show_modal();
     return &prompt;
 }
 

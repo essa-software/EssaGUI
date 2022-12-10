@@ -23,7 +23,7 @@ public:
     };
 
     ButtonRole exec() {
-        run();
+        show_modal();
         return m_clicked_button;
     }
 

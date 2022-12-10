@@ -72,7 +72,16 @@ public:
     // ToolWindows, it is content + titlebar + resize rect.
     virtual Util::Rectf full_rect() const { return rect(); }
 
+    void show_modal() {
+        m_modal = true;
+        run();
+    }
+
+    bool is_modal() const { return m_modal; }
+
 protected:
+    using EventLoop::run;
+
     virtual void tick() override;
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
@@ -84,6 +93,7 @@ protected:
 private:
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
+    bool m_modal = false;
 };
 
 }

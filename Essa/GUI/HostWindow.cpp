@@ -154,7 +154,7 @@ HostWindow::OpenOrFocusResult HostWindow::open_or_focus_tool_window(Util::UStrin
 
 void HostWindow::open_context_menu(ContextMenu context_menu, Util::Vector2f position) {
     auto& menu = open_overlay<ContextMenuOverlay>(context_menu, position);
-    menu.run();
+    menu.show_modal();
 }
 
 void HostWindow::focus_overlay(Overlay& overlay) {
