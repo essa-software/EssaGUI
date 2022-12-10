@@ -207,7 +207,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
         painter.draw_rectangle({ { titlebar_button_position_x, position.y() - TitleBarSize }, { TitleBarSize, TitleBarSize } }, tbb_background);
 
-        Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f) - 1, std::round(position.y() - TitleBarSize / 2.f) - 1 };
+        Util::Vector2f button_center { std::round(titlebar_button_position_x + TitleBarSize / 2.f), std::round(position.y() - TitleBarSize / 2.f) };
 
         std::array<Gfx::Vertex, 4> varr;
         Util::Color const CloseButtonColor { 200, 200, 200 };
@@ -222,8 +222,8 @@ void ToolWindow::draw(Gfx::Painter& painter) {
 
     std::array<Gfx::Vertex, 4> varr_border;
     varr_border[0] = Gfx::Vertex { { position }, titlebar_color, {} };
-    varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(0, size.y() + 1) }, titlebar_color, {} };
-    varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y() + 1) }, titlebar_color, {} };
+    varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(-1, size.y()) }, titlebar_color, {} };
+    varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color, {} };
     varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
