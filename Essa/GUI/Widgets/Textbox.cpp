@@ -10,7 +10,6 @@
 #include <cctype>
 #include <cmath>
 #include <iostream>
-#include <sstream>
 #include <string>
 
 namespace GUI {
@@ -41,16 +40,12 @@ void Textbox::m_fit_in_range() {
     if (maybe_value.is_error()) {
         return;
     }
-    double val = maybe_value.release_value();
-    std::ostringstream oss;
-    oss << std::fixed;
-    if (val < m_min)
-        oss << m_min;
-    else if (val > m_max)
-        oss << m_max;
-    else
-        return;
-    set_content(Util::UString { m_fix_content(oss.str()) }, NotifyUser::No);
+    double value = maybe_value.release_value();
+    if (value < m_min)
+        value = m_min;
+    else if (value > m_max)
+        value = m_max;
+    set_content_impl(Util::UString { m_fix_content(fmt::format("{}", value)) });
 }
 
 bool Textbox::can_insert_codepoint(uint32_t ch) const {

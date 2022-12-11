@@ -114,6 +114,17 @@ Util::UString TextEditor::content() const {
 }
 
 void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
+    set_content_impl(content);
+
+    did_content_change();
+    if (notify_user == NotifyUser::No) {
+        on_content_change();
+        regenerate_styles();
+        m_content_changed = false;
+    }
+}
+
+void TextEditor::set_content_impl(Util::UString const& content) {
     m_lines.clear();
 
     content.for_each_line([&](std::span<uint32_t const> span) {
@@ -130,15 +141,6 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
         m_cursor = {};
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
-
-    m_content_changed = true;
-    if (notify_user == NotifyUser::Yes) {
-        on_content_change();
-        if (on_change)
-            on_change(content);
-        regenerate_styles();
-        m_content_changed = false;
-    }
 }
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
