@@ -1,7 +1,7 @@
 #include "ValueSlider.hpp"
-#include <Essa/GUI/NotifyUser.hpp>
 
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/NotifyUser.hpp>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -55,7 +55,7 @@ double ValueSlider::value() const {
 
 void ValueSlider::set_value(double value, NotifyUser notify_user) {
     m_slider->set_value(value, notify_user);
-    m_textbox->set_content(Util::UString { std::to_string(value) }, notify_user);
+    m_textbox->set_content(Util::UString { std::to_string(m_slider->value()) }, notify_user);
 }
 
 EML::EMLErrorOr<void> ValueSlider::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

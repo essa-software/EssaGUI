@@ -48,6 +48,7 @@ private:
 
     double value_clamped_to_min_max() const;
     float calculate_knob_size() const;
+    void round_to_step();
 
     double m_val = 50;
     bool m_dragging = false;

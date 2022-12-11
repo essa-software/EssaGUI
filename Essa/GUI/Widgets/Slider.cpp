@@ -20,6 +20,7 @@ double Slider::value() const {
 
 void Slider::set_value(double val, NotifyUser notify_user) {
     m_val = val;
+    round_to_step();
 
     if (on_change && notify_user == NotifyUser::Yes)
         on_change(value());
@@ -48,15 +49,18 @@ void Slider::handle_event(Event& event) {
             else
                 m_val = std::min(std::max(m_min, m_val), m_max);
 
-            // round to step
-            m_val /= m_step;
-            m_val = std::round(m_val);
-            m_val *= m_step;
+            round_to_step();
 
             if (on_change)
                 on_change(value());
         }
     }
+}
+
+void Slider::round_to_step() {
+    m_val /= m_step;
+    m_val = std::round(m_val);
+    m_val *= m_step;
 }
 
 float Slider::calculate_knob_size() const {
