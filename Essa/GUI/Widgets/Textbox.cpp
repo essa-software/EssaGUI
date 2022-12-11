@@ -45,7 +45,7 @@ void Textbox::m_fit_in_range() {
         value = m_min;
     else if (value > m_max)
         value = m_max;
-    set_content_impl(Util::UString { m_fix_content(fmt::format("{}", value)) });
+    set_content_impl(Util::UString { m_fix_content(fmt::format("{:.1f}", value)) });
 }
 
 bool Textbox::can_insert_codepoint(uint32_t ch) const {
