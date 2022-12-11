@@ -93,6 +93,7 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
                     slider->set_max(max);
                     slider->set_name_textfield_size(20.0_px);
                     slider->set_unit_textfield_size(0.0_px);
+                    slider->set_step(1);
                     slider->set_name(component);
                     slider->on_change = [this, mode](double) {
                         update_controls(mode);
@@ -134,7 +135,6 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
 }
 
 void ColorPickerDialog::update_controls(Mode mode) {
-
     if (mode == Mode::HSV) {
         int h = m_h_slider->value();
         float s = m_s_slider->value() / 100;
