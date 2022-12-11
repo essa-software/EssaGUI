@@ -11,11 +11,11 @@ public:
         Intersect // current = old ∩ new
     };
 
-    ClipViewScope(Gfx::Painter& target, Util::Vector2u host_window_size, Util::Rectf rect, Mode);
+    ClipViewScope(Gfx::Painter& target, Util::Vector2u host_window_size, Util::Recti rect, Mode);
     ~ClipViewScope();
 
 private:
-    llgl::Projection create_clip_view(Util::Rectf const&, Util::Vector2f offset_position, Util::Vector2u host_window_size) const;
+    llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2f offset_position, Util::Vector2u host_window_size) const;
 
     Gfx::Painter& m_target;
     llgl::Projection m_old_projection;

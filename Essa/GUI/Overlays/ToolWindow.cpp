@@ -232,7 +232,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
-        Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, rect(), Gfx::ClipViewScope::Mode::Override);
+        Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect() }, Gfx::ClipViewScope::Mode::Override);
         WidgetTreeRoot::draw(painter);
     }
 }

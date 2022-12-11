@@ -649,7 +649,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
     if (m_selection_start != cursor) {
         Util::DelayedInit<Gfx::ClipViewScope> scope;
         if (m_multiline) {
-            scope.construct(window, Util::Vector2u { host_window().size() }, clip_rect, Gfx::ClipViewScope::Mode::Intersect);
+            scope.construct(window, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect);
         }
 
         Gfx::RectangleDrawOptions selected_rect;
@@ -695,7 +695,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
                 text.draw(window);
             }
             else {
-                Gfx::ClipViewScope scope { window, Util::Vector2u { host_window().size() }, clip_rect, Gfx::ClipViewScope::Mode::Intersect };
+                Gfx::ClipViewScope scope { window, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect };
 
                 size_t character_index = 0;
                 for (size_t i = 0; i < first_visible_line; i++) {

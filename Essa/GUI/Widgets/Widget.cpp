@@ -136,7 +136,7 @@ void Widget::handle_event(Event& event) {
 
 void Widget::do_draw(Gfx::Painter& painter) const {
     auto rect = this->rect();
-    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, rect, Gfx::ClipViewScope::Mode::Intersect);
+    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = m_background_color;
