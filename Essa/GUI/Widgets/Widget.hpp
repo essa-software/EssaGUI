@@ -60,44 +60,11 @@ constexpr bool operator==(LengthVector const& a, LengthVector const& b) {
     return a.x == b.x && a.y == b.y;
 }
 
-class Event {
+struct Event : public llgl::Event {
 public:
-    Event(llgl::Event const& event)
-        : m_event(event) {
-    }
-
-    llgl::Event event() const { return m_event; }
-
-    // FIXME: idk the names
-    void set_handled() { m_handled = true; }
-    bool is_handled() const { return m_handled; }
-    void set_seen() { m_seen = true; }
-    bool is_seen() const { return m_seen; }
-
-    llgl::Event::Type type() const { return m_event.type; }
-
-    bool is_mouse_related() const {
-        return m_event.type == llgl::Event::Type::MouseMove
-            || m_event.type == llgl::Event::Type::MouseButtonPress
-            || m_event.type == llgl::Event::Type::MouseButtonRelease
-            || m_event.type == llgl::Event::Type::MouseScroll;
-    }
-
-    Util::Vector2i mouse_position() const {
-        assert(is_mouse_related());
-        if (m_event.type == llgl::Event::Type::MouseMove)
-            return m_event.mouse_move.position;
-        if (m_event.type == llgl::Event::Type::MouseButtonPress || m_event.type == llgl::Event::Type::MouseButtonRelease)
-            return m_event.mouse_button.position;
-        if (m_event.type == llgl::Event::Type::MouseScroll)
-            return m_event.mouse_scroll.position;
-        __builtin_unreachable();
-    }
-
-private:
-    llgl::Event m_event;
-    bool m_handled = false;
-    bool m_seen = false;
+    template<class T>
+    Event(T&& t)
+        : llgl::Event(std::forward<T>(t)) { }
 };
 
 class Widget : public EML::EMLObject {
@@ -110,7 +77,14 @@ public:
 
     HostWindow& host_window() const;
 
-    virtual void do_handle_event(Event& event);
+    bool is_affected_by_event(Event const&) const;
+
+    enum class EventHandlerResult {
+        Accepted,   // Event should not bubble up to Container
+        NotAccepted // Event will bubble up
+    };
+
+    virtual Widget::EventHandlerResult do_handle_event(Event const& event);
     virtual void do_update();
     virtual void draw(Gfx::Painter&) const { }
 
@@ -215,11 +189,21 @@ protected:
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
+    EventHandlerResult handle_event(Event const&);
+
+    virtual EventHandlerResult on_window_resize(Event::WindowResize const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_key_press(Event::KeyPress const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_key_release(Event::KeyRelease const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_move(Event::MouseMove const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_scroll(Event::MouseScroll const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_text_input(Event::TextInput const&) { return EventHandlerResult::NotAccepted; }
+
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }
     virtual bool is_mouse_over(Util::Vector2i) const;
     virtual void update();
-    virtual void handle_event(Event&);
     virtual bool accepts_focus() const { return false; }
 
     // "Steals focus" - so that the widget cannot be focused from outside

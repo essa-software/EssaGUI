@@ -26,7 +26,7 @@ public:
 protected:
     Util::Angle m_rotation;
 
-    virtual void handle_event(Event&) override;
+    virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
 };
 
 }

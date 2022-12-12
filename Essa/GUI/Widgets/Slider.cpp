@@ -26,35 +26,37 @@ void Slider::set_value(double val, NotifyUser notify_user) {
         on_change(value());
 }
 
-void Slider::handle_event(Event& event) {
-    if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        if (is_mouse_over(event.event().mouse_button.position)) {
-            m_dragging = true;
-            event.set_handled();
+Widget::EventHandlerResult Slider::on_mouse_button_press(Event::MouseButtonPress const&) {
+    if (is_hover()) {
+        m_dragging = true;
+        return EventHandlerResult::Accepted;
+    }
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult Slider::on_mouse_button_release(Event::MouseButtonRelease const&) {
+    m_dragging = false;
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult Slider::on_mouse_move(Event::MouseMove const& event) {
+    if (m_dragging) {
+        auto mouse_pos_relative_to_slider = Util::Vector2f { event.local_position() };
+        m_val = (mouse_pos_relative_to_slider.x() / raw_size().x()) * (m_max - m_min) + m_min;
+
+        if (m_wraparound) {
+            auto middle = (m_min + m_max) / 2;
+            m_val = std::remainder(m_val - m_min - middle, (m_max - m_min)) + m_min + middle;
         }
-    }
-    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
-        m_dragging = false;
-    }
-    else if (event.type() == llgl::Event::Type::MouseMove) {
-        if (m_dragging) {
-            // TODO: Support converting UninitializedVector to any Vector directly
-            auto mouse_pos_relative_to_slider = Util::Vector2f { Util::Vector2i { event.event().mouse_move.position } } - raw_position();
-            m_val = (mouse_pos_relative_to_slider.x() / raw_size().x()) * (m_max - m_min) + m_min;
+        else
+            m_val = std::min(std::max(m_min, m_val), m_max);
 
-            if (m_wraparound) {
-                auto middle = (m_min + m_max) / 2;
-                m_val = std::remainder(m_val - m_min - middle, (m_max - m_min)) + m_min + middle;
-            }
-            else
-                m_val = std::min(std::max(m_min, m_val), m_max);
+        round_to_step();
 
-            round_to_step();
-
-            if (on_change)
-                on_change(value());
-        }
+        if (on_change)
+            on_change(value());
     }
+    return EventHandlerResult::NotAccepted;
 }
 
 void Slider::round_to_step() {
@@ -103,5 +105,4 @@ EML::EMLErrorOr<void> Slider::load_from_eml_object(EML::Object const& object, EM
 }
 
 EML_REGISTER_CLASS(Slider);
-
 }

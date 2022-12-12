@@ -28,7 +28,7 @@ public:
     }
 
 private:
-    virtual void handle_event(llgl::Event) override;
+    virtual void handle_event(GUI::Event const&) override;
 
     ButtonRole m_clicked_button = ButtonRole::None;
     Button* m_default_button = nullptr;

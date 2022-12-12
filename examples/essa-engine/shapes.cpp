@@ -1,11 +1,11 @@
 #include <Essa/Engine/3D/Cube.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
 #include <Essa/Engine/3D/Sphere.hpp>
-#include <EssaUtil/Angle.hpp>
 #include <Essa/LLGL/Core/Camera.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/Angle.hpp>
 
 int main() {
     llgl::Window window { { 500, 500 }, "Primitive Shapes" };
@@ -20,9 +20,8 @@ int main() {
     double shape_angle = 0;
 
     for (;;) {
-        llgl::Event event;
-        while (window.poll_event(event)) {
-        }
+        // FIXME: Port to GUI::Application
+        while (window.poll_event()) { }
 
         llgl::Camera camera { llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, window.rect()) };
         camera = camera.translate({ 0, 1.5, 5 }).rotate_z(10.0_deg);

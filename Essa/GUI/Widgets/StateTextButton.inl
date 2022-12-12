@@ -38,16 +38,13 @@ void StateTextButton<T>::set_index(unsigned int index) {
 }
 
 template<typename T>
-void StateTextButton<T>::handle_event(Event& event) {
-    if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        if (is_hover()) {
-            m_index++;
-            if (m_index >= m_states.size())
-                m_index = 0;
+Widget::EventHandlerResult StateTextButton<T>::on_mouse_button_press(Event::MouseButtonPress const&) {
+    m_index++;
+    if (m_index >= m_states.size())
+        m_index = 0;
 
-            on_change(state());
-        }
-    }
+    on_change(state());
+    return Widget::EventHandlerResult::NotAccepted;
 }
 
 template<typename T>

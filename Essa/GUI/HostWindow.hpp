@@ -19,7 +19,7 @@ public:
     virtual void handle_events() override; // Called by Application
     virtual void update() override;        // Called by Application
 
-    virtual void handle_event(llgl::Event) override;
+    virtual void handle_event(GUI::Event const&) override;
 
     GUI::Window& window() { return m_window; }
     GUI::Window const& window() const { return m_window; }
@@ -71,7 +71,6 @@ private:
     };
 
     void draw_notification(Notification const&, float y);
-    llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
     Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
 
     using OverlayList = std::list<std::unique_ptr<Overlay>>;

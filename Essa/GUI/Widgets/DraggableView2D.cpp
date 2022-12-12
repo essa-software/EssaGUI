@@ -33,46 +33,48 @@ Util::Vector2i DraggableView2D::world_to_screen(Util::Vector2f world) const {
     return Util::Vector2i { transform().transform_point(Util::Vector3f { world, 1 }) };
 }
 
-void DraggableView2D::handle_event(Event& event) {
-    if (event.type() == llgl::Event::Type::MouseScroll) {
-        if (event.event().mouse_scroll.delta > 0) {
-            m_zoom *= 2;
-            auto delta = (Util::Vector2f { event.mouse_position() } - raw_size() / 2.f) / m_zoom;
-            m_offset += delta;
-        }
-        else {
-            m_zoom /= 2;
-            auto delta = (Util::Vector2f { event.mouse_position() } - raw_size() / 2.f) / m_zoom;
-            m_offset -= delta / 2.f;
-        }
+Widget::EventHandlerResult DraggableView2D::on_mouse_scroll(Event::MouseScroll const& event) {
+    if (event.delta() > 0) {
+        m_zoom *= 2;
+        auto delta = (Util::Vector2f { event.local_position() } - raw_size() / 2.f) / m_zoom;
+        m_offset += delta;
     }
-    else if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        if (!is_hover()) {
-            return;
-        }
-        if (event.event().mouse_button.button != m_pan_button) {
-            return;
-        }
-        m_drag_start_mouse = event.mouse_position();
-        m_drag_start_offset = m_offset;
-        m_dragging = true;
+    else {
+        m_zoom /= 2;
+        auto delta = (Util::Vector2f { event.local_position() } - raw_size() / 2.f) / m_zoom;
+        m_offset -= delta / 2.f;
     }
-    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
-        if (event.event().mouse_button.button != m_pan_button) {
-            return;
-        }
-        m_dragging = false;
-        m_actually_dragging = false;
+    return Widget::EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult DraggableView2D::on_mouse_button_press(Event::MouseButtonPress const& event) {
+    if (event.button() != m_pan_button) {
+        return Widget::EventHandlerResult::NotAccepted;
     }
-    else if (event.type() == llgl::Event::Type::MouseMove) {
-        auto delta = event.mouse_position() - m_drag_start_mouse;
-        if (m_dragging && delta.length_squared() > 400) {
-            m_actually_dragging = true;
-        }
-        if (m_actually_dragging) {
-            m_offset = m_drag_start_offset - Util::Vector2f { delta } / m_zoom;
-        }
+    m_drag_start_mouse = event.local_position();
+    m_drag_start_offset = m_offset;
+    m_dragging = true;
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult DraggableView2D::on_mouse_button_release(Event::MouseButtonRelease const& event) {
+    if (event.button() != m_pan_button) {
+        return Widget::EventHandlerResult::NotAccepted;
     }
+    m_dragging = false;
+    m_actually_dragging = false;
+    return Widget::EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult DraggableView2D::on_mouse_move(Event::MouseMove const& event) {
+    auto delta = event.local_position() - m_drag_start_mouse;
+    if (m_dragging && delta.length_squared() > 400) {
+        m_actually_dragging = true;
+    }
+    if (m_actually_dragging) {
+        m_offset = m_drag_start_offset - Util::Vector2f { delta } / m_zoom;
+    }
+    return EventHandlerResult::NotAccepted;
 }
 
 }

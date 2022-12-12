@@ -23,43 +23,42 @@ ToolWindow::ToolWindow(HostWindow& window, std::string id)
         } });
 }
 
-void ToolWindow::handle_event(llgl::Event event) {
+void ToolWindow::handle_event(Event const& event) {
     if (m_first_tick)
         return;
 
     auto& window = host_window().window();
 
-    Event gui_event { event };
     bool should_pass_event_to_widgets = true;
-    if (gui_event.is_mouse_related()) {
-        auto mouse_position = gui_event.mouse_position();
+    if (event.is_mouse_related()) {
+        auto mouse_position = event.local_mouse_position();
         mouse_position += Util::Vector2i { position() };
 
         float titlebar_button_position_x = position().x() + size().x() - TitleBarSize;
         for (auto& button : m_titlebar_buttons) {
             Util::Rectf rect { { titlebar_button_position_x, position().y() - TitleBarSize }, { TitleBarSize, TitleBarSize } };
 
-            if (event.type == llgl::Event::Type::MouseButtonPress) {
+            if (event.is<Event::MouseButtonPress>()) {
                 if (rect.contains(mouse_position)) {
                     button.mousedown = true;
                     button.hovered = true;
                 }
             }
-            else if (event.type == llgl::Event::Type::MouseButtonRelease) {
+            else if (event.is<Event::MouseButtonRelease>()) {
                 button.mousedown = true;
                 if (rect.contains(mouse_position)) {
                     assert(button.on_click);
                     button.on_click();
                 }
             }
-            else if (event.type == llgl::Event::Type::MouseMove) {
+            else if (event.is<Event::MouseMove>()) {
                 button.hovered = rect.contains(mouse_position);
             }
 
             titlebar_button_position_x -= TitleBarSize;
         }
 
-        if (event.type == llgl::Event::Type::MouseButtonPress) {
+        if (event.is<Event::MouseButtonPress>()) {
             auto start_dragging = [&]() {
                 m_drag_position = mouse_position;
                 should_pass_event_to_widgets = false;
@@ -82,10 +81,7 @@ void ToolWindow::handle_event(llgl::Event event) {
                 }
             }
         }
-        else if (event.type == llgl::Event::Type::MouseMove) {
-            Util::Vector2i mouse_position = event.mouse_move.position;
-            mouse_position += Util::Vector2i { position() };
-
+        else if (event.is<Event::MouseMove>()) {
             auto is_resizing = std::any_of(m_resize_directions.begin(), m_resize_directions.end(), [](std::optional<ResizeDirection> r) {
                 return r.has_value();
             });
@@ -149,16 +145,12 @@ void ToolWindow::handle_event(llgl::Event event) {
                     }
                 }
 
-                // constrain_position();
-
-                llgl::Event event;
-                event.type = llgl::Event::Type::Resize;
-                event.resize.size = { static_cast<int>(m_size.x()), static_cast<int>(m_size.y()) };
-                WidgetTreeRoot::handle_event(event);
+                // Send resize event to ToolWindow's widgets
+                WidgetTreeRoot::handle_event(llgl::Event::WindowResize { { static_cast<unsigned>(m_size.x()), static_cast<unsigned>(m_size.y()) } });
                 return;
             }
         }
-        else if (event.type == llgl::Event::Type::MouseButtonRelease) {
+        else if (event.is<Event::MouseButtonRelease>()) {
             m_moving = false;
             m_resize_directions = {};
         }

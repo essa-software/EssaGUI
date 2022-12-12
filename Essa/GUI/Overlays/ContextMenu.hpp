@@ -18,7 +18,7 @@ private:
 
     Util::Rectf item_rect(size_t index) const;
     virtual void draw(Gfx::Painter&) const override;
-    virtual void handle_event(Event& event) override;
+    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
 };
 
 class ContextMenu {
@@ -43,7 +43,7 @@ public:
     virtual Util::Vector2f size() const override;
 
 private:
-    virtual void handle_event(llgl::Event) override;
+    virtual void handle_event(GUI::Event const&) override;
     virtual void draw(Gfx::Painter&) override;
 
     MenuWidget* m_menu_widget = nullptr;

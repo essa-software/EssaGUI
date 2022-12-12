@@ -79,7 +79,7 @@ void SDLWindowImpl::display() {
 
 static std::map<uint32_t, std::queue<SDL_Event>> s_event_queues;
 
-bool SDLWindowImpl::poll_event(Event& event) {
+std::optional<Event> SDLWindowImpl::poll_event() {
     while (true) {
         std::optional<SDL_Event> sdl_event = [this]() -> std::optional<SDL_Event> {
             auto& queue = s_event_queues[SDL_GetWindowID(m_window)];
@@ -103,15 +103,13 @@ bool SDLWindowImpl::poll_event(Event& event) {
         }();
 
         if (!sdl_event)
-            return false;
+            return {};
 
         if (sdl_event->type == SDL_WINDOWEVENT) {
             bool should_continue = false;
             switch (sdl_event->window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-                event.type = Event::Type::Resize;
-                event.resize.size = { sdl_event->window.data1, sdl_event->window.data2 };
-                break;
+                return Event::WindowResize({ sdl_event->window.data1, sdl_event->window.data2 });
             case SDL_WINDOWEVENT_FOCUS_GAINED:
                 m_focused = true;
                 break;
@@ -131,60 +129,43 @@ bool SDLWindowImpl::poll_event(Event& event) {
             if (should_continue) {
                 continue;
             }
-            return true;
         }
         else if (sdl_event->type == SDL_KEYDOWN) {
-            event.type = Event::Type::KeyPress;
-            event.key.keycode = static_cast<KeyCode>(sdl_event->key.keysym.sym);
-            event.key.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
-            event.key.ctrl = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_CTRL;
-            event.key.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
-            event.key.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
-            return true;
+            Event::Key::KeyModifiers modifiers;
+            modifiers.ctrl = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_CTRL;
+            modifiers.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
+            modifiers.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
+            modifiers.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
+            return Event::KeyPress { static_cast<KeyCode>(sdl_event->key.keysym.sym), modifiers };
         }
         else if (sdl_event->type == SDL_KEYUP) {
-            event.type = Event::Type::KeyRelease;
-            event.key.keycode = static_cast<KeyCode>(sdl_event->key.keysym.sym);
-            event.key.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
-            event.key.ctrl = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_CTRL;
-            event.key.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
-            event.key.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
-            return true;
+            Event::Key::KeyModifiers modifiers;
+            modifiers.ctrl = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_CTRL;
+            modifiers.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
+            modifiers.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
+            modifiers.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
+            return Event::KeyRelease { static_cast<KeyCode>(sdl_event->key.keysym.sym), modifiers };
         }
         else if (sdl_event->type == SDL_MOUSEMOTION) {
             if (sdl_event->motion.xrel == 0 && sdl_event->motion.yrel == 0)
                 continue;
-            event.type = Event::Type::MouseMove;
-            event.mouse_move.position = { sdl_event->motion.x, sdl_event->motion.y };
-            event.mouse_move.relative = { sdl_event->motion.xrel, sdl_event->motion.yrel };
-            return true;
+            return Event::MouseMove { { sdl_event->motion.x, sdl_event->motion.y }, { sdl_event->motion.xrel, sdl_event->motion.yrel } };
         }
         else if (sdl_event->type == SDL_MOUSEBUTTONDOWN) {
-            event.type = Event::Type::MouseButtonPress;
-            event.mouse_button.button = static_cast<MouseButton>(sdl_event->button.button);
-            event.mouse_move.position = { sdl_event->button.x, sdl_event->button.y };
-            return true;
+            return Event::MouseButtonPress { { sdl_event->button.x, sdl_event->button.y }, static_cast<MouseButton>(sdl_event->button.button) };
         }
         else if (sdl_event->type == SDL_MOUSEBUTTONUP) {
-            event.type = Event::Type::MouseButtonRelease;
-            event.mouse_button.button = static_cast<MouseButton>(sdl_event->button.button);
-            event.mouse_move.position = { sdl_event->button.x, sdl_event->button.y };
-            return true;
+            return Event::MouseButtonRelease { { sdl_event->button.x, sdl_event->button.y }, static_cast<MouseButton>(sdl_event->button.button) };
         }
         else if (sdl_event->type == SDL_MOUSEWHEEL) {
-            event.type = Event::Type::MouseScroll;
             auto mouse = mouse_position();
-            event.mouse_scroll.position = { mouse.x(), mouse.y() };
-            event.mouse_scroll.delta = sdl_event->wheel.preciseY;
-            return true;
+            return Event::MouseScroll { { mouse.x(), mouse.y() }, sdl_event->wheel.preciseY };
         }
         else if (sdl_event->type == SDL_TEXTINPUT) {
-            event.type = Event::Type::TextInput;
             Util::UString input_string { { sdl_event->text.text, strlen(sdl_event->text.text) } };
             if (input_string.is_empty())
                 continue;
-            event.text_input.codepoint = input_string.at(0);
-            return true;
+            return Event::TextInput { input_string };
         }
         // TODO
         std::cout << "SDLWindow: Unhandled event (type=" << sdl_event->type << ")" << std::endl;

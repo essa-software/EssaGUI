@@ -24,7 +24,7 @@ public:
     void set_size(Util::Vector2i);
     void set_position(Util::Vector2i);
     void display();
-    bool poll_event(Event&);
+    std::optional<Event> poll_event();
     void set_mouse_position(Util::Vector2i);
     bool is_focused() const;
     void set_active() const;

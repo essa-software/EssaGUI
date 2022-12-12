@@ -4,13 +4,17 @@
 
 namespace GUI {
 
-void Button::handle_event(Event& event) {
-    if (event.event().type == llgl::Event::Type::MouseButtonPress && is_hover())
-        m_pressed_on_button = true;
-    else if (event.event().type == llgl::Event::Type::MouseButtonRelease && is_hover() && m_pressed_on_button) {
+Widget::EventHandlerResult Button::on_mouse_button_press(Event::MouseButtonPress const&) {
+    m_pressed_on_button = true;
+    return Widget::EventHandlerResult::Accepted;
+}
+
+Widget::EventHandlerResult Button::on_mouse_button_release(Event::MouseButtonRelease const&) {
+    if (is_hover() && m_pressed_on_button) {
         click();
         m_pressed_on_button = false;
     }
+    return Widget::EventHandlerResult::Accepted;
 }
 
 Theme::BgFgTextColors Button::colors_for_state() const {

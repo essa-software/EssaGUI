@@ -69,11 +69,11 @@ TextPosition TextEditor::real_cursor_position() const {
     return position;
 }
 
-TextPosition TextEditor::m_character_pos_from_mouse(Event& event) {
+TextPosition TextEditor::text_position_at(Util::Vector2i position) {
     if (line_count() == 0)
         return {};
 
-    auto delta = Util::Vector2f { event.mouse_position() } - raw_position();
+    auto delta = Util::Vector2f { position };
     if (delta.x() < 0)
         return {};
 
@@ -147,7 +147,6 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
     if (extend_selection == SetCursorSelectionBehavior::Clear || (extend_selection != SetCursorSelectionBehavior::DontTouch && !m_shift_pressed))
         m_selection_start = real_cursor_position();
 
-    // TODO: Implement scroll X
     auto x_offset = real_cursor_position().column * character_width() + scroll_offset().x();
     auto max_x = scrollable_rect().width - character_width();
     if (x_offset < 0) {
@@ -170,219 +169,225 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
     // m_cursor_clock.restart();
 }
 
-void TextEditor::handle_event(Event& event) {
-    ScrollableWidget::handle_event(event);
+Widget::EventHandlerResult TextEditor::on_text_input(Event::TextInput const& event) {
+    ScrollableWidget::on_text_input(event);
+    for (auto codepoint : event.text()) {
+        insert_codepoint(codepoint);
+    }
+    return Widget::EventHandlerResult::Accepted;
+}
 
-    if (event.type() == llgl::Event::Type::TextInput) {
-        if (is_focused()) {
-            auto codepoint = event.event().text_input.codepoint;
-            insert_codepoint(codepoint);
-            event.set_handled();
+Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event) {
+    ScrollableWidget::on_key_press(event);
+    m_shift_pressed = event.modifiers().shift;
+    switch (event.code()) {
+    case llgl::KeyCode::Left: {
+        if (event.modifiers().ctrl) {
+            move_cursor_by_word(CursorDirection::Left);
         }
+        else {
+            move_cursor(CursorDirection::Left);
+        }
+        return EventHandlerResult::Accepted;
+    } break;
+    case llgl::KeyCode::Right: {
+        if (event.modifiers().ctrl) {
+            move_cursor_by_word(CursorDirection::Right);
+        }
+        else {
+            move_cursor(CursorDirection::Right);
+        }
+        return EventHandlerResult::Accepted;
+    } break;
+    case llgl::KeyCode::Up: {
+        if (!m_multiline)
+            break;
+        if (m_cursor.line > 0)
+            m_cursor.line--;
+        update_selection_after_set_cursor();
+        return EventHandlerResult::Accepted;
+    } break;
+    case llgl::KeyCode::Down: {
+        if (!m_multiline)
+            break;
+        if (m_cursor.line < line_count() - 1)
+            m_cursor.line++;
+        update_selection_after_set_cursor();
+        return EventHandlerResult::Accepted;
+    } break;
+    case llgl::KeyCode::A: {
+        if (event.modifiers().ctrl) {
+            m_cursor = { .line = line_count() - 1, .column = line(line_count() - 1).size() };
+            m_selection_start = {};
+        }
+        break;
     }
-    else if (event.type() == llgl::Event::Type::KeyPress) {
-        m_shift_pressed = event.event().key.shift;
-        if (is_focused()) {
-            // FIXME: Focus check should be handled at Widget level.
-            switch (event.event().key.keycode) {
-            case llgl::KeyCode::Left: {
-                if (event.event().key.ctrl) {
-                    move_cursor_by_word(CursorDirection::Left);
+    case llgl::KeyCode::X: {
+        if (event.modifiers().ctrl) {
+            auto selected_text = this->selected_text();
+            llgl::Clipboard::set_string(selected_text);
+            erase_selected_text();
+        }
+        break;
+    }
+    case llgl::KeyCode::C: {
+        if (event.modifiers().ctrl) {
+            auto selected_text = this->selected_text();
+            llgl::Clipboard::set_string(selected_text);
+        }
+        break;
+    }
+    case llgl::KeyCode::V: {
+        if (event.modifiers().ctrl && llgl::Clipboard::has_string()) {
+            erase_selected_text();
+            m_selection_start = real_cursor_position();
+            for (auto codepoint : llgl::Clipboard::get_string())
+                insert_codepoint(codepoint);
+        }
+        break;
+    }
+    case llgl::KeyCode::Enter: {
+        // TODO: Handle multiline case
+        if (m_multiline) {
+            if (event.modifiers().ctrl && on_enter) {
+                on_enter(content());
+            }
+            else {
+                insert_codepoint('\n');
+                if (real_cursor_position().line > 0) {
+                    auto indent = line(real_cursor_position().line - 1).indent();
+                    // Indent
+                    for (size_t s = 0; s < indent; s++) {
+                        insert_codepoint(' ');
+                    }
                 }
-                else {
-                    move_cursor(CursorDirection::Left);
+            }
+        }
+        else {
+            if (on_enter)
+                on_enter(content());
+        }
+        break;
+    }
+    case llgl::KeyCode::Tab: {
+        if (!m_multiline)
+            break;
+        if (!can_insert_codepoint(' '))
+            break;
+        do {
+            insert_codepoint(' ');
+        } while (real_cursor_position().column % 4 != 0);
+        break;
+    }
+    case llgl::KeyCode::Backspace: {
+        if (line_count() > 0) {
+            m_cursor = real_cursor_position();
+            if (m_cursor == m_selection_start) {
+                if (m_cursor.column > 0) {
+                    if (event.modifiers().ctrl) {
+                        auto old_cursor = m_cursor;
+                        move_cursor_by_word(CursorDirection::Left);
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column, old_cursor.column - m_cursor.column);
+                    }
+                    else {
+                        auto remove_character = [this]() {
+                            m_cursor.column--;
+                            m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                        };
+                        if (isspace(m_lines[m_cursor.line].at(m_cursor.column - 1))) {
+                            do {
+                                remove_character();
+                            } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
+                        }
+                        else {
+                            remove_character();
+                        }
+                    }
                 }
-                event.set_handled();
-            } break;
-            case llgl::KeyCode::Right: {
-                if (event.event().key.ctrl) {
-                    move_cursor_by_word(CursorDirection::Right);
-                }
-                else {
-                    move_cursor(CursorDirection::Right);
-                }
-                event.set_handled();
-            } break;
-            case llgl::KeyCode::Up: {
-                if (!m_multiline)
-                    break;
-                if (m_cursor.line > 0)
+                else if (m_cursor.line != 0) {
                     m_cursor.line--;
-                update_selection_after_set_cursor();
-                event.set_handled();
-            } break;
-            case llgl::KeyCode::Down: {
-                if (!m_multiline)
-                    break;
-                if (m_cursor.line < line_count() - 1)
-                    m_cursor.line++;
-                update_selection_after_set_cursor();
-                event.set_handled();
-            } break;
-            case llgl::KeyCode::A: {
-                if (event.event().key.ctrl) {
-                    m_cursor = { .line = line_count() - 1, .column = line(line_count() - 1).size() };
-                    m_selection_start = {};
+                    size_t old_size = m_lines[m_cursor.line].size();
+                    if (m_cursor.line < line_count())
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
+                    m_lines.erase(m_lines.begin() + m_cursor.line + 1);
+                    m_cursor.column = old_size;
                 }
-                break;
+                update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+                did_content_change();
             }
-            case llgl::KeyCode::X: {
-                if (event.event().key.ctrl) {
-                    auto selected_text = this->selected_text();
-                    llgl::Clipboard::set_string(selected_text);
-                    erase_selected_text();
-                }
-                break;
-            }
-            case llgl::KeyCode::C: {
-                if (event.event().key.ctrl) {
-                    auto selected_text = this->selected_text();
-                    llgl::Clipboard::set_string(selected_text);
-                }
-                break;
-            }
-            case llgl::KeyCode::V: {
-                if (event.event().key.ctrl && llgl::Clipboard::has_string()) {
-                    erase_selected_text();
-                    m_selection_start = real_cursor_position();
-                    for (auto codepoint : llgl::Clipboard::get_string())
-                        insert_codepoint(codepoint);
-                }
-                break;
-            }
-            case llgl::KeyCode::Enter: {
-                // TODO: Handle multiline case
-                if (m_multiline) {
-                    if (event.event().key.ctrl && on_enter) {
-                        on_enter(content());
-                    }
-                    else {
-                        insert_codepoint('\n');
-                        if (real_cursor_position().line > 0) {
-                            auto indent = line(real_cursor_position().line - 1).indent();
-                            // Indent
-                            for (size_t s = 0; s < indent; s++) {
-                                insert_codepoint(' ');
-                            }
-                        }
-                    }
-                }
-                else {
-                    if (on_enter)
-                        on_enter(content());
-                }
-                break;
-            }
-            case llgl::KeyCode::Tab: {
-                if (!m_multiline)
-                    break;
-                if (!can_insert_codepoint(' '))
-                    break;
-                do {
-                    insert_codepoint(' ');
-                } while (real_cursor_position().column % 4 != 0);
-                break;
-            }
-            case llgl::KeyCode::Backspace: {
-                if (line_count() > 0) {
-                    m_cursor = real_cursor_position();
-                    if (m_cursor == m_selection_start) {
-                        if (m_cursor.column > 0) {
-                            if (event.event().key.ctrl) {
-                                auto old_cursor = m_cursor;
-                                move_cursor_by_word(CursorDirection::Left);
-                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column, old_cursor.column - m_cursor.column);
-                            }
-                            else {
-                                auto remove_character = [this]() {
-                                    m_cursor.column--;
-                                    m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
-                                };
-                                if (isspace(m_lines[m_cursor.line].at(m_cursor.column - 1))) {
-                                    do {
-                                        remove_character();
-                                    } while (m_cursor.column > 0 && m_cursor.column % 4 != 0 && isspace(m_lines[m_cursor.line].at(m_cursor.column - 1)));
-                                }
-                                else {
-                                    remove_character();
-                                }
-                            }
-                        }
-                        else if (m_cursor.line != 0) {
-                            m_cursor.line--;
-                            size_t old_size = m_lines[m_cursor.line].size();
-                            if (m_cursor.line < line_count())
-                                m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
-                            m_lines.erase(m_lines.begin() + m_cursor.line + 1);
-                            m_cursor.column = old_size;
-                        }
-                        update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
-                        did_content_change();
-                    }
-                    else {
-                        erase_selected_text();
-                    }
-                }
-                break;
-            }
-            case llgl::KeyCode::Delete: {
-                if (line_count() > 0) {
-                    m_cursor = real_cursor_position();
-                    if (m_cursor == m_selection_start) {
-                        if (m_cursor.column < m_lines[m_cursor.line].size()) {
-                            if (event.event().key.ctrl) {
-                                auto old_cursor = m_cursor;
-                                move_cursor_by_word(CursorDirection::Right);
-                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(old_cursor.column, m_cursor.column - old_cursor.column);
-                                m_cursor = old_cursor;
-                            }
-                            else {
-                                m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
-                            }
-                        }
-                        else if (m_cursor.line < line_count() - 1) {
-                            m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
-                            m_lines.erase(m_lines.begin() + m_cursor.line + 1);
-                        }
-                        update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
-                    }
-                    else {
-                        erase_selected_text();
-                    }
-                }
-                break;
-            }
-            case llgl::KeyCode::Home: {
-                m_cursor.column = 0;
-                update_selection_after_set_cursor();
-                break;
-            }
-            case llgl::KeyCode::End: {
-                m_cursor.column = m_lines[m_cursor.line].size();
-                update_selection_after_set_cursor();
-                break;
-            }
-            default:
-                break;
+            else {
+                erase_selected_text();
             }
         }
+        break;
     }
-    else if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        if (is_hover()) {
-            m_cursor = m_character_pos_from_mouse(event);
-            update_selection_after_set_cursor();
-            m_dragging = true;
+    case llgl::KeyCode::Delete: {
+        if (line_count() > 0) {
+            m_cursor = real_cursor_position();
+            if (m_cursor == m_selection_start) {
+                if (m_cursor.column < m_lines[m_cursor.line].size()) {
+                    if (event.modifiers().ctrl) {
+                        auto old_cursor = m_cursor;
+                        move_cursor_by_word(CursorDirection::Right);
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(old_cursor.column, m_cursor.column - old_cursor.column);
+                        m_cursor = old_cursor;
+                    }
+                    else {
+                        m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
+                    }
+                }
+                else if (m_cursor.line < line_count() - 1) {
+                    m_lines[m_cursor.line] = m_lines[m_cursor.line] + m_lines[m_cursor.line + 1];
+                    m_lines.erase(m_lines.begin() + m_cursor.line + 1);
+                }
+                update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+            }
+            else {
+                erase_selected_text();
+            }
         }
+        break;
     }
-    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
-        m_dragging = false;
+    case llgl::KeyCode::Home: {
+        m_cursor.column = 0;
+        update_selection_after_set_cursor();
+        break;
     }
-    else if (event.type() == llgl::Event::Type::MouseMove) {
-        if (m_dragging) {
-            m_cursor = m_character_pos_from_mouse(event);
-            update_selection_after_set_cursor(SetCursorSelectionBehavior::DontTouch);
-        }
+    case llgl::KeyCode::End: {
+        m_cursor.column = m_lines[m_cursor.line].size();
+        update_selection_after_set_cursor();
+        break;
     }
+    default:
+        break;
+    }
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult TextEditor::on_mouse_button_press(Event::MouseButtonPress const& event) {
+    ScrollableWidget::on_mouse_button_press(event);
+    m_cursor = text_position_at(event.local_position());
+    update_selection_after_set_cursor();
+    m_dragging = true;
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult TextEditor::on_mouse_button_release(Event::MouseButtonRelease const& event) {
+    ScrollableWidget::on_mouse_button_release(event);
+    m_dragging = false;
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult TextEditor::on_mouse_move(Event::MouseMove const& event) {
+    if (!is_focused()) {
+        return EventHandlerResult::NotAccepted;
+    }
+    ScrollableWidget::on_mouse_move(event);
+    if (m_dragging) {
+        m_cursor = text_position_at(event.local_position());
+        update_selection_after_set_cursor(SetCursorSelectionBehavior::DontTouch);
+    }
+    return EventHandlerResult::NotAccepted;
 }
 
 Util::UString TextEditor::selected_text() const {
@@ -769,5 +774,4 @@ EML::EMLErrorOr<void> TextEditor::load_from_eml_object(EML::Object const& object
 }
 
 EML_REGISTER_CLASS(TextEditor);
-
 }

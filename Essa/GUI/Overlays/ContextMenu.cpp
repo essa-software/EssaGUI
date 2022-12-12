@@ -48,16 +48,17 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
     }
 }
 
-void MenuWidget::handle_event(Event& event) {
-    if (event.type() == llgl::Event::Type::MouseButtonPress && event.event().mouse_button.button == llgl::MouseButton::Left) {
-        int action = std::floor((event.mouse_position().y() - raw_position().y()) / MenuItemHeight);
+Widget::EventHandlerResult MenuWidget::on_mouse_button_press(Event::MouseButtonPress const& event) {
+    if (event.button() == llgl::MouseButton::Left) {
+        int action = std::floor((event.local_position().y() - raw_position().y()) / MenuItemHeight);
         std::cout << action << std::endl;
         if (action < 0 || static_cast<size_t>(action) >= m_actions.size())
-            return;
+            return EventHandlerResult::NotAccepted;
         if (on_action)
             on_action(action);
-        event.set_handled();
+        return EventHandlerResult::Accepted;
     }
+    return EventHandlerResult::NotAccepted;
 }
 
 class Separator : public Widget {
@@ -107,14 +108,15 @@ Util::Vector2f ContextMenuOverlay::size() const {
     return options_size;
 }
 
-void ContextMenuOverlay::handle_event(llgl::Event event) {
+void ContextMenuOverlay::handle_event(Event const& event) {
     WidgetTreeRoot::handle_event(event);
 
-    GUI::Event gui_event { event };
-
     // FIXME: Add something like close_when_clicked_outside()
-    if ((gui_event.type() == llgl::Event::Type::MouseButtonPress && !full_rect().contains(Util::Vector2f { gui_event.mouse_position() } + position()))
-        || (gui_event.type() == llgl::Event::Type::KeyPress && gui_event.event().key.keycode == llgl::KeyCode::Escape)) {
+    if (auto mousepress = event.get<Event::MouseButtonPress>();
+        full_rect().contains(Util::Vector2f { mousepress->local_position() } + position())) {
+        close();
+    }
+    if (auto keypress = event.get<Event::KeyPress>(); keypress->code() == llgl::KeyCode::Escape) {
         close();
     }
 }

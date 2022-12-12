@@ -57,7 +57,7 @@ public:
     CREATE_VALUE(std::string, id, "")
 
     virtual void draw(Gfx::Painter&);
-    virtual void handle_event(llgl::Event);
+    virtual void handle_event(GUI::Event const&);
     virtual void handle_events();
     virtual void update() {
         if (m_main_widget)
@@ -87,8 +87,6 @@ protected:
 
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
-
-    llgl::Event transform_event(Util::Vector2f offset, llgl::Event event) const;
 
 private:
     bool m_needs_relayout = true;

@@ -12,19 +12,6 @@ HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::Co
     : m_window(size, title, settings) {
 }
 
-llgl::Event HostWindow::transform_event(Util::Vector2f offset, llgl::Event event) const {
-    if (event.type == llgl::Event::Type::MouseButtonPress || event.type == llgl::Event::Type::MouseButtonRelease) {
-        event.mouse_button.position.x -= offset.x();
-        event.mouse_button.position.y -= offset.y();
-    }
-    else if (event.type == llgl::Event::Type::MouseMove) {
-        event.mouse_move.position.x -= offset.x();
-        event.mouse_move.position.y -= offset.y();
-    }
-
-    return event;
-}
-
 void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
     if (new_focused_it == m_overlays.end())
         return;
@@ -34,18 +21,17 @@ void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
     m_overlays.push_back(std::move(ptr));
 }
 
-void HostWindow::handle_event(llgl::Event event) {
+void HostWindow::handle_event(GUI::Event const& event) {
     // TODO: Allow user to override closed event
 
     // Focus window if mouse button pressed
-    if (event.type == llgl::Event::Type::MouseButtonPress) {
+    if (auto mouse_button = event.get<llgl::Event::MouseButtonPress>()) {
         m_focused_overlay = nullptr;
-        Util::Vector2i position { event.mouse_button.position };
         decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
             auto& overlay = **it2;
-            if (overlay.full_rect().contains(position)) {
+            if (overlay.full_rect().contains(mouse_button->local_position())) {
                 new_focused_it = it2;
                 break;
             }
@@ -55,10 +41,10 @@ void HostWindow::handle_event(llgl::Event event) {
 
     // Pass events to focused tool window
     if (m_focused_overlay) {
-        m_focused_overlay->handle_event(transform_event(m_focused_overlay->position(), event));
-        bool scroll_outside_window = event.type == llgl::Event::Type::MouseScroll
-            && !m_focused_overlay->full_rect().contains(Util::Vector2i { event.mouse_scroll.position });
-        if (!(event.type == llgl::Event::Type::MouseMove || event.type == llgl::Event::Type::MouseButtonRelease || scroll_outside_window))
+        m_focused_overlay->handle_event(event.relativized(Util::Vector2i { m_focused_overlay->position() }));
+        bool scroll_outside_window = event.is<llgl::Event::MouseScroll>()
+            && !m_focused_overlay->full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
+        if (!(event.is<llgl::Event::MouseMove>() || event.is<llgl::Event::MouseButtonRelease>() || scroll_outside_window))
             return;
     }
 
@@ -67,13 +53,13 @@ void HostWindow::handle_event(llgl::Event event) {
     // Pass mouse moves to all tool windows + capture all scrolls
     for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
         auto& overlay = **it;
-        if (event.type == llgl::Event::Type::MouseMove) {
-            overlay.handle_event(transform_event(overlay.position(), event));
+        if (event.is<llgl::Event::MouseMove>()) {
+            overlay.handle_event(event.relativized(Util::Vector2i { overlay.position() }));
             break;
         }
 
-        bool scroll_on_window = event.type == llgl::Event::Type::MouseScroll
-            && overlay.full_rect().contains(Util::Vector2i { event.mouse_scroll.position });
+        bool scroll_on_window = event.is<llgl::Event::MouseScroll>()
+            && overlay.full_rect().contains(Util::Vector2i { event.get<llgl::Event::MouseScroll>()->local_position() });
 
         if (scroll_on_window)
             should_pass_event_to_main_window = false;
@@ -84,9 +70,13 @@ void HostWindow::handle_event(llgl::Event event) {
 }
 
 void HostWindow::handle_events() {
-    llgl::Event event;
-    while (window().poll_event(event))
-        handle_event(event);
+    while (true) {
+        auto event = window().poll_event();
+        if (!event) {
+            break;
+        }
+        handle_event(*event);
+    }
 }
 
 void HostWindow::do_draw() {

@@ -23,11 +23,11 @@ void WidgetTreeRoot::draw(Gfx::Painter& painter) {
     m_main_widget->do_draw(painter);
 }
 
-void WidgetTreeRoot::handle_event(llgl::Event event) {
+void WidgetTreeRoot::handle_event(GUI::Event const& event) {
     if (!m_main_widget)
         return;
-    Event gui_event(event);
-    m_main_widget->do_handle_event(gui_event);
+
+    m_main_widget->do_handle_event(event);
 }
 
 void WidgetTreeRoot::handle_events() {
@@ -39,11 +39,18 @@ void WidgetTreeRoot::handle_events() {
     //        if other modal window is open.
     auto& app = GUI::Application::the();
     for (auto& host_window : app.host_windows()) {
-        llgl::Event event;
-        while (host_window.window().poll_event(event)) {
-            handle_event(transform_event(position(), event));
-            if (event.type == llgl::Event::Type::Resize)
-                host_window.handle_event(event);
+        while (true) {
+            auto event = host_window.window().poll_event();
+            if (!event) {
+                break;
+            }
+            handle_event(event->relativized(Util::Vector2i { position() }));
+
+            // We need to inform host window about global events, as now we act as
+            // main event loop!
+            if (event->is_global()) {
+                host_window.handle_event(*event);
+            }
         }
     }
 }
@@ -68,19 +75,6 @@ void WidgetTreeRoot::tick() {
         return;
     for (auto& host_window : Application::the().host_windows())
         host_window.remove_closed_overlays();
-}
-
-llgl::Event WidgetTreeRoot::transform_event(Util::Vector2f offset, llgl::Event event) const {
-    if (event.type == llgl::Event::Type::MouseButtonPress || event.type == llgl::Event::Type::MouseButtonRelease) {
-        event.mouse_button.position.x -= offset.x();
-        event.mouse_button.position.y -= offset.y();
-    }
-    else if (event.type == llgl::Event::Type::MouseMove) {
-        event.mouse_move.position.x -= offset.x();
-        event.mouse_move.position.y -= offset.y();
-    }
-
-    return event;
 }
 
 Theme const& WidgetTreeRoot::theme() const {

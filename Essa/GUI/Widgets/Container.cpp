@@ -1,8 +1,8 @@
 #include <Essa/GUI/Widgets/Container.hpp>
 
 #include <Essa/GUI/Application.hpp>
-
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/LLGL/Window/Event.hpp>
 #include <EssaUtil/Config.hpp>
 #include <cassert>
 #include <iostream>
@@ -199,26 +199,28 @@ void Container::do_draw(Gfx::Painter& window) const {
     }
 }
 
-void Container::do_handle_event(Event& event) {
+Widget::EventHandlerResult Container::do_handle_event(Event const& event) {
     for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++) {
         auto& widget = *it;
         if (!widget->is_visible() || !widget->is_enabled())
             continue;
 
-        widget->do_handle_event(event);
-        if (event.is_handled())
-            break;
+        if (widget->do_handle_event(event) == EventHandlerResult::Accepted) {
+            return EventHandlerResult::Accepted;
+        }
     }
-    // FIXME: Proper stacking contexts
-    if (!event.is_handled())
-        Widget::do_handle_event(event);
+
+    // Bubble the event to current Container.
+    return Widget::do_handle_event(event);
 }
 
-void Container::handle_event(Event& event) {
-    if (event.type() == llgl::Event::Type::KeyPress && event.event().key.keycode == llgl::KeyCode::Tab) {
-        if (focus_next_widget(false))
-            event.set_handled();
+Widget::EventHandlerResult Container::on_key_press(Event::KeyPress const& event) {
+    if (event.code() == llgl::KeyCode::Tab) {
+        if (focus_next_widget(false)) {
+            return EventHandlerResult::Accepted;
+        }
     }
+    return EventHandlerResult::NotAccepted;
 }
 
 std::optional<size_t> Container::focused_widget_index(bool recursive) const {
@@ -405,5 +407,4 @@ EML::EMLErrorOr<void> Container::load_from_eml_object(EML::Object const& object,
 }
 
 EML_REGISTER_CLASS(Container);
-
 }

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../ContextSettings.hpp"
-
+#include <Essa/LLGL/Window/Event.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <string>
 
 namespace llgl {
 
-class Event;
+class DeprecatedEvent;
 
 class WindowImpl {
 public:
@@ -19,7 +19,7 @@ public:
     virtual void set_size(Util::Vector2i) = 0;
     virtual void set_position(Util::Vector2i) = 0;
     virtual void display() = 0;
-    virtual bool poll_event(Event&) = 0;
+    virtual std::optional<Event> poll_event() = 0;
     virtual void set_mouse_position(Util::Vector2i) = 0;
     virtual bool is_focused() const = 0;
     virtual void set_active() = 0;

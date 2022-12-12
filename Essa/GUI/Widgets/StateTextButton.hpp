@@ -31,7 +31,7 @@ public:
 
 private:
     virtual void draw(Gfx::Painter& window) const override;
-    virtual void handle_event(Event& event) override;
+    virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
 
     std::vector<std::pair<Util::UString, State>> m_states;
 

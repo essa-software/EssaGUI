@@ -39,13 +39,14 @@ void Window::display() {
     m_impl->display();
 }
 
-bool Window::poll_event(Event& event) {
-    auto result = m_impl->poll_event(event);
-    if (!result)
-        return false;
-    if (event.type == Event::Type::Resize)
-        m_size = event.resize.size;
-    return true;
+std::optional<Event> Window::poll_event() {
+    auto event = m_impl->poll_event();
+    if (event) {
+        if (auto resize = event->get<Event::WindowResize>()) {
+            m_size = Util::Vector2i { resize->new_size() };
+        }
+    }
+    return event;
 }
 
 void Window::set_mouse_position(Util::Vector2i pos) {

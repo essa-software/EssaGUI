@@ -59,9 +59,97 @@ void Widget::update() {
     }
 }
 
-void Widget::do_handle_event(Event& event) {
-    Widget::handle_event(event);
-    handle_event(event);
+Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
+    auto transformed_event = event.relativized(Util::Vector2i { m_raw_position });
+
+    auto result = transformed_event.visit(
+        [&](Event::MouseMove const& event) -> EventHandlerResult {
+            auto mouse_position = event.local_position();
+            m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            switch (m_tooltip_mode) {
+            case TooltipMode::Hint: {
+                if (m_hover && !m_tooltip) {
+                    m_tooltip_counter = 40;
+                    m_tooltip_position = mouse_position;
+                }
+                if (!m_hover) {
+                    if (m_tooltip)
+                        m_tooltip_counter = 0;
+                    else
+                        m_tooltip_counter = -1;
+                }
+                break;
+            }
+            case TooltipMode::Realtime: {
+                m_tooltip_position = mouse_position;
+                if (m_hover) {
+                    if (!m_tooltip)
+                        m_tooltip_counter = 0;
+                }
+                else if (m_tooltip) {
+                    m_tooltip_counter = 0;
+                }
+                break;
+            }
+            }
+            return EventHandlerResult::NotAccepted;
+        },
+        [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
+            Util::Vector2i mouse_position = event.local_position();
+            m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            if (m_hover && accepts_focus()) {
+                set_focused();
+                return EventHandlerResult::Accepted;
+            }
+            return EventHandlerResult::NotAccepted;
+        },
+        [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
+            Util::Vector2i mouse_position = event.local_position();
+            m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            return EventHandlerResult::NotAccepted;
+        },
+        [&](Event::WindowResize const&) -> EventHandlerResult {
+            set_needs_relayout();
+            return EventHandlerResult::NotAccepted;
+        },
+        [&](auto const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; });
+
+    bool should_run_event_handler = transformed_event.is_global() || is_focused() || is_affected_by_event(transformed_event);
+    if (should_run_event_handler) {
+        auto result2 = handle_event(transformed_event);
+        return result2 == EventHandlerResult::Accepted || result == EventHandlerResult::Accepted
+            ? EventHandlerResult::Accepted
+            : EventHandlerResult::NotAccepted;
+    }
+    return result;
+}
+
+Widget::EventHandlerResult Widget::handle_event(Event const& event) {
+    return event.visit(
+        [&](Event::WindowResize const& event) -> EventHandlerResult {
+            return on_window_resize(event);
+        },
+        [&](Event::KeyPress const& event) -> EventHandlerResult {
+            return on_key_press(event);
+        },
+        [&](Event::KeyRelease const& event) -> EventHandlerResult {
+            return on_key_release(event);
+        },
+        [&](Event::MouseMove const& event) -> EventHandlerResult {
+            return on_mouse_move(event);
+        },
+        [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
+            return on_mouse_button_press(event);
+        },
+        [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
+            return on_mouse_button_release(event);
+        },
+        [&](Event::MouseScroll const& event) -> EventHandlerResult {
+            return on_mouse_scroll(event);
+        },
+        [&](Event::TextInput const& event) -> EventHandlerResult {
+            return on_text_input(event);
+        });
 }
 
 void Widget::do_update() {
@@ -86,52 +174,8 @@ bool Widget::are_all_parents_enabled() const {
     return is_enabled() && (m_parent ? m_parent->is_enabled() : true);
 }
 
-void Widget::handle_event(Event& event) {
-    if (event.type() == llgl::Event::Type::MouseMove) {
-        auto mouse_position = event.mouse_position();
-        m_hover = is_mouse_over(mouse_position);
-        switch (m_tooltip_mode) {
-        case TooltipMode::Hint: {
-            if (m_hover && !m_tooltip) {
-                m_tooltip_counter = 40;
-                m_tooltip_position = mouse_position;
-            }
-            if (!m_hover) {
-                if (m_tooltip)
-                    m_tooltip_counter = 0;
-                else
-                    m_tooltip_counter = -1;
-            }
-            break;
-        }
-        case TooltipMode::Realtime: {
-            m_tooltip_position = mouse_position;
-            if (m_hover) {
-                if (!m_tooltip)
-                    m_tooltip_counter = 0;
-            }
-            else if (m_tooltip) {
-                m_tooltip_counter = 0;
-            }
-            break;
-        }
-        }
-        event.set_seen();
-    }
-    else if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        Util::Vector2i mouse_pos = event.event().mouse_button.position;
-        m_hover = is_mouse_over(mouse_pos);
-        if (m_hover && accepts_focus()) {
-            set_focused();
-            event.set_handled();
-        }
-    }
-    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
-        Util::Vector2i mouse_pos = event.event().mouse_button.position;
-        m_hover = is_mouse_over(mouse_pos);
-    }
-    else if (event.type() == llgl::Event::Type::Resize)
-        set_needs_relayout();
+bool Widget::is_affected_by_event(Event const& event) const {
+    return event.is_mouse_related() ? local_rect().contains(event.local_mouse_position()) : false;
 }
 
 void Widget::do_draw(Gfx::Painter& painter) const {

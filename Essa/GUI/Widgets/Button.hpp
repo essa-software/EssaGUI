@@ -11,7 +11,8 @@ class Button : public Widget {
 public:
     std::function<void()> on_click;
 
-    virtual void handle_event(Event&) override;
+    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
+    virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) override;
     virtual void draw(Gfx::Painter& window) const override = 0;
 
     bool is_active() const { return m_active; }

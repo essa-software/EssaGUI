@@ -7,7 +7,6 @@ namespace GUI {
 class TreeView : public AbstractListView {
 public:
     virtual void draw(Gfx::Painter&) const override;
-    virtual void handle_event(GUI::Event&) override;
 
     size_t displayed_row_count() const;
     std::pair<std::vector<size_t>, Model::Node> displayed_row_at_index(size_t row) const;
@@ -16,6 +15,8 @@ public:
     void expand(std::vector<size_t> path) { m_expanded_paths.insert(path); }
 
 private:
+    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
+
     virtual Util::Vector2f content_size() const override;
     void render_rows(Gfx::Painter& window, float& current_y_pos, std::vector<size_t> path, Model::Node const* parent) const;
 

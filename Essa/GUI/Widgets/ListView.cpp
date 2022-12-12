@@ -102,32 +102,31 @@ void ListView::draw(Gfx::Painter& wnd) const {
     ScrollableWidget::draw_scrollbar(wnd);
 }
 
-void ListView::handle_event(Event& event) {
-    ScrollableWidget::handle_event(event);
+Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPress const& event) {
+    ScrollableWidget::on_mouse_button_press(event);
 
     size_t rows = model().root_row_count();
-    if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        auto mouse_pos = event.mouse_position();
+    auto mouse_pos = event.local_position();
 
-        if (is_mouse_over(mouse_pos)) {
-            for (size_t row = 0; row < rows; row++) {
-                Util::Vector2f cell_position = row_position(row);
-                Util::Rectf rect(cell_position, { raw_size().x(), theme().line_height });
+    if (is_mouse_over(mouse_pos)) {
+        for (size_t row = 0; row < rows; row++) {
+            Util::Vector2f cell_position = row_position(row);
+            Util::Rectf rect(cell_position, { raw_size().x(), theme().line_height });
 
-                if (rect.contains(mouse_pos)) {
-                    if (event.event().mouse_button.button == llgl::MouseButton::Left && on_click) {
-                        on_click(row);
-                    }
-                    else if (event.event().mouse_button.button == llgl::MouseButton::Right && on_context_menu_request) {
-                        if (auto context_menu = on_context_menu_request(row)) {
-                            host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos } + widget_tree_root().position());
-                        }
-                    }
-                    return;
+            if (rect.contains(mouse_pos)) {
+                if (event.button() == llgl::MouseButton::Left && on_click) {
+                    on_click(row);
                 }
+                else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
+                    if (auto context_menu = on_context_menu_request(row)) {
+                        host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos } + widget_tree_root().position());
+                    }
+                }
+                return EventHandlerResult::NotAccepted;
             }
         }
     }
+    return EventHandlerResult::NotAccepted;
 }
 
 }

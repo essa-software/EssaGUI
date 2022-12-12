@@ -14,7 +14,6 @@ class TextEditor : public ScrollableWidget {
 public:
     TextEditor();
 
-    virtual void handle_event(Event&) override;
     virtual void draw(Gfx::Painter& window) const override;
 
     size_t line_count() const { return m_lines.size(); }
@@ -51,7 +50,13 @@ protected:
     void set_content_impl(Util::UString const&);
 
 private:
-    TextPosition m_character_pos_from_mouse(Event& event);
+    virtual Widget::EventHandlerResult on_text_input(Event::TextInput const& event) override;
+    virtual Widget::EventHandlerResult on_key_press(Event::KeyPress const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
+
+    TextPosition text_position_at(Util::Vector2i);
     Util::Vector2f calculate_cursor_position() const;
     void erase_selected_text();
     virtual void update() override;

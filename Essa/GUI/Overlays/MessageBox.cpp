@@ -62,10 +62,11 @@ MessageBox::MessageBox(HostWindow& window, Util::UString message, Util::UString 
     }
 }
 
-void MessageBox::handle_event(llgl::Event event) {
+void MessageBox::handle_event(Event const& event) {
     ToolWindow::handle_event(event);
-    if (event.type == llgl::Event::Type::KeyPress && event.key.keycode == llgl::KeyCode::Enter && m_default_button)
+    if (auto keypress = event.get<Event::KeyPress>(); keypress->code() == llgl::KeyCode::Enter && m_default_button) {
         m_default_button->on_click();
+    }
 }
 
 MessageBox::ButtonRole message_box(HostWindow& window, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {

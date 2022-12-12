@@ -1,38 +1,27 @@
 #include "ScrollableWidget.hpp"
-#include "Essa/LLGL/Window/Keyboard.hpp"
 
 #include <EssaUtil/Orientation.hpp>
 
 namespace GUI {
 
-void ScrollableWidget::handle_event(Event& event) {
-    switch (event.type()) {
-    case llgl::Event::Type::MouseScroll: {
-        if (!is_hover()) {
-            // TODO: Check wheel
-            break;
-        }
+Widget::EventHandlerResult ScrollableWidget::on_mouse_scroll(Event::MouseScroll const& event) {
+    auto orientation = llgl::is_shift_pressed() ? Util::Orientation::Horizontal : Util::Orientation::Vertical;
 
-        auto orientation = llgl::is_shift_pressed() ? Util::Orientation::Horizontal : Util::Orientation::Vertical;
+    auto content_component = content_size().main(orientation);
+    auto scroll_area_component = scroll_area_size().main(orientation);
+    auto& scroll_component = orientation == Util::Orientation::Horizontal ? m_scroll.x() : m_scroll.y();
 
-        auto content_component = content_size().main(orientation);
-        auto scroll_area_component = scroll_area_size().main(orientation);
-        auto& scroll_component = orientation == Util::Orientation::Horizontal ? m_scroll.x() : m_scroll.y();
-
-        if (content_component < scroll_area_component)
-            break;
-        scroll_component -= event.event().mouse_scroll.delta * 60;
-        if (scroll_component < 0)
-            scroll_component = 0;
-        double bottom_content = content_component - scroll_area_component;
-        if (scroll_component > bottom_content)
-            scroll_component = bottom_content;
-
-        event.set_handled();
-    } break;
-    default:
-        break;
+    if (content_component < scroll_area_component) {
+        return Widget::EventHandlerResult::NotAccepted;
     }
+    scroll_component -= event.delta() * 60;
+    if (scroll_component < 0)
+        scroll_component = 0;
+    double bottom_content = content_component - scroll_area_component;
+    if (scroll_component > bottom_content)
+        scroll_component = bottom_content;
+
+    return Widget::EventHandlerResult::Accepted;
 }
 
 Util::Vector2f ScrollableWidget::scroll_offset() const {
@@ -98,5 +87,4 @@ Util::Vector2f ScrollableWidget::scroll_area_size() const {
         size.y() -= 5;
     return size;
 }
-
 }

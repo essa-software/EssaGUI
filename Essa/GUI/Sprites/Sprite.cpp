@@ -5,11 +5,10 @@
 
 namespace GUI {
 
-void Sprite::handle_event(Event& event) {
-    if (event.event().type == llgl::Event::Type::MouseButtonPress && is_hover()) {
-        if (on_click)
-            on_click();
-    }
+Widget::EventHandlerResult Sprite::on_mouse_button_press(Event::MouseButtonPress const&) {
+    if (on_click)
+        on_click();
+    return Widget::EventHandlerResult::NotAccepted;
 }
 
 }

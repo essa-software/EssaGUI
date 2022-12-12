@@ -137,7 +137,7 @@ public:
     }
 
     virtual void do_update() override;
-    virtual void do_handle_event(Event&) override;
+    virtual Widget::EventHandlerResult do_handle_event(Event const&) override final;
     virtual void do_relayout() override;
     virtual void do_draw(Gfx::Painter& window) const override;
 
@@ -211,10 +211,11 @@ public:
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() override;
-    virtual void handle_event(Event&) override;
     virtual Boxf intrinsic_padding() const { return {}; }
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;
+
+    virtual EventHandlerResult on_key_press(Event::KeyPress const&) override;
 
     std::optional<size_t> focused_widget_index(bool recursive) const;
     // Returns true if the focus changed (one of children was focused)

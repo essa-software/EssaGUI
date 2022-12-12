@@ -1,8 +1,4 @@
 #include <Essa/Engine/3D/Shaders/Basic.hpp>
-#include <EssaUtil/Color.hpp>
-#include <EssaUtil/Config.hpp>
-#include <EssaUtil/DelayedInit.hpp>
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/OpenGL/Error.hpp>
 #include <Essa/LLGL/OpenGL/FBO.hpp>
 #include <Essa/LLGL/OpenGL/Framebuffer.hpp>
@@ -13,6 +9,10 @@
 #include <Essa/LLGL/OpenGL/VertexArray.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Config.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <iostream>
 
 class BlurShader : public llgl::Shader {
@@ -118,13 +118,8 @@ int main() {
     auto old_oscilloscope_position = next_oscilloscope_position();
 
     for (;;) {
-        llgl::Event event;
-        while (window.poll_event(event)) {
-            switch (event.type) {
-            default:
-                break;
-            }
-        }
+        // FIXME: Port to GUI::Application
+        while (window.poll_event()) { }
 
         renderer.clear();
 

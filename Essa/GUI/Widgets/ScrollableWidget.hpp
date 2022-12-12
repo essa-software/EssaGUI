@@ -14,7 +14,7 @@ public:
     Util::Vector2f scroll() const { return m_scroll; }
 
 protected:
-    virtual void handle_event(Event&) override;
+    virtual Widget::EventHandlerResult on_mouse_scroll(Event::MouseScroll const& event) override;
 
     Util::Vector2f scroll_area_size() const;
     Util::Vector2f scroll_offset() const;

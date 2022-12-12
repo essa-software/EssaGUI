@@ -22,7 +22,10 @@ public:
     void set_pan_button(llgl::MouseButton button) { m_pan_button = button; }
 
 protected:
-    virtual void handle_event(Event&) override;
+    virtual EventHandlerResult on_mouse_scroll(Event::MouseScroll const& event) override;
+    virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
+    virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
+    virtual EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
 
 private:
     float m_zoom = 1;

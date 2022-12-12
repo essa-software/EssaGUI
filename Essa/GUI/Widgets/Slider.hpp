@@ -38,7 +38,6 @@ public:
     double raw_value() const { return m_val; }
     void set_value(double val, NotifyUser = NotifyUser::Yes);
 
-    virtual void handle_event(Event&) override;
     virtual void draw(Gfx::Painter& window) const override;
 
     std::function<void(double)> on_change;
@@ -46,9 +45,14 @@ public:
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
 
+    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
+
     double value_clamped_to_min_max() const;
     float calculate_knob_size() const;
     void round_to_step();
+    virtual bool accepts_focus() const override { return true; }
 
     double m_val = 50;
     bool m_dragging = false;

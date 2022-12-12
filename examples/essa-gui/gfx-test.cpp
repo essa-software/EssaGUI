@@ -12,8 +12,7 @@ int main() {
     Gfx::Painter painter { wnd.renderer() };
     while (true) {
         painter.reset();
-        llgl::Event e;
-        while (wnd.poll_event(e)) {
+        while (wnd.poll_event()) {
         }
 
         painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { wnd.rect() } }, wnd.rect()));

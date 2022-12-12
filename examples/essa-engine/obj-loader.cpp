@@ -48,38 +48,39 @@ int main() {
     double pitch = 0;
 
     for (;;) {
-        llgl::Event event;
-        while (window.poll_event(event)) {
-            switch (event.type) {
-            case llgl::Event::Type::KeyPress:
-                std::cout << "key press: " << llgl::to_string(event.key.keycode) << std::endl;
-                if (event.key.keycode == llgl::KeyCode::A)
-                    a_pressed = true;
-                else if (event.key.keycode == llgl::KeyCode::D)
-                    d_pressed = true;
-                else if (event.key.keycode == llgl::KeyCode::W)
-                    w_pressed = true;
-                else if (event.key.keycode == llgl::KeyCode::S)
-                    s_pressed = true;
-                break;
-            case llgl::Event::Type::KeyRelease:
-                std::cout << "key release: " << llgl::to_string(event.key.keycode) << std::endl;
-                if (event.key.keycode == llgl::KeyCode::A)
-                    a_pressed = false;
-                else if (event.key.keycode == llgl::KeyCode::D)
-                    d_pressed = false;
-                else if (event.key.keycode == llgl::KeyCode::W)
-                    w_pressed = false;
-                else if (event.key.keycode == llgl::KeyCode::S)
-                    s_pressed = false;
-                break;
-            case llgl::Event::Type::MouseMove:
-                yaw += Util::deg_to_rad<float>(event.mouse_move.relative.x);
-                pitch += Util::deg_to_rad<float>(event.mouse_move.relative.y);
-                break;
-            default:
+        // FIXME: Port to GUI::Application
+        while (true) {
+            auto event = window.poll_event();
+            if (!event) {
                 break;
             }
+
+            event->visit(
+                [&](llgl::Event::KeyPress const& event) -> void {
+                    if (event.code() == llgl::KeyCode::A)
+                        a_pressed = true;
+                    else if (event.code() == llgl::KeyCode::D)
+                        d_pressed = true;
+                    else if (event.code() == llgl::KeyCode::W)
+                        w_pressed = true;
+                    else if (event.code() == llgl::KeyCode::S)
+                        s_pressed = true;
+                },
+                [&](llgl::Event::KeyRelease const& event) -> void {
+                    if (event.code() == llgl::KeyCode::A)
+                        a_pressed = false;
+                    else if (event.code() == llgl::KeyCode::D)
+                        d_pressed = false;
+                    else if (event.code() == llgl::KeyCode::W)
+                        w_pressed = false;
+                    else if (event.code() == llgl::KeyCode::S)
+                        s_pressed = false;
+                },
+                [&](llgl::Event::MouseMove const& event) -> void {
+                    yaw += Util::deg_to_rad<float>(event.position_relative_to_last_event().x());
+                    pitch += Util::deg_to_rad<float>(event.position_relative_to_last_event().y());
+                },
+                [&](auto const&) -> void {});
         }
 
         // TODO: Port to llgl.

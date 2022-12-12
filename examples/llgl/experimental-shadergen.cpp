@@ -1,7 +1,3 @@
-#include <EssaUtil/Color.hpp>
-#include <EssaUtil/Config.hpp>
-#include <EssaUtil/Matrix.hpp>
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/Error.hpp>
 #include <Essa/LLGL/OpenGL/Extensions.hpp>
@@ -12,6 +8,10 @@
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <Essa/LLGL/OpenGL/VertexArray.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Config.hpp>
+#include <EssaUtil/Matrix.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <fmt/ostream.h>
 
 auto VertexShader =
@@ -83,10 +83,8 @@ int main() {
     shader.matrix = llgl::Transform {}.rotate_z(0.1).matrix() * llgl::Projection::ortho({ { 0, 0, 400, 400 } }, {}).matrix();
 
     while (true) {
-        llgl::Event event;
-        while (window.poll_event(event)) {
-            ;
-        }
+        // FIXME: Port to GUI::Application
+        while (window.poll_event()) { }
         llgl::set_viewport({ 0, 0, 400, 400 });
         renderer.clear();
         renderer.draw_vertices(varr, llgl::DrawState { shader, llgl::PrimitiveType::Triangles });
