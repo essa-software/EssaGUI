@@ -2,8 +2,7 @@
 #include <Essa/Engine/3D/ObjLoader.hpp>
 #include <Essa/Engine/3D/Shaders/Basic.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
-#include <EssaUtil/Angle.hpp>
-#include <EssaUtil/Color.hpp>
+#include <Essa/GUI/Application.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/OpenGL.hpp>
 #include <Essa/LLGL/OpenGL/Projection.hpp>
@@ -11,9 +10,15 @@
 #include <Essa/LLGL/OpenGL/Transform.hpp>
 #include <Essa/LLGL/Window/Keyboard.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/Angle.hpp>
+#include <EssaUtil/Color.hpp>
 #include <iostream>
 
 int main() {
+    // FIXME: (Hack) GUI::Application is required for ResourceManager to work, which is
+    //        required by Lighting shader now (Try to find a way to fix this!)
+    GUI::Application app;
+
     llgl::Window window { { 500, 500 }, "OBJ loader", { 3, 2 } };
 
     // TODO: Port to llgl, especially clear color.
