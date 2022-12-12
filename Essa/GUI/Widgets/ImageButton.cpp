@@ -22,8 +22,12 @@ void ImageButton::draw(Gfx::Painter& painter) const {
 }
 
 LengthVector ImageButton::initial_size() const {
-    // TODO: Stop special-casing!
-    return { 72.0_px, 72.0_px };
+    // FIXME: More convenient way to convert theme values to pixels. Maybe
+    //        just support units in themes.
+    return {
+        { static_cast<float>(theme().image_button_size), Util::Length::Px },
+        { static_cast<float>(theme().image_button_size), Util::Length::Px },
+    };
 }
 
 }

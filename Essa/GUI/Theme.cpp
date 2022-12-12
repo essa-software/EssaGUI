@@ -129,6 +129,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
 
         DEFINE_THEME_OPTION(label_font_size);
         DEFINE_THEME_OPTION(line_height);
+        DEFINE_THEME_OPTION(image_button_size);
 
 #undef DEFINE_THEME_OPTION
 
@@ -161,7 +162,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
                 }
             }
             else {
-                std::cout << "This should be a compile-time error!" << std::endl;
+                std::cout << "FIXME: This should be a compile-time error!" << std::endl;
             }
         },
             keys.second);
