@@ -4,6 +4,7 @@
 #include "Loader.hpp"
 
 #include <EssaUtil/ScopeGuard.hpp>
+#include <EssaUtil/UStringBuilder.hpp>
 #include <fmt/format.h>
 
 namespace EML {
@@ -72,7 +73,18 @@ std::string Value::string() const {
                 return fmt::format("{}..{}", r.min, r.max);
             },
             [](Array const& array) -> std::string {
-                return fmt::format("<TODO array with {} elements>", array.values().size());
+                Util::UStringBuilder builder;
+                builder.append("[");
+                size_t s = 0;
+                for (auto const& value : array.values()) {
+                    builder.append(Util::UString { value.string() });
+                    if (s != array.values().size() - 1) {
+                        builder.append(", ");
+                    }
+                    s++;
+                }
+                builder.append("]");
+                return builder.release_string().encode();
             },
             [](auto const&) -> std::string {
                 return "???";
