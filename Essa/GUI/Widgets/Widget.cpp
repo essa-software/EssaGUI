@@ -55,7 +55,7 @@ void Widget::update() {
         auto text = m_tooltip->text();
         update_tooltip(widget_relative_mouse_position, text);
         m_tooltip->set_text(text);
-        m_tooltip->set_position(m_widget_tree_root->position() + tooltip_position + Util::Vector2f { 32, 32 });
+        m_tooltip->set_position(m_widget_tree_root->position() + raw_position() + tooltip_position + Util::Vector2f { 32, 32 });
     }
 }
 
