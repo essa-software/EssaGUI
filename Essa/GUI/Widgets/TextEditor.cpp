@@ -47,7 +47,7 @@ Util::Vector2f TextEditor::content_size() const {
         }
     }
 
-    return { width + 10, line_count() * line_height + 5 };
+    return { width + 9, line_count() * line_height + 8 };
 }
 
 Util::Rectf TextEditor::scrollable_rect() const {
