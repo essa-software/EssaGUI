@@ -8,14 +8,20 @@
 
 namespace GUI {
 
+Textfield::Textfield()
+    : m_font(&GUI::Application::the().font()) {
+}
+
 void Textfield::draw(Gfx::Painter& window) const {
+    assert(m_font);
+
     auto theme_colors = theme().label;
 
     Gfx::RectangleDrawOptions rect;
     rect.fill_color = theme_colors.background;
     window.draw_rectangle(local_rect(), rect);
 
-    Gfx::Text text { m_content, Application::the().font() };
+    Gfx::Text text { m_content, *m_font };
     text.set_fill_color(theme_colors.text);
     text.set_font_size(m_font_size);
     text.align(m_alignment, text_rect());

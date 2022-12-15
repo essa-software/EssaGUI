@@ -8,7 +8,12 @@ namespace GUI {
 
 class Textfield : public Widget {
 public:
+    Textfield();
+
     virtual void draw(Gfx::Painter& window) const override;
+
+    // FIXME: EML
+    void set_font(llgl::TTFFont const& font) { m_font = &font; }
 
     CREATE_VALUE(Util::UString, content, "")
     CREATE_VALUE(size_t, font_size, theme().label_font_size)
@@ -20,6 +25,8 @@ public:
 private:
     virtual LengthVector initial_size() const override;
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
+
+    llgl::TTFFont const* m_font = nullptr;
 };
 
 }
