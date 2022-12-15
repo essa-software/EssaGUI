@@ -58,4 +58,33 @@ void add_cube(std::vector<Model::Vertex>& vertices, CubeProperties properties) {
     vertices.push_back({ transform_point({ 1, 1, 1 }), properties.color, {}, { 0, 0, 1 } });
 }
 
+void add_wireframe_cube(std::vector<Model::Vertex>& vertices) {
+    vertices.push_back({ { -1, -1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, -1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, 1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, 1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, -1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, -1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, 1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, 1, 1 }, Util::Colors::White, {}, {} });
+
+    vertices.push_back({ { -1, -1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, 1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, -1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, 1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, -1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, 1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, -1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, 1, 1 }, Util::Colors::White, {}, {} });
+
+    vertices.push_back({ { -1, -1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, -1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, -1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, -1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, 1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { -1, 1, 1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, 1, -1 }, Util::Colors::White, {}, {} });
+    vertices.push_back({ { 1, 1, 1 }, Util::Colors::White, {}, {} });
+}
+
 }

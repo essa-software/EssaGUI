@@ -16,5 +16,6 @@ struct CubeProperties {
 };
 
 void add_cube(std::vector<Model::Vertex>& vertices, CubeProperties properties = {});
+void add_wireframe_cube(std::vector<Model::Vertex>& vertices);
 
 }

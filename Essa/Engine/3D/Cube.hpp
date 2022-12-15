@@ -12,16 +12,25 @@ namespace Essa {
 
 class Cube {
 public:
-    explicit Cube();
+    enum class RenderingMode {
+        Solid,
+        Wireframe
+    };
+    explicit Cube(RenderingMode = RenderingMode::Solid);
 
     void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader) const {
-        renderer.draw_vertices(m_vao, llgl::DrawState { shader, llgl::PrimitiveType::Triangles });
+        renderer.draw_vertices(m_vao,
+            llgl::DrawState {
+                shader,
+                m_rendering_mode == RenderingMode::Solid ? llgl::PrimitiveType::Triangles : llgl::PrimitiveType::Lines,
+            });
     }
 
 private:
     void generate();
 
     llgl::VertexArray<Model::Vertex> m_vao;
+    RenderingMode m_rendering_mode;
 };
 
 }
