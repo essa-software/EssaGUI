@@ -149,6 +149,7 @@ public:
 
     bool is_visible() const { return m_visible; }
     bool is_hover() const { return m_hover; }
+    bool was_hovered_on_mouse_press() const { return m_hovered_on_click; }
 
     CREATE_BOOLEAN(enabled, true);
     CREATE_BOOLEAN(initialized, false);
@@ -248,6 +249,7 @@ private:
     Util::Vector2i m_tooltip_position;
 
     bool m_hover = false;
+    bool m_hovered_on_click = false;
     bool m_visible = true;
 };
 

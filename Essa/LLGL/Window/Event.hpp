@@ -12,11 +12,18 @@ namespace llgl {
 
 struct Event;
 
+enum class EventTargetType {
+    KeyboardFocused, // Only keyboard-focused widgets are notified
+    MouseFocused,    // Only mouse-focused (mouse hovered) widgets are notified. They have mouse position.
+    Specific,        // Only specific widgets are notified (e.g focus events) (is affected = false for every widget)
+    Global,          // All widgets are notified (e.g window resize) (is affected = true for every widget)
+};
+
 namespace EventTypes {
 
 class Base {
 public:
-    static bool is_global() { return false; }
+    static EventTargetType target_type() { return EventTargetType::Specific; }
 };
 
 class WindowResizeEvent : public Base {
@@ -25,7 +32,7 @@ public:
         : m_new_size(new_size) { }
 
     Util::Vector2u new_size() const { return m_new_size; }
-    static bool is_global() { return true; }
+    static EventTargetType target_type() { return EventTargetType::Global; }
 
 private:
     Util::Vector2u m_new_size;
@@ -46,6 +53,7 @@ public:
 
     auto code() const { return m_code; }
     auto modifiers() const { return m_modifiers; }
+    static EventTargetType target_type() { return EventTargetType::KeyboardFocused; }
 
 private:
     llgl::KeyCode m_code;
@@ -73,6 +81,7 @@ public:
     // (Widget/WTR). The parent is responsible for transforming event using
     // Event::transformed() function.
     Util::Vector2i local_position() const { return m_local_position; }
+    static EventTargetType target_type() { return EventTargetType::MouseFocused; }
 
 private:
     friend struct ::llgl::Event;
@@ -138,6 +147,7 @@ public:
         : m_text(std::move(text)) { }
 
     Util::UString const& text() const { return m_text; }
+    static EventTargetType target_type() { return EventTargetType::KeyboardFocused; }
 
 private:
     Util::UString m_text;
@@ -199,10 +209,10 @@ struct Event : public EventTypes::Variant {
         return std::visit(OverloadedType { callbacks... }, *this);
     }
 
-    bool is_global() const {
-        return visit([](auto const& event) -> bool {
+    EventTargetType target_type() const {
+        return visit([](auto const& event) -> EventTargetType {
             using EventType = std::remove_cvref_t<decltype(event)>;
-            return EventType::is_global();
+            return EventType::target_type();
         });
     }
 
@@ -221,18 +231,11 @@ struct Event : public EventTypes::Variant {
     };
 
     bool is_mouse_related() const {
-        return visit([&](auto const& event) -> bool {
-            using EventType = std::remove_cvref_t<decltype(event)>;
-            if constexpr (std::is_base_of_v<Event::Mouse, EventType>) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        });
+        return target_type() == EventTargetType::MouseFocused;
     }
 
     Util::Vector2i local_mouse_position() const {
+        assert(is_mouse_related());
         return visit([&](auto const& event) -> Util::Vector2i {
             using EventType = std::remove_cvref_t<decltype(event)>;
             if constexpr (std::is_base_of_v<Event::Mouse, EventType>) {

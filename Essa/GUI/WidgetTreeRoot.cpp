@@ -48,7 +48,7 @@ void WidgetTreeRoot::handle_events() {
 
             // We need to inform host window about global events, as now we act as
             // main event loop!
-            if (event->is_global()) {
+            if (event->target_type() == llgl::EventTargetType::Global) {
                 host_window.handle_event(*event);
             }
         }

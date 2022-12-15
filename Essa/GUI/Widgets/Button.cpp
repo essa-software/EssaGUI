@@ -5,16 +5,11 @@
 namespace GUI {
 
 Widget::EventHandlerResult Button::on_mouse_button_press(Event::MouseButtonPress const&) {
-    if (!is_hover()) {
-        // FIXME: This should be somehow handled at Widget level.
-        return Widget::EventHandlerResult::NotAccepted;
-    }
-    m_pressed_on_button = true;
     return Widget::EventHandlerResult::Accepted;
 }
 
 Widget::EventHandlerResult Button::on_mouse_button_release(Event::MouseButtonRelease const&) {
-    if (is_hover() && m_pressed_on_button) {
+    if (is_hover() && was_hovered_on_mouse_press()) {
         click();
         m_pressed_on_button = false;
     }

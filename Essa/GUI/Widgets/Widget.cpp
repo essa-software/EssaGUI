@@ -62,7 +62,14 @@ void Widget::update() {
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto transformed_event = event.relativized(Util::Vector2i { m_raw_position });
 
-    auto result = transformed_event.visit(
+    // Check if widget is actually affected by the event, this
+    // must be here so that event handler will actually run if
+    // line below will change widget state (e.g hover)
+    bool should_run_event_handler = is_affected_by_event(transformed_event);
+    EventHandlerResult result = should_run_event_handler ? handle_event(transformed_event) : EventHandlerResult::NotAccepted;
+
+    // Handle events common to all widgets
+    auto result2 = transformed_event.visit(
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
             m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
@@ -97,6 +104,9 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
             Util::Vector2i mouse_position = event.local_position();
             m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            if (m_hover) {
+                m_hovered_on_click = true;
+            }
             if (m_hover && accepts_focus()) {
                 set_focused();
                 return EventHandlerResult::Accepted;
@@ -106,6 +116,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
             Util::Vector2i mouse_position = event.local_position();
             m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            m_hovered_on_click = false;
             return EventHandlerResult::NotAccepted;
         },
         [&](Event::WindowResize const&) -> EventHandlerResult {
@@ -114,14 +125,9 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](auto const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; });
 
-    bool should_run_event_handler = transformed_event.is_global() || is_focused() || is_affected_by_event(transformed_event);
-    if (should_run_event_handler) {
-        auto result2 = handle_event(transformed_event);
-        return result2 == EventHandlerResult::Accepted || result == EventHandlerResult::Accepted
-            ? EventHandlerResult::Accepted
-            : EventHandlerResult::NotAccepted;
-    }
-    return result;
+    return result2 == EventHandlerResult::Accepted || result == EventHandlerResult::Accepted
+        ? EventHandlerResult::Accepted
+        : EventHandlerResult::NotAccepted;
 }
 
 Widget::EventHandlerResult Widget::handle_event(Event const& event) {
@@ -175,7 +181,17 @@ bool Widget::are_all_parents_enabled() const {
 }
 
 bool Widget::is_affected_by_event(Event const& event) const {
-    return event.is_mouse_related() ? local_rect().contains(event.local_mouse_position()) : false;
+    switch (event.target_type()) {
+    case llgl::EventTargetType::KeyboardFocused:
+        return is_focused();
+    case llgl::EventTargetType::MouseFocused:
+        return local_rect().contains(event.local_mouse_position()) || m_hovered_on_click;
+    case llgl::EventTargetType::Specific:
+        return false;
+    case llgl::EventTargetType::Global:
+        return true;
+    }
+    ESSA_UNREACHABLE;
 }
 
 void Widget::do_draw(Gfx::Painter& painter) const {
