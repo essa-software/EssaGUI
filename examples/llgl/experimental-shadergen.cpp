@@ -46,12 +46,16 @@ void main()
 struct MyShader : public llgl::Shader {
     using Vertex = llgl::Vertex<Util::Vector2f, Util::Colorf>;
 
-    llgl::Uniform<Util::Color> other_color { "otherColor" };
-    llgl::Uniform<Util::Matrix4x4f> matrix { "matrix" };
+    struct Uniforms {
+        Util::Color other_color;
+        Util::Matrix4x4f matrix;
 
-    auto uniforms() {
-        return llgl::UniformList { other_color, matrix };
-    }
+        static auto mapping() {
+            return llgl::make_uniform_mapping(
+                std::pair { "otherColor", &Uniforms::other_color },
+                std::pair { "matrix", &Uniforms::matrix });
+        }
+    };
 
     std::string_view source(llgl::ShaderType type) {
         switch (type) {
@@ -79,15 +83,17 @@ int main() {
     llgl::Renderer renderer { 0 };
 
     MyShader shader;
-    shader.other_color = Util::Colors::Red;
-    shader.matrix = llgl::Transform {}.rotate_z(0.1).matrix() * llgl::Projection::ortho({ { 0, 0, 400, 400 } }, {}).matrix();
+
+    MyShader::Uniforms uniforms;
+    uniforms.other_color = Util::Colors::Red;
+    uniforms.matrix = llgl::Transform {}.rotate_z(0.1).matrix() * llgl::Projection::ortho({ { 0, 0, 400, 400 } }, {}).matrix();
 
     while (true) {
         // FIXME: Port to GUI::Application
         while (window.poll_event()) { }
         llgl::set_viewport({ 0, 0, 400, 400 });
         renderer.clear();
-        renderer.draw_vertices(varr, llgl::DrawState { shader, llgl::PrimitiveType::Triangles });
+        renderer.draw_vertices(varr, llgl::DrawState { shader, uniforms, llgl::PrimitiveType::Triangles });
         window.display();
     }
 }

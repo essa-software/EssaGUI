@@ -9,15 +9,16 @@
 
 namespace Gfx {
 
-class DefaultGUIShader : public llgl::Shader
-    , public llgl::ShaderBases::Texture
-    , public llgl::ShaderBases::Transform {
+class DefaultGUIShader : public llgl::Shader {
 public:
     using Vertex = Gfx::Vertex;
 
-    auto uniforms() {
-        return llgl::ShaderBases::Transform::uniforms() + llgl::ShaderBases::Texture::uniforms();
-    }
+    struct Uniforms : public llgl::ShaderBases::Texture
+        , public llgl::ShaderBases::Transform {
+        static auto mapping() {
+            return llgl::ShaderBases::Texture::mapping() | llgl::ShaderBases::Transform::mapping();
+        }
+    };
 
     std::string_view source(llgl::ShaderType type) const;
 };

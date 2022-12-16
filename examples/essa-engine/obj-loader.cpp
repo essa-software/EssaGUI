@@ -102,22 +102,26 @@ int main() {
         view_transform = view_transform.rotate_y(yaw).rotate_x(pitch).translate(camera_position);
 
         light_angle += 0.01;
-        lighting_shader.set_light_position({ static_cast<float>(std::sin(light_angle)), 5, static_cast<float>(std::cos(light_angle)) });
+
+        Essa::Shaders::Lighting::Uniforms uniforms_base;
+        uniforms_base.set_light_position({ static_cast<float>(std::sin(light_angle)), 5, static_cast<float>(std::cos(light_angle)) });
 
         {
-            lighting_shader.set_transform(model_transform.matrix(),
+            Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
+            uniforms.set_transform(model_transform.matrix(),
                 view_transform.matrix(),
                 llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix());
-            lighting_shader.set_light_color(Util::Colors::Red * 0.8);
-            object->render(window.renderer(), lighting_shader);
+            uniforms.set_light_color(Util::Colors::Red * 0.8);
+            object->render(window.renderer(), lighting_shader, uniforms);
         }
 
         {
-            lighting_shader.set_transform(model_transform.translate({ 3, 0, 0 }).matrix(),
+            Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
+            uniforms.set_transform(model_transform.translate({ 3, 0, 0 }).matrix(),
                 view_transform.matrix(),
                 llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix());
-            lighting_shader.set_light_color(Util::Colors::Blue * 0.8);
-            object->render(window.renderer(), lighting_shader);
+            uniforms.set_light_color(Util::Colors::Blue * 0.8);
+            object->render(window.renderer(), lighting_shader, uniforms);
         }
 
         window.display();

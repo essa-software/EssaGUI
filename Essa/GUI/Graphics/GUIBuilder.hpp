@@ -70,10 +70,11 @@ private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add_render_range_for_last_vertices;
 
     virtual void render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override {
-        m_shader.set_transform(range.model.matrix(), range.view.matrix(), range.projection.matrix());
-        m_shader.set_texture(range.texture);
+        Gfx::DefaultGUIShader::Uniforms uniforms;
+        uniforms.set_transform(range.model.matrix(), range.view.matrix(), range.projection.matrix());
+        uniforms.set_texture(range.texture);
         llgl::set_viewport(range.projection.viewport());
-        renderer.draw_vertices(vao, llgl::DrawState { m_shader, range.type }, range.first, range.size);
+        renderer.draw_vertices(vao, llgl::DrawState { m_shader, uniforms, range.type }, range.first, range.size);
     }
 
     mutable Gfx::DefaultGUIShader m_shader;

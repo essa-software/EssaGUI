@@ -62,22 +62,22 @@ public:
         m_builder.add_range(vertices, material);
     }
 
-    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader) const {
-        auto range_renderer = [&shader](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
-            if constexpr (requires() { shader.set_material(*range.material); }) {
+    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms) const {
+        auto range_renderer = [&shader, uniforms](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
+            auto uniforms_copy = uniforms;
+            if constexpr (requires() { uniforms.set_material(*range.material); }) {
                 if (range.material) {
-                    shader.set_material(*range.material);
+                    uniforms_copy.set_material(*range.material);
                 }
                 else {
-                    shader.set_material(Material {
+                    uniforms_copy.set_material(Material {
                         .ambient = { .color = Util::Colors::Gray },
                         .diffuse = { .color = Util::Colors::White },
                         .emission { .color = Util::Colors::Black },
                     });
                 }
             }
-
-            renderer.draw_vertices(vao, llgl::DrawState { shader, range.type }, range.first, range.size);
+            renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.type }, range.first, range.size);
         };
         m_builder.set_range_renderer(std::move(range_renderer));
         m_builder.render(renderer);

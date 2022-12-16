@@ -1,10 +1,10 @@
 #include <Essa/Engine/3D/Model.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
-#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/WorldView.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 
@@ -27,8 +27,9 @@ private:
         GUI::WorldDrawScope scope { painter, GUI::WorldDrawScope::ClearDepth::Yes };
 
         static Essa::Shaders::Lighting shader;
-        shader.set_light_color(Util::Colors::LightGoldenRodYellow);
-        shader.set_light_position({ 0, 5, 10 });
+        Essa::Shaders::Lighting::Uniforms uniforms;
+        uniforms.set_light_color(Util::Colors::LightGoldenRodYellow);
+        uniforms.set_light_position({ 0, 5, 10 });
 
         auto& model = resource_manager().require_external<Essa::Model>("../examples/essa-engine/multiple-materials.obj");
 
@@ -36,8 +37,8 @@ private:
                              .rotate_x(m_angle_x.rad())
                              .rotate_y(m_angle_y.rad())
                              .rotate_z(m_angle_z.rad());
-        shader.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
-        model.render(painter.renderer(), shader);
+        uniforms.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
+        model.render(painter.renderer(), shader, uniforms);
     }
 
     Util::Angle m_angle_x;

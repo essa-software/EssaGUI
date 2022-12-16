@@ -19,9 +19,24 @@ class BlurShader : public llgl::Shader {
 public:
     using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f>;
 
-    auto uniforms() {
-        return llgl::UniformList { accum, pass1, m_framebuffer_size };
-    }
+    struct Uniforms {
+        static auto mapping() {
+            return llgl::make_uniform_mapping(
+                std::pair("accum", &Uniforms::accum),
+                std::pair("pass1", &Uniforms::pass1),
+                std::pair("fbSize", &Uniforms::m_framebuffer_size));
+        }
+
+        void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
+
+        void set_accum(llgl::Texture const* tex) { accum.texture = tex; }
+        void set_pass1(llgl::Texture const* tex) { pass1.texture = tex; }
+
+    private:
+        llgl::TextureUnit accum { 0 };
+        llgl::TextureUnit pass1 { 1 };
+        Util::Vector2f m_framebuffer_size;
+    };
 
     auto source(llgl::ShaderType type) {
         switch (type) {
@@ -74,17 +89,7 @@ public:
                 )~~~";
         }
         ESSA_UNREACHABLE;
-    }
-
-    void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
-
-    void set_accum(llgl::Texture const* tex) { accum->texture = tex; }
-    void set_pass1(llgl::Texture const* tex) { pass1->texture = tex; }
-
-private:
-    llgl::Uniform<llgl::TextureUnit> accum { "accum", { 0, nullptr } };
-    llgl::Uniform<llgl::TextureUnit> pass1 { "pass1", { 1, nullptr } };
-    llgl::Uniform<Util::Vector2f> m_framebuffer_size { "fbSize" };
+    };
 };
 
 Util::Vector2f next_oscilloscope_position() {
@@ -123,7 +128,8 @@ int main() {
 
         renderer.clear();
 
-        blur_shader.set_framebuffer_size(Util::Vector2f { window.size() });
+        BlurShader::Uniforms blur_shader_uniforms;
+        blur_shader_uniforms.set_framebuffer_size(Util::Vector2f { window.size() });
         pass1.resize(Util::Vector2u { window.size() });
         accum.resize(Util::Vector2u { window.size() });
 
@@ -146,11 +152,11 @@ int main() {
                 { Util::Vector3f { old_oscilloscope_position + diff + cross, 0 }, Util::Colors::Green, {} }
             };
 
-            basic_shader.set_texture(nullptr);
-            basic_shader.set_transform({},
+            Essa::Shaders::Basic::Uniforms basic_shader_uniforms;
+            basic_shader_uniforms.set_transform({},
                 {},
                 llgl::Projection::ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } }, {}).matrix());
-            pass1.draw_vertices(input_vao, llgl::DrawState { basic_shader, llgl::PrimitiveType::TriangleStrip });
+            pass1.draw_vertices(input_vao, llgl::DrawState { basic_shader, basic_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
 
             old_oscilloscope_position = oscilloscope_position;
         }
@@ -158,17 +164,18 @@ int main() {
         {
             // Blur the pass1 and blend with accum
             // Do not clear because we want previous frames
-            blur_shader.set_accum(&accum.color_texture());
-            blur_shader.set_pass1(&pass1.color_texture());
-            accum.draw_vertices(fullscreen_vao, llgl::DrawState { blur_shader, llgl::PrimitiveType::TriangleStrip });
+            blur_shader_uniforms.set_accum(&accum.color_texture());
+            blur_shader_uniforms.set_pass1(&pass1.color_texture());
+            accum.draw_vertices(fullscreen_vao, llgl::DrawState { blur_shader, blur_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
         }
 
         // Draw the result to backbuffer
 
         llgl::set_viewport(window.rect());
-        basic_shader.set_texture(&accum.color_texture());
-        basic_shader.set_transform({}, {}, llgl::Projection::ortho({ { -1, -1, 2, 2 } }, {}).matrix());
-        renderer.draw_vertices(fullscreen_vao, llgl::DrawState { basic_shader, llgl::PrimitiveType::TriangleStrip });
+        Essa::Shaders::Basic::Uniforms basic_shader_uniforms;
+        basic_shader_uniforms.set_texture(&accum.color_texture());
+        basic_shader_uniforms.set_transform({}, {}, llgl::Projection::ortho({ { -1, -1, 2, 2 } }, {}).matrix());
+        renderer.draw_vertices(fullscreen_vao, llgl::DrawState { basic_shader, basic_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
         window.display();
     }
     return 0;

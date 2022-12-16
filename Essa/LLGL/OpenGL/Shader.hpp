@@ -4,6 +4,7 @@
 #include "OpenGL.hpp"
 #include "Texture.hpp"
 #include <EssaUtil/Matrix.hpp>
+#include <bits/utility.h>
 #include <concepts>
 #include <fmt/core.h>
 #include <string_view>
@@ -61,37 +62,6 @@ inline void set_uniform(int location, float value) {
 
 } // namespace Detail
 
-template<class T>
-requires requires(T t) { Detail::set_uniform(0, t); }
-class Uniform {
-public:
-    Uniform(std::string name, T&& initial_value = {})
-        : m_value(std::move(initial_value))
-        , m_name(std::move(name)) { }
-
-    Uniform& operator=(T const& value) {
-        m_value = value;
-        return *this;
-    }
-
-    void set(unsigned program) const {
-        if (!m_location) {
-            m_location = glGetUniformLocation(program, m_name.c_str());
-        }
-        Detail::set_uniform(*m_location, m_value);
-    }
-
-    auto& operator*() { return m_value; }
-    auto* operator->() { return &m_value; }
-    auto const& operator*() const { return m_value; }
-    auto const* operator->() const { return &m_value; }
-
-private:
-    T m_value;
-    mutable std::optional<unsigned> m_location;
-    std::string m_name;
-};
-
 namespace Detail {
 
 template<class T1, size_t... Id1, class T2, size_t... Id2>
@@ -109,42 +79,49 @@ auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
 
 } // namespace Detail
 
-template<class... Args>
-requires(!(std::is_const_v<Args> || ...)) class UniformList {
+template<class... Members>
+class UniformMapping {
 public:
-    constexpr UniformList(std::tuple<Args*...> uniforms)
-        : m_uniforms(std::move(uniforms)) { }
+    UniformMapping(std::pair<const char*, Members>&&... pairs)
+        : m_pairs(std::move(pairs)...) { }
 
-    constexpr UniformList(Args&... args)
-        : m_uniforms(&args...) { }
-
-    template<class... Args2>
-    constexpr auto operator+(UniformList<Args2...> const& args) const {
-        return UniformList<Args..., Args2...> {
-            Detail::concat_tuples(m_uniforms, args.m_uniforms)
-        };
+    void bind(int program, auto const& uniforms) {
+        bind_impl(program, uniforms, std::make_index_sequence<sizeof...(Members)>());
     }
 
-    template<class Callback>
-    constexpr void for_each(Callback callback) {
-        std::apply([&callback](auto... vals) { (callback(*vals), ...); },
-            m_uniforms);
+    template<class... Members2>
+    auto operator|(UniformMapping<Members2...> const& other) const {
+        return UniformMapping<Members..., Members2...>(Detail::concat_tuples(m_pairs, other.m_pairs));
     }
 
 private:
-    template<class... FArgs>
-    requires(!(std::is_const_v<FArgs> || ...)) friend class UniformList;
+    template<class... M2>
+    friend class UniformMapping;
 
-    std::tuple<Args*...> m_uniforms;
+    template<size_t... Idx>
+    void bind_impl(int program, auto const& uniforms, std::index_sequence<Idx...>) {
+        ((Detail::set_uniform(glGetUniformLocation(program, std::get<Idx>(m_pairs).first), uniforms.*std::get<Idx>(m_pairs).second)), ...);
+    }
+
+    explicit UniformMapping(std::tuple<std::pair<const char*, Members>...> pairs)
+        : m_pairs(std::move(pairs)) { }
+
+    std::tuple<std::pair<const char*, Members>...> m_pairs;
 };
+
+template<class... Members>
+UniformMapping<Members...> make_uniform_mapping(std::pair<const char*, Members>&&... members) {
+    return { std::move(members)... };
+}
 
 class Shader;
 
 template<class T>
 concept ShaderImpl = std::is_base_of_v<Shader, T> && requires(T t, ShaderType st) {
     typename T::Vertex;
+    typename T::Uniforms;
     { t.source(st) } -> std::convertible_to<std::string_view>;
-    { t.uniforms() };
+    { std::declval<typename T::Uniforms>().mapping() };
 };
 
 class Shader {
@@ -194,7 +171,8 @@ requires(std::is_same_v<Args, unsigned>&&...) unsigned link_shader(
     return id;
 }
 
-inline void bind_shader(ShaderImpl auto& shader) {
+template<ShaderImpl Shader>
+inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
     if (!shader.program()) {
         auto fragment_shader = compile_shader(GL_FRAGMENT_SHADER, shader.source(ShaderType::Fragment));
         auto vertex_shader = compile_shader(GL_VERTEX_SHADER, shader.source(ShaderType::Vertex));
@@ -202,9 +180,8 @@ inline void bind_shader(ShaderImpl auto& shader) {
     }
 
     glUseProgram(shader.program());
-    auto uniforms = shader.uniforms();
-    uniforms.for_each(
-        [&](auto const& uniform) { uniform.set(shader.program()); });
+    using Uniforms = typename Shader::Uniforms;
+    Uniforms::mapping().bind(shader.program(), uniforms);
 }
 
 } // namespace Detail

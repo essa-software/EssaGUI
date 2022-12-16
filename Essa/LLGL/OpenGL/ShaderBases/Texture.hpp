@@ -4,26 +4,21 @@
 
 namespace llgl::ShaderBases {
 
-class Texture {
-public:
+struct Texture {
     void set_texture(llgl::Texture const* tex) {
-        m_texture->texture = tex;
+        m_texture.texture = tex;
         m_texture_set = tex;
     }
 
-    auto uniforms() {
-        return llgl::UniformList {
-            m_texture,
-            m_texture_set
-        };
+    static auto mapping() {
+        return llgl::make_uniform_mapping(
+            std::pair { "texture", &Texture::m_texture },
+            std::pair { "textureSet", &Texture::m_texture_set });
     }
 
 private:
-    llgl::Uniform<Util::Matrix4x4f> m_model_matrix { "modelMatrix" };
-    llgl::Uniform<Util::Matrix4x4f> m_view_matrix { "viewMatrix" };
-    llgl::Uniform<Util::Matrix4x4f> m_projection_matrix { "projectionMatrix" };
-    llgl::Uniform<llgl::TextureUnit> m_texture { "texture", { 0, nullptr } };
-    llgl::Uniform<bool> m_texture_set { "textureSet" };
+    llgl::TextureUnit m_texture;
+    bool m_texture_set = false;
 };
 
 }

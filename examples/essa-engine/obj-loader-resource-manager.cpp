@@ -1,10 +1,10 @@
 #include <Essa/Engine/3D/Model.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
-#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/WorldView.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 
@@ -15,7 +15,7 @@ public:
         // FIXME: The "background" would now cover cubes because it is rendered by
         //        Builder AFTER draw() is called. Make background rendered immediately
         //        for WorldView so that is is actually *below* the world render.
-        //set_background_color(Util::Colors::LightBlue);
+        // set_background_color(Util::Colors::LightBlue);
     }
 
 private:
@@ -36,7 +36,8 @@ private:
         GUI::WorldDrawScope scope { painter, GUI::WorldDrawScope::ClearDepth::Yes };
 
         static Essa::Shaders::Lighting shader;
-        shader.set_light_color(Util::Colors::LightGoldenRodYellow);
+        Essa::Shaders::Lighting::Uniforms shader_uniforms;
+        shader_uniforms.set_light_color(Util::Colors::LightGoldenRodYellow);
 
         auto& model = resource_manager().require_external<Essa::Model>("../examples/essa-engine/cube.obj");
 
@@ -44,8 +45,8 @@ private:
                              .rotate_x(m_angle_x.rad())
                              .rotate_y(m_angle_y.rad())
                              .rotate_z(m_angle_z.rad());
-        shader.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
-        model.render(painter.renderer(), shader);
+        shader_uniforms.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
+        model.render(painter.renderer(), shader, shader_uniforms);
     }
 
     Util::Angle m_angle_x;

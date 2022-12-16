@@ -33,27 +33,31 @@ int main() {
         light_angle += 0.01;
         shape_angle += 0.05;
 
-        shader.set_light_position({ static_cast<float>(std::sin(light_angle)), 5, static_cast<float>(std::cos(light_angle)) });
+        Essa::Shaders::Lighting::Uniforms uniforms_base;
+        uniforms_base.set_light_position({ static_cast<float>(std::sin(light_angle)), 5, static_cast<float>(std::cos(light_angle)) });
 
         {
-            shader.set_light_color(Util::Colors::Red * 0.8);
-            shader.set_transform(llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
+            Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
+            uniforms.set_light_color(Util::Colors::Red * 0.8);
+            uniforms.set_transform(llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
                 camera.view_matrix(), camera.projection().matrix());
-            sphere.render(window.renderer(), shader);
+            sphere.render(window.renderer(), shader, uniforms);
         }
 
         {
-            shader.set_light_color(Util::Colors::Green * 0.8);
-            shader.set_transform(llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
+            Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
+            uniforms.set_light_color(Util::Colors::Green * 0.8);
+            uniforms.set_transform(llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
                 camera.view_matrix(), camera.projection().matrix());
-            sphere.render(window.renderer(), shader);
+            sphere.render(window.renderer(), shader, uniforms);
         }
 
         {
-            shader.set_light_color(Util::Colors::Blue * 0.8);
-            shader.set_transform(llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
+            Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
+            uniforms.set_light_color(Util::Colors::Blue * 0.8);
+            uniforms.set_transform(llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
                 camera.view_matrix(), camera.projection().matrix());
-            cube.render(window.renderer(), shader);
+            cube.render(window.renderer(), shader, uniforms);
         }
 
         window.display();

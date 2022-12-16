@@ -13,8 +13,8 @@ class Sphere {
 public:
     explicit Sphere();
 
-    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader) const {
-        renderer.draw_vertices(m_vao, llgl::DrawState { shader, llgl::PrimitiveType::Triangles });
+    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms) const {
+        renderer.draw_vertices(m_vao, llgl::DrawState { shader, uniforms, llgl::PrimitiveType::Triangles });
     }
 
 private:

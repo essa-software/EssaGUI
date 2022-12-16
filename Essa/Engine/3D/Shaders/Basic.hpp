@@ -8,16 +8,16 @@
 
 namespace Essa::Shaders {
 
-class Basic : public llgl::Shader
-    , public llgl::ShaderBases::Transform
-    , public llgl::ShaderBases::Texture {
+class Basic : public llgl::Shader {
 public:
     using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f>;
 
-    auto uniforms() {
-        return llgl::ShaderBases::Transform::uniforms()
-            + llgl::ShaderBases::Texture::uniforms();
-    }
+    struct Uniforms : public llgl::ShaderBases::Transform
+        , public llgl::ShaderBases::Texture {
+        static auto mapping() {
+            return llgl::ShaderBases::Transform::mapping() | llgl::ShaderBases::Texture::mapping();
+        }
+    };
 
     std::string_view source(llgl::ShaderType type) const;
 };
