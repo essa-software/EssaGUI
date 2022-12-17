@@ -1,7 +1,7 @@
 #include <Essa/Engine/3D/Shaders/Basic.hpp>
+#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/GUIBuilder.hpp>
 #include <Essa/GUI/Graphics/Vertex.hpp>
-#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Widgets/WorldView.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
@@ -14,9 +14,9 @@ private:
         builder.set_projection(llgl::Projection::ortho({ Util::Rectd { 0, 0, 220 * raw_size().x() / raw_size().y(), 220 } }, Util::Recti { rect() }));
         builder.add_rectangle({ 25, 25, 50, 50 }, { .fill_color = Util::Colors::Red });
         builder.add_rectangle({ 145, 145, 50, 50 }, { .fill_color = Util::Colors::Green });
-        builder.add_regular_polygon({ 110, 110 }, 25, 5, Util::Colors::LightBlue);
-        builder.add_regular_polygon({ 50, 160 }, 25, 3, Util::Colors::LightYellow);
-        builder.add_regular_polygon({ 160, 50 }, 25, 30, Util::Colors::DarkSlateGray);
+        builder.add_regular_polygon({ 110, 110 }, 25, 5, { .color = Util::Colors::LightBlue });
+        builder.add_regular_polygon({ 50, 160 }, 25, 3, { .color = Util::Colors::LightYellow });
+        builder.add_regular_polygon({ 160, 50 }, 25, 30, { .color = Util::Colors::DarkSlateGray });
         builder.render(window.renderer());
     }
 };

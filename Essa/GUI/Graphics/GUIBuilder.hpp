@@ -8,6 +8,7 @@
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
 #include <Essa/LLGL/OpenGL/VertexArray.hpp>
+#include <EssaUtil/Angle.hpp>
 #include <vector>
 
 namespace Gfx {
@@ -42,12 +43,16 @@ public:
         add_render_range_for_last_vertices(4, llgl::PrimitiveType::TriangleStrip, m_projection, m_view, m_model, options.texture);
     }
 
-    void add_regular_polygon(Util::Vector2f center, float radius, size_t vertices, Util::Colorf const& color = Util::Colors::White) {
-        for (size_t s = 0; s < vertices; s++) {
-            float angle = M_PI * 2 * s / vertices;
-            add(create_vertex(Util::Vector3f(Util::Vector2f::create_polar(angle, radius) + center, 0), color, Util::Vector2f {}, Util::Vector3f {}));
+    struct RegularPolygonDrawOptions {
+        Util::Colorf color = Util::Colors::White;
+        Util::Angle rotation {};
+    };
+
+    void add_regular_polygon(Util::Vector2f center, float radius, size_t vertices, RegularPolygonDrawOptions options) {
+        for (size_t s = 0; s < vertices + 1; s++) {
+            float angle = M_PI * 2 * s / vertices + options.rotation.rad();
+            add(create_vertex(Util::Vector3f(Util::Vector2f::create_polar(angle, radius) + center, 0), options.color, Util::Vector2f {}, Util::Vector3f {}));
         }
-        add(create_vertex(Util::Vector3f(Util::Vector2f { radius, 0 } + center, 0), color, Util::Vector2f {}, Util::Vector3f {}));
         add_render_range_for_last_vertices(vertices + 1, llgl::PrimitiveType::TriangleFan, m_projection, m_view, m_model);
     }
 
