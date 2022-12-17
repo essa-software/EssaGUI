@@ -41,6 +41,7 @@ public:
     void render(llgl::Renderer& renderer) const {
         if (m_was_modified) {
             m_vao.upload_vertices(m_vertices);
+            m_was_modified = false;
         }
         for (auto const& range : m_ranges) {
             render_range(renderer, m_vao, range);
