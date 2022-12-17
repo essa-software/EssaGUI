@@ -93,6 +93,12 @@ void HostWindow::do_draw() {
     for (auto& overlay : m_overlays)
         overlay->draw(m_painter);
 
+    float y = 10;
+    for (auto const& notification : m_notifications) {
+        draw_notification(notification, y);
+        y += 30;
+    }
+
     m_painter.render();
     window().display();
 }
@@ -100,19 +106,12 @@ void HostWindow::do_draw() {
 void HostWindow::draw_notification(Notification const& notification, float y) {
     Gfx::Text text { notification.message, GUI::Application::the().font() };
     text.set_font_size(theme().label_font_size);
-    auto text_bounds = text.calculate_text_size();
-    Util::Vector2f text_position { window().size().x() - text_bounds.x() - 20, y + 20 };
-    text.set_position(text_position);
-
-    Gfx::RectangleDrawOptions rs;
-    rs.set_border_radius(10);
+    text.align(GUI::Align::Top, rect().move_y(y));
     switch (notification.level) {
     case NotificationLevel::Error:
-        rs.fill_color = { 155, 50, 50, 100 };
+        text.set_fill_color(Util::Colors::Red);
         break;
     }
-
-    m_painter.draw_rectangle({ { text_position.x() - 10 + text_position.x(), text_position.y() - 15 + text_position.y() }, { text_bounds.x() + 20, text_bounds.y() + 30 } });
     text.draw(m_painter);
 }
 
@@ -161,6 +160,13 @@ void HostWindow::update() {
     remove_closed_overlays();
     for (auto& overlay : m_overlays)
         overlay->update();
+
+    for (auto& notification : m_notifications) {
+        notification.remaining_ticks--;
+    }
+    std::erase_if(m_notifications, [](auto const& notification) {
+        return notification.remaining_ticks <= 0;
+    });
 }
 
 void HostWindow::remove_closed_overlays() {
