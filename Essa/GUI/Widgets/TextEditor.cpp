@@ -628,20 +628,16 @@ void TextEditor::did_content_change() {
     m_content_changed = true;
 }
 
-void TextEditor::draw(Gfx::Painter& window) const {
+void TextEditor::draw(Gfx::Painter& painter) const {
     auto cursor = real_cursor_position();
     auto theme_colors = theme().textbox.value(*this);
 
-    Gfx::RectangleDrawOptions background_rect;
-    background_rect.fill_color = theme_colors.background;
-    background_rect.outline_color = (is_focused() && !is_multiline()) ? theme().focus_frame : theme_colors.foreground;
-    background_rect.outline_thickness = -1;
-    window.draw_rectangle(local_rect(), background_rect);
+    theme().renderer().draw_text_editor_background(*this, painter);
 
     if (m_multiline) {
         Gfx::RectangleDrawOptions gutter_rect;
         gutter_rect.fill_color = theme().gutter.background;
-        window.draw_rectangle({ {}, Util::Vector2f { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
+        painter.draw_rectangle({ {}, Util::Vector2f { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
     }
 
     auto clip_rect = scrollable_rect();
@@ -652,7 +648,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
     if (m_selection_start != cursor) {
         Util::DelayedInit<Gfx::ClipViewScope> scope;
         if (m_multiline) {
-            scope.construct(window, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect);
+            scope.construct(painter, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect);
         }
 
         Gfx::RectangleDrawOptions selected_rect;
@@ -665,7 +661,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
             float start = text.find_character_position(s == selection_start.line ? selection_start.column : 0);
             float end = text.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size());
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : raw_size().y() / 2 - cursor_height / 2;
-            window.draw_rectangle({ Util::Vector2f { start + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
+            painter.draw_rectangle({ Util::Vector2f { start + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
         }
     }
 
@@ -686,7 +682,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
             text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
             assert(should_draw_placeholder || line_count() > 0);
             text.align(Align::CenterLeft, align_rect);
-            text.draw(window);
+            text.draw(painter);
         }
         else {
             if (should_draw_placeholder) {
@@ -695,10 +691,10 @@ void TextEditor::draw(Gfx::Painter& window) const {
                 position.y() += line_height;
                 text.set_string(m_placeholder);
                 text.set_position(position);
-                text.draw(window);
+                text.draw(painter);
             }
             else {
-                Gfx::ClipViewScope scope { window, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect };
+                Gfx::ClipViewScope scope { painter, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect };
 
                 size_t character_index = 0;
                 for (size_t i = 0; i < first_visible_line; i++) {
@@ -720,7 +716,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
                         text.set_string(Util::UString { character });
                         text.set_fill_color(style.color);
                         text.set_position(position);
-                        text.draw(window);
+                        text.draw(painter);
                         position.x() += character_width;
                         character_index++;
                     }
@@ -741,7 +737,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
         for (size_t i = first_visible_line; i <= last_visible_line; i++) {
             text.set_string(Util::UString { std::to_string(i + 1) });
             text.align(Align::CenterRight, { position, { theme().text_editor_gutter_width - 10, line_height } });
-            text.draw(window);
+            text.draw(painter);
             position.y() += line_height;
         }
     }
@@ -751,16 +747,14 @@ void TextEditor::draw(Gfx::Painter& window) const {
         auto position = calculate_cursor_position();
         Gfx::RectangleDrawOptions cursor;
         cursor.fill_color = theme_colors.text;
-        window.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
+        painter.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
             cursor);
         // }
     }
 
-    // Border once again so that it covers text
-    background_rect.fill_color = Util::Colors::Transparent;
-    window.draw_rectangle(local_rect(), background_rect);
-
-    ScrollableWidget::draw_scrollbar(window);
+    // Border
+    theme().renderer().draw_text_editor_border(*this, is_multiline(), painter);
+    ScrollableWidget::draw_scrollbar(painter);
 }
 
 EML::EMLErrorOr<void> TextEditor::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

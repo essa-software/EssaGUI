@@ -6,6 +6,7 @@ namespace GUI {
 
 class Theme;
 class TextButton;
+class Widget;
 
 class ThemeRenderer {
 public:
@@ -15,6 +16,8 @@ public:
     virtual ~ThemeRenderer() = default;
 
     virtual void draw_text_button_background(GUI::TextButton const&, Gfx::Painter&) const = 0;
+    virtual void draw_text_editor_background(GUI::Widget const& widget, Gfx::Painter& painter) const = 0;
+    virtual void draw_text_editor_border(GUI::Widget const& widget, bool multiline, Gfx::Painter& painter) const = 0;
 
 protected:
     auto& theme() const { return m_theme; }
@@ -30,6 +33,8 @@ public:
 
 private:
     virtual void draw_text_button_background(GUI::TextButton const&, Gfx::Painter&) const override;
+    virtual void draw_text_editor_background(GUI::Widget const& widget, Gfx::Painter& painter) const override;
+    virtual void draw_text_editor_border(GUI::Widget const& widget, bool multiline, Gfx::Painter& painter) const override;
 };
 
 }
