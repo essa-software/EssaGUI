@@ -27,7 +27,7 @@ private:
     virtual void tick() override;
 
     Gfx::ResourceManager m_resource_manager;
-    mutable std::optional<Theme> m_cached_theme;
+    mutable std::unique_ptr<Theme> m_cached_theme;
     std::list<HostWindow> m_host_windows;
 };
 
