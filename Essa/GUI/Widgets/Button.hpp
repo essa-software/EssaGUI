@@ -37,9 +37,9 @@ public:
         return *m_button_colors_override;
     }
 
-protected:
     Theme::BgFgTextColors colors_for_state() const;
 
+protected:
     virtual Theme::ButtonColors default_button_colors() const = 0;
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;

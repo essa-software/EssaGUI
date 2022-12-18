@@ -5,29 +5,28 @@
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/GUI/ThemeRenderer.hpp>
 
 namespace GUI {
 
-void TextButton::draw(Gfx::Painter& window) const {
+void TextButton::draw(Gfx::Painter& painter) const {
     auto colors = colors_for_state();
 
-    Gfx::RectangleDrawOptions rect;
-    rect.fill_color = colors.background;
-    window.draw_rectangle(local_rect(), rect);
+    theme().renderer().draw_text_button_background(*this, painter);
 
     double text_offset = 0;
     if (m_image) {
         Gfx::RectangleDrawOptions image;
         image.texture = m_image;
         if (m_content.is_empty()) {
-            window.draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
-                                      Util::Vector2f { m_image->size() } },
+            painter.draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
+                                       Util::Vector2f { m_image->size() } },
                 image);
             return;
         }
         else {
             text_offset = 5 + m_image->size().x();
-            window.draw_rectangle(
+            painter.draw_rectangle(
                 { { 5, raw_size().y() / 2 - m_image->size().y() / 2.f },
                     { static_cast<float>(m_image->size().x()), static_cast<float>(m_image->size().y()) } },
                 image);
@@ -48,7 +47,7 @@ void TextButton::draw(Gfx::Painter& window) const {
         text.set_string(m_content);
 
     text.align(GUI::Align::Center, text_rect);
-    text.draw(window);
+    text.draw(painter);
 }
 
 EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

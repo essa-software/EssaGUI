@@ -4,6 +4,7 @@ add_library(GUI SHARED
     HostWindow.cpp
     Model.cpp
     Theme.cpp
+    ThemeRenderer.cpp
     WidgetTreeRoot.cpp
 
     EML/AST.cpp

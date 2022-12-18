@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Essa/GUI/ThemeRenderer.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/Error.hpp>
@@ -9,11 +10,12 @@
 namespace GUI {
 
 class Button;
+class ThemeRenderer;
 class Widget;
 
 class Theme {
 public:
-    Theme() = default;
+    Theme();
     Theme(Theme const&) = delete;
     Theme& operator=(Theme const&) = delete;
     Theme(Theme&&) = default;
@@ -91,8 +93,15 @@ public:
 
     uint32_t label_font_size;
 
-    uint32_t line_height; // Default height of buttons, textboxes etc.
+    uint32_t line_height;       // Default height of buttons, textboxes etc.
     uint32_t image_button_size; // Initial width and height / diameter of ImageButton
+
+    template<class T>
+    void set_renderer() { m_renderer = std::make_unique<T>(*this); }
+    ThemeRenderer const& renderer() const { return *m_renderer; }
+
+private:
+    std::unique_ptr<ThemeRenderer> m_renderer;
 };
 
 }

@@ -1,5 +1,6 @@
 #include "Theme.hpp"
 
+#include <Essa/GUI/ThemeRenderer.hpp>
 #include <Essa/GUI/Util/ConfigFile.hpp>
 #include <Essa/GUI/Widgets/Button.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
@@ -15,6 +16,10 @@
 #include <vector>
 
 namespace GUI {
+
+Theme::Theme() {
+    set_renderer<DefaultThemeRenderer>();
+}
 
 Theme::BgFgTextColors Theme::ButtonColors::value(Button const& w) const {
     if (!w.are_all_parents_enabled())
