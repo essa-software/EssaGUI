@@ -189,7 +189,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     painter.draw_rectangle({ position - Util::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
 
     Gfx::Text text { title(), Application::the().bold_font() };
-    text.set_position({ position + Util::Vector2f(10, -theme().tool_window_title_bar_size / 2.f + 5) });
+    text.set_position({ position + Util::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5) });
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(Util::Colors::White);
     text.draw(painter);
