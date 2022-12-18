@@ -23,6 +23,10 @@ struct Transform {
             std::pair { "projectionMatrix", &Transform::m_projection_matrix });
     }
 
+    auto model() const { return m_model_matrix; }
+    auto view() const { return m_view_matrix; }
+    auto projection() const { return m_projection_matrix; }
+
 private:
     Util::Matrix4x4f m_model_matrix;
     Util::Matrix4x4f m_view_matrix;
