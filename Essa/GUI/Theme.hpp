@@ -99,6 +99,11 @@ public:
     uint32_t text_editor_gutter_width;
     uint32_t text_editor_margin;
 
+    uint32_t tool_window_title_bar_size;
+    uint32_t tool_window_title_bar_border_radius;
+    uint32_t tool_window_min_size;
+    uint32_t tool_window_resize_border_width;
+
     template<class T>
     void set_renderer() { m_renderer = std::make_unique<T>(*this); }
     ThemeRenderer const& renderer() const { return *m_renderer; }

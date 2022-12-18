@@ -121,8 +121,8 @@ void HostWindow::spawn_notification(Util::UString message, NotificationLevel lev
 
 Overlay& HostWindow::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
     auto overlay_ptr = overlay.get();
-    m_next_overlay_position += Util::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
-    if (m_next_overlay_position.x() > size().x() - ToolWindow::TitleBarSize || m_next_overlay_position.y() > size().y() - ToolWindow::TitleBarSize)
+    m_next_overlay_position += Util::Vector2f(theme().tool_window_title_bar_size * 2, theme().tool_window_title_bar_size * 2);
+    if (m_next_overlay_position.x() > size().x() - theme().tool_window_title_bar_size || m_next_overlay_position.y() > size().y() - theme().tool_window_title_bar_size)
         m_next_overlay_position = { 10, 10 };
     m_overlays.push_back(std::move(overlay));
     return *overlay_ptr;

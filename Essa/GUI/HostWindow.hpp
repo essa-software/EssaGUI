@@ -79,7 +79,7 @@ private:
 
     GUI::Window m_window;
     OverlayList m_overlays;
-    Util::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
+    Util::Vector2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
     Gfx::Painter m_painter { window().renderer() };

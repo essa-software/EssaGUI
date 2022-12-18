@@ -139,6 +139,11 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(text_editor_gutter_width);
         DEFINE_THEME_OPTION(text_editor_margin);
 
+        DEFINE_THEME_OPTION(tool_window_title_bar_size);
+        DEFINE_THEME_OPTION(tool_window_title_bar_border_radius);
+        DEFINE_THEME_OPTION(tool_window_min_size);
+        DEFINE_THEME_OPTION(tool_window_resize_border_width);
+
 #undef DEFINE_THEME_OPTION
 
         return options;

@@ -10,10 +10,6 @@ class ToolWindow : public Overlay {
 public:
     explicit ToolWindow(HostWindow&, std::string id = "ToolWindow");
 
-    static constexpr auto TitleBarSize = 28;
-    static constexpr auto MinSize = 50;
-    static constexpr auto ResizeBorderWidth = 10;
-
     virtual Util::Vector2f position() const override { return m_position; }
     void set_position(Util::Vector2f position) { m_position = position; }
     void center_on_screen();
@@ -24,10 +20,10 @@ public:
     CREATE_VALUE(Util::UString, title, "")
 
     virtual Util::Rectf full_rect() const override {
-        return Util::Rect { position() - Util::Vector2f(0, TitleBarSize), size() + Util::Vector2f(0, TitleBarSize) }
-            .inflated(ResizeBorderWidth / 2);
+        return Util::Rect { position() - Util::Vector2f(0, theme().tool_window_title_bar_size), size() + Util::Vector2f(0, theme().tool_window_title_bar_size) }
+            .inflated(theme().tool_window_resize_border_width / 2.f);
     }
-    Util::Rectf titlebar_rect() const { return { position() - Util::Vector2f(0, TitleBarSize), { size().x(), TitleBarSize } }; }
+    Util::Rectf titlebar_rect() const { return { position() - Util::Vector2f(0, theme().tool_window_title_bar_size), { size().x(), theme().tool_window_title_bar_size } }; }
 
     enum class ResizeDirection {
         Top,
