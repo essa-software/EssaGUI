@@ -96,6 +96,9 @@ public:
     uint32_t line_height;       // Default height of buttons, textboxes etc.
     uint32_t image_button_size; // Initial width and height / diameter of ImageButton
 
+    uint32_t text_editor_gutter_width;
+    uint32_t text_editor_margin;
+
     template<class T>
     void set_renderer() { m_renderer = std::make_unique<T>(*this); }
     ThemeRenderer const& renderer() const { return *m_renderer; }

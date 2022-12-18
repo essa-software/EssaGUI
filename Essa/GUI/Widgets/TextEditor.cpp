@@ -27,11 +27,8 @@ float TextEditor::line_height() const {
     return Application::the().fixed_width_font().line_height(theme().label_font_size);
 }
 
-constexpr float GutterWidth = 50.f;
-constexpr float Margin = 5.f;
-
 float TextEditor::left_margin() const {
-    return m_multiline ? GutterWidth + Margin : Margin;
+    return m_multiline ? theme().text_editor_gutter_width + theme().text_editor_margin : theme().text_editor_margin;
 }
 
 Util::Vector2f TextEditor::content_size() const {
@@ -644,7 +641,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
     if (m_multiline) {
         Gfx::RectangleDrawOptions gutter_rect;
         gutter_rect.fill_color = theme().gutter.background;
-        window.draw_rectangle({ {}, Util::Vector2f { GutterWidth, raw_size().y() } }, gutter_rect);
+        window.draw_rectangle({ {}, Util::Vector2f { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
     }
 
     auto clip_rect = scrollable_rect();
@@ -685,7 +682,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
 
     {
         if (!m_multiline) {
-            Util::Rectf align_rect { Margin, 0, raw_size().x(), raw_size().y() };
+            Util::Rectf align_rect { static_cast<float>(theme().text_editor_margin), 0, raw_size().x(), raw_size().y() };
             text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
             assert(should_draw_placeholder || line_count() > 0);
             text.align(Align::CenterLeft, align_rect);
@@ -743,7 +740,7 @@ void TextEditor::draw(Gfx::Painter& window) const {
 
         for (size_t i = first_visible_line; i <= last_visible_line; i++) {
             text.set_string(Util::UString { std::to_string(i + 1) });
-            text.align(Align::CenterRight, { position, { GutterWidth - 10, line_height } });
+            text.align(Align::CenterRight, { position, { theme().text_editor_gutter_width - 10, line_height } });
             text.draw(window);
             position.y() += line_height;
         }

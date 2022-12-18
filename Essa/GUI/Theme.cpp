@@ -136,6 +136,9 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(line_height);
         DEFINE_THEME_OPTION(image_button_size);
 
+        DEFINE_THEME_OPTION(text_editor_gutter_width);
+        DEFINE_THEME_OPTION(text_editor_margin);
+
 #undef DEFINE_THEME_OPTION
 
         return options;
