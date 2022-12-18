@@ -178,24 +178,21 @@ void ColorPicker::on_init() {
     };
 }
 
-void ColorPicker::draw(Gfx::Painter& window) const {
+void ColorPicker::draw(Gfx::Painter& painter) const {
     auto theme_colors = theme().textbox.value(*this);
 
-    Gfx::RectangleDrawOptions background_rect;
-    background_rect.fill_color = theme_colors.background;
-    background_rect.outline_color = theme_colors.foreground;
-    background_rect.outline_thickness = -1;
-    window.draw_rectangle(local_rect(), background_rect);
+    theme().renderer().draw_text_editor_background(*this, painter);
+    theme().renderer().draw_text_editor_border(*this, false, painter);
 
     Gfx::RectangleDrawOptions color_rect;
     color_rect.fill_color = m_color;
-    window.draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
+    painter.draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
 
     Gfx::Text html_display { Util::UString { m_color.to_html_string() }, resource_manager().fixed_width_font() };
     html_display.set_fill_color(theme_colors.text);
     html_display.set_font_size(theme().label_font_size);
     html_display.align(GUI::Align::CenterLeft, { raw_size().y(), 4, raw_size().x() - raw_size().y(), raw_size().y() - 8 });
-    html_display.draw(window);
+    html_display.draw(painter);
 }
 
 EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
