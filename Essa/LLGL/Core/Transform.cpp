@@ -2,17 +2,30 @@
 
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <fmt/ostream.h>
 
 namespace llgl {
 
 Transform Transform::translate(Util::Vector3f vector) const {
-    Util::Matrix4x4f translation_matrix {
-        1, 0, 0, vector.x(),
-        0, 1, 0, vector.y(),
-        0, 0, 1, vector.z(),
-        0, 0, 0, 1
-    };
-    return Transform { m_matrix * translation_matrix };
+    auto matrix = m_matrix;
+    matrix.element(0, 3) = m_matrix.element(0, 0) * vector.x()
+        + m_matrix.element(0, 1) * vector.y()
+        + m_matrix.element(0, 2) * vector.z()
+        + m_matrix.element(0, 3);
+    matrix.element(1, 3) = m_matrix.element(1, 0) * vector.x()
+        + m_matrix.element(1, 1) * vector.y()
+        + m_matrix.element(1, 2) * vector.z()
+        + m_matrix.element(1, 3);
+    matrix.element(2, 3) = m_matrix.element(2, 0) * vector.x()
+        + m_matrix.element(2, 1) * vector.y()
+        + m_matrix.element(2, 2) * vector.z()
+        + m_matrix.element(2, 3);
+    matrix.element(3, 3) = m_matrix.element(3, 0) * vector.x()
+        + m_matrix.element(3, 1) * vector.y()
+        + m_matrix.element(3, 2) * vector.z()
+        + m_matrix.element(3, 3);
+
+    return Transform { matrix };
 }
 
 Transform Transform::rotate_x(float angle) const {
@@ -49,43 +62,37 @@ Transform Transform::rotate_z(float angle) const {
 }
 
 Transform Transform::scale(float scale) const {
-    Util::Matrix4x4f scale_matrix {
-        scale, 0, 0, 0,
-        0, scale, 0, 0,
-        0, 0, scale, 0,
-        0, 0, 0, 1
-    };
-    return Transform { m_matrix * scale_matrix };
+    auto matrix = m_matrix;
+    for (size_t x = 0; x < 4; x++) {
+        for (size_t y = 0; y < 3; y++) {
+            matrix.element(x, y) *= scale;
+        }
+    }
+    return Transform { matrix };
 }
 
 Transform Transform::scale_x(float scale) const {
-    Util::Matrix4x4f scale_matrix {
-        scale, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    };
-    return Transform { m_matrix * scale_matrix };
+    auto matrix = m_matrix;
+    for (size_t x = 0; x < 4; x++) {
+        matrix.element(x, 0) *= scale;
+    }
+    return Transform { matrix };
 }
 
 Transform Transform::scale_y(float scale) const {
-    Util::Matrix4x4f scale_matrix {
-        1, 0, 0, 0,
-        0, scale, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    };
-    return Transform { m_matrix * scale_matrix };
+    auto matrix = m_matrix;
+    for (size_t x = 0; x < 4; x++) {
+        matrix.element(x, 1) *= scale;
+    }
+    return Transform { matrix };
 }
 
 Transform Transform::scale_z(float scale) const {
-    Util::Matrix4x4f scale_matrix {
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, scale, 0,
-        0, 0, 0, 1
-    };
-    return Transform { m_matrix * scale_matrix };
+    auto matrix = m_matrix;
+    for (size_t x = 0; x < 4; x++) {
+        matrix.element(x, 2) *= scale;
+    }
+    return Transform { matrix };
 }
 
 Util::Vector3f Transform::transform_point(Util::Vector3f const& vector) const {

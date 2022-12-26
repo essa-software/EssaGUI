@@ -8,6 +8,7 @@
 #include <EssaUtil/Random.hpp>
 
 // ~2.40 FPS
+// ~2.70-~3.00 FPS after optimizing transforms
 
 constexpr size_t ModelCount = 100000;
 
