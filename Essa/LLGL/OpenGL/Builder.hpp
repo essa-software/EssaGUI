@@ -76,13 +76,13 @@ protected:
         m_ranges.push_back(StoredRenderRange { { m_vertices.size() - count, count, pt }, std::forward<Args>(args)... });
     }
 
-private:
-    virtual void render_range(llgl::Renderer&, llgl::VertexArray<Vertex> const&, StoredRenderRange const&) const {};
-
     mutable llgl::VertexArray<Vertex> m_vao;
     std::vector<Vertex> m_vertices;
     mutable bool m_was_modified = false;
     std::vector<StoredRenderRange> m_ranges;
+
+private:
+    virtual void render_range(llgl::Renderer&, llgl::VertexArray<Vertex> const&, StoredRenderRange const&) const {};
 };
 
 }

@@ -10,6 +10,7 @@
 // ~2.4 FPS
 // ~2.7-~3.0 FPS after optimizing transforms
 // ~6.1-~6.8 FPS after uniform location caching
+// ~6.8-~7.4 FPS after getting rid of std::function in ModelBuilder
 
 constexpr size_t ModelCount = 100000;
 

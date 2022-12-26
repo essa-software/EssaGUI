@@ -6,6 +6,7 @@
 #include <Essa/LLGL/OpenGL/Builder.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
+#include <EssaUtil/Config.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/NonCopyable.hpp>
 #include <functional>
@@ -46,9 +47,35 @@ public:
         add_render_range_for_last_vertices(vertices.size(), llgl::PrimitiveType::Triangles, std::move(material));
     }
 
+    void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto const& uniforms) {
+        if (m_was_modified) {
+            m_vao.upload_vertices(m_vertices);
+            m_was_modified = false;
+        }
+        auto range_renderer = [&shader, uniforms](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
+            auto uniforms_copy = uniforms;
+            if constexpr (requires() { uniforms_copy.set_material(*range.material); }) {
+                if (range.material) {
+                    uniforms_copy.set_material(*range.material);
+                }
+                else {
+                    uniforms_copy.set_material(Material {
+                        .ambient = { .color = Util::Colors::Gray },
+                        .diffuse = { .color = Util::Colors::White },
+                        .emission { .color = Util::Colors::Black },
+                    });
+                }
+            }
+            renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.type }, range.first, range.size);
+        };
+        for (auto const& range : m_ranges) {
+            range_renderer(renderer, m_vao, range);
+        }
+    }
+
 private:
-    virtual void render_range(llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) const override {
-        m_renderer(renderer, vao, range);
+    virtual void render_range(llgl::Renderer&, llgl::VertexArray<ModelVertex> const&, ModelRenderRange const&) const override {
+        ESSA_UNREACHABLE;
     }
     RangeRenderer m_renderer;
 };
@@ -63,24 +90,7 @@ public:
     }
 
     void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms) const {
-        auto range_renderer = [&shader, uniforms](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
-            auto uniforms_copy = uniforms;
-            if constexpr (requires() { uniforms.set_material(*range.material); }) {
-                if (range.material) {
-                    uniforms_copy.set_material(*range.material);
-                }
-                else {
-                    uniforms_copy.set_material(Material {
-                        .ambient = { .color = Util::Colors::Gray },
-                        .diffuse = { .color = Util::Colors::White },
-                        .emission { .color = Util::Colors::Black },
-                    });
-                }
-            }
-            renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.type }, range.first, range.size);
-        };
-        m_builder.set_range_renderer(std::move(range_renderer));
-        m_builder.render(renderer);
+        m_builder.render(renderer, shader, uniforms);
     }
 
 private:
