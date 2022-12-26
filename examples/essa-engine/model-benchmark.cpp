@@ -7,8 +7,9 @@
 #include <Essa/GUI/Widgets/WorldView.hpp>
 #include <EssaUtil/Random.hpp>
 
-// ~2.40 FPS
-// ~2.70-~3.00 FPS after optimizing transforms
+// ~2.4 FPS
+// ~2.7-~3.0 FPS after optimizing transforms
+// ~6.1-~6.8 FPS after uniform location caching
 
 constexpr size_t ModelCount = 100000;
 

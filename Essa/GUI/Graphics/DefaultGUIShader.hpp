@@ -15,9 +15,7 @@ public:
 
     struct Uniforms : public llgl::ShaderBases::Texture
         , public llgl::ShaderBases::Transform {
-        static auto mapping() {
-            return llgl::ShaderBases::Texture::mapping() | llgl::ShaderBases::Transform::mapping();
-        }
+        static inline auto mapping = llgl::ShaderBases::Texture::mapping | llgl::ShaderBases::Transform::mapping;
     };
 
     std::string_view source(llgl::ShaderType type) const;

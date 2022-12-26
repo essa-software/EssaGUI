@@ -25,6 +25,7 @@ struct TextureUnit {
 
 namespace Detail {
 
+// C++ -> OpenGL set uniform wrappers
 inline void set_uniform(int location, TextureUnit const& tu) {
     glActiveTexture(GL_TEXTURE0 + tu.id);
     llgl::Texture::bind(tu.texture);
@@ -60,10 +61,7 @@ inline void set_uniform(int location, float value) {
     glUniform1f(location, value);
 }
 
-} // namespace Detail
-
-namespace Detail {
-
+// Concat tuples
 template<class T1, size_t... Id1, class T2, size_t... Id2>
 decltype(auto) concat_tuples_impl(T1 const& t1, std::index_sequence<Id1...>,
     T2 const& t2,
@@ -79,51 +77,69 @@ auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
 
 } // namespace Detail
 
+// ShaderImpl
+template<class T>
+concept ShaderImplPartial = requires(T t, ShaderType st) {
+    typename T::Vertex;
+    typename T::Uniforms;
+    { t.source(st) } -> std::convertible_to<std::string_view>;
+    { T::Uniforms::mapping };
+};
+
+class Shader;
+
+template<class MT>
+struct Uniform {
+    const char* name;
+    MT member;
+    int location = 0;
+
+    Uniform(const char* name_, MT member_)
+        : name(name_)
+        , member(member_) { }
+};
+
+// Uniform Mapping - stores uniforms and their locations, responsible for binding them
 template<class... Members>
 class UniformMapping {
 public:
-    UniformMapping(std::pair<const char*, Members>&&... pairs)
-        : m_pairs(std::move(pairs)...) { }
+    UniformMapping(Uniform<Members>&&... pairs)
+        : m_uniforms(std::move(pairs)...) { }
 
-    void bind(int program, auto const& uniforms) {
+    void bind(Shader& program, auto const& uniforms) {
         bind_impl(program, uniforms, std::make_index_sequence<sizeof...(Members)>());
     }
 
     template<class... Members2>
     auto operator|(UniformMapping<Members2...> const& other) const {
-        return UniformMapping<Members..., Members2...>(Detail::concat_tuples(m_pairs, other.m_pairs));
+        return UniformMapping<Members..., Members2...>(Detail::concat_tuples(m_uniforms, other.m_uniforms));
     }
 
 private:
     template<class... M2>
     friend class UniformMapping;
 
+    explicit UniformMapping(std::tuple<Uniform<Members>...> pairs)
+        : m_uniforms(std::move(pairs)) { }
+
     template<size_t... Idx>
-    void bind_impl(int program, auto const& uniforms, std::index_sequence<Idx...>) {
-        ((Detail::set_uniform(glGetUniformLocation(program, std::get<Idx>(m_pairs).first), uniforms.*std::get<Idx>(m_pairs).second)), ...);
-    }
+    void bind_impl(Shader& shader, auto const& uniforms, std::index_sequence<Idx...>);
 
-    explicit UniformMapping(std::tuple<std::pair<const char*, Members>...> pairs)
-        : m_pairs(std::move(pairs)) { }
+    template<class MT>
+    int resolve_uniform_location(Shader& program, Uniform<MT>& member);
 
-    std::tuple<std::pair<const char*, Members>...> m_pairs;
+    std::tuple<Uniform<Members>...> m_uniforms;
 };
 
 template<class... Members>
-UniformMapping<Members...> make_uniform_mapping(std::pair<const char*, Members>&&... members) {
+UniformMapping<Members...> make_uniform_mapping(Uniform<Members>&&... members) {
     return { std::move(members)... };
 }
 
-class Shader;
-
 template<class T>
-concept ShaderImpl = std::is_base_of_v<Shader, T> && requires(T t, ShaderType st) {
-    typename T::Vertex;
-    typename T::Uniforms;
-    { t.source(st) } -> std::convertible_to<std::string_view>;
-    { std::declval<typename T::Uniforms>().mapping() };
-};
+concept ShaderImpl = std::is_base_of_v<Shader, T> && ShaderImplPartial<T>;
 
+// Shader - RAII wrapper for OpenGL programs
 class Shader {
 public:
     ~Shader() {
@@ -137,6 +153,21 @@ public:
 private:
     unsigned m_program = 0;
 };
+
+template<class... Members>
+template<size_t... Idx>
+void UniformMapping<Members...>::bind_impl(Shader& shader, auto const& uniforms, std::index_sequence<Idx...>) {
+    ((Detail::set_uniform(resolve_uniform_location(shader, std::get<Idx>(m_uniforms)), uniforms.*std::get<Idx>(m_uniforms).member)), ...);
+}
+
+template<class... Members>
+template<class MT>
+int UniformMapping<Members...>::resolve_uniform_location(Shader& program, Uniform<MT>& member) {
+    if (!member.location) {
+        member.location = glGetUniformLocation(program.program(), member.name);
+    }
+    return member.location;
+}
 
 namespace Detail {
 
@@ -181,7 +212,7 @@ inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniform
 
     glUseProgram(shader.program());
     using Uniforms = typename Shader::Uniforms;
-    Uniforms::mapping().bind(shader.program(), uniforms);
+    Uniforms::mapping.bind(shader, uniforms);
 }
 
 } // namespace Detail

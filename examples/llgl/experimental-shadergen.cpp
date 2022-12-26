@@ -50,11 +50,9 @@ struct MyShader : public llgl::Shader {
         Util::Color other_color;
         Util::Matrix4x4f matrix;
 
-        static auto mapping() {
-            return llgl::make_uniform_mapping(
-                std::pair { "otherColor", &Uniforms::other_color },
-                std::pair { "matrix", &Uniforms::matrix });
-        }
+        static inline auto mapping = llgl::make_uniform_mapping(
+            llgl::Uniform { "otherColor", &Uniforms::other_color },
+            llgl::Uniform { "matrix", &Uniforms::matrix });
     };
 
     std::string_view source(llgl::ShaderType type) {

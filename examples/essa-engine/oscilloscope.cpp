@@ -20,22 +20,21 @@ public:
     using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f>;
 
     struct Uniforms {
-        static auto mapping() {
-            return llgl::make_uniform_mapping(
-                std::pair("accum", &Uniforms::accum),
-                std::pair("pass1", &Uniforms::pass1),
-                std::pair("fbSize", &Uniforms::m_framebuffer_size));
-        }
+    private:
+        llgl::TextureUnit accum { 0 };
+        llgl::TextureUnit pass1 { 1 };
+        Util::Vector2f m_framebuffer_size;
+
+    public:
+        static inline auto mapping = llgl::make_uniform_mapping(
+            llgl::Uniform("accum", &Uniforms::accum),
+            llgl::Uniform("pass1", &Uniforms::pass1),
+            llgl::Uniform("fbSize", &Uniforms::m_framebuffer_size));
 
         void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
 
         void set_accum(llgl::Texture const* tex) { accum.texture = tex; }
         void set_pass1(llgl::Texture const* tex) { pass1.texture = tex; }
-
-    private:
-        llgl::TextureUnit accum { 0 };
-        llgl::TextureUnit pass1 { 1 };
-        Util::Vector2f m_framebuffer_size;
     };
 
     auto source(llgl::ShaderType type) {
