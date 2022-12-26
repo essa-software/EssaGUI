@@ -91,6 +91,9 @@ public:
     CREATE_VALUE(Util::Vector2f, raw_position, Util::Vector2f())
     CREATE_VALUE(Util::Vector2f, raw_size, Util::Vector2f())
 
+    Util::Vector2f position_on_host_window() const;
+    Util::Vector2f position_on_widget_tree_root() const;
+
     LengthVector position() const { return m_expected_pos; }
     LengthVector size() const { return m_input_size; }
 

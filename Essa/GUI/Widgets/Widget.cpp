@@ -163,6 +163,18 @@ void Widget::do_update() {
     update();
 }
 
+Util::Vector2f Widget::position_on_host_window() const {
+    return widget_tree_root().position() + position_on_widget_tree_root();
+}
+
+Util::Vector2f Widget::position_on_widget_tree_root() const {
+    auto position = raw_position();
+    if (m_parent) {
+        position += m_parent->position_on_widget_tree_root();
+    }
+    return position;
+}
+
 void Widget::set_focused() {
     assert(accepts_focus());
     m_widget_tree_root->set_focused_widget(this);
