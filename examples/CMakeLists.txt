@@ -33,6 +33,8 @@ add_example("essa-gui/tree-view")
 
 add_example("llgl/experimental-shadergen")
 
+add_example("essa-engine/model-benchmark")
+target_link_libraries(essa-engine-model-benchmark Engine-3D)
 add_example("essa-engine/multiple-materials")
 target_link_libraries(essa-engine-multiple-materials Engine-3D)
 add_example("essa-engine/obj-loader")
