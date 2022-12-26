@@ -47,8 +47,8 @@ void Application::tick() {
     for (auto& host_window : m_host_windows) {
         host_window.handle_events();
     }
-    if (on_update) {
-        on_update();
+    if (on_tick) {
+        on_tick();
     }
     for (auto& host_window : m_host_windows) {
         host_window.update();

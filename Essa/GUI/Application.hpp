@@ -24,7 +24,7 @@ public:
     void redraw_all_host_windows();
 
     // This is called every tick, just before updating host windows.
-    std::function<void()> on_update;
+    std::function<void()> on_tick;
 
 private:
     virtual void tick() override;
