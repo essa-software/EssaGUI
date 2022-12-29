@@ -36,7 +36,6 @@ RichText& RichText::append(Util::UString const& string, Util::Color const& color
         }
         if (index > string.size() - 1)
             break;
-        fmt::print("{}..{}\n", index, *next);
         append_fragment<RichTextFragments::Text>(string.substring(index, *next - index + 1), color);
         if (string.at(*next) == '\n') {
             append_fragment<RichTextFragments::LineBreak>();
