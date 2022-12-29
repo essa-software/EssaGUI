@@ -49,6 +49,8 @@ private:
     virtual void draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter&) const override;
     virtual std::unique_ptr<Base> clone() const override { return std::make_unique<Image>(*this); }
 
+    Util::Vector2f scaled_image_size(RichTextContext const&) const;
+
     llgl::Texture const& m_texture;
 };
 

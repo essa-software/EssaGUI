@@ -22,16 +22,24 @@ Gfx::Text Text::text(RichTextContext const& context) const {
     return text;
 }
 
-float Image::wanted_size(RichTextContext const&) const {
-    return m_texture.size().x() + 6;
+float Image::wanted_size(RichTextContext const& context) const {
+    auto size = scaled_image_size(context);
+    return size.x() + 6;
 }
+
+Util::Vector2f Image::scaled_image_size(RichTextContext const& context) const {
+    Util::Vector2f size { m_texture.size() };
+    if (size.y() > context.default_font.line_height(context.font_size)) {
+        size *= context.default_font.line_height(context.font_size) / size.y();
+    }
+    return size;
+};
 
 void Image::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     Gfx::RectangleDrawOptions rect;
     rect.texture = &m_texture;
-    Util::Vector2f size { m_texture.size() };
+    auto size = scaled_image_size(context);
     auto height = context.default_font.line_height(context.font_size);
     painter.draw_rectangle({ { position.x() + 3, position.y() + height / 2.f - size.y() / 2.f }, size }, rect);
 }
-
 }
