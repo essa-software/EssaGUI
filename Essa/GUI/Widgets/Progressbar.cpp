@@ -55,4 +55,7 @@ void Progressbar::step_by() {
     }
 }
 
+// FIXME: EML loader
+EML_REGISTER_CLASS(Progressbar)
+
 }
