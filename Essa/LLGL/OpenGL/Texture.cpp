@@ -69,6 +69,7 @@ Image Texture::copy_to_image() const {
 
 void Texture::ensure_initialized(Format format) {
     if (m_id == 0) {
+        // FIXME: Check if there is an OpenGL context active currently.
         glGenTextures(1, &m_id);
         set_filtering(Filtering::Nearest);
 
