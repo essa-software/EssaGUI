@@ -164,6 +164,16 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                             text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
                             text.draw(painter);
                         },
+                        [&](Gfx::RichText const& data) {
+                            Gfx::RichTextDrawable drawable { data,
+                                {
+                                    .default_font = Application::the().font(),
+                                    .font_size = static_cast<int>(theme().label_font_size),
+                                    .text_alignment = GUI::Align::CenterLeft
+                                } };
+                            drawable.set_rect({ cell_position + Util::Vector2f(5, 0), cell_size });
+                            drawable.draw(painter);
+                        },
                         [&](llgl::Texture const* data) {
                             Gfx::RectangleDrawOptions rect;
                             rect.texture = data;

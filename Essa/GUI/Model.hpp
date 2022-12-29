@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Essa/GUI/Graphics/RichText.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
 #include <EssaUtil/UString.hpp>
 #include <set>
@@ -9,7 +10,7 @@
 
 namespace GUI {
 
-using Variant = std::variant<Util::UString, llgl::Texture const*>;
+using Variant = std::variant<Util::UString, Gfx::RichText, llgl::Texture const*>;
 
 struct ModelColumn {
     float width = 15;

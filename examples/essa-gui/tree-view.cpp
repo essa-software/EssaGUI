@@ -76,7 +76,10 @@ private:
         }
         case T_Index: {
             auto data = static_cast<Index const*>(node.data);
-            return VariantList { Util::UString { data->name }, Util::UString { data->type } }[column];
+            Gfx::RichText text;
+            text.append(Util::UString { data->type }, Util::Colors::White);
+            text.append_image(GUI::Application::the().resource_manager().require_texture("gui/symlink.png"));
+            return VariantList { Util::UString { data->name }, text }[column];
         }
         }
         ESSA_UNREACHABLE;
@@ -143,7 +146,9 @@ void print_children(size_t depth, GUI::Model const& model, GUI::Model::Node cons
         fmt::print("{}", indent(depth));
         auto child = model.child(node, s);
         for (size_t c = 0; c < model.column_count(); c++) {
-            fmt::print("{}; ", std::get<Util::UString>(model.data(child, c)).encode());
+            auto data = model.data(child, 0);
+            bool is_string = std::holds_alternative<Util::UString>(data);
+            fmt::print("{}; ", is_string ? std::get<Util::UString>(data).encode() : "<?>");
         }
         fmt::print("\n");
 
@@ -165,7 +170,9 @@ void print_model_flattened(GUI::TreeView const& view) {
     auto row_count = view.displayed_row_count();
     for (size_t s = 0; s < row_count; s++) {
         auto node = view.displayed_row_at_index(s);
-        fmt::print("{}: {}\n", fmt::join(node.first, ", "), node.second.data ? std::get<Util::UString>(view.model()->data(node.second, 0)).encode() : "NULL");
+        auto data = view.model()->data(node.second, 0);
+        bool is_string = node.second.data && std::holds_alternative<Util::UString>(data);
+        fmt::print("{}: {}\n", fmt::join(node.first, ", "), is_string ? std::get<Util::UString>(data).encode() : "NULL");
     }
 }
 
@@ -187,10 +194,9 @@ int main() {
     db_model->db.m_tables.push_back(t1);
     db_model->db.m_tables.push_back(t2);
 
-    print_model(*db_model);
-
     GUI::Application app;
     auto& window = app.create_host_window({ 500, 500 }, "TreeView");
+    print_model(*db_model);
     auto& tv = window.set_main_widget<GUI::TreeView>();
 
     tv.set_model(std::move(db_model));

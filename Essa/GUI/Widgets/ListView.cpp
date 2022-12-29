@@ -93,6 +93,16 @@ void ListView::draw(Gfx::Painter& wnd) const {
                             text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
                             text.draw(wnd);
                         },
+                        [&](Gfx::RichText const& data) {
+                            Gfx::RichTextDrawable drawable { data,
+                                {
+                                    .default_font = Application::the().font(),
+                                    .font_size = static_cast<int>(theme().label_font_size),
+                                    .text_alignment = GUI::Align::CenterLeft,
+                                } };
+                            drawable.set_rect({ cell_position + Util::Vector2f(5, 0), cell_size });
+                            drawable.draw(wnd);
+                        },
                         [&](llgl::Texture const* data) {
                             Gfx::RectangleDrawOptions rect;
                             rect.texture = data;
@@ -140,5 +150,4 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
 }
 
 EML_REGISTER_CLASS(ListView);
-
 }
