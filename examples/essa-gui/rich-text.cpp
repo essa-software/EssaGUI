@@ -1,6 +1,6 @@
+#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/RichText.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Overlays/FileExplorer.hpp>
 #include <Essa/LLGL/Resources/TTFFont.hpp>
 
@@ -23,6 +23,11 @@ int main() {
     auto& window = app.create_host_window({ 1000, 1000 }, "Rich Text");
 
     Gfx::RichText text;
+
+    text.append("This thing will cost 50", Util::Colors::White);
+    text.append_fragment<Gfx::RichTextFragments::Image>(app.resource_manager().require_texture("gui/executableFile.png"));
+    text.append("\n", Util::Colors::White);
+
     text.append("Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi \
 iure unde optio error laboriosam exercitationem nam temporibus? Minus corporis \
 consectetur cumque non error. Harum totam, accusamus doloremque corporis rem obcaecati? ",

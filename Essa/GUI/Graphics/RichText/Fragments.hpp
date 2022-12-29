@@ -35,4 +35,17 @@ class LineBreak : public Base {
     virtual float wanted_size(RichTextContext const&) const override { return 0; }
     virtual void draw(RichTextContext const&, Util::Vector2f, Gfx::Painter&) const override { }
 };
+
+class Image : public Base {
+public:
+    explicit Image(llgl::Texture const& tex)
+        : m_texture(tex) { }
+
+private:
+    virtual float wanted_size(RichTextContext const&) const override;
+    virtual void draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter&) const override;
+
+    llgl::Texture const& m_texture;
+};
+
 }

@@ -21,4 +21,15 @@ Gfx::Text Text::text(RichTextContext const& context) const {
     return text;
 }
 
+float Image::wanted_size(RichTextContext const&) const {
+    return m_texture.size().x() + 6;
+}
+
+void Image::draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter& painter) const {
+    Gfx::RectangleDrawOptions rect;
+    rect.texture = &m_texture;
+    Util::Vector2f size { m_texture.size() };
+    painter.draw_rectangle({ { position.x() + 3, position.y() - size.y() }, size }, rect);
+}
+
 }
