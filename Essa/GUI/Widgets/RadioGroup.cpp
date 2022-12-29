@@ -58,4 +58,19 @@ void RadioGroup::add_radio(const Util::UString& caption) {
     m_buttons.back()->set_caption(caption);
 }
 
+EML::EMLErrorOr<void> RadioGroup::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    // Intentionally calling Widget to disallow setting Container properties from EML.
+    TRY(Widget::load_from_eml_object(object, loader));
+
+    for (auto const& child : object.objects) {
+        // FIXME: This is hacky. Doesn't even copy all RadioButton properties.
+        std::shared_ptr<RadioButton> button = TRY(child.construct<RadioButton>(loader, widget_tree_root()));
+        assert(button);
+        add_radio(button->caption());
+    }
+    return {};
+}
+
+EML_REGISTER_CLASS(RadioGroup);
+
 }

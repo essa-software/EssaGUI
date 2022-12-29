@@ -23,6 +23,8 @@ public:
     std::function<void(size_t)> on_change;
 
 private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
+
     size_t m_index = 0;
 
     std::vector<RadioButton*> m_buttons;
