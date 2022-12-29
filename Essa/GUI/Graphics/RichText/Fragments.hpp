@@ -13,6 +13,7 @@ public:
     virtual ~Base() = default;
     virtual float wanted_size(RichTextContext const&) const = 0;
     virtual void draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter&) const = 0;
+    virtual std::unique_ptr<Base> clone() const = 0;
 };
 
 class Text : public Base {
@@ -23,6 +24,7 @@ public:
 
     virtual float wanted_size(RichTextContext const&) const override;
     virtual void draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter&) const override;
+    virtual std::unique_ptr<Base> clone() const override { return std::make_unique<Text>(*this); }
 
 private:
     Gfx::Text text(RichTextContext const&) const;
@@ -34,6 +36,7 @@ private:
 class LineBreak : public Base {
     virtual float wanted_size(RichTextContext const&) const override { return 0; }
     virtual void draw(RichTextContext const&, Util::Vector2f, Gfx::Painter&) const override { }
+    virtual std::unique_ptr<Base> clone() const override { return std::make_unique<LineBreak>(*this); }
 };
 
 class Image : public Base {
@@ -44,6 +47,7 @@ public:
 private:
     virtual float wanted_size(RichTextContext const&) const override;
     virtual void draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter&) const override;
+    virtual std::unique_ptr<Base> clone() const override { return std::make_unique<Image>(*this); }
 
     llgl::Texture const& m_texture;
 };

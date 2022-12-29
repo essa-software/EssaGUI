@@ -5,6 +5,25 @@
 
 namespace Gfx {
 
+RichText::RichText(RichText const& other) {
+    for (auto const& fragment : other.fragments()) {
+        m_fragments.push_back(fragment->clone());
+    }
+}
+
+RichText& RichText::operator=(RichText const& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    m_fragments.clear();
+    for (auto const& fragment : other.fragments()) {
+        m_fragments.push_back(fragment->clone());
+    }
+
+    return *this;
+}
+
 RichText& RichText::append(Util::UString const& string, Util::Color const& color) {
     size_t index = 0;
     while (true) {
@@ -29,8 +48,8 @@ RichText& RichText::append(Util::UString const& string, Util::Color const& color
     return *this;
 }
 
-void RichText::append_image(llgl::Texture const& texture) {
-    append_fragment<Gfx::RichTextFragments::Image>(texture);
+RichText& RichText::append_image(llgl::Texture const& texture) {
+    return append_fragment<Gfx::RichTextFragments::Image>(texture);
 }
 
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
