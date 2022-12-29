@@ -11,12 +11,13 @@ namespace Gfx {
 class RichText : public Util::NonCopyable {
 public:
     template<class T, class... Args>
-    requires(std::is_base_of_v<RichTextFragments::Base, T>) void append_fragment(Args&&... args) {
+    requires(std::is_base_of_v<RichTextFragments::Base, T>) RichText& append_fragment(Args&&... args) {
         m_fragments.push_back(std::make_unique<T>(std::forward<Args>(args)...));
+        return *this;
     }
 
-    void append(Util::UString const&, Util::Color const&);
-    void append_image(llgl::Texture const&);
+    RichText& append(Util::UString const&, Util::Color const&);
+    RichText& append_image(llgl::Texture const&);
 
     std::vector<std::unique_ptr<RichTextFragments::Base>> const& fragments() const { return m_fragments; }
 

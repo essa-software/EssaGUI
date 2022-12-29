@@ -5,7 +5,7 @@
 
 namespace Gfx {
 
-void RichText::append(Util::UString const& string, Util::Color const& color) {
+RichText& RichText::append(Util::UString const& string, Util::Color const& color) {
     size_t index = 0;
     while (true) {
         if (index >= string.size()) {
@@ -26,6 +26,7 @@ void RichText::append(Util::UString const& string, Util::Color const& color) {
             break;
         index = *next + 1;
     }
+    return *this;
 }
 
 void RichText::append_image(llgl::Texture const& texture) {
