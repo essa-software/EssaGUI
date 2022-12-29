@@ -31,4 +31,8 @@ private:
     Util::Color m_color;
 };
 
+class LineBreak : public Base {
+    virtual float wanted_size(RichTextContext const&) const override { return 0; }
+    virtual void draw(RichTextContext const&, Util::Vector2f, Gfx::Painter&) const override { }
+};
 }
