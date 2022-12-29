@@ -38,12 +38,12 @@ protected:
     virtual void handle_event(GUI::Event const&) override;
     virtual void draw(Gfx::Painter&) override;
 
-private:
     virtual void update() override {
         WidgetTreeRoot::update();
         m_first_tick = false;
     }
 
+private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     Util::Vector2f m_position;
