@@ -15,6 +15,7 @@ template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
 void ListView::draw(Gfx::Painter& wnd) const {
+    theme().renderer().draw_text_editor_border(*this, false, wnd);
     auto row_height = theme().line_height;
     auto row_width = this->row_width();
 
