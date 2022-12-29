@@ -10,7 +10,7 @@ float Text::wanted_size(RichTextContext const& context) const {
 
 void Text::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     auto text = this->text(context);
-    text.set_position(position);
+    text.align(GUI::Align::CenterLeft, { position, { 0, context.default_font.line_height(context.font_size) } });
     text.draw(painter);
 }
 
@@ -30,8 +30,8 @@ void Image::draw(RichTextContext const& context, Util::Vector2f position, Gfx::P
     Gfx::RectangleDrawOptions rect;
     rect.texture = &m_texture;
     Util::Vector2f size { m_texture.size() };
-    auto height = context.default_font.calculate_text_size("I", context.font_size);
-    painter.draw_rectangle({ { position.x() + 3, position.y() - height.y() / 4.f - size.y() / 2.f }, size }, rect);
+    auto height = context.default_font.line_height(context.font_size);
+    painter.draw_rectangle({ { position.x() + 3, position.y() + height / 2.f - size.y() / 2.f }, size }, rect);
 }
 
 }

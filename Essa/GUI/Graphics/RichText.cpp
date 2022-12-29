@@ -53,22 +53,62 @@ RichText& RichText::append_image(llgl::Texture const& texture) {
 
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
     float const line_height = m_context.default_font.line_height(m_context.font_size);
-    Util::Vector2f current_position;
-    current_position.y() += line_height;
 
-    for (auto const& frag : m_text.fragments()) {
-        if (Util::is<RichTextFragments::LineBreak>(*frag)) {
-            current_position.x() = 0;
-            current_position.y() += line_height;
-            continue;
+    // 1. Calculate how many lines we need.
+    size_t line_count = 1;
+    {
+        Util::Vector2f current_position;
+        for (auto const& frag : m_text.fragments()) {
+            if (Util::is<RichTextFragments::LineBreak>(*frag)) {
+                current_position.x() = 0;
+                current_position.y() += line_height;
+                line_count++;
+                continue;
+            }
+            auto wanted_size = frag->wanted_size(m_context);
+            if (current_position.x() + wanted_size > m_rect.width) {
+                current_position.x() = 0;
+                current_position.y() += line_height;
+                line_count++;
+            }
+            current_position.x() += wanted_size;
         }
-        auto wanted_size = frag->wanted_size(m_context);
-        if (current_position.x() + wanted_size > m_rect.width) {
-            current_position.x() = 0;
-            current_position.y() += line_height;
+    }
+
+    // 2. Render lines, aligning them properly.
+    {
+        Util::Vector2f current_position;
+        switch (m_context.text_alignment) {
+        case GUI::Align::TopLeft:
+        case GUI::Align::Top:
+        case GUI::Align::TopRight:
+            current_position.y() = 0;
+            break;
+        case GUI::Align::CenterLeft:
+        case GUI::Align::Center:
+        case GUI::Align::CenterRight:
+            current_position.y() = m_rect.height / 2.f - line_count * line_height / 2.f;
+            break;
+        case GUI::Align::BottomLeft:
+        case GUI::Align::Bottom:
+        case GUI::Align::BottomRight:
+            current_position.y() = m_rect.height - line_count * line_height;
+            break;
         }
-        frag->draw(m_context, current_position + m_rect.position(), painter);
-        current_position.x() += wanted_size;
+        for (auto const& frag : m_text.fragments()) {
+            if (Util::is<RichTextFragments::LineBreak>(*frag)) {
+                current_position.x() = 0;
+                current_position.y() += line_height;
+                continue;
+            }
+            auto wanted_size = frag->wanted_size(m_context);
+            if (current_position.x() + wanted_size > m_rect.width) {
+                current_position.x() = 0;
+                current_position.y() += line_height;
+            }
+            frag->draw(m_context, current_position + m_rect.position(), painter);
+            current_position.x() += wanted_size;
+        }
     }
 }
 
