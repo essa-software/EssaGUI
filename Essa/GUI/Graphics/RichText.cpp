@@ -29,20 +29,20 @@ void RichText::append(Util::UString const& string, Util::Color const& color) {
 }
 
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
-    constexpr float LineHeight = 30;
+    float const line_height = m_context.default_font.line_height(m_context.font_size);
     Util::Vector2f current_position;
-    current_position.y() += LineHeight;
+    current_position.y() += line_height;
 
     for (auto const& frag : m_text.fragments()) {
         if (Util::is<RichTextFragments::LineBreak>(*frag)) {
             current_position.x() = 0;
-            current_position.y() += LineHeight;
+            current_position.y() += line_height;
             continue;
         }
         auto wanted_size = frag->wanted_size(m_context);
         if (current_position.x() + wanted_size > m_rect.width) {
             current_position.x() = 0;
-            current_position.y() += LineHeight;
+            current_position.y() += line_height;
         }
         frag->draw(m_context, current_position + m_rect.position(), painter);
         current_position.x() += wanted_size;

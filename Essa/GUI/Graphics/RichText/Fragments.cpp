@@ -18,6 +18,7 @@ Gfx::Text Text::text(RichTextContext const& context) const {
     Gfx::Text text { m_string, context.default_font };
     text.set_string(m_string);
     text.set_fill_color(m_color);
+    text.set_font_size(context.font_size);
     return text;
 }
 
