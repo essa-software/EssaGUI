@@ -165,7 +165,7 @@ void print_model_flattened(GUI::TreeView const& view) {
     auto row_count = view.displayed_row_count();
     for (size_t s = 0; s < row_count; s++) {
         auto node = view.displayed_row_at_index(s);
-        fmt::print("{}: {}\n", fmt::join(node.first, ", "), node.second.data ? std::get<Util::UString>(view.model().data(node.second, 0)).encode() : "NULL");
+        fmt::print("{}: {}\n", fmt::join(node.first, ", "), node.second.data ? std::get<Util::UString>(view.model()->data(node.second, 0)).encode() : "NULL");
     }
 }
 

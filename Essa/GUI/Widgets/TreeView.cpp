@@ -29,7 +29,10 @@ Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPre
 }
 
 void TreeView::draw(Gfx::Painter& wnd) const {
-    auto& model = this->model();
+    if (!model()) {
+        return;
+    }
+    auto& model = *this->model();
 
     auto row_height = theme().line_height;
     auto row_width = this->row_width();
@@ -85,7 +88,7 @@ void TreeView::draw(Gfx::Painter& wnd) const {
 }
 
 void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vector<size_t> path, Model::Node const* parent) const {
-    auto& model = this->model();
+    auto& model = *this->model();
     auto columns = model.column_count();
     auto depth = path.size();
 
@@ -192,10 +195,13 @@ size_t TreeView::displayed_row_count() const {
 }
 
 size_t TreeView::recursive_displayed_row_count(Model::Node const* node, std::vector<size_t> path) const {
-    size_t children_count = model().children_count(node);
+    if (!model()) {
+        return 0;
+    }
+    size_t children_count = model()->children_count(node);
     size_t total_count = children_count;
     for (size_t s = 0; s < children_count; s++) {
-        auto child = model().child(node, s);
+        auto child = model()->child(node, s);
         auto child_path = path;
         child_path.push_back(s);
         total_count += is_expanded(child_path)
@@ -211,14 +217,17 @@ std::pair<std::vector<size_t>, Model::Node> TreeView::displayed_row_at_index(siz
 }
 
 std::pair<std::vector<size_t>, Model::Node> TreeView::recursive_displayed_row_at_index(Model::Node const* parent, std::vector<size_t> path, size_t& index) const {
+    if (!model()) {
+        return {};
+    }
     if (!is_expanded(path)) {
         return {};
     }
-    auto children_count = model().children_count(parent);
+    auto children_count = model()->children_count(parent);
     for (size_t s = 0; s < children_count; s++) {
         auto child_path = path;
         child_path.push_back(s);
-        auto child = model().child(parent, s);
+        auto child = model()->child(parent, s);
         index--;
         if (index == 0) {
             return { child_path, child };

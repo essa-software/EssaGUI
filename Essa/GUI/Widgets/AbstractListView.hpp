@@ -23,9 +23,8 @@ public:
 
     CREATE_VALUE(bool, display_header, true);
 
-    Model& model() const {
-        assert(m_model);
-        return *m_model;
+    Model* model() const {
+        return m_model.get();
     }
 
 protected:

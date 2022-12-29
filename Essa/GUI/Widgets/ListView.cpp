@@ -16,10 +16,15 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 void ListView::draw(Gfx::Painter& wnd) const {
     theme().renderer().draw_text_editor_border(*this, false, wnd);
+
+    if (!model()) {
+        return;
+    }
+
     auto row_height = theme().line_height;
     auto row_width = this->row_width();
 
-    auto& model = this->model();
+    auto& model = *this->model();
 
     size_t rows = model.row_count();
     size_t columns = model.column_count();
@@ -106,7 +111,11 @@ void ListView::draw(Gfx::Painter& wnd) const {
 Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPress const& event) {
     ScrollableWidget::on_mouse_button_press(event);
 
-    size_t rows = model().root_row_count();
+    if (!model()) {
+        return Widget::EventHandlerResult::NotAccepted;
+    }
+
+    size_t rows = model()->root_row_count();
     auto mouse_pos = event.local_position();
 
     if (is_mouse_over(mouse_pos)) {
