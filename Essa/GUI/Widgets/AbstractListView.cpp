@@ -22,4 +22,9 @@ Util::Vector2f AbstractListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, theme().line_height };
 }
 
+EML::EMLErrorOr<void> AbstractListView::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+    m_display_header = TRY(object.get_property("display_header", false).to_bool());
+    return {};
+}
+
 }

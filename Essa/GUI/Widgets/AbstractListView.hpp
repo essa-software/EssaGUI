@@ -31,6 +31,7 @@ protected:
     virtual Util::Vector2f content_size() const override;
     float row_width() const;
     Util::Vector2f cell_size(size_t row, size_t column) const;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;
 
 private:
     std::unique_ptr<Model> m_model;

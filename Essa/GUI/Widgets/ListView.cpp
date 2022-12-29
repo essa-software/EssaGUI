@@ -139,4 +139,6 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
     return EventHandlerResult::NotAccepted;
 }
 
+EML_REGISTER_CLASS(ListView);
+
 }
