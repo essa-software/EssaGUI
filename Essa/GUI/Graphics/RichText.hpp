@@ -16,6 +16,7 @@ public:
     }
 
     void append(Util::UString const&, Util::Color const&);
+    void append_image(llgl::Texture const&);
 
     std::vector<std::unique_ptr<RichTextFragments::Base>> const& fragments() const { return m_fragments; }
 

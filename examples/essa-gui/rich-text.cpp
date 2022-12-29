@@ -34,7 +34,7 @@ consectetur cumque non error. Harum totam, accusamus doloremque corporis rem obc
         Util::Colors::White);
 
     text.append("This thing will cost 50", Util::Colors::White);
-    text.append_fragment<Gfx::RichTextFragments::Image>(app.resource_manager().require_texture("gui/executableFile.png"));
+    text.append_image(app.resource_manager().require_texture("gui/executableFile.png"));
 
     text.append("Lorem ipsum dolor\u00a0sit (NBSP working as expected) amet consectetur adipisicing elit. Modi \
 iure unde optio error laboriosam exercitationem nam temporibus? Minus corporis \

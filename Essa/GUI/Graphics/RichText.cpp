@@ -28,6 +28,10 @@ void RichText::append(Util::UString const& string, Util::Color const& color) {
     }
 }
 
+void RichText::append_image(llgl::Texture const& texture) {
+    append_fragment<Gfx::RichTextFragments::Image>(texture);
+}
+
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
     float const line_height = m_context.default_font.line_height(m_context.font_size);
     Util::Vector2f current_position;
