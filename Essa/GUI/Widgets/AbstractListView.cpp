@@ -1,5 +1,7 @@
 #include "AbstractListView.hpp"
 
+#include <Essa/GUI/Widgets/ScrollableWidget.hpp>
+
 namespace GUI {
 
 Util::Vector2f AbstractListView::row_position(size_t row) const {
@@ -22,7 +24,9 @@ Util::Vector2f AbstractListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, theme().line_height };
 }
 
-EML::EMLErrorOr<void> AbstractListView::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+EML::EMLErrorOr<void> AbstractListView::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(ScrollableWidget::load_from_eml_object(object, loader));
+
     m_display_header = TRY(object.get_property("display_header", false).to_bool());
     return {};
 }
