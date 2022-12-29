@@ -26,11 +26,12 @@ float Image::wanted_size(RichTextContext const&) const {
     return m_texture.size().x() + 6;
 }
 
-void Image::draw(RichTextContext const&, Util::Vector2f position, Gfx::Painter& painter) const {
+void Image::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     Gfx::RectangleDrawOptions rect;
     rect.texture = &m_texture;
     Util::Vector2f size { m_texture.size() };
-    painter.draw_rectangle({ { position.x() + 3, position.y() - size.y() }, size }, rect);
+    auto height = context.default_font.calculate_text_size("I", context.font_size);
+    painter.draw_rectangle({ { position.x() + 3, position.y() - height.y() / 4.f - size.y() / 2.f }, size }, rect);
 }
 
 }
