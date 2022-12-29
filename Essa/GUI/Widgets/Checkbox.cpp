@@ -68,7 +68,7 @@ void Checkbox::draw(Gfx::Painter& painter) const {
         }
     }
 
-    Util::Rectf text_rect(raw_position().x() + raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
+    Util::Rectf text_rect(7 + box.width, 0, raw_size().x() - 10, raw_size().y());
 
     Gfx::Text text { m_caption, Application::the().font() };
     text.set_fill_color(theme().label.text);
