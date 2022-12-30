@@ -36,7 +36,7 @@ private:
     }
 
     void append_point() {
-        bool equation = Util::Random::default_engine()() % 2;
+        bool equation = Util::Random::default_engine().next_bool(2);
         auto old_position = m_current_position;
         if (equation) {
             m_current_position.x() = -0.4 * old_position.x() - 1;
