@@ -21,6 +21,10 @@ Widget::EventHandlerResult ScrollableWidget::on_mouse_scroll(Event::MouseScroll 
     if (scroll_component > bottom_content)
         scroll_component = bottom_content;
 
+    if (on_scroll) {
+        on_scroll();
+    }
+
     return Widget::EventHandlerResult::Accepted;
 }
 
@@ -87,4 +91,5 @@ Util::Vector2f ScrollableWidget::scroll_area_size() const {
         size.y() -= 5;
     return size;
 }
+
 }
