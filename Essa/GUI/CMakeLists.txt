@@ -57,6 +57,7 @@ add_library(GUI SHARED
     Widgets/Progressbar.cpp
     Widgets/RadioButton.cpp
     Widgets/RadioGroup.cpp
+    Widgets/ScrollableContainer.cpp
     Widgets/ScrollableWidget.cpp
     Widgets/SelectWidget.cpp
     Widgets/SettingsMenu.cpp
