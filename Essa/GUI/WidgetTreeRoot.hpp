@@ -31,10 +31,7 @@ public:
         auto widget_ptr = widget.get();
         m_main_widget = std::move(widget);
         m_main_widget->set_widget_tree_root(*this);
-        if (!m_main_widget->m_initialized) {
-            m_main_widget->on_init();
-            m_main_widget->m_initialized = true;
-        }
+        m_main_widget->init();
         m_needs_relayout = true;
         return *widget_ptr;
     }
@@ -44,10 +41,7 @@ public:
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
         m_main_widget->set_widget_tree_root(*this);
-        if (!m_main_widget->m_initialized) {
-            m_main_widget->on_init();
-            m_main_widget->m_initialized = true;
-        }
+        m_main_widget->init();
         m_needs_relayout = true;
         return *widget_ptr;
     }

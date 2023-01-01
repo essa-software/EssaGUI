@@ -188,6 +188,13 @@ public:
     }
     virtual void on_init() { }
 
+    void init() {
+        if (!m_initialized) {
+            on_init();
+            m_initialized = true;
+        }
+    }
+    
     // FIXME: This should probably be private.
     void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
 

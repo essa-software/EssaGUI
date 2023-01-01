@@ -118,20 +118,14 @@ public:
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(widget);
         widget->set_parent(*this);
-        if (!widget->m_initialized) {
-            widget->on_init();
-            widget->m_initialized = true;
-        }
+        widget->init();
         set_needs_relayout();
         return widget.get();
     }
 
     void add_created_widget(std::shared_ptr<Widget> widget) {
         widget->set_parent(*this);
-        if (!widget->m_initialized) {
-            widget->on_init();
-            widget->m_initialized = true;
-        }
+        widget->init();
         m_widgets.push_back(std::move(widget));
         set_needs_relayout();
     }
