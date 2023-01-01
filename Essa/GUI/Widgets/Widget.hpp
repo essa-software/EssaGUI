@@ -188,6 +188,9 @@ public:
     }
     virtual void on_init() { }
 
+    // FIXME: This should probably be private.
+    void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
+
 protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
     Theme const& theme() const;
@@ -235,7 +238,6 @@ private:
     friend Container;
     friend WidgetTreeRoot;
 
-    void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
     void set_parent(Container& parent);
 
     virtual LengthVector initial_size() const { return LengthVector {}; }
