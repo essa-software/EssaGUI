@@ -188,6 +188,9 @@ public:
     }
     virtual void on_init() { }
 
+    // "Total size" size of all children of a widget (with padding included), or a widget itself.
+    virtual Util::Vector2f total_size() const { return raw_size(); }
+
     void init() {
         if (!m_initialized) {
             on_init();

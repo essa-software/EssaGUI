@@ -121,6 +121,16 @@ void BoxLayout::run(Container& container) {
     }*/
 }
 
+Util::Vector2f BoxLayout::total_size(Container const& container) const {
+    float main_size = m_padding.main_sum(m_orientation);
+    for (auto const& widget : container.widgets()) {
+        main_size += widget->raw_size().main(m_orientation) + m_spacing;
+    }
+    main_size -= m_spacing;
+    float cross_size = container.raw_size().cross(m_orientation);
+    return Util::Vector2f::from_main_cross(m_orientation, main_size, cross_size);
+}
+
 EML::EMLErrorOr<void> BoxLayout::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Layout::load_from_eml_object(object, loader));
 
@@ -179,6 +189,10 @@ void BasicLayout::run(Container& container) {
 
         w->set_raw_position({ x + container.raw_position().x(), y + container.raw_position().y() });
     }
+}
+
+Util::Vector2f BasicLayout::total_size(Container const& container) const {
+    return container.raw_size();
 }
 
 EML_REGISTER_CLASS(BasicLayout);
@@ -392,6 +406,10 @@ Widget* Container::find_widget_by_id_recursively(std::string_view id) const {
     return nullptr;
 }
 
+Util::Vector2f Container::total_size() const {
+    return m_layout->total_size(*this);
+}
+
 EML::EMLErrorOr<void> Container::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
@@ -407,4 +425,5 @@ EML::EMLErrorOr<void> Container::load_from_eml_object(EML::Object const& object,
 }
 
 EML_REGISTER_CLASS(Container);
+
 }
