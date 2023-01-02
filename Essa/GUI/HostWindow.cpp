@@ -1,4 +1,5 @@
 #include "HostWindow.hpp"
+#include "Essa/LLGL/Window/Event.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
@@ -23,6 +24,14 @@ void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
 
 void HostWindow::handle_event(GUI::Event const& event) {
     // TODO: Allow user to override closed event
+
+    if (event.target_type() == llgl::EventTargetType::Global) {
+        for (auto const& overlay : m_overlays) {
+            overlay->handle_event(event.relativized(Util::Vector2i { overlay->position() }));
+        }
+        WidgetTreeRoot::handle_event(event);
+        return;
+    }
 
     // Focus window if mouse button pressed
     if (auto mouse_button = event.get<llgl::Event::MouseButtonPress>()) {
