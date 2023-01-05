@@ -71,7 +71,6 @@ void BoxLayout::run(Container& container) {
     float autosized_widget_size = (available_size_for_autosized_widgets - (m_spacing * (autosized_widget_count - 1))) / autosized_widget_count;
     if (autosized_widget_size < 0)
         autosized_widget_size = 0;
-    size_t index = 0;
     switch (m_content_alignment) {
     case ContentAlignment::BoxStart: {
         float current_position = 0;
@@ -89,7 +88,6 @@ void BoxLayout::run(Container& container) {
                 container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
                 container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)));
             current_position += w->raw_size().main(m_orientation) + m_spacing;
-            index++;
         }
     } break;
     case ContentAlignment::BoxEnd: {
@@ -109,7 +107,6 @@ void BoxLayout::run(Container& container) {
                 m_orientation,
                 container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
                 container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)));
-            index++;
         }
     } break;
     }
