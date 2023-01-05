@@ -27,6 +27,14 @@ void WidgetTreeRoot::handle_event(GUI::Event const& event) {
     if (!m_main_widget)
         return;
 
+    // FIXME: Find a way to make first focusable widget focused "from start".
+    if (!m_focused_widget && event.is<GUI::Event::KeyPress>()) {
+        auto key_event = *event.get<GUI::Event::KeyPress>();
+        if (key_event.code() == llgl::KeyCode::Tab) {
+            m_main_widget->focus_first_child_or_self();
+        }
+        return;
+    }
     m_main_widget->do_handle_event(event);
 }
 
