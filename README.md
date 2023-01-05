@@ -2,7 +2,7 @@
 
 A GUI framework written in C++. It was initially a component of [ESSA](https://github.com/essa-software/essa). Currently is developed along with [EssaDB](https://github.com/essa-software/EssaDB).
 
-**EssaGUI** uses [LLGL](/LLGL) and OpenGL 3.2 as rendering backends. EssaGUI apps run a simple window manager in the main (system) window. You can open dialogs and other windows here.
+**EssaGUI** uses [LLGL](/Essa/LLGL) and OpenGL 3.2 as rendering backends. EssaGUI apps run a simple window manager in the main (system) window. You can open dialogs and other windows here.
 
 ## Features
 
