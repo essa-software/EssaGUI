@@ -8,6 +8,7 @@ namespace GUI {
 
 class AbstractListView : public ScrollableWidget {
 public:
+    // Calculate row position for index, in widget-local coords.
     Util::Vector2f row_position(size_t) const;
 
     void set_model(std::unique_ptr<Model> model) { m_model = std::move(model); }

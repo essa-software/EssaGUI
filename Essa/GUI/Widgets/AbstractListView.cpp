@@ -5,7 +5,7 @@
 namespace GUI {
 
 Util::Vector2f AbstractListView::row_position(size_t row) const {
-    return Util::Vector2f { raw_position().x(), raw_position().y() + theme().line_height * (display_header() ? row + 1 : row) } + scroll_offset();
+    return Util::Vector2f { 0, theme().line_height * (display_header() ? row + 1 : row) } + scroll_offset();
 }
 
 Util::Vector2f AbstractListView::content_size() const {
