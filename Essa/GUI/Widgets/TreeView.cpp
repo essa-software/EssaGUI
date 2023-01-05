@@ -14,7 +14,7 @@ constexpr float IndentSize = 24;
 
 Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPress const& event) {
     if (event.button() == llgl::MouseButton::Left) {
-        size_t row = (event.local_position().y() - raw_position().y() - scroll_offset().y()) / theme().line_height;
+        size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
         auto path = displayed_row_at_index(row);
         if (!path.first.empty()) {
             if (m_expanded_paths.contains(path.first)) {
