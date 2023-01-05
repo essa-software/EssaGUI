@@ -138,6 +138,8 @@ public:
     virtual void do_relayout() override;
     virtual void do_draw(Gfx::Painter& window) const override;
 
+    virtual bool is_focused() const override;
+
     void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 
     template<class T, class... Args>

@@ -160,7 +160,7 @@ public:
     bool are_all_parents_enabled() const;
 
     void set_focused();
-    bool is_focused() const;
+    virtual bool is_focused() const;
 
     Container* parent() const { return m_parent; }
 

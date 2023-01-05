@@ -237,6 +237,15 @@ Widget::EventHandlerResult Container::on_key_press(Event::KeyPress const& event)
     return EventHandlerResult::NotAccepted;
 }
 
+bool Container::is_focused() const {
+    for (auto const& child : m_widgets) {
+        if (child->is_focused()) {
+            return true;
+        }
+    }
+    return Widget::is_focused();
+}
+
 std::optional<size_t> Container::focused_widget_index(bool recursive) const {
     for (size_t c = 0; auto& w : m_widgets) {
         if (widget_tree_root().focused_widget() == w.get())
