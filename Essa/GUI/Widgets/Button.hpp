@@ -13,6 +13,7 @@ public:
 
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
     virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) override;
+    virtual Widget::EventHandlerResult on_key_press(Event::KeyPress const&) override;
     virtual void draw(Gfx::Painter& window) const override = 0;
 
     bool is_active() const { return m_active; }

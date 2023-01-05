@@ -1,6 +1,7 @@
 #include "TextButton.hpp"
 
 #include "Button.hpp"
+#include "Essa/GUI/Graphics/Painter.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
@@ -48,6 +49,14 @@ void TextButton::draw(Gfx::Painter& painter) const {
 
     text.align(GUI::Align::Center, text_rect);
     text.draw(painter);
+
+    if (is_focused()) {
+        Gfx::RectangleDrawOptions focus_rect;
+        focus_rect.fill_color = Util::Colors::Transparent;
+        focus_rect.outline_color = theme().focus_frame;
+        focus_rect.outline_thickness = -1;
+        painter.draw_rectangle(local_rect(), focus_rect);
+    }
 }
 
 EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

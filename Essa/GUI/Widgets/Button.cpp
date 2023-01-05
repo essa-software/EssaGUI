@@ -16,6 +16,14 @@ Widget::EventHandlerResult Button::on_mouse_button_release(Event::MouseButtonRel
     return Widget::EventHandlerResult::Accepted;
 }
 
+Widget::EventHandlerResult Button::on_key_press(Event::KeyPress const& event) {
+    if (event.code() == llgl::KeyCode::Enter) {
+        click();
+        return Widget::EventHandlerResult::Accepted;
+    }
+    return Widget::EventHandlerResult::NotAccepted;
+}
+
 Theme::BgFgTextColors Button::colors_for_state() const {
     auto colors = m_button_colors_override.value_or(default_button_colors()).value(*this);
     return colors;
