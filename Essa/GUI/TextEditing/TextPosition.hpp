@@ -26,4 +26,9 @@ struct TextSpan {
     size_t size;
 };
 
+struct TextRange {
+    TextPosition start;
+    TextPosition end;
+};
+
 }

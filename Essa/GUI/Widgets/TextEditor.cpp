@@ -655,14 +655,14 @@ void TextEditor::draw(Gfx::Painter& painter) const {
         selected_rect.fill_color = theme().selection.value(*this);
         auto selection_start = std::min(m_selection_start, cursor);
         auto selection_end = std::max(m_selection_start, cursor);
-        for (size_t s = selection_start.line; s <= selection_end.line; s++) {
-            Gfx::Text text { m_lines[s], Application::the().fixed_width_font() };
+        for_each_line_in_range({ selection_start, selection_end }, [&](size_t line, size_t start, size_t end) {
+            Gfx::Text text { m_lines[line], Application::the().fixed_width_font() };
             text.set_font_size(theme().label_font_size);
-            float start = text.find_character_position(s == selection_start.line ? selection_start.column : 0);
-            float end = text.find_character_position(s == selection_end.line ? selection_end.column : m_lines[s].size());
-            float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * s : raw_size().y() / 2 - cursor_height / 2;
-            painter.draw_rectangle({ Util::Vector2f { start + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end - start, cursor_height } }, selected_rect);
-        }
+            float start_x = text.find_character_position(start);
+            float end_x = text.find_character_position(end);
+            float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * line : raw_size().y() / 2 - cursor_height / 2;
+            painter.draw_rectangle({ Util::Vector2f { start_x + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end_x - start_x, cursor_height } }, selected_rect);
+        });
     }
 
     Gfx::Text text { "", GUI::Application::the().fixed_width_font() };

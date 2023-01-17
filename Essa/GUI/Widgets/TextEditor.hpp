@@ -44,6 +44,17 @@ public:
 
     void set_syntax_highlighter(std::unique_ptr<SyntaxHighlighter> h) { m_syntax_highlighter = std::move(h); }
 
+    // Callback is void callback(size_t line, size_t start_column, size_t end_column)
+    // Note: This is overflow-safe.
+    template<class Callback>
+    void for_each_line_in_range(TextRange range, Callback&& callback) const {
+        for (size_t line = range.start.line; line <= range.end.line; line++) {
+            auto start = line == range.start.line ? range.start.column : 0;
+            auto end = line == range.end.line ? range.end.column : m_lines[line].size();
+            callback(line, start, end);
+        }
+    }
+
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
