@@ -628,6 +628,29 @@ void TextEditor::did_content_change() {
     m_content_changed = true;
 }
 
+static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type type, Util::Vector2f start, float width) {
+    auto draw_curly = [&](Util::Vector2f position, float width, Util::Color color) {
+        std::vector<Gfx::Vertex> vertices;
+        for (float x = position.x(); x < position.x() + width; x += 1) {
+            float y = position.y() + std::sin(x / 6 * (2 * M_PI)) * 1.5;
+            vertices.push_back(Gfx::Vertex { { x, y }, color, {} });
+        }
+        painter.draw_vertices(llgl::PrimitiveType::LineStrip, vertices);
+    };
+
+    switch (type) {
+    case TextEditor::ErrorSpan::Type::Note:
+        draw_curly(start, width, Util::Colors::Gray);
+        break;
+    case TextEditor::ErrorSpan::Type::Warning:
+        draw_curly(start, width, Util::Colors::Orange);
+        break;
+    case TextEditor::ErrorSpan::Type::Error:
+        draw_curly(start, width, Util::Colors::Red);
+        break;
+    }
+}
+
 void TextEditor::draw(Gfx::Painter& painter) const {
     auto cursor = real_cursor_position();
     auto theme_colors = theme().textbox.value(*this);
@@ -694,6 +717,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
                 text.draw(painter);
             }
             else {
+                // Text
                 Gfx::ClipViewScope scope { painter, Util::Vector2u { host_window().size() }, Util::Recti { clip_rect }, Gfx::ClipViewScope::Mode::Intersect };
 
                 size_t character_index = 0;
@@ -721,6 +745,15 @@ void TextEditor::draw(Gfx::Painter& painter) const {
                         character_index++;
                     }
                     character_index++; // Newline
+                }
+
+                // Errors
+                for (auto const& error : m_error_spans) {
+                    Util::Vector2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
+                    for_each_line_in_range(error.range, [&](size_t line, size_t start, size_t end) {
+                        Util::Vector2f start_position { base_position.x() + start * character_width, base_position.y() + line * line_height + 3 };
+                        draw_error_line(painter, error.type, start_position, (end - start) * character_width);
+                    });
                 }
             }
         }

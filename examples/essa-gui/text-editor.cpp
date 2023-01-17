@@ -1,8 +1,8 @@
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/TextEditing/SyntaxHighlighter.hpp>
 #include <Essa/GUI/Widgets/TextEditor.hpp>
 #include <Essa/GUI/Widgets/Textbox.hpp>
-#include <Essa/GUI/TextEditing/SyntaxHighlighter.hpp>
 
 class TestSyntaxHighlighter : public GUI::SyntaxHighlighter {
     virtual std::vector<GUI::TextStyle> styles() const override {
@@ -30,6 +30,15 @@ int main() {
     auto text_editor = container1.add_widget<GUI::TextEditor>();
     text_editor->set_placeholder("Test placeholder");
     text_editor->set_syntax_highlighter(std::make_unique<TestSyntaxHighlighter>());
+
+    text_editor->set_error_spans({
+        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Error,
+            { { 0, 0 }, { 0, 10 } } },
+        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Warning,
+            { { 1, 0 }, { 1, 10 } } },
+        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Note,
+            { { 2, 0 }, { 2, 10 } } },
+    });
 
     auto number_text_box = container1.add_widget<GUI::Textbox>();
     number_text_box->set_placeholder("Enter number");

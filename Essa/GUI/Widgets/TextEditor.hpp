@@ -44,6 +44,17 @@ public:
 
     void set_syntax_highlighter(std::unique_ptr<SyntaxHighlighter> h) { m_syntax_highlighter = std::move(h); }
 
+    struct ErrorSpan {
+        enum class Type {
+            Note,
+            Warning,
+            Error
+        };
+        Type type;
+        TextRange range;
+    };
+    void set_error_spans(std::vector<ErrorSpan> errors) { m_error_spans = std::move(errors); }
+
     // Callback is void callback(size_t line, size_t start_column, size_t end_column)
     // Note: This is overflow-safe.
     template<class Callback>
@@ -111,6 +122,7 @@ private:
     TextPosition m_cursor;
     TextPosition m_selection_start;
     std::unique_ptr<SyntaxHighlighter> m_syntax_highlighter;
+    std::vector<ErrorSpan> m_error_spans;
     bool m_content_changed = false;
 };
 
