@@ -622,10 +622,24 @@ void TextEditor::regenerate_styles() {
             }
         }
     }
+
+    m_error_spans.clear();
 }
 
 void TextEditor::did_content_change() {
     m_content_changed = true;
+}
+
+TextPosition TextEditor::index_to_position(size_t offset) const {
+    TextPosition position;
+
+    while (offset >= m_lines[position.line].size() + 1) {
+        position.line++;
+        offset -= m_lines[position.line].size() + 1;
+    }
+
+    position.column = offset;
+    return position;
 }
 
 static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type type, Util::Vector2f start, float width) {

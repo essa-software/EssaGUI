@@ -66,6 +66,9 @@ public:
         }
     }
 
+    // Convert codepoint index to text editor position (line:column).
+    TextPosition index_to_position(size_t) const;
+
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
