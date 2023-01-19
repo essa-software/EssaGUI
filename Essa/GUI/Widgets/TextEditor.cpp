@@ -722,6 +722,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
     {
         if (!m_multiline) {
             Util::Rectf align_rect { static_cast<float>(theme().text_editor_margin), 0, raw_size().x(), raw_size().y() };
+            align_rect = align_rect.move_x(scroll_offset().x());
             text.set_string(should_draw_placeholder ? m_placeholder : m_lines[0]);
             assert(should_draw_placeholder || line_count() > 0);
             text.align(Align::CenterLeft, align_rect);
