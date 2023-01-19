@@ -337,6 +337,7 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
                     m_lines.erase(m_lines.begin() + m_cursor.line + 1);
                 }
                 update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+                did_content_change();
             }
             else {
                 erase_selected_text();
