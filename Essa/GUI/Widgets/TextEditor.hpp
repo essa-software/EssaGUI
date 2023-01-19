@@ -26,7 +26,9 @@ public:
     bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].is_empty()); }
 
     CREATE_VALUE(Util::UString, placeholder, "")
-    CREATE_BOOLEAN(multiline, true)
+
+    void set_multiline(bool m);
+    bool is_multiline() const { return m_multiline; }
 
     enum class SetCursorSelectionBehavior {
         Extend,
@@ -127,6 +129,7 @@ private:
     std::unique_ptr<SyntaxHighlighter> m_syntax_highlighter;
     std::vector<ErrorSpan> m_error_spans;
     bool m_content_changed = false;
+    bool m_multiline = true;
 };
 
 }

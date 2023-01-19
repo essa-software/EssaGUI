@@ -120,6 +120,12 @@ void TextEditor::set_content(Util::UString content, NotifyUser notify_user) {
     }
 }
 
+void TextEditor::set_multiline(bool m) {
+    m_multiline = m;
+    set_x_scrollbar_visible(m_multiline);
+    set_y_scrollbar_visible(m_multiline);
+}
+
 void TextEditor::set_content_impl(Util::UString const& content) {
     m_lines.clear();
 
