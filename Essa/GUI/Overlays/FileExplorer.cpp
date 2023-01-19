@@ -185,34 +185,75 @@ llgl::Texture const* FileModel::file_icon(File const& file) const {
 
 FileExplorer::FileExplorer(HostWindow& window)
     : ToolWindow(window) {
-    static llgl::Texture& parent_directory_icon = resource_manager().require_texture("gui/parentDirectory.png");
-    static llgl::Texture& new_folder_icon = resource_manager().require_texture("gui/newFolder.png");
-    static llgl::Texture& new_file_icon = resource_manager().require_texture("gui/newFile.png");
+    (void)load_from_eml_resource(Application::the().resource_manager().require<EML::EMLResource>("FileExplorer.eml"));
 
-    auto& container = set_main_widget<GUI::Container>();
-    container.set_layout<VerticalBoxLayout>().set_spacing(1);
+    auto container = static_cast<Container*>(main_widget());
 
-    Util::Length toolbar_height = { static_cast<float>(theme().line_height), Util::Length::Unit::Px };
+    m_list = container->find_widget_of_type_by_id_recursively<ListView>("list");
+    m_list->on_click = [&](unsigned row) {
+        auto path = m_model->get_path(row);
 
-    auto toolbar = container.add_widget<Container>();
-    toolbar->set_layout<HorizontalBoxLayout>();
-    toolbar->set_size({ Util::Length::Auto, toolbar_height });
+        if (m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)) {
+            if (on_submit)
+                on_submit(path);
+            close();
+        }
+        else {
+            open_path(path);
+        }
+    };
 
-    m_path_textbox = toolbar->add_widget<Textbox>();
-    m_path_textbox->set_type(Textbox::Type::TEXT);
-    m_path_textbox->set_content(Util::UString { m_current_path.string() });
+    m_model = &m_list->create_and_set_model<FileModel>();
 
-    auto parent_directory_button = toolbar->add_widget<TextButton>();
-    parent_directory_button->set_image(&parent_directory_icon);
-    parent_directory_button->set_tooltip_text("Parent");
-    parent_directory_button->set_alignment(Align::Center);
-    parent_directory_button->set_size({ toolbar_height, Util::Length::Auto });
+    m_directory_path_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("directory_path");
+    m_directory_path_textbox->set_type(Textbox::TEXT);
+    m_directory_path_textbox->on_enter = [this](Util::UString const& str) {
+        open_path(str.encode());
+    };
 
-    auto create_directory_button = toolbar->add_widget<TextButton>();
-    create_directory_button->set_image(&new_folder_icon);
-    create_directory_button->set_tooltip_text("Create folder");
-    create_directory_button->set_alignment(Align::Center);
-    create_directory_button->set_size({ toolbar_height, Util::Length::Auto });
+    // m_file_name_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("file_name");
+    // m_file_name_textbox->set_type(Textbox::TEXT);
+
+    auto search_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("search");
+    search_textbox->set_type(Textbox::TEXT);
+    search_textbox->on_change = [this](Util::UString const& query) {
+        // FIXME: Port this to UString instead of encoding this to std::string
+        //        because of lazyness.
+        m_model->update_content(m_current_path, [query = query.encode()](std::filesystem::path path) -> bool {
+            // TODO: Support fuzzy search
+            auto str = path.string();
+            auto size = query.size();
+
+            if (query[0] != '*' && query[size - 1] != '*') {
+                return str.substr(0, size) == query;
+            }
+            else if (query[0] != '*' && query[size - 1] == '*') {
+                return str.substr(0, size - 1) == query.substr(0, size - 1);
+            }
+            else if (query[0] == '*' && query[size - 1] != '*') {
+                for (unsigned i = 0; i < str.size(); i++) {
+                    if (str.substr(i, std::min(i + size - 1, str.size())) == query.substr(1, size))
+                        return true;
+                }
+                return false;
+            }
+            else {
+                for (unsigned i = 0; i < str.size(); i++) {
+                    if (str.substr(i, std::min(i + size - 1, str.size())) == query.substr(1, size - 1))
+                        return true;
+                }
+                return false;
+            }
+            return false;
+        });
+    };
+
+    auto parent_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("parent_directory");
+    parent_directory_button->on_click = [&]() {
+        open_path(m_current_path.parent_path());
+    };
+
+    auto create_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("create_directory");
     create_directory_button->on_click = [&]() {
         auto path = GUI::prompt(host_window(), "Folder name: ", "Create folder");
         if (path.has_value()) {
@@ -228,63 +269,7 @@ FileExplorer::FileExplorer(HostWindow& window)
         };
     };
 
-    auto create_file_button = toolbar->add_widget<TextButton>();
-    create_file_button->set_image(&new_file_icon);
-    create_file_button->set_tooltip_text("Create file");
-    create_file_button->set_alignment(Align::Center);
-    create_file_button->set_size({ 30.0_px, Util::Length::Auto });
-    create_file_button->on_click = [&]() {
-        auto file_name = GUI::prompt(host_window(), "File name with extension: ", "Create file");
-        if (file_name.has_value()) {
-            // C++ Why mutable paths?!!!
-            auto new_path = m_current_path;
-            new_path.append(file_name->encode());
-            std::ofstream f_out(new_path);
-            m_model->update_content(m_current_path);
-        };
-    };
-
-    auto find = toolbar->add_widget<Textbox>();
-    find->set_placeholder("Find file or directory");
-    find->set_size({ { 25.0, Util::Length::Percent }, Util::Length::Auto });
-    find->set_type(Textbox::Type::TEXT);
-    find->on_change = [&](Util::UString const& content) {
-        // FIXME: The encode() hack
-        m_model->update_content(m_current_path, [content = content.encode()](std::filesystem::path path) {
-            // TODO: Support fuzzy search
-            auto str = path.string();
-            auto size = content.size();
-
-            if (content[0] != '*' && content[size - 1] != '*') {
-                return str.substr(0, size) == content;
-            }
-            else if (content[0] != '*' && content[size - 1] == '*') {
-                return str.substr(0, size - 1) == content.substr(0, size - 1);
-            }
-            else if (content[0] == '*' && content[size - 1] != '*') {
-                for (unsigned i = 0; i < str.size(); i++) {
-                    if (str.substr(i, std::min(i + size - 1, str.size())) == content.substr(1, size))
-                        return true;
-                }
-                return false;
-            }
-            else {
-                for (unsigned i = 0; i < str.size(); i++) {
-                    if (str.substr(i, std::min(i + size - 1, str.size())) == content.substr(1, size - 1))
-                        return true;
-                }
-                return false;
-            }
-            return false;
-        });
-    };
-
-    auto main_container = container.add_widget<Container>();
-    main_container->set_layout<HorizontalBoxLayout>().set_spacing(1);
-
-    auto sidebar = main_container->add_widget<Container>();
-    sidebar->set_size({ { 20.0, Util::Length::Percent }, Util::Length::Auto });
-    sidebar->set_layout<GUI::VerticalBoxLayout>();
+    auto sidebar = container->find_widget_of_type_by_id_recursively<GUI::Container>("sidebar");
     sidebar->set_background_color(theme().sidebar);
 
     auto add_common_location = [&](Util::UString const& name, std::filesystem::path path) {
@@ -299,58 +284,15 @@ FileExplorer::FileExplorer(HostWindow& window)
     auto home_directory = getenv("HOME");
     if (home_directory)
         add_common_location("Home", home_directory);
-
-    m_list = main_container->add_widget<ListView>();
-    m_model = &m_list->create_and_set_model<FileModel>();
-
-    m_list->on_click = [&](unsigned row) {
-        auto path = m_model->get_path(row);
-
-        if (m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)) {
-            if (on_submit)
-                on_submit(path);
-            close();
-        }
-        else {
-            open_path(path);
-        }
-    };
-
-    m_list->on_context_menu_request = [&](unsigned row) -> std::optional<ContextMenu> {
-        ContextMenu context_menu;
-        context_menu.set_title({ m_model->get_path(row).filename().string() });
-        context_menu.add_action("Open", [this, row]() {
-            m_list->on_click(row);
-        });
-        return context_menu;
-    };
-
-    m_path_textbox->on_enter = [&](Util::UString const& path) {
-        open_path(path.encode());
-    };
-
-    parent_directory_button->on_click = [&]() {
-        open_path(m_current_path.parent_path());
-    };
-
-    open_path(".");
-
-    auto open_folder_container = container.add_widget<GUI::Container>();
-    open_folder_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    open_folder_container->set_size({ Util::Length::Auto, 40.0_px });
-    open_folder_container->set_background_color(theme().sidebar);
-    auto footer_text = open_folder_container->add_widget<GUI::Textfield>();
-    footer_text->set_content("Choose folder to open: ");
-    footer_text->set_alignment(GUI::Align::CenterRight);
-    footer_text->set_size({ { 70.0, Util::Length::Percent }, Util::Length::Auto });
-
-    auto open_directory_btn = open_folder_container->add_widget<GUI::TextButton>();
-    open_directory_btn->set_content("Open folder");
-    open_directory_btn->set_alignment(Align::Center);
-    open_directory_btn->set_background_color(Util::Colors::Red);
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {
+    // FIXME: Hack because std c++ is weird as always with differentiating
+    // "/foo/bar" and "/foo/bar/"
+    if (path.string().ends_with("/")) {
+        path = path.parent_path();
+    }
+
     if (!std::filesystem::is_directory(path)) {
         // TODO: Implement that
         std::cout << "select path: " << path << std::endl;
@@ -365,7 +307,7 @@ void FileExplorer::open_path(std::filesystem::path path) {
         return;
     }
     m_current_path = path;
-    m_path_textbox->set_content(Util::UString { path.string() }, NotifyUser::No);
+    m_directory_path_textbox->set_content(Util::UString { path.string() }, NotifyUser::No);
     m_list->set_scroll({});
 }
 

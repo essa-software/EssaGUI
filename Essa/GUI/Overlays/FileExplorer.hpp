@@ -75,7 +75,8 @@ public:
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
 private:
-    Textbox* m_path_textbox {};
+    Textbox* m_directory_path_textbox {};
+    Textbox* m_file_name_textbox {};
     FileModel* m_model {};
     ListView* m_list {};
 };
