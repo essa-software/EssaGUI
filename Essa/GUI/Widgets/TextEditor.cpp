@@ -396,13 +396,12 @@ Util::UString TextEditor::selected_text() const {
     }
 
     Util::UString text;
-    for (size_t s = selection_start.line; s <= selection_end.line; s++) {
-        float start = s == selection_start.line ? selection_start.column : 0;
-        float end = s == selection_end.line ? selection_end.column : m_lines[s].size();
-        text = text + m_lines[s].substring(start, end - start);
-        if (s != selection_end.line)
+    for_each_line_in_range({ selection_start, selection_end }, [&](size_t line, size_t start, size_t end) {
+        text = text + m_lines[line].substring(start, end - start);
+        if (line != selection_end.line)
             text = text + "\n";
-    }
+    });
+
     return text;
 }
 
