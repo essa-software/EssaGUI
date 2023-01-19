@@ -137,6 +137,7 @@ void TextEditor::set_content_impl(Util::UString const& content) {
         m_cursor = {};
     }
     update_selection_after_set_cursor(SetCursorSelectionBehavior::Clear);
+    scroll_to_bottom();
 }
 
 void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior extend_selection) {
