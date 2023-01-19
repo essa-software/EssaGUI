@@ -280,10 +280,13 @@ FileExplorer::FileExplorer(HostWindow& window)
             open_path(path);
         };
     };
+
     add_common_location("Root", "/");
     auto home_directory = getenv("HOME");
     if (home_directory)
         add_common_location("Home", home_directory);
+
+    open_path(std::filesystem::current_path());
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {
