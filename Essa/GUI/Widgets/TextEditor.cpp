@@ -388,8 +388,8 @@ Widget::EventHandlerResult TextEditor::on_mouse_move(Event::MouseMove const& eve
 }
 
 Util::UString TextEditor::selected_text() const {
-    auto selection_start = std::min(m_selection_start, m_cursor);
-    auto selection_end = std::max(m_selection_start, m_cursor);
+    auto selection_start = std::min(m_selection_start, real_cursor_position());
+    auto selection_end = std::max(m_selection_start, real_cursor_position());
 
     if (selection_start.line == selection_end.line) {
         return m_lines[selection_start.line].substring(selection_start.column, selection_end.column - selection_start.column);
