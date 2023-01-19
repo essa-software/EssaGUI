@@ -38,7 +38,7 @@ void ScrollableWidget::set_scroll(Util::Vector2f scroll) {
 
 void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
     auto scrollable_rect = this->scrollable_rect();
-    {
+    if (m_x_scrollbar_visible) {
         float scroll_area_size = this->scroll_area_size().x();
         float content_size = this->content_size().x();
         if (content_size > scroll_area_size) {
@@ -52,7 +52,7 @@ void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
                 scrollbar);
         }
     }
-    {
+    if (m_y_scrollbar_visible) {
         float scroll_area_size = this->scroll_area_size().y();
         float content_size = this->content_size().y();
         if (content_size > scroll_area_size) {

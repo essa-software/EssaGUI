@@ -3,6 +3,7 @@
 #include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <EssaUtil/Enum.hpp>
 #include <functional>
 
 namespace GUI {
@@ -13,6 +14,10 @@ public:
     void set_scroll_x(float x) { m_scroll.x() = x; }
     void set_scroll_y(float y) { m_scroll.y() = y; }
     Util::Vector2f scroll() const { return m_scroll; }
+
+    // If this is set to false, scrollbar won't be visible even if content overflows.
+    void set_x_scrollbar_visible(bool v) { m_x_scrollbar_visible = v; }
+    void set_y_scrollbar_visible(bool v) { m_y_scrollbar_visible = v; }
 
     std::function<void()> on_scroll;
 
@@ -35,6 +40,8 @@ private:
     virtual Util::Vector2f content_size() const = 0;
 
     Util::Vector2f m_scroll {};
+    bool m_x_scrollbar_visible = true;
+    bool m_y_scrollbar_visible = true;
 };
 
 }
