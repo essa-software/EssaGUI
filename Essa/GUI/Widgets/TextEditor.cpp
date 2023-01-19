@@ -95,7 +95,6 @@ float TextEditor::character_width() const {
 }
 
 Util::UString TextEditor::content() const {
-    // TODO: Implement UStringBuilder
     Util::UStringBuilder builder;
     size_t content_length = 0;
     for (size_t s = 0; s < line_count(); s++) {
