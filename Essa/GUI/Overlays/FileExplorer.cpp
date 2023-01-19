@@ -290,11 +290,6 @@ FileExplorer::FileExplorer(HostWindow& window)
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {
-    // FIXME: Hack because std c++ is weird as always with differentiating
-    // "/foo/bar" and "/foo/bar/"
-    if (path.string().ends_with("/")) {
-        path = path.parent_path();
-    }
 
     if (!std::filesystem::is_directory(path)) {
         // TODO: Implement that
@@ -302,6 +297,14 @@ void FileExplorer::open_path(std::filesystem::path path) {
         return;
     }
     path = std::filesystem::absolute(path).lexically_normal();
+
+    // FIXME: Hack because std c++ is weird as always with differentiating
+    //        "/foo/bar" and "/foo/bar/" and (even weirder) considers "/foo/bar"
+    //        a PARENT for "/foo/bar/". WTF.
+    if (path.string().ends_with("/")) {
+        path = path.parent_path();
+    }
+
     try {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
