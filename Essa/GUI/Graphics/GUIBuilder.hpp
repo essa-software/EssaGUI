@@ -17,32 +17,13 @@ struct GUIBuilderRenderRange : public llgl::RenderRange {
     llgl::Projection projection;
     llgl::Transform view;
     llgl::Transform model;
+    llgl::Transform submodel;
     llgl::Texture const* texture = nullptr;
 };
 
 // Builder optimized for generating 2D GUI components, widgets etc.
 class GUIBuilder : public llgl::Builder<Vertex, GUIBuilderRenderRange> {
 public:
-    struct RectangleDrawOptions {
-        llgl::Texture const* texture = nullptr;
-        Util::Rectf texture_rect;
-        Util::Colorf fill_color;
-    };
-
-    void add_rectangle(Util::Rectf const& rect, RectangleDrawOptions const& options) {
-        add({
-            create_vertex(Util::Vector3f { rect.left, rect.top, 0 }, options.fill_color,
-                Util::Vector2f { options.texture_rect.left, options.texture_rect.top }, Util::Vector3f {}),
-            create_vertex(Util::Vector3f { rect.left + rect.width, rect.top, 0 }, options.fill_color,
-                Util::Vector2f { options.texture_rect.left + options.texture_rect.width, options.texture_rect.top }, Util::Vector3f {}),
-            create_vertex(Util::Vector3f { rect.left, rect.top + rect.height, 0 }, options.fill_color,
-                Util::Vector2f { options.texture_rect.left, options.texture_rect.top + options.texture_rect.height }, Util::Vector3f {}),
-            create_vertex(Util::Vector3f { rect.left + rect.width, rect.top + rect.height, 0 }, options.fill_color,
-                Util::Vector2f { options.texture_rect.left + options.texture_rect.width, options.texture_rect.top + options.texture_rect.height }, Util::Vector3f {}),
-        });
-        add_render_range_for_last_vertices(4, llgl::PrimitiveType::TriangleStrip, m_projection, m_view, m_model, options.texture);
-    }
-
     struct RegularPolygonDrawOptions {
         Util::Colorf color = Util::Colors::White;
         Util::Angle rotation {};
@@ -53,13 +34,13 @@ public:
             float angle = M_PI * 2 * s / vertices + options.rotation.rad();
             add(create_vertex(Util::Vector3f(Util::Vector2f::create_polar(angle, radius) + center, 0), options.color, Util::Vector2f {}, Util::Vector3f {}));
         }
-        add_render_range_for_last_vertices(vertices + 1, llgl::PrimitiveType::TriangleFan, m_projection, m_view, m_model);
+        add_render_range_for_last_vertices(vertices + 1, llgl::PrimitiveType::TriangleFan, m_projection, m_view, m_model, m_submodel);
     }
 
     void add_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const> vertices, llgl::Texture const* texture) {
         for (auto const& v : vertices)
             add(v);
-        add_render_range_for_last_vertices(vertices.size(), mode, m_projection, m_view, m_model, texture);
+        add_render_range_for_last_vertices(vertices.size(), mode, m_projection, m_view, m_model, m_submodel, texture);
     }
 
     void set_projection(llgl::Projection projection) { m_projection = std::move(projection); }
@@ -68,6 +49,11 @@ public:
     auto view() const { return m_view; }
     void set_model(llgl::Transform const& transform) { m_model = transform; }
     auto model() const { return m_model; }
+
+    // Submodel should NEVER be accessed directly, only in Painter.
+    // It is not guaranteed to maintain state after drawing calls.
+    void set_submodel(llgl::Transform const& transform) { m_submodel = transform; }
+    auto submodel() const { return m_submodel; }
 
 private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::create_vertex;
@@ -78,6 +64,7 @@ private:
         Gfx::DefaultGUIShader::Uniforms uniforms;
         uniforms.set_transform(range.model.matrix(), range.view.matrix(), range.projection.matrix());
         uniforms.set_texture(range.texture);
+        uniforms.submodel_matrix = range.submodel.matrix();
         llgl::set_viewport(range.projection.viewport());
         renderer.draw_vertices(vao, llgl::DrawState { m_shader, uniforms, range.type }, range.first, range.size);
     }
@@ -86,6 +73,7 @@ private:
     llgl::Projection m_projection;
     llgl::Transform m_view;
     llgl::Transform m_model;
+    llgl::Transform m_submodel;
 };
 
 }

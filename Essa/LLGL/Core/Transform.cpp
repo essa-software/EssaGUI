@@ -96,13 +96,32 @@ Transform Transform::scale_z(float scale) const {
 }
 
 Util::Vector3f Transform::transform_point(Util::Vector3f const& vector) const {
-    // TODO: Improve this constructor so that you can say vec4f(vector, 1) or something like this
     auto vector4 = Util::Vector4f { vector, 1 };
     if (m_matrix == Util::Matrix4x4f::identity())
         return vector;
     auto result = m_matrix * vector4;
     result /= result.w();
     return Util::Vector3f { result.x(), result.y(), result.z() };
+}
+
+Util::Vector2f Transform::transform_point_2d(Util::Vector2f const& vec) const {
+    return Util::Vector2f { transform_point(Util::Vector3f { vec, 0 }) };
+}
+
+std::vector<Util::Vector3f> Transform::transform_points(std::vector<Util::Vector3f> const& points) const {
+    std::vector<Util::Vector3f> output;
+    for (auto const& p : points) {
+        output.push_back(transform_point(p));
+    }
+    return output;
+}
+
+std::vector<Util::Vector2f> Transform::transform_points_2d(std::vector<Util::Vector2f> const& points) const {
+    std::vector<Util::Vector2f> output;
+    for (auto const& p : points) {
+        output.push_back(transform_point_2d(p));
+    }
+    return output;
 }
 
 }

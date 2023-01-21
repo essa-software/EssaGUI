@@ -1,94 +1,233 @@
 #include "Painter.hpp"
 
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
+#include <Essa/GUI/Graphics/Drawing/Shape.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
+#include <EssaUtil/Config.hpp>
+#include <algorithm>
+#include <fmt/ostream.h>
 
 namespace Gfx {
 
-constexpr size_t RoundedEdgeResolution = 10;
-constexpr size_t RoundedRectanglePointCount = RoundedEdgeResolution * 4;
+void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f> const& vertices) {
+    auto fill = shape.fill();
+    auto local_bounds = shape.local_bounds();
 
-static Util::Vector2f get_rounded_rectangle_vertex(std::size_t index, Util::Vector2f size, Gfx::RectangleDrawOptions const& options) {
-    size_t side = index / RoundedEdgeResolution;
+    std::vector<Gfx::Vertex> fill_vertices;
 
-    float subangle = (float)(index % RoundedEdgeResolution) / (RoundedEdgeResolution - 1) * M_PI_2;
-    float angle = subangle + side * M_PI_2;
-
-    float radius_top_left = std::min(std::min(options.border_radius_top_left, size.x() / 2), size.y() / 2);
-    float radius_top_right = std::min(std::min(options.border_radius_top_right, size.x() / 2), size.y() / 2);
-    float radius_bottom_left = std::min(std::min(options.border_radius_bottom_left, size.x() / 2), size.y() / 2);
-    float radius_bottom_right = std::min(std::min(options.border_radius_bottom_right, size.x() / 2), size.y() / 2);
-
-    Util::Vector2f offset;
-    Util::Vector2f base;
-    switch (side) {
-    case 0:
-        base = { size.x() - radius_bottom_right, size.y() - radius_bottom_right };
-        offset = { std::cos(angle) * radius_bottom_right, std::sin(angle) * radius_bottom_right };
-        break;
-    case 1:
-        base = { radius_bottom_left, size.y() - radius_bottom_left };
-        offset = { std::cos(angle) * radius_bottom_left, std::sin(angle) * radius_bottom_left };
-        break;
-    case 2:
-        base = { radius_top_left, radius_top_left };
-        offset = { std::cos(angle) * radius_top_left, std::sin(angle) * radius_top_left };
-        break;
-    case 3:
-        base = { size.x() - radius_top_right, radius_top_right };
-        offset = { std::cos(angle) * radius_top_right, std::sin(angle) * radius_top_right };
-        break;
-    default:
-        break;
+    Util::Vector2f texture_size { fill.texture() ? fill.texture()->size() : Util::Vector2u {} };
+    auto texture_rect = fill.texture_rect();
+    if (texture_rect.size() == Util::Vector2f {}) {
+        texture_rect.width = texture_size.x();
+        texture_rect.height = texture_size.y();
     }
-    auto result = base + offset;
-    return result;
+
+    auto normalized_texture_coord_for_point = [&](Util::Vector2f point) -> Util::Vector2f {
+        if (texture_rect.size() == Util::Vector2f {}) {
+            return {};
+        }
+
+        Util::Vector2f point_normalized_coords {
+            (point.x() - local_bounds.left) / local_bounds.width,
+            (point.y() - local_bounds.top) / local_bounds.height,
+        };
+        Util::Vector2f texture_coords {
+            texture_rect.left + point_normalized_coords.x() * texture_rect.width,
+            texture_rect.top + point_normalized_coords.y() * texture_rect.height,
+        };
+
+        return { texture_coords.x() / texture_size.x(), texture_coords.y() / texture_size.y() };
+    };
+
+    for (auto const& point : vertices) {
+        fill_vertices.push_back(Gfx::Vertex {
+            point,
+            fill.color(),
+            normalized_texture_coord_for_point(point),
+        });
+    }
+
+    draw_vertices(llgl::PrimitiveType::TriangleFan, fill_vertices, fill.texture());
+}
+
+void Painter::draw_outline(Drawing::Shape const& shape, std::vector<Util::Vector2f> const& vertices) {
+    draw_outline(vertices, shape.outline().color(), shape.outline().thickness());
+}
+
+struct RoundingResult {
+    Util::Vector2f center;
+    float angle_start;
+    float angle_end;
+    float scaled_radius;
+};
+struct RoundingSettings {
+    Util::Vector2f left;
+    Util::Vector2f right;
+    Util::Vector2f tip;
+    float radius;
+};
+
+RoundingResult round(RoundingSettings settings) {
+    // fmt::print("--- ROUND ---\n");
+    auto& A = settings.left;
+    auto& B = settings.right;
+    auto& C = settings.tip;
+    assert(A != B);
+    assert(B != C);
+    assert(A != C);
+    auto& r = settings.radius;
+    // fmt::print("A={} B={} C={} r={}\n", fmt::streamed(A), fmt::streamed(B), fmt::streamed(C), r);
+
+    // 1)
+    auto d_a = A - C;
+    auto d_b = B - C;
+    // fmt::print("DA={}, DB={}\n", fmt::streamed(d_a), fmt::streamed(d_b));
+
+    auto tg_gamma_rec = -(d_a.x() * d_b.x() + d_a.y() * d_b.y()) / (d_a.y() * d_b.x() - d_a.x() * d_b.y());
+
+    // 2a)
+    auto cos_gamma = d_a.normalized().dot(d_b.normalized());
+    auto sin_gamma = tg_gamma_rec == 0 ? 1 : cos_gamma / tg_gamma_rec;
+    // fmt::print("sin={}, cos={}\n", sin_gamma, cos_gamma);
+
+    // 2b)
+    auto tg_half_gamma = 1 / sin_gamma - tg_gamma_rec;
+
+    // 2c)
+    // fmt::print("1/tg y = {}; tg 1/2y = {}\n", tg_gamma_rec, tg_half_gamma);
+    // fmt::print("r = {}\n", r);
+    auto expected_a = std::abs(r / tg_half_gamma);
+    auto a = expected_a;
+
+    // Scale everything down if doesn't fit.
+    a = std::min<float>(a, d_a.length() / 2);
+    a = std::min<float>(a, d_b.length() / 2);
+    r *= a / expected_a;
+    // fmt::print("a ..= {} {}\n", expected_a, a);
+
+    // 3)
+    auto ca_p = d_a.with_length(a);
+    auto cb_p = d_b.with_length(a);
+    // fmt::print("ca = {} {}\n", fmt::streamed(ca_p), fmt::streamed(cb_p));
+
+    // 4a)
+    auto d = std::hypot(r, a);
+
+    // 4b)
+    auto center = C + (ca_p + cb_p).with_length(d);
+
+    // 5)
+    float alpha = ((C + ca_p) - center).angle();
+    float beta = ((C + cb_p) - center).angle();
+    if (beta - alpha > M_PI) {
+        alpha += M_PI * 2;
+    }
+    if (alpha - beta > M_PI) {
+        beta += M_PI * 2;
+    }
+    assert(std::abs(alpha - beta) < M_PI + 10e-6);
+
+    // fmt::print("{} {}\n", fmt::streamed(settings.tip), fmt::streamed(center));
+    return { center, alpha, beta, r };
+}
+
+static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
+    std::vector<Util::Vector2f> vertices;
+
+    auto round_radius_for_vertex = [&](size_t idx) {
+        if (shape.point_count() == 4) {
+            switch (idx) {
+            case 0:
+                return shape.outline().round_radius().top_left;
+            case 1:
+                return shape.outline().round_radius().top_right;
+            case 2:
+                return shape.outline().round_radius().bottom_right;
+            case 3:
+                return shape.outline().round_radius().bottom_left;
+            default:
+                ESSA_UNREACHABLE;
+            }
+        }
+
+        // We don't support separate round radiuses for other shapes
+        // than rectangle, for now.
+        return shape.outline().round_radius().top_left;
+    };
+
+    for (size_t s = 0; s < shape.point_count(); s++) {
+        auto r = round_radius_for_vertex(s);
+
+        auto tip = shape.point(s);
+        if (r == 0) {
+            vertices.push_back(tip);
+            continue;
+        }
+
+        auto left = shape.point(s == 0 ? shape.point_count() - 1 : s - 1);
+        auto right = shape.point(s == shape.point_count() - 1 ? 0 : s + 1);
+
+        auto rounding = round({ left, right, tip, r });
+
+        for (size_t s = 0; s <= 12; s++) {
+            float angle = rounding.angle_start + (rounding.angle_end - rounding.angle_start) * s / 12.0;
+            // fmt::print("{}\n", fmt::streamed(rounding.center));
+            auto point = rounding.center + Util::Vector2f::create_polar(angle, rounding.scaled_radius);
+
+            // Don't allow duplicates
+            if (vertices.empty() || !point.is_approximately_equal(vertices.back())) {
+                vertices.push_back(point);
+            }
+        }
+    }
+
+    // Don't allow duplicates
+    if (vertices.front().is_approximately_equal(vertices.back())) {
+        vertices.pop_back();
+    }
+
+    // fmt::print("--- Rounded Vertices ---\n");
+    // for (auto const& v : vertices) {
+    //     fmt::print("* {}\n", fmt::streamed(v));
+    // }
+
+    return vertices;
+}
+
+void Painter::draw(Drawing::Shape const& shape) {
+    std::vector<Util::Vector2f> vertices_for_rounded_shape = [&]() {
+        if (!shape.outline().is_rounded()) {
+            return shape.points().to_vector();
+        }
+        return calculate_vertices_for_rounded_shape(shape);
+    }();
+
+    m_builder.set_submodel(shape.transform());
+    if (shape.fill().is_visible()) {
+        draw_fill(shape, vertices_for_rounded_shape);
+    }
+    if (shape.outline().is_visible()) {
+        draw_outline(shape, vertices_for_rounded_shape);
+    }
+    m_builder.set_submodel(llgl::Transform {});
 }
 
 void Painter::draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOptions const& options) {
-    if (options.border_radius_bottom_left == 0 && options.border_radius_bottom_right == 0 && options.border_radius_top_left == 0 && options.border_radius_top_right == 0) {
-        Util::Vector2f normalized_texture_rect_position = options.texture
-            ? Util::Vector2f { static_cast<float>(options.texture_rect.position().x()) / options.texture->size().x(),
-                  static_cast<float>(options.texture_rect.position().y()) / options.texture->size().y() }
-            : Util::Vector2f {};
-
-        Util::Vector2f normalized_texture_rect_size = options.texture
-            ? Util::Vector2f { static_cast<float>(options.texture_rect.size().x()) / options.texture->size().x(),
-                  static_cast<float>(options.texture_rect.size().y()) / options.texture->size().y() }
-            : Util::Vector2f {};
-
-        if (normalized_texture_rect_position == Util::Vector2f {} && normalized_texture_rect_size == Util::Vector2f {})
-            normalized_texture_rect_size = { 1, 1 };
-
-        std::array<Util::Vector2f, 4> outline_positions;
-
-        outline_positions[0] = { bounds.left, bounds.top };
-        outline_positions[1] = { bounds.left + bounds.width, bounds.top };
-        outline_positions[2] = { bounds.left + bounds.width, bounds.top + bounds.height };
-        outline_positions[3] = { bounds.left, bounds.top + bounds.height };
-
-        m_builder.add_rectangle(bounds, GUIBuilder::RectangleDrawOptions {
-                                            .texture = options.texture,
-                                            .texture_rect = { normalized_texture_rect_position, normalized_texture_rect_size },
-                                            .fill_color = options.fill_color,
-                                        });
-        draw_outline(outline_positions, options.outline_color, options.outline_thickness);
-        return;
-    }
-
-    std::array<Gfx::Vertex, RoundedRectanglePointCount> vertices;
-    std::array<Util::Vector2f, RoundedRectanglePointCount> outline_positions;
-    for (size_t s = 0; s < RoundedRectanglePointCount; s++) {
-        Util::Vector2f vertex { get_rounded_rectangle_vertex(s, { bounds.width, bounds.height }, options) + Util::Vector2f(bounds.left, bounds.top) };
-        vertices[s] = Gfx::Vertex {
-            vertex,
-            options.fill_color,
-            { vertex.x() / bounds.width, vertex.y() / bounds.height }
-        };
-        outline_positions[s] = vertex;
-    }
-    draw_vertices(llgl::PrimitiveType::TriangleFan, vertices, options.texture);
-    draw_outline(outline_positions, options.outline_color, options.outline_thickness);
+    draw(Drawing::Rectangle {
+        bounds,
+        Drawing::Fill {}
+            .set_color(options.fill_color)
+            .set_texture(options.texture)
+            .set_texture_rect(Util::Rectf { options.texture_rect }),
+        Drawing::Outline::normal(options.outline_color, options.outline_thickness)
+            .set_round_radius({
+                options.border_radius_top_left,
+                options.border_radius_top_right,
+                options.border_radius_bottom_left,
+                options.border_radius_bottom_right,
+            }),
+    });
 }
 
 void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& options) {
@@ -106,7 +245,7 @@ void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptio
         };
         outline_positions[s] = vertices[s].position();
     }
-    draw_vertices(llgl::PrimitiveType::TriangleFan, vertices);
+    draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);
     draw_outline(outline_positions, options.outline_color, options.outline_thickness);
 }
 
@@ -124,20 +263,16 @@ void Painter::draw_outline(std::span<Util::Vector2f const> positions, Util::Colo
 
     std::vector<Gfx::Vertex> vertices;
     for (size_t i = 0; i < positions.size() + 1; i++) {
-        // See docs/outline.xcf for proof
         auto A = i == 0 ? positions.back() : positions[i - 1];
         auto B = positions[(i + 1) % positions.size()];
         auto C = positions[i % positions.size()]; // fill corner
-        auto BC = C - B;
-        auto AC = C - A;
-        auto cos_edge_angle = BC.dot(AC);
-        auto e = thickness * std::sqrt(1 - cos_edge_angle * cos_edge_angle);
-        auto A2 = BC.normalized() * e;
-        auto B2 = AC.normalized() * e;
-        auto CD = A2 + B2;
-        auto corner = C + CD;
+        assert(A != B);
+        auto outer_corner = round({ A, B, C, thickness }).center;
+        if (thickness > 0) {
+            outer_corner = outer_corner + (C - outer_corner) * 2.f;
+        }
 
-        vertices.push_back(Gfx::Vertex { corner, color, {} });
+        vertices.push_back(Gfx::Vertex { outer_corner, color, {} });
         vertices.push_back(Gfx::Vertex { C, color, {} });
     }
     draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);

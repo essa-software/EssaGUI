@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 class MainWidget : public GUI::Widget {
 private:
     virtual void update() override {
-        constexpr int PointsPerTick = 500000;
+        constexpr int PointsPerTick = 100000;
         m_painter.reset();
         for (int i = 0; i < PointsPerTick; i++) {
             append_point();

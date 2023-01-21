@@ -9,6 +9,10 @@
 
 namespace Gfx {
 
+namespace Drawing {
+class Shape;
+}
+
 struct DrawOptions {
     Util::Color fill_color = Util::Colors::White;
     Util::Color outline_color = Util::Colors::White;
@@ -46,6 +50,8 @@ public:
         m_builder.render(m_renderer);
     }
 
+    void draw(Drawing::Shape const&);
+
     void draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
     void draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& = {});
     void draw_line(std::span<Util::Vector2f const>, LineDrawOptions const&);
@@ -65,6 +71,10 @@ public:
 
 private:
     void apply_states();
+
+    // In these functions, vertices are and after rounding, but not transformed.
+    void draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f> const& vertices);
+    void draw_outline(Drawing::Shape const& shape, std::vector<Util::Vector2f> const& vertices);
 
     GUIBuilder m_builder;
     llgl::Renderer& m_renderer;

@@ -16,6 +16,7 @@ layout (location = 2) in vec2 texCoords;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
+uniform mat4 submodelMatrix;
 
 out vec4 fColor;
 out vec2 fTexCoords;
@@ -23,7 +24,7 @@ out vec2 fTexCoords;
 void main() {
     fColor = color;
     fTexCoords = texCoords;
-    gl_Position = projectionMatrix * (viewMatrix * (modelMatrix * vec4(position, 0, 1)));
+    gl_Position = projectionMatrix * (viewMatrix * (modelMatrix * (submodelMatrix * vec4(position, 0, 1))));
 }
 )~~~";
 
