@@ -53,7 +53,7 @@ void StateTextButton<T>::draw(Gfx::Painter& painter) const {
     bg.fill_color = get_element_from_index(m_index).second.bg_color;
     bg.outline_color = get_element_from_index(m_index).second.fg_color;
     bg.outline_thickness = 3;
-    painter.draw_rectangle(local_rect(), bg);
+    painter.deprecated_draw_rectangle(local_rect(), bg);
 
     Gfx::Text text { get_element_from_index(m_index).first, Application::the().font() };
     text.set_font_size(theme().label_font_size);

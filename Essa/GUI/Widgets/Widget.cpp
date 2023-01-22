@@ -212,7 +212,7 @@ void Widget::do_draw(Gfx::Painter& painter) const {
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = m_background_color;
-    painter.draw_rectangle(local_rect(), background);
+    painter.deprecated_draw_rectangle(local_rect(), background);
 
     this->draw(painter);
 }

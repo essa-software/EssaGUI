@@ -20,7 +20,7 @@ void Checkbox::draw(Gfx::Painter& painter) const {
     box_opt.outline_thickness = 1;
     box_opt.outline_color = colors.foreground;
     box_opt.fill_color = colors.background;
-    painter.draw_rectangle(box, box_opt);
+    painter.deprecated_draw_rectangle(box, box_opt);
 
     // TODO: Take advantage of GUIBuilder
     if (is_active()) {

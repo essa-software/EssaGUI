@@ -680,7 +680,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
     if (m_multiline) {
         Gfx::RectangleDrawOptions gutter_rect;
         gutter_rect.fill_color = theme().gutter.background;
-        painter.draw_rectangle({ {}, Util::Vector2f { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
+        painter.deprecated_draw_rectangle({ {}, Util::Vector2f { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
     }
 
     auto clip_rect = scrollable_rect();
@@ -704,7 +704,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
             float start_x = text.find_character_position(start);
             float end_x = text.find_character_position(end);
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * line : raw_size().y() / 2 - cursor_height / 2;
-            painter.draw_rectangle({ Util::Vector2f { start_x + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end_x - start_x, cursor_height } }, selected_rect);
+            painter.deprecated_draw_rectangle({ Util::Vector2f { start_x + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end_x - start_x, cursor_height } }, selected_rect);
         });
     }
 
@@ -801,7 +801,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
         auto position = calculate_cursor_position();
         Gfx::RectangleDrawOptions cursor;
         cursor.fill_color = theme_colors.text;
-        painter.draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
+        painter.deprecated_draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
             cursor);
         // }
     }

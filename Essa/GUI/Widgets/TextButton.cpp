@@ -20,14 +20,14 @@ void TextButton::draw(Gfx::Painter& painter) const {
         Gfx::RectangleDrawOptions image;
         image.texture = m_image;
         if (m_content.is_empty()) {
-            painter.draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
+            painter.deprecated_draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
                                        Util::Vector2f { m_image->size() } },
                 image);
             return;
         }
         else {
             text_offset = 5 + m_image->size().x();
-            painter.draw_rectangle(
+            painter.deprecated_draw_rectangle(
                 { { 5, raw_size().y() / 2 - m_image->size().y() / 2.f },
                     { static_cast<float>(m_image->size().x()), static_cast<float>(m_image->size().y()) } },
                 image);
@@ -55,7 +55,7 @@ void TextButton::draw(Gfx::Painter& painter) const {
         focus_rect.fill_color = Util::Colors::Transparent;
         focus_rect.outline_color = theme().focus_frame;
         focus_rect.outline_thickness = -1;
-        painter.draw_rectangle(local_rect(), focus_rect);
+        painter.deprecated_draw_rectangle(local_rect(), focus_rect);
     }
 }
 

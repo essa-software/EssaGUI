@@ -72,17 +72,17 @@ float Slider::calculate_knob_size() const {
 void Slider::draw(Gfx::Painter& window) const {
     Gfx::RectangleDrawOptions slider;
     slider.fill_color = are_all_parents_enabled() ? theme().slider.background : theme().slider.background - Util::Color { 60, 60, 60, 0 };
-    window.draw_rectangle({ { 0, raw_size().y() / 2 - 2.5f }, { raw_size().x(), 5.f } }, slider);
+    window.deprecated_draw_rectangle({ { 0, raw_size().y() / 2 - 2.5f }, { raw_size().x(), 5.f } }, slider);
 
     Gfx::RectangleDrawOptions bound;
     bound.fill_color = are_all_parents_enabled() ? theme().slider.background : theme().slider.background - Util::Color { 60, 60, 60, 0 };
-    window.draw_rectangle({ { 0, raw_size().y() / 2 - 5 }, Util::Vector2f(2, 10) }, bound);
-    window.draw_rectangle({ { raw_size().x() - 2, raw_size().y() / 2 - 5 }, Util::Vector2f(2, 10) }, bound);
+    window.deprecated_draw_rectangle({ { 0, raw_size().y() / 2 - 5 }, Util::Vector2f(2, 10) }, bound);
+    window.deprecated_draw_rectangle({ { raw_size().x() - 2, raw_size().y() / 2 - 5 }, Util::Vector2f(2, 10) }, bound);
 
     Gfx::RectangleDrawOptions slider_value;
     auto knob_size_x = calculate_knob_size();
     slider_value.fill_color = are_all_parents_enabled() ? theme().slider.foreground : theme().slider.foreground - Util::Color { 70, 70, 70, 0 };
-    window.draw_rectangle(
+    window.deprecated_draw_rectangle(
         { { static_cast<float>((value_clamped_to_min_max() - m_min) / (m_max - m_min) * raw_size().x() - knob_size_x / 2),
               raw_size().y() / 2 - 10.f },
             Util::Vector2f(knob_size_x, 20.f) },

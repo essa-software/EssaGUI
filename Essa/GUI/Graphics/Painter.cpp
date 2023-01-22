@@ -213,7 +213,7 @@ void Painter::draw(Drawing::Shape const& shape) {
     m_builder.set_submodel(llgl::Transform {});
 }
 
-void Painter::draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOptions const& options) {
+void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOptions const& options) {
     draw(Drawing::Rectangle {
         bounds,
         Drawing::Fill {}

@@ -40,6 +40,6 @@ void Image::draw(RichTextContext const& context, Util::Vector2f position, Gfx::P
     rect.texture = &m_texture;
     auto size = scaled_image_size(context);
     auto height = context.default_font.line_height(context.font_size);
-    painter.draw_rectangle({ { position.x() + 3, position.y() + height / 2.f - size.y() / 2.f }, size }, rect);
+    painter.deprecated_draw_rectangle({ { position.x() + 3, position.y() + height / 2.f - size.y() / 2.f }, size }, rect);
 }
 }

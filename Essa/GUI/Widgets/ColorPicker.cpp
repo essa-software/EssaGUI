@@ -27,7 +27,7 @@ private:
 void ColorField::draw(Gfx::Painter& window) const {
     Gfx::RectangleDrawOptions options;
     options.fill_color = m_color;
-    window.draw_rectangle(local_rect(), options);
+    window.deprecated_draw_rectangle(local_rect(), options);
 }
 
 class ColorPickerDialog : public ToolWindow {
@@ -186,7 +186,7 @@ void ColorPicker::draw(Gfx::Painter& painter) const {
 
     Gfx::RectangleDrawOptions color_rect;
     color_rect.fill_color = m_color;
-    painter.draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
+    painter.deprecated_draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
 
     Gfx::Text html_display { Util::UString { m_color.to_html_string() }, resource_manager().fixed_width_font() };
     html_display.set_fill_color(theme_colors.text);

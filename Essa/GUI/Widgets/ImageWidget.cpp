@@ -19,7 +19,7 @@ void ImageWidget::draw(Gfx::Painter& painter) const {
 
     Gfx::RectangleDrawOptions rect;
     rect.texture = m_image;
-    painter.draw_rectangle({ raw_size() / 2.f - rect_size / 2.f, rect_size }, rect);
+    painter.deprecated_draw_rectangle({ raw_size() / 2.f - rect_size / 2.f, rect_size }, rect);
 }
 
 EML::EMLErrorOr<void> ImageWidget::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

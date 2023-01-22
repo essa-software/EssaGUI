@@ -17,13 +17,13 @@ private:
 
         Gfx::RectangleDrawOptions rect;
         rect.fill_color = Util::Colors::DarkRed;
-        painter.draw_rectangle({ -10, -10, 20, 20 }, rect);
+        painter.deprecated_draw_rectangle({ -10, -10, 20, 20 }, rect);
 
         rect.fill_color = Util::Colors::Green;
-        painter.draw_rectangle({ -110, -110, 20, 20 }, rect);
+        painter.deprecated_draw_rectangle({ -110, -110, 20, 20 }, rect);
 
         rect.fill_color = Util::Colors::Blue;
-        painter.draw_rectangle({ 90, 90, 20, 20 }, rect);
+        painter.deprecated_draw_rectangle({ 90, 90, 20, 20 }, rect);
 
         m_stats_label->set_content(Util::UString { fmt::format("Offset={} Zoom={} VisibleArea=({}, {})",
             fmt::streamed(offset()), zoom(), fmt::streamed(visible_area().position()), fmt::streamed(visible_area().size())) });

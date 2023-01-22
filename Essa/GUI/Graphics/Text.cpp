@@ -23,7 +23,7 @@ void Text::draw(Gfx::Painter& painter) const {
             auto glyph = cache->ensure_glyph(m_font, codepoint);
             text_rect.texture_rect = glyph.texture_rect;
             // TODO: Take (better) advantage of GUIBuilder
-            painter.draw_rectangle(
+            painter.deprecated_draw_rectangle(
                 {
                     std::floor(x_position + line_position.x()),
                     std::floor(line_position.y()),

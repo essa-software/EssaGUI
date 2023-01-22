@@ -13,7 +13,7 @@ void DefaultThemeRenderer::draw_text_button_background(GUI::TextButton const& bu
 
     Gfx::RectangleDrawOptions rect;
     rect.fill_color = colors.background;
-    painter.draw_rectangle(button.local_rect(), rect);
+    painter.deprecated_draw_rectangle(button.local_rect(), rect);
 }
 
 void DefaultThemeRenderer::draw_text_editor_background(GUI::Widget const& widget, Gfx::Painter& painter) const {
@@ -21,7 +21,7 @@ void DefaultThemeRenderer::draw_text_editor_background(GUI::Widget const& widget
 
     Gfx::RectangleDrawOptions background_rect;
     background_rect.fill_color = theme_colors.background;
-    painter.draw_rectangle(widget.local_rect(), background_rect);
+    painter.deprecated_draw_rectangle(widget.local_rect(), background_rect);
 }
 
 void DefaultThemeRenderer::draw_text_editor_border(GUI::Widget const& widget, bool multiline, Gfx::Painter& painter) const {
@@ -31,7 +31,7 @@ void DefaultThemeRenderer::draw_text_editor_border(GUI::Widget const& widget, bo
     border_rect.fill_color = Util::Colors::Transparent;
     border_rect.outline_color = (widget.is_focused() && !multiline) ? theme().focus_frame : theme_colors.foreground;
     border_rect.outline_thickness = -1;
-    painter.draw_rectangle(widget.local_rect(), border_rect);
+    painter.deprecated_draw_rectangle(widget.local_rect(), border_rect);
 }
 
 }

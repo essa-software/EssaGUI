@@ -44,7 +44,7 @@ void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
         if (content_size > scroll_area_size) {
             Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
-            window.draw_rectangle(
+            window.deprecated_draw_rectangle(
                 {
                     { scrollable_rect.position().x() + m_scroll.x() * scroll_area_size / content_size + 2, scrollable_rect.position().y() + scrollable_rect.size().y() - 5 },
                     { scroll_area_size / content_size * scroll_area_size - 4, 3 },
@@ -58,7 +58,7 @@ void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
         if (content_size > scroll_area_size) {
             Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
-            window.draw_rectangle(
+            window.deprecated_draw_rectangle(
                 {
                     { scrollable_rect.position().x() + scrollable_rect.size().x() - 5, scrollable_rect.position().y() + m_scroll.y() * scroll_area_size / content_size + 2 },
                     { 3, scroll_area_size / content_size * scroll_area_size - 4 },

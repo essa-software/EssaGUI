@@ -39,7 +39,7 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         if (background_rect.contains(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - raw_position())) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
-            painter.draw_rectangle(background_rect, hovered_background);
+            painter.deprecated_draw_rectangle(background_rect, hovered_background);
         }
         text.set_string(action);
         text.align(Align::CenterLeft, text_align_rect);
@@ -68,7 +68,7 @@ private:
     virtual void draw(Gfx::Painter& painter) const override {
         Gfx::RectangleDrawOptions rect;
         rect.fill_color = theme().menu.foreground;
-        painter.draw_rectangle({ 10, raw_size().y() / 2, raw_size().x() - 20, 1 }, rect);
+        painter.deprecated_draw_rectangle({ 10, raw_size().y() / 2, raw_size().x() - 20, 1 }, rect);
     }
 };
 
@@ -126,7 +126,7 @@ void ContextMenuOverlay::draw(Gfx::Painter& painter) {
     background.fill_color = theme().menu.background;
     background.outline_color = theme().menu.foreground;
     background.outline_thickness = -1;
-    painter.draw_rectangle(rect(), background);
+    painter.deprecated_draw_rectangle(rect(), background);
 
     WidgetTreeRoot::draw(painter);
 }

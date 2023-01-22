@@ -170,7 +170,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     if (is_modal()) {
         Gfx::RectangleDrawOptions modal_backdrop;
         modal_backdrop.fill_color = theme().modal_backdrop;
-        painter.draw_rectangle(host_window().rect(), modal_backdrop);
+        painter.deprecated_draw_rectangle(host_window().rect(), modal_backdrop);
     }
 
     Util::Vector2f position { std::round(this->position().x()), std::round(this->position().y()) };
@@ -178,7 +178,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = { 50, 50, 50, 220 };
-    painter.draw_rectangle({ position, size }, background);
+    painter.deprecated_draw_rectangle({ position, size }, background);
 
     auto titlebar_color = host_window().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
 
@@ -186,7 +186,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     rs_titlebar.border_radius_top_left = theme().tool_window_title_bar_border_radius;
     rs_titlebar.border_radius_top_right = theme().tool_window_title_bar_border_radius;
     rs_titlebar.fill_color = titlebar_color;
-    painter.draw_rectangle({ position - Util::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
+    painter.deprecated_draw_rectangle({ position - Util::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
 
     Gfx::Text text { title(), Application::the().bold_font() };
     text.set_position({ position + Util::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5) });
@@ -202,7 +202,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         Gfx::RectangleDrawOptions tbb_background;
         tbb_background.border_radius_top_right = theme().tool_window_title_bar_border_radius;
         tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
-        painter.draw_rectangle({ { titlebar_button_position_x, position.y() - theme().tool_window_title_bar_size }, { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } }, tbb_background);
+        painter.deprecated_draw_rectangle({ { titlebar_button_position_x, position.y() - theme().tool_window_title_bar_size }, { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } }, tbb_background);
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f), std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
 

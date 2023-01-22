@@ -26,7 +26,7 @@ void TabButton::draw(Gfx::Painter& window) const {
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
     rect.fill_color = colors.background;
-    window.draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, raw_size() } : local_rect(), rect);
+    window.deprecated_draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, raw_size() } : local_rect(), rect);
 
     Util::Vector2f text_position;
     if (!is_active())

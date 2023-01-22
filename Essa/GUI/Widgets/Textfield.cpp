@@ -19,7 +19,7 @@ void Textfield::draw(Gfx::Painter& window) const {
 
     Gfx::RectangleDrawOptions rect;
     rect.fill_color = theme_colors.background;
-    window.draw_rectangle(local_rect(), rect);
+    window.deprecated_draw_rectangle(local_rect(), rect);
 
     Gfx::Text text { m_content, *m_font };
     text.set_fill_color(theme_colors.text);

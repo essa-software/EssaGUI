@@ -18,7 +18,7 @@ void ImageButton::draw(Gfx::Painter& painter) const {
         return;
     Gfx::RectangleDrawOptions sprite;
     sprite.texture = m_image;
-    painter.draw_rectangle(local_rect(), sprite);
+    painter.deprecated_draw_rectangle(local_rect(), sprite);
 }
 
 LengthVector ImageButton::initial_size() const {

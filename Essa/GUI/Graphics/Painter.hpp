@@ -52,7 +52,7 @@ public:
 
     void draw(Drawing::Shape const&);
 
-    void draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
+    void deprecated_draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
     void draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& = {});
     void draw_line(std::span<Util::Vector2f const>, LineDrawOptions const&);
     void draw_line(std::initializer_list<Util::Vector2f> vertices, LineDrawOptions const& options) {

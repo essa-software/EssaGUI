@@ -23,7 +23,7 @@ void TooltipOverlay::draw(Gfx::Painter& painter) {
         { bounds.x() + 20, bounds.y() + 12 },
     };
 
-    painter.draw_rectangle(bounds_rect, background);
+    painter.deprecated_draw_rectangle(bounds_rect, background);
 
     // FIXME: Text size is calculated 2x
     text.align(Align::Center, bounds_rect);

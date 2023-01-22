@@ -23,7 +23,7 @@ private:
         Gfx::RectangleDrawOptions rect;
         rect.texture = &m_framebuffer.color_texture();
         rect.texture_rect = { 0, 0, 500, 500 };
-        painter.draw_rectangle(local_rect(), rect);
+        painter.deprecated_draw_rectangle(local_rect(), rect);
 
         Gfx::Text text { Util::UString { std::to_string(m_point_count) + "; "
                              + std::to_string(static_cast<int>(GUI::Application::the().tps())) + " FPS; "
@@ -50,7 +50,7 @@ private:
         m_painter.builder().set_projection(llgl::Projection { {}, { 0, 0, 500, 500 } });
         Gfx::RectangleDrawOptions point;
         point.fill_color = Util::Colors::White;
-        m_painter.draw_rectangle({ m_current_position, { 0.001, 0.001 } }, point);
+        m_painter.deprecated_draw_rectangle({ m_current_position, { 0.001, 0.001 } }, point);
     }
 
     llgl::Framebuffer m_framebuffer { { 500, 500 } };

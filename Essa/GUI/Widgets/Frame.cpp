@@ -8,7 +8,7 @@ void Frame::draw(Gfx::Painter& painter) const {
     Gfx::RectangleDrawOptions rect;
     rect.set_border_radius(BorderRadius);
     rect.fill_color = Util::Color(50, 50, 50, 150);
-    painter.draw_rectangle(local_rect(), rect);
+    painter.deprecated_draw_rectangle(local_rect(), rect);
 }
 
 }
