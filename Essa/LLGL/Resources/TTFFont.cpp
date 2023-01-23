@@ -66,7 +66,7 @@ std::optional<llgl::Image> TTFFont::render_text(Util::UString const& text, int f
 
     auto surface = TTF_RenderUTF8_Blended(font_face->sdl_font, text.encode().c_str(), { 255, 255, 255, 255 });
     if (!surface) {
-        std::cerr << "TTFFont: Failed TTF_RenderUTF8_Blended: " << TTF_GetError() << std::endl;
+        fmt::print("TTFFont: TTF_RenderUTF8_Blended('{}') failed: {}\n", text.encode(), TTF_GetError());
         return {};
     }
 
