@@ -91,7 +91,7 @@ void HostWindow::handle_events() {
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
     window().set_active();
-    window().clear();
+    window().clear(m_background_color);
     glClear(GL_DEPTH_BUFFER_BIT);
     m_painter.reset();
 
