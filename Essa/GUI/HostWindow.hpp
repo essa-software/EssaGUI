@@ -12,7 +12,7 @@ namespace GUI {
 // to the operating system's window.
 class HostWindow : public WidgetTreeRoot {
 public:
-    explicit HostWindow(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& = {});
+    explicit HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
 
     // TODO: Find a way for this to be private
     void do_draw();

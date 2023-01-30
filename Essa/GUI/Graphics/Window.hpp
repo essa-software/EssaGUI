@@ -20,7 +20,7 @@ namespace GUI {
 
 class Window : public llgl::Window {
 public:
-    Window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& = {});
+    Window(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
     virtual ~Window() = default;
 
     void clear(Util::Color = Util::Colors::Black);

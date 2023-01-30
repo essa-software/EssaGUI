@@ -33,7 +33,7 @@ Theme const& Application::theme() const {
     return *m_cached_theme;
 }
 
-HostWindow& Application::create_host_window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings) {
+HostWindow& Application::create_host_window(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& settings) {
     return m_host_windows.emplace_back(size, title, settings);
 }
 

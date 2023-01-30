@@ -9,7 +9,7 @@
 
 namespace GUI {
 
-HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& settings)
+HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& settings)
     : m_window(size, title, settings) {
 }
 

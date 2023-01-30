@@ -19,7 +19,7 @@ int main() {
     //        required by Lighting shader now (Try to find a way to fix this!)
     GUI::Application app;
 
-    llgl::Window window { { 500, 500 }, "OBJ loader", { 3, 2 } };
+    llgl::Window window { { 500, 500 }, "OBJ loader", { .context_settings = { 3, 2 } } };
 
     // TODO: Port to llgl, especially clear color.
     glEnable(GL_DEPTH_TEST);

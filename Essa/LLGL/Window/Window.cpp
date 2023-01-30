@@ -8,12 +8,12 @@
 
 namespace llgl {
 
-Window::Window(Util::Vector2i size, Util::UString const& title, ContextSettings const& settings)
+Window::Window(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings)
     : m_impl { std::make_unique<SDLWindowImpl>() } {
     create(size, title, settings);
 }
 
-void Window::create(Util::Vector2i size, Util::UString const& title, ContextSettings const& settings) {
+void Window::create(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
     m_size = size;
     m_impl->create(size, std::move(title), settings);
 }

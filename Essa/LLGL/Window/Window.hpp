@@ -1,10 +1,11 @@
 #pragma once
 
-#include "ContextSettings.hpp"
 #include "Event.hpp"
 #include "Impls/WindowImpl.hpp"
+#include "WindowSettings.hpp"
 
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
+#include <EssaUtil/Enum.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
 
@@ -15,10 +16,10 @@ namespace llgl {
 
 class Window {
 public:
-    Window(Util::Vector2i size, Util::UString const& title, ContextSettings const& = {});
+    Window(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
 
     // These are passed to WindowImpl
-    void create(Util::Vector2i size, Util::UString const& title, ContextSettings const& = {});
+    void create(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
     void close();
     void set_title(Util::UString const&);
     void set_size(Util::Vector2i);

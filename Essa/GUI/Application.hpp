@@ -19,7 +19,7 @@ public:
     llgl::TTFFont& fixed_width_font() const { return m_resource_manager.fixed_width_font(); }
     Theme const& theme() const;
 
-    HostWindow& create_host_window(Util::Vector2i size, Util::UString const& title, llgl::ContextSettings const& = {});
+    HostWindow& create_host_window(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
     std::list<HostWindow>& host_windows() { return m_host_windows; }
     void redraw_all_host_windows();
 

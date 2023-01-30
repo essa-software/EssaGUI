@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ContextSettings.hpp"
+#include "../WindowSettings.hpp"
 #include <Essa/LLGL/Window/Event.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
@@ -13,7 +13,7 @@ class DeprecatedEvent;
 class WindowImpl {
 public:
     virtual ~WindowImpl() = default;
-    virtual void create(Util::Vector2i size, Util::UString const& title, ContextSettings const&) = 0;
+    virtual void create(Util::Vector2i size, Util::UString const& title, WindowSettings const&) = 0;
     virtual void close() = 0;
     virtual void set_title(Util::UString const&) = 0;
     virtual void set_size(Util::Vector2i) = 0;

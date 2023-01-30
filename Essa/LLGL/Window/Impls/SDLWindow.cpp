@@ -22,7 +22,27 @@ SDLWindowImpl::~SDLWindowImpl() {
     close();
 }
 
-void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, ContextSettings const& settings) {
+uint32_t llgl_window_flags_to_sdl(WindowFlags flags) {
+    uint32_t sdl_flags = 0;
+    if (has_flag(flags, WindowFlags::Fullscreen)) {
+        sdl_flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    if (has_flag(flags, WindowFlags::Borderless)) {
+        sdl_flags |= SDL_WINDOW_BORDERLESS;
+    }
+    if (has_flag(flags, WindowFlags::Resizable)) {
+        sdl_flags |= SDL_WINDOW_RESIZABLE;
+    }
+    if (has_flag(flags, WindowFlags::Minimized)) {
+        sdl_flags |= SDL_WINDOW_MINIMIZED;
+    }
+    if (has_flag(flags, WindowFlags::Maximized)) {
+        sdl_flags |= SDL_WINDOW_MAXIMIZED;
+    }
+    return sdl_flags;
+}
+
+void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
     static bool initialized = false;
     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
     if (!initialized && SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -37,11 +57,12 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Cont
     initialized = true;
 
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, settings.major_version);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, settings.minor_version);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, settings.context_settings.major_version);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, settings.context_settings.minor_version);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    m_window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    uint32_t sdl_flags = llgl_window_flags_to_sdl(settings.flags);
+    m_window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
     int major, minor;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
