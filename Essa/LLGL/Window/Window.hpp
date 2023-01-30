@@ -30,6 +30,7 @@ public:
     bool is_focused() const;
     void set_active() const;
     void maximize() const;
+    Util::Recti system_rect() const;
 
     Renderer& renderer() { return m_renderer; }
     Util::Vector2i size() const { return m_size; }

@@ -23,6 +23,7 @@ public:
     virtual void set_active() override;
     virtual void maximize() override;
     virtual Util::Vector2i screen_size() override;
+    virtual Util::Recti system_rect() override;
 
 private:
     SDL_Window* m_window {};

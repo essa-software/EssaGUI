@@ -216,4 +216,11 @@ Util::Vector2i SDLWindowImpl::screen_size() {
     return { mode.w, mode.h };
 }
 
+Util::Recti SDLWindowImpl::system_rect() {
+    Util::Recti rect;
+    SDL_GetWindowPosition(m_window, &rect.left, &rect.top);
+    SDL_GetWindowSize(m_window, &rect.width, &rect.height);
+    return rect;
+}
+
 }

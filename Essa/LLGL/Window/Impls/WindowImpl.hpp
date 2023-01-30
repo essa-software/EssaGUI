@@ -2,6 +2,7 @@
 
 #include "../WindowSettings.hpp"
 #include <Essa/LLGL/Window/Event.hpp>
+#include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <string>
@@ -24,6 +25,7 @@ public:
     virtual bool is_focused() const = 0;
     virtual void set_active() = 0;
     virtual void maximize() = 0;
+    virtual Util::Recti system_rect() = 0;
     virtual Util::Vector2i screen_size() = 0;
 };
 

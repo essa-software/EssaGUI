@@ -65,6 +65,10 @@ void Window::maximize() const {
     m_impl->maximize();
 }
 
+Util::Recti Window::system_rect() const {
+    return m_impl->system_rect();
+}
+
 void Window::center_on_screen() const {
     auto screen_size = m_impl->screen_size();
     m_impl->set_position({ screen_size.x() / 2 - size().x() / 2, screen_size.y() / 2 - size().y() / 2 });
