@@ -1,6 +1,8 @@
 #include "RadioButton.hpp"
+#include "Essa/GUI/Graphics/Drawing/Outline.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/UString.hpp>
@@ -9,28 +11,18 @@
 namespace GUI {
 
 void RadioButton::draw(Gfx::Painter& window) const {
-    Util::Vector2f circle_size(raw_size().y(), raw_size().y());
-    Util::Vector2f circle_pos = circle_size / 2;
-
-    circle_size -= Util::Vector2f(2, 2);
-
+    constexpr float circle_radius = 8;
     auto colors = colors_for_state();
 
-    Gfx::DrawOptions circle_opt;
-    circle_opt.outline_color = colors.foreground;
-    circle_opt.outline_thickness = 2;
-    circle_opt.fill_color = colors.background;
-
-    window.draw_ellipse(circle_pos, circle_size, circle_opt);
+    window.draw(Gfx::Drawing::Ellipse { { 2 + circle_radius, raw_size().y() / 2 },
+        circle_radius, Gfx::Drawing::Fill::solid(colors.background),
+        Gfx::Drawing::Outline::normal(colors.foreground, 1) });
 
     if (is_active()) {
-        circle_size.x() -= 6;
-        circle_size.y() -= 6;
+        constexpr float active_circle_radius = 4;
 
-        circle_opt.outline_thickness = 0;
-        circle_opt.fill_color = theme().placeholder;
-
-        window.draw_ellipse(circle_pos, circle_size, circle_opt);
+        window.draw(Gfx::Drawing::Ellipse { { 2 + circle_radius, raw_size().y() / 2 },
+            active_circle_radius, Gfx::Drawing::Fill::solid(theme().placeholder) });
     }
 
     Util::Rectf text_rect(raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
@@ -62,5 +54,4 @@ EML::EMLErrorOr<void> RadioButton::load_from_eml_object(EML::Object const& objec
 }
 
 EML_REGISTER_CLASS(RadioButton);
-
 }

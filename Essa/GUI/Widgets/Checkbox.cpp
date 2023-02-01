@@ -15,7 +15,9 @@ namespace GUI {
 void Checkbox::draw(Gfx::Painter& painter) const {
     auto colors = colors_for_state();
 
-    Util::Rectf box(2, 2, raw_size().y() - 4, raw_size().y() - 4);
+    constexpr float checkbox_size = 16;
+
+    Util::Rectf box(2, raw_size().y() / 2 - checkbox_size / 2, checkbox_size, checkbox_size);
     Gfx::RectangleDrawOptions box_opt;
     box_opt.outline_thickness = 1;
     box_opt.outline_color = colors.foreground;
@@ -30,18 +32,18 @@ void Checkbox::draw(Gfx::Painter& painter) const {
             Gfx::Vertex vert;
             vert.color() = theme().placeholder;
 
-            vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .2f);
+            vert.position() = Util::Vector2f(box.left + 3, box.top + 3);
             vertex_arr[0] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .8f);
+            vert.position() = Util::Vector2f(box.left + box.width - 3, box.top + box.height - 3);
             vertex_arr[1] = vert;
 
             painter.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
 
-            vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .8f);
+            vert.position() = Util::Vector2f(box.left + 3, box.top + box.height - 3);
             vertex_arr[0] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .2f);
+            vert.position() = Util::Vector2f(box.left + box.width - 3, box.top + 3);
             vertex_arr[1] = vert;
 
             painter.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
@@ -52,13 +54,13 @@ void Checkbox::draw(Gfx::Painter& painter) const {
             Gfx::Vertex vert;
             vert.color() = theme().placeholder;
 
-            vert.position() = Util::Vector2f(box.left + box.width * .2f, box.top + box.height * .4f);
+            vert.position() = Util::Vector2f(box.left + 3, box.top + box.height / 2);
             vertex_arr[0] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width * .5f, box.top + box.height * .7f);
+            vert.position() = Util::Vector2f(box.left + box.width / 2 - 2, box.top + box.height - 3);
             vertex_arr[1] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width * .8f, box.top + box.height * .2f);
+            vert.position() = Util::Vector2f(box.left + box.width - 3, box.top + 3);
             vertex_arr[2] = vert;
 
             painter.draw_vertices(llgl::PrimitiveType::LineStrip, vertex_arr);
