@@ -258,7 +258,9 @@ void Painter::draw_outline(std::span<Util::Vector2f const> positions, Util::Colo
         auto A = i == 0 ? positions.back() : positions[i - 1];
         auto B = positions[(i + 1) % positions.size()];
         auto C = positions[i % positions.size()]; // fill corner
-        assert(A != B);
+        if (A == B || A == C || B == C) {
+            continue;
+        }
         auto outer_corner = round({ A, B, C, thickness }).center;
         if (thickness > 0) {
             outer_corner = outer_corner + (C - outer_corner) * 2.f;
