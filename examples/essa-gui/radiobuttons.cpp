@@ -1,3 +1,4 @@
+#include "Essa/GUI/Widgets/Container.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
 #include <Essa/GUI/Widgets/RadioButton.hpp>
@@ -19,16 +20,17 @@ int main() {
     container1.set_layout<GUI::VerticalBoxLayout>();
 
     auto radiogrp = container1.add_widget<GUI::RadioGroup>();
+    radiogrp->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
     for (size_t i = 0; i < 5; i++) {
-        radiogrp->add_radio("radio" + Util::to_ustring(i));
+        auto radio = radiogrp->add_widget<GUI::RadioButton>();
+        radio->set_size({Util::Length::Auto, 15.0_px});
+        radio->set_caption("radio" + Util::to_ustring(i));
     }
 
     radiogrp->on_change = [](size_t index) {
         std::cout << "Selected index: " << index << "\n";
     };
-
-    radiogrp->set_row_height(15.0_px);
 
     app.run();
     return 0;

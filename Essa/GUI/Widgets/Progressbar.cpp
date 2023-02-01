@@ -36,7 +36,7 @@ void Progressbar::draw(Gfx::Painter& painter) const {
     painter.deprecated_draw_rectangle(completed_rect, completed_opt);
 
     Gfx::Text text_opt { get_content_with_labelling(), Application::the().font() };
-    text_opt.set_font_size(raw_size().y() - 2);
+    text_opt.set_font_size(theme().label_font_size);
     text_opt.set_fill_color(theme_colors.text);
     text_opt.align(Align::Center, local_rect());
     text_opt.draw(painter);
