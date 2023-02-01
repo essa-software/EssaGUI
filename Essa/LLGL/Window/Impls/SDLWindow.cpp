@@ -1,13 +1,16 @@
 #include "SDLWindow.hpp"
 
 #include "../Event.hpp"
+#include "SDLHelpers.hpp"
 #include <Essa/LLGL/Window/Mouse.hpp>
 #include <EssaUtil/UString.hpp>
+#include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_hints.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_video.h>
 #include <fmt/core.h>
 #include <iostream>
@@ -20,26 +23,6 @@ static SDL_GLContext s_context = nullptr;
 
 SDLWindowImpl::~SDLWindowImpl() {
     close();
-}
-
-uint32_t llgl_window_flags_to_sdl(WindowFlags flags) {
-    uint32_t sdl_flags = 0;
-    if (has_flag(flags, WindowFlags::Fullscreen)) {
-        sdl_flags |= SDL_WINDOW_FULLSCREEN;
-    }
-    if (has_flag(flags, WindowFlags::Borderless)) {
-        sdl_flags |= SDL_WINDOW_BORDERLESS;
-    }
-    if (has_flag(flags, WindowFlags::Resizable)) {
-        sdl_flags |= SDL_WINDOW_RESIZABLE;
-    }
-    if (has_flag(flags, WindowFlags::Minimized)) {
-        sdl_flags |= SDL_WINDOW_MINIMIZED;
-    }
-    if (has_flag(flags, WindowFlags::Maximized)) {
-        sdl_flags |= SDL_WINDOW_MAXIMIZED;
-    }
-    return sdl_flags;
 }
 
 void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
@@ -56,12 +39,32 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Wind
 
     initialized = true;
 
+    // Note: Remember to add these attributes to GLX in transparent window implementation
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, settings.context_settings.major_version);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, settings.context_settings.minor_version);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    uint32_t sdl_flags = llgl_window_flags_to_sdl(settings.flags);
+
+    uint32_t sdl_flags = SDLHelpers::llgl_window_flags_to_sdl(settings.flags);
+    if (has_flag(settings.flags, WindowFlags::TransparentBackground)) {
+        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+#ifdef SDL_VIDEO_DRIVER_X11
+        auto forced_visual_id = SDLHelpers::X11::get_transparent_visual_id();
+        if (!forced_visual_id) {
+            fmt::print("SDLWindow: Transparent windows not supported\n");
+        }
+        else {
+            SDL_SetHint(SDL_HINT_VIDEO_X11_WINDOW_VISUALID, std::to_string(*forced_visual_id).c_str());
+            SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
+        }
+#else
+        fmt::print("SDLWindow: Transparent windows not supported for video driver {}\n", SDL_GetVideoDriver(0));
+#endif
+    }
     m_window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
     int major, minor;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
@@ -157,6 +160,7 @@ std::optional<Event> SDLWindowImpl::poll_event() {
             modifiers.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
             modifiers.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
             modifiers.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
+#undef KeyPress // Thanks C++
             return Event::KeyPress { static_cast<KeyCode>(sdl_event->key.keysym.sym), modifiers };
         }
         else if (sdl_event->type == SDL_KEYUP) {
@@ -165,6 +169,7 @@ std::optional<Event> SDLWindowImpl::poll_event() {
             modifiers.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
             modifiers.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
             modifiers.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
+#undef KeyRelease // Thanks C++
             return Event::KeyRelease { static_cast<KeyCode>(sdl_event->key.keysym.sym), modifiers };
         }
         else if (sdl_event->type == SDL_MOUSEMOTION) {
