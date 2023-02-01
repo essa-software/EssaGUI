@@ -1,5 +1,6 @@
 #include "Painter.hpp"
 
+#include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Drawing/Shape.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
@@ -231,22 +232,13 @@ void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOp
 }
 
 void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& options) {
-    constexpr int VertexCount = 30;
-
-    std::array<Gfx::Vertex, VertexCount> vertices;
-    std::array<Util::Vector2f, VertexCount> outline_positions;
-    for (size_t s = 0; s < VertexCount; s++) {
-        float angle = 6.28 * s / VertexCount;
-        Util::Vector2f vpos { size.x() / 2 * std::sin(angle), size.y() / 2 * std::cos(angle) };
-        vertices[s] = Gfx::Vertex {
-            Util::Vector2f(vpos + center),
-            options.fill_color,
-            {}
-        };
-        outline_positions[s] = vertices[s].position();
-    }
-    draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);
-    draw_outline(outline_positions, options.outline_color, options.outline_thickness);
+    draw(Gfx::Drawing::Ellipse { center, size / 2.f,
+        Drawing::Fill {}
+            .set_color(options.fill_color)
+            .set_texture(options.texture)
+            .set_texture_rect(Util::Rectf { options.texture_rect }),
+        Drawing::Outline::normal(options.outline_color, options.outline_thickness) }
+             .set_point_count(30));
 }
 
 void Painter::draw_line(std::span<Util::Vector2f const> positions, LineDrawOptions const& options) {
