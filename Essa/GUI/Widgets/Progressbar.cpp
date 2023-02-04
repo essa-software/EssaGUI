@@ -11,11 +11,11 @@ namespace GUI {
 
 Util::UString Progressbar::get_content_with_labelling() const {
     switch (m_labelling) {
-    case Labelling::NONE:
+    case Labelling::None:
         return m_content;
-    case Labelling::PERCENTAGE:
+    case Labelling::Percentage:
         return m_content + " (" + Util::to_ustring((int)(((float)m_value / (float)m_max) * 100)) + "%)";
-    case Labelling::VALUE:
+    case Labelling::Value:
         return m_content + " (" + Util::to_ustring(m_value) + " / " + Util::to_ustring(m_max) + ")";
     }
     return m_content;
@@ -55,7 +55,18 @@ void Progressbar::step_by() {
     }
 }
 
-// FIXME: EML loader
+EML::EMLErrorOr<void> Progressbar::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+    m_content = TRY(object.get_property("content", "").to_string());
+    m_labelling = TRY(object.get_enum("labelling", labelling_from_string, Labelling::None));
+    m_min = TRY(object.get_property("min", static_cast<double>(m_min)).to_double());
+    m_max = TRY(object.get_property("max", static_cast<double>(m_max)).to_double());
+    m_step = TRY(object.get_property("step", static_cast<double>(m_step)).to_double());
+    m_progressbar_color = TRY(object.get_property("color", m_progressbar_color).to_color());
+    m_value = TRY(object.get_property("value", static_cast<double>(m_value)).to_double());
+    return {};
+}
+
 EML_REGISTER_CLASS(Progressbar)
 
 }

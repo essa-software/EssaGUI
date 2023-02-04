@@ -49,11 +49,11 @@ int main() {
         thread_vec.push_back(std::thread(busy_progressbar, prog1, timestep));
     };
 
-    create_progressbar(Util::Colors::Green, 100, container1, "Processbar1", GUI::Progressbar::Labelling::PERCENTAGE);
-    create_progressbar(Util::Colors::Blue, 200, container1, "Processbar2", GUI::Progressbar::Labelling::VALUE);
-    create_progressbar(Util::Colors::Red, 50, container1, "Processbar3", GUI::Progressbar::Labelling::NONE);
-    create_progressbar(Util::Colors::Yellow, 150, container1, "Processbar4", GUI::Progressbar::Labelling::PERCENTAGE);
-    create_progressbar(Util::Colors::Cyan, 300, container1, "Processbar5", GUI::Progressbar::Labelling::NONE);
+    create_progressbar(Util::Colors::Green, 100, container1, "Processbar1", GUI::Progressbar::Labelling::Percentage);
+    create_progressbar(Util::Colors::Blue, 200, container1, "Processbar2", GUI::Progressbar::Labelling::Value);
+    create_progressbar(Util::Colors::Red, 50, container1, "Processbar3", GUI::Progressbar::Labelling::None);
+    create_progressbar(Util::Colors::Yellow, 150, container1, "Processbar4", GUI::Progressbar::Labelling::Percentage);
+    create_progressbar(Util::Colors::Cyan, 300, container1, "Processbar5", GUI::Progressbar::Labelling::None);
 
     app.run();
 
