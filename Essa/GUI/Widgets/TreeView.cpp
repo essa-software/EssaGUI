@@ -1,4 +1,5 @@
 #include "TreeView.hpp"
+#include "Essa/GUI/EML/Loader.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
@@ -169,7 +170,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                                 {
                                     .default_font = Application::the().font(),
                                     .font_size = static_cast<int>(theme().label_font_size),
-                                    .text_alignment = GUI::Align::CenterLeft
+                                    .text_alignment = GUI::Align::CenterLeft,
                                 } };
                             drawable.set_rect({ cell_position + Util::Vector2f(5, 0), cell_size });
                             drawable.draw(painter);
@@ -257,5 +258,7 @@ Util::Vector2f TreeView::content_size() const {
 bool TreeView::is_expanded(std::vector<size_t> const& path) const {
     return m_expanded_paths.contains(path);
 }
+
+EML_REGISTER_CLASS(TreeView);
 
 }
