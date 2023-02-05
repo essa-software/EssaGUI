@@ -41,6 +41,7 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Wind
 
     // Note: Remember to add these attributes to GLX in transparent window implementation
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, settings.context_settings.major_version);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, settings.context_settings.minor_version);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
