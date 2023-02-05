@@ -1,46 +1,32 @@
 #include "Window.hpp"
 
 #include "Impls/SDLWindow.hpp"
-#include "Impls/WindowImpl.hpp"
 
 #include <fmt/format.h>
 #include <iostream>
 
 namespace llgl {
 
-Window::Window(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings)
-    : m_impl { std::make_unique<SDLWindowImpl>() } {
+Window::Window(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
     create(size, title, settings);
+}
+
+Window::~Window() {
+    destroy();
 }
 
 void Window::create(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
     m_size = size;
-    m_impl->create(size, std::move(title), settings);
-}
-
-void Window::close() {
-    m_impl->close();
-}
-
-void Window::set_title(Util::UString const& title) {
-    m_impl->set_title(title);
+    create_impl(size, std::move(title), settings);
 }
 
 void Window::set_size(Util::Vector2i size) {
     m_size = size;
-    m_impl->set_size(size);
-}
-
-void Window::set_position(Util::Vector2i position) {
-    m_impl->set_position(position);
-}
-
-void Window::display() {
-    m_impl->display();
+    set_size_impl(size);
 }
 
 std::optional<Event> Window::poll_event() {
-    auto event = m_impl->poll_event();
+    auto event = poll_event_impl();
     if (event) {
         if (auto resize = event->get<Event::WindowResize>()) {
             m_size = Util::Vector2i { resize->new_size() };
@@ -49,29 +35,9 @@ std::optional<Event> Window::poll_event() {
     return event;
 }
 
-void Window::set_mouse_position(Util::Vector2i pos) {
-    m_impl->set_mouse_position(pos);
-}
-
-bool Window::is_focused() const {
-    return m_impl->is_focused();
-}
-
-void Window::set_active() const {
-    m_impl->set_active();
-}
-
-void Window::maximize() const {
-    m_impl->maximize();
-}
-
-Util::Recti Window::system_rect() const {
-    return m_impl->system_rect();
-}
-
-void Window::center_on_screen() const {
-    auto screen_size = m_impl->screen_size();
-    m_impl->set_position({ screen_size.x() / 2 - size().x() / 2, screen_size.y() / 2 - size().y() / 2 });
+void Window::center_on_screen() {
+    auto screen_size = this->screen_size();
+    set_position({ screen_size.x() / 2 - size().x() / 2, screen_size.y() / 2 - size().y() / 2 });
 }
 
 }

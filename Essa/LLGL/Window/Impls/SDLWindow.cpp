@@ -1,10 +1,14 @@
 #include "SDLWindow.hpp"
 
-#include "../Event.hpp"
 #include "SDLHelpers.hpp"
+
+#undef KeyPress   // Thanks C++
+#undef KeyRelease // Thanks C++
+
+#include <Essa/LLGL/Window/Event.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
+#include <Essa/LLGL/Window/Window.hpp>
 #include <EssaUtil/UString.hpp>
-#include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_hints.h>
@@ -21,11 +25,11 @@ namespace llgl {
 
 static SDL_GLContext s_context = nullptr;
 
-SDLWindowImpl::~SDLWindowImpl() {
+void Window::destroy() {
     close();
 }
 
-void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
+void Window::create_impl(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
     static bool initialized = false;
     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
     if (!initialized && SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -66,48 +70,52 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Wind
         fmt::print("SDLWindow: Transparent windows not supported for video driver {}\n", SDL_GetVideoDriver(0));
 #endif
     }
-    m_window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+
+    m_data = std::make_unique<Detail::SDLWindowData>();
+
+    m_data->window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
     if (!s_context)
-        s_context = SDL_GL_CreateContext(m_window);
+        s_context = SDL_GL_CreateContext(m_data->window);
     int major, minor;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
     std::cout << "SDLWindow: Created OpenGL context version " << major << "." << minor << std::endl;
 }
 
-void SDLWindowImpl::close() {
-    if (!m_window)
+void Window::close() {
+    if (!m_data->window)
         return;
-    SDL_DestroyWindow(m_window);
+    SDL_DestroyWindow(m_data->window);
+    m_data.reset();
     // SDL_GL_DeleteContext(s_context);
 }
 
-void SDLWindowImpl::set_title(Util::UString const& title) {
-    if (!m_window)
+void Window::set_title(Util::UString const& title) {
+    if (!m_data->window)
         return;
-    SDL_SetWindowTitle(m_window, (char*)title.encode().c_str());
+    SDL_SetWindowTitle(m_data->window, (char*)title.encode().c_str());
 }
 
-void SDLWindowImpl::set_size(Util::Vector2i size) {
-    if (!m_window)
+void Window::set_size_impl(Util::Vector2i size) {
+    if (!m_data->window)
         return;
-    SDL_SetWindowSize(m_window, size.x(), size.y());
+    SDL_SetWindowSize(m_data->window, size.x(), size.y());
 }
 
-void SDLWindowImpl::set_position(Util::Vector2i position) {
-    SDL_SetWindowPosition(m_window, position.x(), position.y());
+void Window::set_position(Util::Vector2i position) {
+    SDL_SetWindowPosition(m_data->window, position.x(), position.y());
 }
 
-void SDLWindowImpl::display() {
-    SDL_GL_SwapWindow(m_window);
+void Window::display() {
+    SDL_GL_SwapWindow(m_data->window);
 }
 
 static std::map<uint32_t, std::queue<SDL_Event>> s_event_queues;
 
-std::optional<Event> SDLWindowImpl::poll_event() {
+std::optional<Event> Window::poll_event_impl() {
     while (true) {
         std::optional<SDL_Event> sdl_event = [this]() -> std::optional<SDL_Event> {
-            auto& queue = s_event_queues[SDL_GetWindowID(m_window)];
+            auto& queue = s_event_queues[SDL_GetWindowID(m_data->window)];
             if (!queue.empty()) {
                 auto queued_event = queue.front();
                 queue.pop();
@@ -119,7 +127,7 @@ std::optional<Event> SDLWindowImpl::poll_event() {
                 if (!is_event)
                     return {};
 
-                if (sdl_event2.window.windowID != SDL_GetWindowID(m_window)) {
+                if (sdl_event2.window.windowID != SDL_GetWindowID(m_data->window)) {
                     s_event_queues[sdl_event2.window.windowID].push(sdl_event2);
                     return {};
                 }
@@ -136,10 +144,10 @@ std::optional<Event> SDLWindowImpl::poll_event() {
             case SDL_WINDOWEVENT_RESIZED:
                 return Event::WindowResize({ sdl_event->window.data1, sdl_event->window.data2 });
             case SDL_WINDOWEVENT_FOCUS_GAINED:
-                m_focused = true;
+                m_data->focused = true;
                 break;
             case SDL_WINDOWEVENT_FOCUS_LOST:
-                m_focused = false;
+                m_data->focused = false;
                 break;
             case SDL_WINDOWEVENT_CLOSE: {
                 // TODO: This is a hack to make Ctrl+C working. This should be
@@ -161,7 +169,6 @@ std::optional<Event> SDLWindowImpl::poll_event() {
             modifiers.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
             modifiers.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
             modifiers.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
-#undef KeyPress // Thanks C++
             return Event::KeyPress { static_cast<KeyCode>(sdl_event->key.keysym.sym), modifiers };
         }
         else if (sdl_event->type == SDL_KEYUP) {
@@ -170,7 +177,6 @@ std::optional<Event> SDLWindowImpl::poll_event() {
             modifiers.alt = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_ALT;
             modifiers.shift = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_SHIFT;
             modifiers.meta = sdl_event->key.keysym.mod & SDL_Keymod::KMOD_GUI;
-#undef KeyRelease // Thanks C++
             return Event::KeyRelease { static_cast<KeyCode>(sdl_event->key.keysym.sym), modifiers };
         }
         else if (sdl_event->type == SDL_MOUSEMOTION) {
@@ -200,32 +206,32 @@ std::optional<Event> SDLWindowImpl::poll_event() {
     }
 }
 
-void SDLWindowImpl::set_mouse_position(Util::Vector2i pos) {
-    SDL_WarpMouseInWindow(m_window, pos.x(), pos.y());
+void Window::set_mouse_position(Util::Vector2i pos) {
+    SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y());
 }
 
-bool SDLWindowImpl::is_focused() const {
-    return m_focused;
+bool Window::is_focused() const {
+    return m_data->focused;
 }
 
-void SDLWindowImpl::set_active() {
-    SDL_GL_MakeCurrent(m_window, s_context);
+void Window::set_active() const {
+    SDL_GL_MakeCurrent(m_data->window, s_context);
 }
 
-void SDLWindowImpl::maximize() {
-    SDL_MaximizeWindow(m_window);
+void Window::maximize() const {
+    SDL_MaximizeWindow(m_data->window);
 }
 
-Util::Vector2i SDLWindowImpl::screen_size() {
+Util::Vector2i Window::screen_size() const{
     SDL_DisplayMode mode;
-    SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_window), &mode);
+    SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_data->window), &mode);
     return { mode.w, mode.h };
 }
 
-Util::Recti SDLWindowImpl::system_rect() {
+Util::Recti Window::system_rect() const {
     Util::Recti rect;
-    SDL_GetWindowPosition(m_window, &rect.left, &rect.top);
-    SDL_GetWindowSize(m_window, &rect.width, &rect.height);
+    SDL_GetWindowPosition(m_data->window, &rect.left, &rect.top);
+    SDL_GetWindowSize(m_data->window, &rect.width, &rect.height);
     return rect;
 }
 

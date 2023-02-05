@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Event.hpp"
-#include "Impls/WindowImpl.hpp"
 #include "WindowSettings.hpp"
 
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
@@ -14,12 +13,17 @@
 
 namespace llgl {
 
+namespace Detail {
+class SDLWindowData;
+}
+
 class Window {
 public:
     Window(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
+    ~Window();
 
-    // These are passed to WindowImpl
     void create(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
+
     void close();
     void set_title(Util::UString const&);
     void set_size(Util::Vector2i);
@@ -38,10 +42,19 @@ public:
     float aspect() const { return (float)m_size.x() / m_size.y(); }
     Util::Recti rect() const { return { 0, 0, size().x(), size().y() }; }
 
-    void center_on_screen() const;
+    // Get size of screen the window is currently on.
+    Util::Vector2i screen_size() const;
+
+    void center_on_screen();
 
 private:
-    std::unique_ptr<WindowImpl> m_impl;
+    void create_impl(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
+    void set_size_impl(Util::Vector2i);
+    std::optional<Event> poll_event_impl();
+    void destroy();
+
+    // Don't require user to include all of SDL
+    std::unique_ptr<Detail::SDLWindowData> m_data;
     Renderer m_renderer { 0 };
     Util::Vector2i m_size;
 };
