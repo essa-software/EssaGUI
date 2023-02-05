@@ -204,7 +204,7 @@ void Painter::draw(Drawing::Shape const& shape) {
         return calculate_vertices_for_rounded_shape(shape);
     }();
 
-    m_builder.set_submodel(shape.transform());
+    m_builder.set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin(), 0.f }));
     if (shape.fill().is_visible()) {
         draw_fill(shape, vertices_for_rounded_shape);
     }

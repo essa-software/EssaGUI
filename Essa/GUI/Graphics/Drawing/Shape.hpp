@@ -19,6 +19,10 @@ public:
         m_transform = t;
         return *this;
     }
+    Shape& set_origin(Util::Vector2f o) {
+        m_origin = o;
+        return *this;
+    }
     Shape& move(Util::Vector2f t) {
         m_transform = m_transform.translate(Util::Vector3f { t, 0 });
         return *this;
@@ -33,6 +37,8 @@ public:
     }
 
     llgl::Transform transform() const { return m_transform; }
+    // All points are offsetted by -origin() before transforming.
+    Util::Vector2f origin() const { return m_origin; }
     Fill fill() const { return m_fill; }
     Outline outline() const { return m_outline; }
 
@@ -82,6 +88,7 @@ public:
 
 private:
     llgl::Transform m_transform;
+    Util::Vector2f m_origin;
     Fill m_fill;
     Outline m_outline;
 };
