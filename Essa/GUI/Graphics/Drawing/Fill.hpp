@@ -15,7 +15,7 @@ public:
         return Fill {}.set_color(color);
     }
     static Fill textured(llgl::Texture const& tex, Util::Rectf rect = {}) {
-        return Fill {}.set_texture(&tex).set_texture_rect(rect);
+        return Fill {}.set_color(Util::Colors::White).set_texture(&tex).set_texture_rect(rect);
     }
 
     Fill& set_color(Util::Color color) {
