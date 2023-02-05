@@ -66,12 +66,12 @@ void SDLWindowImpl::create(Util::Vector2i size, Util::UString const& title, Wind
 #endif
     }
     m_window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+    if (!s_context)
+        s_context = SDL_GL_CreateContext(m_window);
     int major, minor;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
     std::cout << "SDLWindow: Created OpenGL context version " << major << "." << minor << std::endl;
-    if (!s_context)
-        s_context = SDL_GL_CreateContext(m_window);
 }
 
 void SDLWindowImpl::close() {
