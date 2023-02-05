@@ -11,6 +11,7 @@ enum class WindowFlags {
     Minimized = 0x08,
     Maximized = 0x10,
     TransparentBackground = 0x20,
+    Shaped = 0x40,
 };
 
 ESSA_ENUM_BITWISE_OPERATORS(WindowFlags)

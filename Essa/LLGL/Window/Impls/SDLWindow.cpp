@@ -73,7 +73,12 @@ void Window::create_impl(Util::Vector2i size, Util::UString const& title, Window
 
     m_data = std::make_unique<Detail::SDLWindowData>();
 
-    m_data->window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+    if (has_flag(settings.flags, WindowFlags::Shaped)) {
+        m_data->window = SDL_CreateShapedWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+    }
+    else {
+        m_data->window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+    }
     if (!s_context)
         s_context = SDL_GL_CreateContext(m_data->window);
     int major, minor;
@@ -222,7 +227,7 @@ void Window::maximize() const {
     SDL_MaximizeWindow(m_data->window);
 }
 
-Util::Vector2i Window::screen_size() const{
+Util::Vector2i Window::screen_size() const {
     SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_data->window), &mode);
     return { mode.w, mode.h };
