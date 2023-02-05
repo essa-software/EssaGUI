@@ -4,7 +4,7 @@
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>

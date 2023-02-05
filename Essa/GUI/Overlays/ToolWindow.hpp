@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 

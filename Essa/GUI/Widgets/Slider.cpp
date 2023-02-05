@@ -1,7 +1,7 @@
 #include "Slider.hpp"
 
 #include <Essa/GUI/EML/Loader.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/NotifyUser.hpp>
 #include <cmath>
 #include <iostream>

@@ -1,4 +1,5 @@
 #include "HostWindow.hpp"
+#include "Essa/LLGL/OpenGL/Error.hpp"
 #include "Essa/LLGL/Window/Event.hpp"
 
 #include <Essa/GUI/Application.hpp>
@@ -11,6 +12,7 @@ namespace GUI {
 
 HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& settings)
     : m_window(size, title, settings) {
+    llgl::opengl::enable_debug_output();
 }
 
 void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
@@ -91,7 +93,7 @@ void HostWindow::handle_events() {
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
     window().set_active();
-    window().clear(m_background_color);
+    window().renderer().clear(m_background_color);
     glClear(GL_DEPTH_BUFFER_BIT);
     m_painter.reset();
 

@@ -22,7 +22,6 @@ add_library(GUI SHARED
     Graphics/RichText.cpp
     Graphics/RichText/Fragments.cpp
     Graphics/Text.cpp
-    Graphics/Window.cpp
     
     Overlays/ContextMenu.cpp
     Overlays/FileExplorer.cpp

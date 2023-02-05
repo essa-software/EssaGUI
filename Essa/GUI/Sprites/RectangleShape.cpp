@@ -1,6 +1,6 @@
 #include "RectangleShape.hpp"
 
-#include <Essa/GUI/Graphics/Window.hpp>
+
 
 namespace GUI {
 

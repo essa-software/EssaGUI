@@ -6,7 +6,7 @@
 #endif
 
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/Widgets/Widget.hpp>
 
 namespace GUI {

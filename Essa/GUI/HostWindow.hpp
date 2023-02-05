@@ -5,6 +5,7 @@
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
+#include <Essa/LLGL/Window/Window.hpp>
 
 namespace GUI {
 
@@ -21,8 +22,8 @@ public:
 
     virtual void handle_event(GUI::Event const&) override;
 
-    GUI::Window& window() { return m_window; }
-    GUI::Window const& window() const { return m_window; }
+    llgl::Window& window() { return m_window; }
+    llgl::Window const& window() const { return m_window; }
 
     enum class NotificationLevel {
         Error
@@ -79,7 +80,7 @@ private:
 
     void focus_window(OverlayList::iterator);
 
-    GUI::Window m_window;
+    llgl::Window m_window;
     OverlayList m_overlays;
     Util::Vector2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
     Overlay* m_focused_overlay = nullptr;

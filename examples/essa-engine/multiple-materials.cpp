@@ -1,7 +1,7 @@
 #include <Essa/Engine/3D/Model.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>

@@ -6,7 +6,7 @@
 #include <Essa/LLGL/Resources/TTFFont.hpp>
 
 int main() {
-    GUI::Window wnd { { 1000, 700 }, "Gfx test" };
+    llgl::Window wnd { { 1000, 700 }, "Gfx test" };
 
     llgl::TTFFont fixed_font = llgl::TTFFont::open_from_file("../assets/fonts/SourceCodePro-Regular.otf");
     llgl::TTFFont regular_font = llgl::TTFFont::open_from_file("../assets/fonts/Xolonium-pn4D.ttf");
@@ -19,7 +19,7 @@ int main() {
 
         painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { wnd.rect() } }, wnd.rect()));
 
-        wnd.clear(Util::Color { 100, 100, 100 });
+        wnd.renderer().clear(Util::Color { 100, 100, 100 });
 
         painter.draw(Gfx::Drawing::Rectangle {
             { 190, 30, 100, 100 },

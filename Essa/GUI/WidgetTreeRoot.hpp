@@ -4,7 +4,6 @@
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <list>
 #include <memory>

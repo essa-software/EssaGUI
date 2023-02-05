@@ -3,7 +3,6 @@
 #include "WidgetTreeRoot.hpp"
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>

@@ -4,7 +4,7 @@
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/TextEditing/SyntaxHighlighter.hpp>
 #include <Essa/GUI/Widgets/ScrollableWidget.hpp>

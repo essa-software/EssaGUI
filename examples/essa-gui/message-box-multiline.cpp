@@ -1,4 +1,4 @@
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
 

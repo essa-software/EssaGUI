@@ -2,7 +2,6 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
 
 namespace GUI {
 
