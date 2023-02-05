@@ -25,6 +25,16 @@ int SDLHelpers::get_sdl_gl_attribute(SDL_GLattr id) {
 }
 
 #ifdef SDL_VIDEO_DRIVER_X11
+template<class T>
+class XDeallocator {
+public:
+    void operator()(T* ptr) {
+        XFree(ptr);
+    }
+};
+template<class T>
+using XUniquePtr = std::unique_ptr<T, XDeallocator<T>>;
+
 std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
     auto x_display = XOpenDisplay(NULL);
     if (!x_display) {
@@ -52,38 +62,30 @@ std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
 
     int numfbconfigs = 0;
     auto fbconfigs = glXChooseFBConfig(x_display, x_screen, attributes, &numfbconfigs);
-    XVisualInfo* visual = nullptr;
+    XUniquePtr<XVisualInfo> visual = nullptr;
 
     for (int i = 0; i < numfbconfigs; i++) {
-        visual = glXGetVisualFromFBConfig(x_display, fbconfigs[i]);
+        visual = XUniquePtr<XVisualInfo> { glXGetVisualFromFBConfig(x_display, fbconfigs[i]) };
         if (!visual) {
             continue;
         }
 
         auto pict_format = XRenderFindVisualFormat(x_display, visual->visual);
         if (!pict_format) {
-            XFree(visual);
             continue;
         }
 
         if (pict_format->direct.alphaMask > 0) {
-            int id;
-            glXGetFBConfigAttrib(x_display, fbconfigs[i], GLX_FBCONFIG_ID, &id);
-            fmt::print("Visual: {:x} FBConfig: {:x} PictFormat: {:x}\n", visual->visualid, id, pict_format->id);
             break;
         }
     }
 
     if (!visual) {
         fmt::print("No matching visual found\n");
-
-        XFree(fbconfigs);
         return {};
     }
 
     int visual_id = visual->visualid;
-    XFree(visual);
-    XFree(fbconfigs);
     return visual_id;
 }
 #endif
