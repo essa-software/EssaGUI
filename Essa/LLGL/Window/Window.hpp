@@ -42,10 +42,12 @@ public:
     float aspect() const { return (float)m_size.x() / m_size.y(); }
     Util::Recti rect() const { return { 0, 0, size().x(), size().y() }; }
 
-    // Get size of screen the window is currently on.
+    // Get a size of a screen the window is currently on.
     Util::Vector2i screen_size() const;
 
     void center_on_screen();
+
+    Detail::SDLWindowData* window_data() { return m_data.get(); }
 
 private:
     void create_impl(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
