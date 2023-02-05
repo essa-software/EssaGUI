@@ -11,7 +11,8 @@ namespace GUI {
 
 // The WTR that can "host" Overlays (ToolWindows etc.). It corresponds
 // to the operating system's window.
-class HostWindow : public WidgetTreeRoot {
+class HostWindow : public WidgetTreeRoot
+    , public llgl::Window {
 public:
     explicit HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
 
@@ -21,9 +22,6 @@ public:
     virtual void update() override;        // Called by Application
 
     virtual void handle_event(GUI::Event const&) override;
-
-    llgl::Window& window() { return m_window; }
-    llgl::Window const& window() const { return m_window; }
 
     enum class NotificationLevel {
         Error
@@ -60,11 +58,13 @@ public:
     void remove_closed_overlays();
 
     virtual Util::Vector2f position() const override { return {}; }
-    virtual Util::Vector2f size() const override { return Util::Vector2f { window().size() }; }
+    virtual Util::Vector2f size() const override { return Util::Vector2f { llgl::Window::size() }; }
 
     void focus_overlay(Overlay&);
 
     void set_background_color(Util::Color color) { m_background_color = color; }
+
+    using WidgetTreeRoot::rect;
 
 private:
     struct Notification {
@@ -80,13 +80,12 @@ private:
 
     void focus_window(OverlayList::iterator);
 
-    llgl::Window m_window;
     OverlayList m_overlays;
     Util::Vector2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
     Util::Color m_background_color;
-    Gfx::Painter m_painter { window().renderer() };
+    Gfx::Painter m_painter { renderer() };
 };
 
 }

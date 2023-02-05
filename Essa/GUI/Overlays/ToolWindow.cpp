@@ -27,7 +27,7 @@ void ToolWindow::handle_event(Event const& event) {
     if (m_first_tick)
         return;
 
-    auto& window = host_window().window();
+    auto& window = host_window();
 
     bool should_pass_event_to_widgets = true;
     if (event.is_mouse_related()) {
@@ -162,7 +162,7 @@ void ToolWindow::handle_event(Event const& event) {
 }
 
 void ToolWindow::center_on_screen() {
-    auto& window = host_window().window();
+    auto& window = host_window();
     m_position = Util::Vector2f(window.size().x() / 2, window.size().y() / 2) - m_size / 2.f;
 }
 

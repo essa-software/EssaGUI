@@ -48,7 +48,7 @@ void WidgetTreeRoot::handle_events() {
     auto& app = GUI::Application::the();
     for (auto& host_window : app.host_windows()) {
         while (true) {
-            auto event = host_window.window().poll_event();
+            auto event = host_window.poll_event();
             if (!event) {
                 break;
             }

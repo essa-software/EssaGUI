@@ -44,10 +44,10 @@ public:
     SimpleApplication(Util::UString const& title, Util::Vector2i window_size = {}, Args&&... args)
         : m_window(create_host_window(window_size, title)) {
         if (window_size == Util::Vector2i {}) {
-            m_window.window().set_size({ 500, 500 });
-            m_window.window().maximize();
+            m_window.set_size({ 500, 500 });
+            m_window.maximize();
         }
-        m_window.window().center_on_screen();
+        m_window.center_on_screen();
         m_window.set_main_widget<W>(std::forward<Args>(args)...);
     }
 

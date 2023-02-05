@@ -11,7 +11,7 @@
 namespace GUI {
 
 HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& settings)
-    : m_window(size, title, settings) {
+    : llgl::Window(size, title, settings) {
     llgl::opengl::enable_debug_output();
 }
 
@@ -82,7 +82,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
 
 void HostWindow::handle_events() {
     while (true) {
-        auto event = window().poll_event();
+        auto event = poll_event();
         if (!event) {
             break;
         }
@@ -92,8 +92,8 @@ void HostWindow::handle_events() {
 
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
-    window().set_active();
-    window().renderer().clear(m_background_color);
+    set_active();
+    renderer().clear(m_background_color);
     glClear(GL_DEPTH_BUFFER_BIT);
     m_painter.reset();
 
@@ -111,7 +111,7 @@ void HostWindow::do_draw() {
     }
 
     m_painter.render();
-    window().display();
+    display();
 }
 
 void HostWindow::draw_notification(Notification const& notification, float y) {
