@@ -11,8 +11,15 @@ Window::Window(Util::Vector2i size, Util::UString const& title, WindowSettings c
     create(size, title, settings);
 }
 
+Window Window::create_foreign(std::unique_ptr<Detail::SDLWindowData> data) {
+    Window window;
+    window.m_foreign = true;
+    window.m_data = std::move(data);
+    return window;
+}
+
 Window::~Window() {
-    destroy();
+    close();
 }
 
 void Window::create(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
@@ -38,6 +45,12 @@ std::optional<Event> Window::poll_event() {
 void Window::center_on_screen() {
     auto screen_size = this->screen_size();
     set_position({ screen_size.x() / 2 - size().x() / 2, screen_size.y() / 2 - size().y() / 2 });
+}
+
+void Window::close() {
+    if (!m_foreign) {
+        destroy();
+    }
 }
 
 }

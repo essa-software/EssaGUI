@@ -22,6 +22,11 @@ public:
     Window(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
     ~Window();
 
+    Window(Window&&) = default;
+    Window& operator=(Window&&) = default;
+
+    static Window create_foreign(std::unique_ptr<Detail::SDLWindowData>);
+
     void create(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
 
     void close();
@@ -50,10 +55,15 @@ public:
     Detail::SDLWindowData* window_data() { return m_data.get(); }
 
 private:
+    Window() = default;
+
     void create_impl(Util::Vector2i size, Util::UString const& title, WindowSettings const& = {});
     void set_size_impl(Util::Vector2i);
     std::optional<Event> poll_event_impl();
     void destroy();
+
+    // Should we care about removing the window?
+    bool m_foreign = false;
 
     // Don't require user to include all of SDL
     std::unique_ptr<Detail::SDLWindowData> m_data;

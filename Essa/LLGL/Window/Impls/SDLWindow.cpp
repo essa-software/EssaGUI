@@ -25,10 +25,6 @@ namespace llgl {
 
 static SDL_GLContext s_context = nullptr;
 
-void Window::destroy() {
-    close();
-}
-
 void Window::create_impl(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
     static bool initialized = false;
     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
@@ -87,7 +83,7 @@ void Window::create_impl(Util::Vector2i size, Util::UString const& title, Window
     std::cout << "SDLWindow: Created OpenGL context version " << major << "." << minor << std::endl;
 }
 
-void Window::close() {
+void Window::destroy() {
     if (!m_data->window)
         return;
     SDL_DestroyWindow(m_data->window);
