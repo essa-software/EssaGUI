@@ -6,7 +6,6 @@
 #include <EssaUtil/NonCopyable.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
-#include <SDL2/SDL_ttf.h>
 #include <map>
 
 using TTF_Font = struct _TTF_Font;

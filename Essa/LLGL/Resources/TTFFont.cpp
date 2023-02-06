@@ -2,7 +2,6 @@
 
 #include "ImageLoader.hpp"
 
-#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
 #include <cmath>
 #include <utility>
