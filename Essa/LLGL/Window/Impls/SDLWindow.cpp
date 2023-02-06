@@ -97,6 +97,10 @@ void Window::set_title(Util::UString const& title) {
     SDL_SetWindowTitle(m_data->window, (char*)title.encode().c_str());
 }
 
+Util::UString Window::title() const {
+    return Util::UString { SDL_GetWindowTitle(m_data->window) };
+}
+
 void Window::set_size_impl(Util::Vector2i size) {
     if (!m_data->window)
         return;

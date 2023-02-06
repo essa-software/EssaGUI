@@ -31,6 +31,7 @@ public:
 
     void close();
     void set_title(Util::UString const&);
+    Util::UString title() const;
     void set_size(Util::Vector2i);
     void set_position(Util::Vector2i);
     void display();
