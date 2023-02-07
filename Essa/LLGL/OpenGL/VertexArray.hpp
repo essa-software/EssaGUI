@@ -25,7 +25,7 @@ struct CppTypeToGL {
 };
 
 template<size_t C, class T>
-struct CppTypeToGL<Util::Detail::Vector<C, T>> {
+struct CppTypeToGL<Util::Detail::DeprecatedVector<C, T>> {
     static GLAttrType get() {
         return { .size = C, .type = CppTypeToGL<T>::get().type };
     }
