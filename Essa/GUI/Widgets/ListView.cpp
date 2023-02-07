@@ -48,7 +48,12 @@ void ListView::draw(Gfx::Painter& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             Gfx::RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
-            wnd.deprecated_draw_rectangle({ Util::Vector2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset(), { row_width, row_height } }, rs);
+            wnd.deprecated_draw_rectangle(
+                {
+                    Util::Cs::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + Util::Cs::Vector2f::from_deprecated_vector(scroll_offset()),
+                    { row_width, row_height },
+                },
+                rs);
         }
     }
 
@@ -56,7 +61,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
     if (display_header()) {
         Gfx::RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
-        wnd.deprecated_draw_rectangle({ scroll_offset(), { row_width, row_height } }, rs);
+        wnd.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(scroll_offset()), { row_width, row_height } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
@@ -76,10 +81,10 @@ void ListView::draw(Gfx::Painter& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = model.root_data(r, c);
-                Util::Vector2f cell_position { current_x_pos, r * row_height };
+                Util::Cs::Point2f cell_position { current_x_pos, r * row_height };
                 if (display_header())
-                    cell_position.y() += row_height;
-                cell_position += scroll_offset();
+                    cell_position.set_y(cell_position.y() + row_height);
+                cell_position += Util::Cs::Vector2f::from_deprecated_vector(scroll_offset());
                 auto cell_size = this->cell_size(r, c);
 
                 // TODO: ClipViewScope it
@@ -92,7 +97,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
                             Gfx::Text text { data, Application::the().bold_font() };
                             text.set_font_size(theme().label_font_size);
                             text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
-                            text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
+                            text.align(Align::CenterLeft, { cell_position + Util::Cs::Vector2f(5, 0), Util::Cs::Size2f::from_deprecated_vector(cell_size) });
                             text.draw(wnd);
                         },
                         [&](Gfx::RichText const& data) {
@@ -102,7 +107,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
                                     .font_size = static_cast<int>(theme().label_font_size),
                                     .text_alignment = GUI::Align::CenterLeft,
                                 } };
-                            drawable.set_rect({ cell_position + Util::Vector2f(5, 0), cell_size });
+                            drawable.set_rect({ cell_position + Util::Cs::Vector2f(5, 0), Util::Cs::Size2f::from_deprecated_vector(cell_size) });
                             drawable.draw(wnd);
                         },
                         [&](llgl::Texture const* data) {
@@ -128,11 +133,10 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
     }
 
     size_t rows = model()->root_row_count();
-    auto mouse_pos = event.local_position();
-    fmt::print("{}\n", fmt::streamed(mouse_pos));
+    auto mouse_pos = Util::Cs::Point2f::from_deprecated_vector(event.local_position());
 
     for (size_t row = 0; row < rows; row++) {
-        Util::Vector2f cell_position = row_position(row);
+        auto cell_position = Util::Cs::Point2f::from_deprecated_vector(row_position(row));
         Util::Rectf rect(cell_position, { raw_size().x(), theme().line_height });
 
         if (rect.contains(mouse_pos)) {
@@ -141,7 +145,7 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
             }
             else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
                 if (auto context_menu = on_context_menu_request(row)) {
-                    host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos } + widget_tree_root().position());
+                    host_window().open_context_menu(*context_menu, mouse_pos.to_deprecated_vector() + widget_tree_root().position());
                 }
             }
             return EventHandlerResult::NotAccepted;

@@ -106,7 +106,7 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
                 current_position.x() = 0;
                 current_position.y() += line_height;
             }
-            frag->draw(m_context, current_position + m_rect.position(), painter);
+            frag->draw(m_context, (Util::Cs::Point2f::from_deprecated_vector(current_position) + m_rect.position().to_vector()).to_deprecated_vector(), painter);
             current_position.x() += wanted_size;
         }
     }

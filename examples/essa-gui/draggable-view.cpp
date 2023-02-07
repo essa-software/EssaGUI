@@ -1,5 +1,5 @@
-#include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/DraggableView2D.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
@@ -26,7 +26,7 @@ private:
         painter.deprecated_draw_rectangle({ 90, 90, 20, 20 }, rect);
 
         m_stats_label->set_content(Util::UString { fmt::format("Offset={} Zoom={} VisibleArea=({}, {})",
-            fmt::streamed(offset()), zoom(), fmt::streamed(visible_area().position()), fmt::streamed(visible_area().size())) });
+            offset(), zoom(), visible_area().position(), visible_area().size()) });
     }
 
     GUI::Textfield* m_stats_label {};

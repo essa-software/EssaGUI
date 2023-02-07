@@ -680,7 +680,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
     if (m_multiline) {
         Gfx::RectangleDrawOptions gutter_rect;
         gutter_rect.fill_color = theme().gutter.background;
-        painter.deprecated_draw_rectangle({ {}, Util::Vector2f { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
+        painter.deprecated_draw_rectangle({ {}, { theme().text_editor_gutter_width, raw_size().y() } }, gutter_rect);
     }
 
     auto clip_rect = scrollable_rect();
@@ -704,7 +704,13 @@ void TextEditor::draw(Gfx::Painter& painter) const {
             float start_x = text.find_character_position(start);
             float end_x = text.find_character_position(end);
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * line : raw_size().y() / 2 - cursor_height / 2;
-            painter.deprecated_draw_rectangle({ Util::Vector2f { start_x + (m_multiline ? 0 : left_margin()), y } + scroll_offset(), { end_x - start_x, cursor_height } }, selected_rect);
+            painter.deprecated_draw_rectangle(
+                {
+                    Util::Cs::Point2f(start_x + (m_multiline ? 0 : left_margin()), y)
+                        + Util::Cs::Vector2f::from_deprecated_vector(scroll_offset()),
+                    { end_x - start_x, cursor_height },
+                },
+                selected_rect);
         });
     }
 
@@ -783,8 +789,8 @@ void TextEditor::draw(Gfx::Painter& painter) const {
     // Line numbers
     if (m_multiline) {
         Gfx::Text text { "", GUI::Application::the().fixed_width_font() };
-        Util::Vector2f position;
-        position.y() = 5 + scroll_offset().y() + line_height * first_visible_line;
+        Util::Cs::Point2f position;
+        position.set_y(5 + scroll_offset().y() + line_height * first_visible_line);
         text.set_fill_color(theme().gutter.text);
         text.set_font_size(theme().label_font_size);
 
@@ -792,7 +798,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
             text.set_string(Util::UString { std::to_string(i + 1) });
             text.align(Align::CenterRight, { position, { theme().text_editor_gutter_width - 10, line_height } });
             text.draw(painter);
-            position.y() += line_height;
+            position.set_y(position.y() + line_height);
         }
     }
 
@@ -801,7 +807,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
         auto position = calculate_cursor_position();
         Gfx::RectangleDrawOptions cursor;
         cursor.fill_color = theme_colors.text;
-        painter.deprecated_draw_rectangle({ position + Util::Vector2f(left_margin(), 0), Util::Vector2f(2, cursor_height) },
+        painter.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(position + Util::Vector2f(left_margin(), 0)), { 2, cursor_height } },
             cursor);
         // }
     }

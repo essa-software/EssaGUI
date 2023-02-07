@@ -31,8 +31,8 @@ void ToolWindow::handle_event(Event const& event) {
 
     bool should_pass_event_to_widgets = true;
     if (event.is_mouse_related()) {
-        auto mouse_position = event.local_mouse_position();
-        mouse_position += Util::Vector2i { position() };
+        auto mouse_position = Util::Cs::Point2i::from_deprecated_vector(event.local_mouse_position());
+        mouse_position += Util::Cs::Vector2i::from_deprecated_vector(position());
 
         float titlebar_button_position_x = position().x() + size().x() - theme().tool_window_title_bar_size;
         for (auto& button : m_titlebar_buttons) {
@@ -60,7 +60,7 @@ void ToolWindow::handle_event(Event const& event) {
 
         if (event.is<Event::MouseButtonPress>()) {
             auto start_dragging = [&]() {
-                m_drag_position = mouse_position;
+                m_drag_position = { mouse_position.x(), mouse_position.y() };
                 should_pass_event_to_widgets = false;
                 m_initial_dragging_position = m_position;
                 m_initial_dragging_size = m_size;
@@ -86,7 +86,7 @@ void ToolWindow::handle_event(Event const& event) {
                 return r.has_value();
             });
 
-            auto delta = mouse_position - m_drag_position;
+            auto delta = mouse_position - Util::Cs::Point2i::from_deprecated_vector(m_drag_position);
 
             auto constrain_position = [this, &window]() {
                 if (m_position.y() < theme().tool_window_title_bar_size)
@@ -100,7 +100,7 @@ void ToolWindow::handle_event(Event const& event) {
             };
 
             if (m_moving) {
-                m_position = m_initial_dragging_position + Util::Vector2f { delta };
+                m_position = m_initial_dragging_position + Util::Vector2f { delta.x(), delta.y() };
                 constrain_position();
                 return;
             }
@@ -112,33 +112,33 @@ void ToolWindow::handle_event(Event const& event) {
                     switch (*direction) {
                     case ResizeDirection::Left:
                         if (m_initial_dragging_size.x() - delta.x() < theme().tool_window_min_size) {
-                            delta.x() = m_initial_dragging_size.x() - theme().tool_window_min_size;
+                            delta.set_x(m_initial_dragging_size.x() - theme().tool_window_min_size);
                         }
                         if (m_initial_dragging_position.x() + delta.x() < 0) {
-                            delta.x() = -m_initial_dragging_position.x();
+                            delta.set_x(-m_initial_dragging_position.x());
                         }
                         m_size.x() = m_initial_dragging_size.x() - delta.x();
                         m_position.x() = m_initial_dragging_position.x() + delta.x();
                         break;
                     case ResizeDirection::Top:
                         if (m_initial_dragging_size.y() - delta.y() < theme().tool_window_min_size) {
-                            delta.y() = m_initial_dragging_size.y() - theme().tool_window_min_size;
+                            delta.set_y(m_initial_dragging_size.y() - theme().tool_window_min_size);
                         }
                         if (m_initial_dragging_position.y() + delta.y() < theme().tool_window_title_bar_size) {
-                            delta.y() = -m_initial_dragging_position.y() + theme().tool_window_title_bar_size;
+                            delta.set_y(-m_initial_dragging_position.y() + theme().tool_window_title_bar_size);
                         }
                         m_size.y() = m_initial_dragging_size.y() - delta.y();
                         m_position.y() = m_initial_dragging_position.y() + delta.y();
                         break;
                     case ResizeDirection::Right:
                         if (m_initial_dragging_size.x() + delta.x() < theme().tool_window_min_size) {
-                            delta.x() = theme().tool_window_min_size - m_initial_dragging_size.x();
+                            delta.set_x(theme().tool_window_min_size - m_initial_dragging_size.x());
                         }
                         m_size.x() = m_initial_dragging_size.x() + delta.x();
                         break;
                     case ResizeDirection::Bottom:
                         if (m_initial_dragging_size.y() + delta.y() < theme().tool_window_min_size) {
-                            delta.y() = theme().tool_window_min_size - m_initial_dragging_size.y();
+                            delta.set_y(theme().tool_window_min_size - m_initial_dragging_size.y());
                         }
                         m_size.y() = m_initial_dragging_size.y() + delta.y();
                         break;
@@ -173,8 +173,8 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         painter.deprecated_draw_rectangle(host_window().rect(), modal_backdrop);
     }
 
-    Util::Vector2f position { std::round(this->position().x()), std::round(this->position().y()) };
-    Util::Vector2f size { std::round(this->size().x()), std::round(this->size().y()) };
+    Util::Cs::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
+    Util::Cs::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = { 50, 50, 50, 220 };
@@ -186,10 +186,10 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     rs_titlebar.border_radius_top_left = theme().tool_window_title_bar_border_radius;
     rs_titlebar.border_radius_top_right = theme().tool_window_title_bar_border_radius;
     rs_titlebar.fill_color = titlebar_color;
-    painter.deprecated_draw_rectangle({ position - Util::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
+    painter.deprecated_draw_rectangle({ position - Util::Cs::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
 
     Gfx::Text text { title(), Application::the().bold_font() };
-    text.set_position({ position + Util::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5) });
+    text.set_position((position + Util::Cs::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)).to_deprecated_vector());
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(Util::Colors::White);
     text.draw(painter);
@@ -218,10 +218,10 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     }
 
     std::array<Gfx::Vertex, 4> varr_border;
-    varr_border[0] = Gfx::Vertex { { position }, titlebar_color, {} };
-    varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(-1, size.y()) }, titlebar_color, {} };
-    varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color, {} };
-    varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
+    varr_border[0] = Gfx::Vertex { { position.to_deprecated_vector() }, titlebar_color, {} };
+    varr_border[1] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(-1, size.y()) }, titlebar_color, {} };
+    varr_border[2] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color, {} };
+    varr_border[3] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
         Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect() }, Gfx::ClipViewScope::Mode::Override);

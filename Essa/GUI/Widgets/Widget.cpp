@@ -21,7 +21,11 @@ Widget::~Widget() {
 }
 
 bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
-    return Util::Rectf { m_raw_position, m_raw_size }.contains(mouse_pos);
+    return Util::Rectf {
+        Util::Cs::Point2f::from_deprecated_vector(m_raw_position),
+        Util::Cs::Size2f::from_deprecated_vector(m_raw_size),
+    }
+        .contains(Util::Cs::Point2f::from_deprecated_vector(mouse_pos));
 }
 
 void Widget::update() {
@@ -197,7 +201,7 @@ bool Widget::is_affected_by_event(Event const& event) const {
     case llgl::EventTargetType::KeyboardFocused:
         return is_focused();
     case llgl::EventTargetType::MouseFocused:
-        return local_rect().contains(event.local_mouse_position()) || m_hovered_on_click;
+        return local_rect().contains(Util::Cs::Point2i::from_deprecated_vector(event.local_mouse_position())) || m_hovered_on_click;
     case llgl::EventTargetType::Specific:
         return false;
     case llgl::EventTargetType::Global:
@@ -218,7 +222,10 @@ void Widget::do_draw(Gfx::Painter& painter) const {
 }
 
 Util::Rectf Widget::rect() const {
-    return { raw_position() + m_widget_tree_root->position(), raw_size() };
+    return {
+        Util::Cs::Point2f::from_deprecated_vector(raw_position() + m_widget_tree_root->position()),
+        Util::Cs::Size2f::from_deprecated_vector(raw_size()),
+    };
 }
 
 void Widget::do_relayout() {

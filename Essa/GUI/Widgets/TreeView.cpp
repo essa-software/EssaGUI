@@ -58,7 +58,12 @@ void TreeView::draw(Gfx::Painter& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             Gfx::RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
-            wnd.deprecated_draw_rectangle({ Util::Vector2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset(), { row_width, row_height } }, rs);
+            wnd.deprecated_draw_rectangle(
+                {
+                    Util::Cs::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + Util::Cs::Vector2f::from_deprecated_vector(scroll_offset()),
+                    { row_width, row_height },
+                },
+                rs);
         }
     }
 
@@ -67,7 +72,7 @@ void TreeView::draw(Gfx::Painter& wnd) const {
     if (display_header()) {
         Gfx::RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
-        wnd.deprecated_draw_rectangle({ scroll_offset(), { row_width, row_height } }, rs);
+        wnd.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(scroll_offset()), { row_width, row_height } }, rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
@@ -115,7 +120,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
             line_rect.fill_color = theme().placeholder;
             Util::Vector2f line_position { depth * IndentSize - IndentSize / 2, current_y_pos + row_height / 2.f };
             line_position += scroll_offset();
-            painter.deprecated_draw_rectangle({ line_position, { IndentSize / 2, 1 } }, line_rect);
+            painter.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(line_position), { IndentSize / 2, 1 } }, line_rect);
 
             float first_column_position = depth * IndentSize;
             if (model.children_count(&child) > 0) {
@@ -142,7 +147,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                 rect.texture = icon;
                 Util::Vector2f icon_position { first_column_position + 4, current_y_pos + row_height / 2.f - 8 };
                 icon_position += scroll_offset();
-                painter.deprecated_draw_rectangle({ icon_position, { 16, 16 } }, rect);
+                painter.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(icon_position), { 16, 16 } }, rect);
                 first_column_position += 20;
             }
 
@@ -152,7 +157,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                 auto data = model.data(child, c);
                 Util::Vector2f cell_position { c == 0 ? first_column_position : current_x_pos, current_y_pos };
                 cell_position += scroll_offset();
-                auto cell_size = this->cell_size(r, c);
+                auto cell_size = Util::Cs::Size2f::from_deprecated_vector(this->cell_size(r, c));
 
                 // TODO: ClipViewScope it
                 // TODO: Make this all (font, font raw_size, alignment) configurable
@@ -162,7 +167,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                             Gfx::Text text { data, Application::the().bold_font() };
                             text.set_font_size(theme().label_font_size);
                             text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
-                            text.align(Align::CenterLeft, { cell_position + Util::Vector2f(5, 0), cell_size });
+                            text.align(Align::CenterLeft, { Util::Cs::Point2f::from_deprecated_vector(cell_position + Util::Vector2f(5, 0)), cell_size });
                             text.draw(painter);
                         },
                         [&](Gfx::RichText const& data) {
@@ -172,7 +177,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                                     .font_size = static_cast<int>(theme().label_font_size),
                                     .text_alignment = GUI::Align::CenterLeft,
                                 } };
-                            drawable.set_rect({ cell_position + Util::Vector2f(5, 0), cell_size });
+                            drawable.set_rect({ Util::Cs::Point2f::from_deprecated_vector(cell_position + Util::Vector2f(5, 0)), cell_size });
                             drawable.draw(painter);
                         },
                         [&](llgl::Texture const* data) {
@@ -196,7 +201,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
             line_rect.fill_color = theme().placeholder;
             Util::Vector2f line_position { depth * IndentSize - IndentSize / 2, lines_start_y };
             line_position += scroll_offset();
-            painter.deprecated_draw_rectangle({ line_position, { 1, lines_end_y - lines_start_y + 1 } }, line_rect);
+            painter.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(line_position), { 1, lines_end_y - lines_start_y + 1 } }, line_rect);
         }
     }
 }

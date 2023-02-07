@@ -28,7 +28,10 @@ public:
         float angle = static_cast<float>(idx * M_PI * 2) / m_point_count;
         return { std::sin(angle) * m_extents.x(), std::cos(angle) * m_extents.y() };
     }
-    virtual Util::Rectf local_bounds() const override { return { -m_extents, m_extents }; }
+    virtual Util::Rectf local_bounds() const override { return {
+        Util::Cs::Point2f::from_deprecated_vector(-m_extents),
+        Util::Cs::Size2f::from_deprecated_vector(m_extents),
+    }; }
 
 private:
     Util::Vector2f m_extents;

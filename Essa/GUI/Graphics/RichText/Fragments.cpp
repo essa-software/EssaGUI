@@ -10,7 +10,7 @@ float Text::wanted_size(RichTextContext const& context) const {
 
 void Text::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     auto text = this->text(context);
-    text.align(GUI::Align::CenterLeft, { position, { 0, context.default_font.line_height(context.font_size) } });
+    text.align(GUI::Align::CenterLeft, { Util::Cs::Point2f::from_deprecated_vector(position), { 0, context.default_font.line_height(context.font_size) } });
     text.draw(painter);
 }
 
@@ -38,7 +38,7 @@ Util::Vector2f Image::scaled_image_size(RichTextContext const& context) const {
 void Image::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     Gfx::RectangleDrawOptions rect;
     rect.texture = &m_texture;
-    auto size = scaled_image_size(context);
+    auto size = Util::Cs::Size2f::from_deprecated_vector(scaled_image_size(context));
     auto height = context.default_font.line_height(context.font_size);
     painter.deprecated_draw_rectangle({ { position.x() + 3, position.y() + height / 2.f - size.y() / 2.f }, size }, rect);
 }

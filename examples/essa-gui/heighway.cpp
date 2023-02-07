@@ -50,7 +50,7 @@ private:
         m_painter.builder().set_projection(llgl::Projection { {}, { 0, 0, 500, 500 } });
         Gfx::RectangleDrawOptions point;
         point.fill_color = Util::Colors::White;
-        m_painter.deprecated_draw_rectangle({ m_current_position, { 0.001, 0.001 } }, point);
+        m_painter.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(m_current_position), { 0.001, 0.001 } }, point);
     }
 
     llgl::Framebuffer m_framebuffer { { 500, 500 } };

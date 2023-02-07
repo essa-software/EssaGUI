@@ -20,8 +20,11 @@ void TextButton::draw(Gfx::Painter& painter) const {
         Gfx::RectangleDrawOptions image;
         image.texture = m_image;
         if (m_content.is_empty()) {
-            painter.deprecated_draw_rectangle({ raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f,
-                                       Util::Vector2f { m_image->size() } },
+            painter.deprecated_draw_rectangle(
+                {
+                    Util::Cs::Point2f::from_deprecated_vector(raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f),
+                    Util::Cs::Size2f::from_deprecated_vector(m_image->size()),
+                },
                 image);
             return;
         }

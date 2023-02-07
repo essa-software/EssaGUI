@@ -24,7 +24,7 @@ public:
     void set_needs_relayout() { m_needs_relayout = true; }
 
     template<class T, class... Args>
-    requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
+        requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
     auto& set_main_widget(Args&&... args) {
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         auto widget_ptr = widget.get();
@@ -59,7 +59,10 @@ public:
 
     virtual Util::Vector2f position() const = 0;
     virtual Util::Vector2f size() const = 0;
-    Util::Rectf rect() const { return { position(), size() }; }
+    Util::Rectf rect() const { return {
+        Util::Cs::Point2f::from_deprecated_vector(position()),
+        Util::Cs::Size2f::from_deprecated_vector(size()),
+    }; }
 
     // The rect that the WidgetTreeRoot should consume events from. For
     // ToolWindows, it is content + titlebar + resize rect.

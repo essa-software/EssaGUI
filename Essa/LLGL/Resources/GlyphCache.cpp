@@ -34,8 +34,11 @@ GlyphCache::Glyph GlyphCache::ensure_glyph(TTFFont const& font, uint32_t codepoi
         }
     }
 
-    Util::Rectu texture_rect { m_current_atlas_position, rendered_glyph->size() };
-    m_atlas.update(texture_rect.position(), texture_rect.size(), std::span<Util::Color const> { rendered_glyph->pixels() }, Texture::Format::RGBA);
+    Util::Rectu texture_rect {
+        Util::Cs::Point2u::from_deprecated_vector(m_current_atlas_position),
+        Util::Cs::Size2u::from_deprecated_vector(rendered_glyph->size()),
+    };
+    m_atlas.update(texture_rect.position().to_deprecated_vector(), texture_rect.size().to_deprecated_vector(), std::span<Util::Color const> { rendered_glyph->pixels() }, Texture::Format::RGBA);
 
     m_current_atlas_position.x() += rendered_glyph->size().x();
     m_max_row_height = std::max<int>(rendered_glyph->size().y(), m_max_row_height);

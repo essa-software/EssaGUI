@@ -17,13 +17,13 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f>
 
     Util::Vector2f texture_size { fill.texture() ? fill.texture()->size() : Util::Vector2u {} };
     auto texture_rect = fill.texture_rect();
-    if (texture_rect.size() == Util::Vector2f {}) {
+    if (texture_rect.size().is_zero()) {
         texture_rect.width = texture_size.x();
         texture_rect.height = texture_size.y();
     }
 
     auto normalized_texture_coord_for_point = [&](Util::Vector2f point) -> Util::Vector2f {
-        if (texture_rect.size() == Util::Vector2f {}) {
+        if (texture_rect.size().is_zero()) {
             return {};
         }
 

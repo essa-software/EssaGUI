@@ -19,10 +19,18 @@ public:
     CREATE_VALUE(Util::UString, title, "")
 
     virtual Util::Rectf full_rect() const override {
-        return Util::Rect { position() - Util::Vector2f(0, theme().tool_window_title_bar_size), size() + Util::Vector2f(0, theme().tool_window_title_bar_size) }
+        return Util::Rectf {
+            Util::Cs::Point2f::from_deprecated_vector(position() - Util::Vector2f(0, theme().tool_window_title_bar_size)),
+            Util::Cs::Size2f::from_deprecated_vector(size() + Util::Vector2f(0, theme().tool_window_title_bar_size)),
+        }
             .inflated(theme().tool_window_resize_border_width / 2.f);
     }
-    Util::Rectf titlebar_rect() const { return { position() - Util::Vector2f(0, theme().tool_window_title_bar_size), { size().x(), theme().tool_window_title_bar_size } }; }
+    Util::Rectf titlebar_rect() const {
+        return {
+            Util::Cs::Point2f::from_deprecated_vector(position() - Util::Vector2f(0, theme().tool_window_title_bar_size)),
+            Util::Cs::Size2f(size().x(), theme().tool_window_title_bar_size),
+        };
+    }
 
     enum class ResizeDirection {
         Top,

@@ -26,16 +26,16 @@ void TabButton::draw(Gfx::Painter& window) const {
     rect.border_radius_bottom_left = 0;
     rect.border_radius_bottom_right = 0;
     rect.fill_color = colors.background;
-    window.deprecated_draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, raw_size() } : local_rect(), rect);
+    window.deprecated_draw_rectangle(!is_active() ? Util::Rectf { { 0, 4 }, Util::Cs::Size2f::from_deprecated_vector(raw_size()) } : local_rect(), rect);
 
-    Util::Vector2f text_position;
+    Util::Cs::Point2f text_position;
     if (!is_active())
-        text_position.y() = 2;
+        text_position.set_y(2);
 
     Gfx::Text text { is_active() ? content() : active_content(), Application::the().font() };
     text.set_fill_color(colors.text);
     text.set_font_size(theme().label_font_size);
-    text.align(Align::Center, { text_position, raw_size() });
+    text.align(Align::Center, { text_position, Util::Cs::Size2f::from_deprecated_vector(raw_size()) });
     text.draw(window);
 }
 

@@ -88,10 +88,10 @@ Util::Vector2f ScrollableWidget::scroll_area_size() const {
     // We need to make place for scrollbars if content overflows
     auto content_size = this->content_size();
     if (content_size.y() > size.y())
-        size.x() -= 5;
+        size.set_x(size.x() - 5);
     if (content_size.x() > size.x())
-        size.y() -= 5;
-    return size;
+        size.set_y(size.y() - 5);
+    return size.to_deprecated_vector();
 }
 
 }

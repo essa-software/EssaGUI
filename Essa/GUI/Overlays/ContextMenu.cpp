@@ -36,7 +36,7 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.left += 10;
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
-        if (background_rect.contains(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - raw_position())) {
+        if (background_rect.contains(Util::Cs::Point2f::from_deprecated_vector(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - raw_position()))) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             painter.deprecated_draw_rectangle(background_rect, hovered_background);
@@ -113,7 +113,7 @@ void ContextMenuOverlay::handle_event(Event const& event) {
 
     // FIXME: Add something like close_when_clicked_outside()
     if (auto mousepress = event.get<Event::MouseButtonPress>();
-        full_rect().contains(Util::Vector2f { mousepress->local_position() } + position())) {
+        full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(Util::Vector2f { mousepress->local_position() } + position()))) {
         close();
     }
     if (auto keypress = event.get<Event::KeyPress>(); keypress->code() == llgl::KeyCode::Escape) {

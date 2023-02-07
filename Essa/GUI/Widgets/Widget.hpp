@@ -137,7 +137,7 @@ public:
     }
 
     Util::Rectf rect() const;
-    Util::Rectf local_rect() const { return { Util::Vector2f(), m_raw_size }; }
+    Util::Rectf local_rect() const { return { {}, Util::Cs::Size2f::from_deprecated_vector(m_raw_size) }; }
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
@@ -197,7 +197,7 @@ public:
             m_initialized = true;
         }
     }
-    
+
     // FIXME: This should probably be private.
     void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
 

@@ -42,7 +42,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
             auto& overlay = **it2;
-            if (overlay.full_rect().contains(mouse_button->local_position())) {
+            if (overlay.full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(mouse_button->local_position()))) {
                 new_focused_it = it2;
                 break;
             }
@@ -54,7 +54,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
     if (m_focused_overlay) {
         m_focused_overlay->handle_event(event.relativized(Util::Vector2i { m_focused_overlay->position() }));
         bool scroll_outside_window = event.is<llgl::Event::MouseScroll>()
-            && !m_focused_overlay->full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
+            && !m_focused_overlay->full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(event.get<llgl::Event::MouseScroll>()->local_position()));
         if (!(event.is<llgl::Event::MouseMove>() || event.is<llgl::Event::MouseButtonRelease>() || scroll_outside_window))
             return;
     }
@@ -70,7 +70,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
         }
 
         bool scroll_on_window = event.is<llgl::Event::MouseScroll>()
-            && overlay.full_rect().contains(Util::Vector2i { event.get<llgl::Event::MouseScroll>()->local_position() });
+            && overlay.full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(event.get<llgl::Event::MouseScroll>()->local_position()));
 
         if (scroll_on_window)
             should_pass_event_to_main_window = false;
@@ -97,8 +97,8 @@ void HostWindow::do_draw() {
     glClear(GL_DEPTH_BUFFER_BIT);
     m_painter.reset();
 
-    Util::Rectf viewport { {}, size() };
-    m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, Util::Vector2d { size() } } }, Util::Recti { viewport }));
+    Util::Rectf viewport { {}, Util::Cs::Size2f::from_deprecated_vector(size()) };
+    m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, Util::Cs::Size2d::from_deprecated_vector(size()) } }, Util::Recti { viewport }));
 
     WidgetTreeRoot::draw(m_painter);
     for (auto& overlay : m_overlays)
