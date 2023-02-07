@@ -29,7 +29,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
 
     if (event.target_type() == llgl::EventTargetType::Global) {
         for (auto const& overlay : m_overlays) {
-            overlay->handle_event(event.relativized(Util::Vector2i { overlay->position() }));
+            overlay->handle_event(event.relativized(Util::Cs::Vector2i::from_deprecated_vector(overlay->position())));
         }
         WidgetTreeRoot::handle_event(event);
         return;
@@ -42,7 +42,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
             auto& overlay = **it2;
-            if (overlay.full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(mouse_button->local_position()))) {
+            if (overlay.full_rect().contains(mouse_button->local_position())) {
                 new_focused_it = it2;
                 break;
             }
@@ -52,9 +52,9 @@ void HostWindow::handle_event(GUI::Event const& event) {
 
     // Pass events to focused tool window
     if (m_focused_overlay) {
-        m_focused_overlay->handle_event(event.relativized(Util::Vector2i { m_focused_overlay->position() }));
+        m_focused_overlay->handle_event(event.relativized(Util::Cs::Vector2i::from_deprecated_vector(m_focused_overlay->position())));
         bool scroll_outside_window = event.is<llgl::Event::MouseScroll>()
-            && !m_focused_overlay->full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(event.get<llgl::Event::MouseScroll>()->local_position()));
+            && !m_focused_overlay->full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
         if (!(event.is<llgl::Event::MouseMove>() || event.is<llgl::Event::MouseButtonRelease>() || scroll_outside_window))
             return;
     }
@@ -65,12 +65,12 @@ void HostWindow::handle_event(GUI::Event const& event) {
     for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
         auto& overlay = **it;
         if (event.is<llgl::Event::MouseMove>()) {
-            overlay.handle_event(event.relativized(Util::Vector2i { overlay.position() }));
+            overlay.handle_event(event.relativized(Util::Cs::Vector2i::from_deprecated_vector(overlay.position())));
             break;
         }
 
         bool scroll_on_window = event.is<llgl::Event::MouseScroll>()
-            && overlay.full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(event.get<llgl::Event::MouseScroll>()->local_position()));
+            && overlay.full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
 
         if (scroll_on_window)
             should_pass_event_to_main_window = false;

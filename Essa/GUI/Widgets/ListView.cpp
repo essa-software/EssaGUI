@@ -133,7 +133,7 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
     }
 
     size_t rows = model()->root_row_count();
-    auto mouse_pos = Util::Cs::Point2f::from_deprecated_vector(event.local_position());
+    auto mouse_pos = event.local_position();
 
     for (size_t row = 0; row < rows; row++) {
         auto cell_position = Util::Cs::Point2f::from_deprecated_vector(row_position(row));
@@ -145,7 +145,7 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
             }
             else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
                 if (auto context_menu = on_context_menu_request(row)) {
-                    host_window().open_context_menu(*context_menu, mouse_pos.to_deprecated_vector() + widget_tree_root().position());
+                    host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos.to_deprecated_vector() } + widget_tree_root().position());
                 }
             }
             return EventHandlerResult::NotAccepted;

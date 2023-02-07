@@ -41,7 +41,7 @@ Widget::EventHandlerResult Slider::on_mouse_button_release(Event::MouseButtonRel
 
 Widget::EventHandlerResult Slider::on_mouse_move(Event::MouseMove const& event) {
     if (m_dragging) {
-        auto mouse_pos_relative_to_slider = Util::Vector2f { event.local_position() };
+        auto mouse_pos_relative_to_slider = event.local_position();
         m_val = (mouse_pos_relative_to_slider.x() / raw_size().x()) * (m_max - m_min) + m_min;
 
         if (m_wraparound) {

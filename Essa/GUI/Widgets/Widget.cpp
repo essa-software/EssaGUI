@@ -64,7 +64,7 @@ void Widget::update() {
 }
 
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
-    auto transformed_event = event.relativized(Util::Vector2i { m_raw_position });
+    auto transformed_event = event.relativized(Util::Cs::Vector2i::from_deprecated_vector(m_raw_position));
 
     // Check if widget is actually affected by the event, this
     // must be here so that event handler will actually run if
@@ -76,12 +76,12 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto result2 = transformed_event.visit(
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            m_hover = is_mouse_over(mouse_position.to_deprecated_vector() + Util::Vector2i { m_raw_position });
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
                 if (m_hover && !m_tooltip) {
                     m_tooltip_counter = 40;
-                    m_tooltip_position = mouse_position;
+                    m_tooltip_position = mouse_position.to_deprecated_vector();
                 }
                 if (!m_hover) {
                     if (m_tooltip)
@@ -92,7 +92,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 break;
             }
             case TooltipMode::Realtime: {
-                m_tooltip_position = mouse_position;
+                m_tooltip_position = mouse_position.to_deprecated_vector();
                 if (m_hover) {
                     if (!m_tooltip)
                         m_tooltip_counter = 0;
@@ -106,8 +106,8 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             return EventHandlerResult::NotAccepted;
         },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
-            Util::Vector2i mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            auto mouse_position = event.local_position();
+            m_hover = is_mouse_over(mouse_position.to_deprecated_vector() + Util::Vector2i { m_raw_position });
             if (m_hover) {
                 m_hovered_on_click = true;
             }
@@ -118,8 +118,8 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             return EventHandlerResult::NotAccepted;
         },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
-            Util::Vector2i mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + Util::Vector2i { m_raw_position });
+            auto mouse_position = event.local_position();
+            m_hover = is_mouse_over(mouse_position.to_deprecated_vector() + Util::Vector2i { m_raw_position });
             m_hovered_on_click = false;
             return EventHandlerResult::NotAccepted;
         },
@@ -201,7 +201,7 @@ bool Widget::is_affected_by_event(Event const& event) const {
     case llgl::EventTargetType::KeyboardFocused:
         return is_focused();
     case llgl::EventTargetType::MouseFocused:
-        return local_rect().contains(Util::Cs::Point2i::from_deprecated_vector(event.local_mouse_position())) || m_hovered_on_click;
+        return local_rect().contains(event.local_mouse_position()) || m_hovered_on_click;
     case llgl::EventTargetType::Specific:
         return false;
     case llgl::EventTargetType::Global:

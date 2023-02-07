@@ -77,8 +77,8 @@ int main() {
                         s_pressed = false;
                 },
                 [&](llgl::Event::MouseMove const& event) -> void {
-                    yaw += Util::deg_to_rad<float>(event.position_relative_to_last_event().x());
-                    pitch += Util::deg_to_rad<float>(event.position_relative_to_last_event().y());
+                    yaw += Util::deg_to_rad<float>(event.delta().x());
+                    pitch += Util::deg_to_rad<float>(event.delta().y());
                 },
                 [&](auto const&) -> void {});
         }

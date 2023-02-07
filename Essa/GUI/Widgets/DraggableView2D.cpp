@@ -36,12 +36,12 @@ Util::Vector2i DraggableView2D::world_to_screen(Util::Vector2f world) const {
 Widget::EventHandlerResult DraggableView2D::on_mouse_scroll(Event::MouseScroll const& event) {
     if (event.delta() > 0) {
         m_zoom *= 2;
-        auto delta = (Util::Vector2f { event.local_position() } - raw_size() / 2.f) / m_zoom;
+        auto delta = (Util::Vector2f { event.local_position().to_deprecated_vector() } - raw_size() / 2.f) / m_zoom;
         m_offset += delta;
     }
     else {
         m_zoom /= 2;
-        auto delta = (Util::Vector2f { event.local_position() } - raw_size() / 2.f) / m_zoom;
+        auto delta = (Util::Vector2f { event.local_position().to_deprecated_vector() } - raw_size() / 2.f) / m_zoom;
         m_offset -= delta / 2.f;
     }
     return Widget::EventHandlerResult::NotAccepted;
@@ -52,7 +52,7 @@ Widget::EventHandlerResult DraggableView2D::on_mouse_button_press(Event::MouseBu
         return Widget::EventHandlerResult::NotAccepted;
     }
     m_drag_start_mouse = event.local_position();
-    m_drag_start_offset = m_offset;
+    m_drag_start_offset = Util::Cs::Vector2i::from_deprecated_vector(m_offset);
     m_dragging = true;
     return EventHandlerResult::NotAccepted;
 }
@@ -72,7 +72,7 @@ Widget::EventHandlerResult DraggableView2D::on_mouse_move(Event::MouseMove const
         m_actually_dragging = true;
     }
     if (m_actually_dragging) {
-        m_offset = m_drag_start_offset - Util::Vector2f { delta } / m_zoom;
+        m_offset = Util::Vector2f { (m_drag_start_offset - delta / m_zoom).to_deprecated_vector() };
     }
     return EventHandlerResult::NotAccepted;
 }

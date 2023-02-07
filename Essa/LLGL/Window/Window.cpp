@@ -36,7 +36,7 @@ std::optional<Event> Window::poll_event() {
     auto event = poll_event_impl();
     if (event) {
         if (auto resize = event->get<Event::WindowResize>()) {
-            m_size = Util::Vector2i { resize->new_size() };
+            m_size = Util::Vector2i { resize->new_size().to_deprecated_vector() };
         }
     }
     return event;

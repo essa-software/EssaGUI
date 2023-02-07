@@ -113,7 +113,7 @@ void ContextMenuOverlay::handle_event(Event const& event) {
 
     // FIXME: Add something like close_when_clicked_outside()
     if (auto mousepress = event.get<Event::MouseButtonPress>();
-        full_rect().contains(Util::Cs::Point2f::from_deprecated_vector(Util::Vector2f { mousepress->local_position() } + position()))) {
+        full_rect().contains(mousepress->local_position() + Util::Cs::Vector2i::from_deprecated_vector(position()))) {
         close();
     }
     if (auto keypress = event.get<Event::KeyPress>(); keypress->code() == llgl::KeyCode::Escape) {

@@ -52,7 +52,7 @@ void WidgetTreeRoot::handle_events() {
             if (!event) {
                 break;
             }
-            handle_event(event->relativized(Util::Vector2i { position() }));
+            handle_event(event->relativized(Util::Cs::Vector2i::from_deprecated_vector(position())));
 
             // We need to inform host window about global events, as now we act as
             // main event loop!

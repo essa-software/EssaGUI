@@ -31,7 +31,7 @@ void ToolWindow::handle_event(Event const& event) {
 
     bool should_pass_event_to_widgets = true;
     if (event.is_mouse_related()) {
-        auto mouse_position = Util::Cs::Point2i::from_deprecated_vector(event.local_mouse_position());
+        auto mouse_position = event.local_mouse_position();
         mouse_position += Util::Cs::Vector2i::from_deprecated_vector(position());
 
         float titlebar_button_position_x = position().x() + size().x() - theme().tool_window_title_bar_size;

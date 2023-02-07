@@ -370,7 +370,7 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
 
 Widget::EventHandlerResult TextEditor::on_mouse_button_press(Event::MouseButtonPress const& event) {
     ScrollableWidget::on_mouse_button_press(event);
-    m_cursor = text_position_at(event.local_position());
+    m_cursor = text_position_at(event.local_position().to_deprecated_vector());
     update_selection_after_set_cursor();
     m_dragging = true;
     return EventHandlerResult::NotAccepted;
@@ -388,7 +388,7 @@ Widget::EventHandlerResult TextEditor::on_mouse_move(Event::MouseMove const& eve
     }
     ScrollableWidget::on_mouse_move(event);
     if (m_dragging) {
-        m_cursor = text_position_at(event.local_position());
+        m_cursor = text_position_at(event.local_position().to_deprecated_vector());
         update_selection_after_set_cursor(SetCursorSelectionBehavior::DontTouch);
     }
     return EventHandlerResult::NotAccepted;

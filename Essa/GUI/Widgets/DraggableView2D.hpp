@@ -32,8 +32,8 @@ private:
     float m_zoom = 1;
     Util::Vector2f m_offset;
 
-    Util::Vector2i m_drag_start_mouse;
-    Util::Vector2f m_drag_start_offset;
+    Util::Cs::Point2i m_drag_start_mouse;
+    Util::Cs::Vector2i m_drag_start_offset;
     bool m_dragging = false;
     bool m_actually_dragging = false;
     llgl::MouseButton m_pan_button = llgl::MouseButton::Middle;

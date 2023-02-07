@@ -3,6 +3,7 @@
 #include <Essa/LLGL/Window/Keyboard.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
 #include <EssaUtil/Config.hpp>
+#include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <type_traits>
@@ -28,14 +29,14 @@ public:
 
 class WindowResizeEvent : public Base {
 public:
-    explicit WindowResizeEvent(Util::Vector2u new_size)
+    explicit WindowResizeEvent(Util::Cs::Size2u new_size)
         : m_new_size(new_size) { }
 
-    Util::Vector2u new_size() const { return m_new_size; }
+    Util::Cs::Size2u new_size() const { return m_new_size; }
     static EventTargetType target_type() { return EventTargetType::Global; }
 
 private:
-    Util::Vector2u m_new_size;
+    Util::Cs::Size2u m_new_size;
 };
 
 class KeyEvent : public Base {
@@ -74,40 +75,40 @@ public:
 
 class MouseEvent : public Base {
 public:
-    explicit MouseEvent(Util::Vector2i position)
+    explicit MouseEvent(Util::Cs::Point2i position)
         : m_local_position(position) { }
 
     // Position relative to thing that is currently handling the event
     // (Widget/WTR). The parent is responsible for transforming event using
     // Event::transformed() function.
-    Util::Vector2i local_position() const { return m_local_position; }
+    Util::Cs::Point2i local_position() const { return m_local_position; }
     static EventTargetType target_type() { return EventTargetType::MouseFocused; }
 
 private:
     friend struct ::llgl::Event;
 
-    void relativize(Util::Vector2i offset) {
+    void relativize(Util::Cs::Vector2i offset) {
         m_local_position -= offset;
     }
 
-    Util::Vector2i m_local_position;
+    Util::Cs::Point2i m_local_position;
 };
 
 class MouseMoveEvent : public MouseEvent {
 public:
-    explicit MouseMoveEvent(Util::Vector2i position, Util::Vector2u position_relative_to_last_event)
+    explicit MouseMoveEvent(Util::Cs::Point2i position, Util::Cs::Vector2i delta)
         : MouseEvent(position)
-        , m_position_relative_to_last_event(position_relative_to_last_event) { }
+        , m_delta(delta) { }
 
-    Util::Vector2u position_relative_to_last_event() const { return m_position_relative_to_last_event; }
+    Util::Cs::Vector2i delta() const { return m_delta; }
 
 private:
-    Util::Vector2u m_position_relative_to_last_event;
+    Util::Cs::Vector2i m_delta;
 };
 
 class MouseButtonEvent : public MouseEvent {
 public:
-    explicit MouseButtonEvent(Util::Vector2i position, llgl::MouseButton button)
+    explicit MouseButtonEvent(Util::Cs::Point2i position, llgl::MouseButton button)
         : MouseEvent(position)
         , m_button(button) { }
 
@@ -119,19 +120,19 @@ private:
 
 class MouseButtonPressEvent : public MouseButtonEvent {
 public:
-    explicit MouseButtonPressEvent(Util::Vector2i position, llgl::MouseButton button)
+    explicit MouseButtonPressEvent(Util::Cs::Point2i position, llgl::MouseButton button)
         : MouseButtonEvent(position, button) { }
 };
 
 class MouseButtonReleaseEvent : public MouseButtonEvent {
 public:
-    explicit MouseButtonReleaseEvent(Util::Vector2i position, llgl::MouseButton button)
+    explicit MouseButtonReleaseEvent(Util::Cs::Point2i position, llgl::MouseButton button)
         : MouseButtonEvent(position, button) { }
 };
 
 class MouseScrollEvent : public MouseEvent {
 public:
-    explicit MouseScrollEvent(Util::Vector2i position, float delta)
+    explicit MouseScrollEvent(Util::Cs::Point2i position, float delta)
         : MouseEvent(position)
         , m_delta(delta) { }
 
@@ -169,7 +170,8 @@ struct Event : public EventTypes::Variant {
     using Variant = EventTypes::Variant;
 
     template<class T>
-    Event(T&& t) requires(std::is_constructible_v<Variant, T>)
+    Event(T&& t)
+        requires(std::is_constructible_v<Variant, T>)
         : Variant(std::forward<T>(t)) { }
 
     using WindowResize = EventTypes::WindowResizeEvent;
@@ -216,7 +218,7 @@ struct Event : public EventTypes::Variant {
         });
     }
 
-    Event relativized(Util::Vector2i offset) const {
+    Event relativized(Util::Cs::Vector2i offset) const {
         return visit([&](auto const& event) -> Event {
             using EventType = std::remove_cvref_t<decltype(event)>;
             if constexpr (std::is_base_of_v<Event::Mouse, EventType>) {
@@ -234,9 +236,9 @@ struct Event : public EventTypes::Variant {
         return target_type() == EventTargetType::MouseFocused;
     }
 
-    Util::Vector2i local_mouse_position() const {
+    Util::Cs::Point2i local_mouse_position() const {
         assert(is_mouse_related());
-        return visit([&](auto const& event) -> Util::Vector2i {
+        return visit([&](auto const& event) -> Util::Cs::Point2i {
             using EventType = std::remove_cvref_t<decltype(event)>;
             if constexpr (std::is_base_of_v<Event::Mouse, EventType>) {
                 return event.local_position();
