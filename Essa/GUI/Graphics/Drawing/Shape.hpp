@@ -23,8 +23,8 @@ public:
         m_origin = o;
         return *this;
     }
-    Shape& move(Util::Vector2f t) {
-        m_transform = m_transform.translate(Util::Vector3f { t, 0 });
+    Shape& move(Util::Cs::Vector2f const& t) {
+        m_transform = m_transform.translate(Util::Cs::Vector3f { t, 0 });
         return *this;
     }
     Shape& rotate(float t) {
@@ -97,6 +97,6 @@ private:
 
 #define __ESSA_DEFINE_SHAPE_CHAINABLES(Subclass)                                                           \
     Subclass& set_transform(llgl::Transform t) { return static_cast<Subclass&>(Shape::set_transform(t)); } \
-    Subclass& move(Util::Vector2f t) { return static_cast<Subclass&>(Shape::move(t)); }                    \
+    Subclass& move(Util::Cs::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }         \
     Subclass& rotate(float t) { return static_cast<Subclass&>(Shape::rotate(t)); }                         \
     Subclass& scale(Util::Vector2f t) { return static_cast<Subclass&>(Shape::scale(t)); }

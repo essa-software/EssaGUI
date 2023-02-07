@@ -1,5 +1,6 @@
 #pragma once
 
+#include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <vector>
@@ -12,7 +13,7 @@ public:
         : m_matrix(matrix) {
     }
 
-    [[nodiscard]] Transform translate(Util::Vector3f vector) const;
+    [[nodiscard]] Transform translate(Util::Cs::Vector3f const& by) const;
 
     // Angle is in radians.
     [[nodiscard]] Transform rotate_x(float angle) const;
@@ -26,13 +27,13 @@ public:
 
     Util::Matrix4x4f matrix() const { return m_matrix; }
 
-    Util::Vector3f transform_point(Util::Vector3f const&) const;
+    Util::Cs::Point3f transform_point(Util::Cs::Point3f const&) const;
 
     // Transform a point using z = 0 and ignoring z on return.
-    Util::Vector2f transform_point_2d(Util::Vector2f const&) const;
+    Util::Cs::Point2f transform_point_2d(Util::Cs::Point2f const&) const;
 
-    std::vector<Util::Vector3f> transform_points(std::vector<Util::Vector3f> const&) const;
-    std::vector<Util::Vector2f> transform_points_2d(std::vector<Util::Vector2f> const&) const;
+    std::vector<Util::Cs::Point3f> transform_points(std::vector<Util::Cs::Point3f> const&) const;
+    std::vector<Util::Cs::Point2f> transform_points_2d(std::vector<Util::Cs::Point2f> const&) const;
 
 private:
     Util::Matrix4x4f m_matrix = Util::Matrix4x4f::identity();

@@ -99,7 +99,7 @@ int main() {
         if (s_pressed)
             camera_position.z() -= 0.1;
         llgl::Transform view_transform;
-        view_transform = view_transform.rotate_y(yaw).rotate_x(pitch).translate(camera_position);
+        view_transform = view_transform.rotate_y(yaw).rotate_x(pitch).translate(Util::Cs::Vector3f::from_deprecated_vector(camera_position));
 
         light_angle += 0.01;
 

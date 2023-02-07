@@ -5,7 +5,7 @@
 namespace llgl {
 
 Camera Camera::translate(Util::Vector3f vector) const {
-    return Camera { m_projection, llgl::Transform {}.translate(-vector).matrix() * m_view_matrix };
+    return Camera { m_projection, llgl::Transform {}.translate(Util::Cs::Vector3f::from_deprecated_vector(-vector)).matrix() * m_view_matrix };
 }
 
 Camera Camera::rotate_x(Util::Angle angle) const {

@@ -4,16 +4,16 @@ namespace GUI {
 
 llgl::Transform DraggableView2D::transform() const {
     return llgl::Transform {}
-        .translate(Util::Vector3f { raw_size() / 2.f, 0 })
+        .translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { raw_size() / 2.f, 0 }))
         .scale(m_zoom)
-        .translate(Util::Vector3f { -m_offset, 0 });
+        .translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { -m_offset, 0 }));
 }
 
 llgl::Transform DraggableView2D::inverse_transform() const {
     return llgl::Transform {}
-        .translate(Util::Vector3f { m_offset, 0 })
+        .translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { m_offset, 0 }))
         .scale(1 / m_zoom)
-        .translate(Util::Vector3f { -raw_size() / 2.f, 0 });
+        .translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { -raw_size() / 2.f, 0 }));
 }
 
 Util::Rectf DraggableView2D::visible_area() const {
@@ -26,11 +26,11 @@ Util::Rectf DraggableView2D::visible_area() const {
 }
 
 Util::Vector2f DraggableView2D::screen_to_world(Util::Vector2i screen) const {
-    return Util::Vector2f { inverse_transform().transform_point(Util::Vector3f { screen, 1 }) };
+    return inverse_transform().transform_point_2d(Util::Cs::Point2f::from_deprecated_vector(screen)).to_deprecated_vector();
 }
 
 Util::Vector2i DraggableView2D::world_to_screen(Util::Vector2f world) const {
-    return Util::Vector2i { transform().transform_point(Util::Vector3f { world, 1 }) };
+    return Util::Vector2i{ transform().transform_point_2d(Util::Cs::Point2f::from_deprecated_vector(world)).to_deprecated_vector() };
 }
 
 Widget::EventHandlerResult DraggableView2D::on_mouse_scroll(Event::MouseScroll const& event) {

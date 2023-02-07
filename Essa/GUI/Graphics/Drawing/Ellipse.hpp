@@ -8,11 +8,11 @@ class Ellipse : public Shape {
 public:
     Ellipse(Util::Vector2f center, float radius, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
-        , m_extents(radius, radius) { move(center); }
+        , m_extents(radius, radius) { move(Util::Cs::Vector2f::from_deprecated_vector(center)); }
 
     Ellipse(Util::Vector2f center, Util::Vector2f extents, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
-        , m_extents(extents) { move(center); }
+        , m_extents(extents) { move(Util::Cs::Vector2f::from_deprecated_vector(center)); }
 
     __ESSA_DEFINE_SHAPE_CHAINABLES(Ellipse)
 
