@@ -15,8 +15,6 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f>
     auto fill = shape.fill();
     auto local_bounds = shape.local_bounds();
 
-    std::vector<Gfx::Vertex> fill_vertices;
-
     Util::Vector2f texture_size { fill.texture() ? fill.texture()->size() : Util::Vector2u {} };
     auto texture_rect = fill.texture_rect();
     if (texture_rect.size() == Util::Vector2f {}) {
@@ -41,6 +39,8 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f>
         return { texture_coords.x() / texture_size.x(), texture_coords.y() / texture_size.y() };
     };
 
+    std::vector<Gfx::Vertex> fill_vertices;
+    fill_vertices.reserve(vertices.size());
     for (auto const& point : vertices) {
         fill_vertices.push_back(Gfx::Vertex {
             point,
