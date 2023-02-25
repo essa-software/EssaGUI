@@ -99,9 +99,9 @@ Util::Cs::Point3f Transform::transform_point(Util::Cs::Point3f const& vector) co
     auto vector4 = Util::Cs::Point4f { vector, 1 };
     if (m_matrix == Util::Matrix4x4f::identity())
         return vector;
-    auto result = (m_matrix * vector4).to_vector();
+    auto result = m_matrix * vector4;
     result /= result.w();
-    return Util::Cs::Point3f { result.x(), result.y(), result.z() };
+    return Util::Cs::Point3f { result };
 }
 
 Util::Cs::Point2f Transform::transform_point_2d(Util::Cs::Point2f const& vec) const {
