@@ -16,7 +16,11 @@ ResourceManager::ResourceManager()
 
 std::optional<std::string> ResourceManager::lookup_resource(ResourceIdAndBase const& id_and_base) const {
     if (id_and_base.id.type() == ResourceId::Type::External) {
-        return std::filesystem::absolute(id_and_base.id.path());
+        try {
+            return std::filesystem::absolute(id_and_base.id.path());
+        } catch (...) {
+            return {};
+        }
     }
 
     for (auto const& root : m_resource_roots) {
