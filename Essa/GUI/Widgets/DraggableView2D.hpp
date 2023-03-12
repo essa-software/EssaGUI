@@ -14,7 +14,7 @@ public:
     float zoom() const { return m_zoom; }
     void set_zoom(float z) { m_zoom = z; }
     auto offset() const { return m_offset; }
-    void set_offset(Util::Vector2f off) { m_offset = off; }
+    void set_offset(Util::Cs::Vector2f off) { m_offset = off; }
     Util::Rectf visible_area() const;
     Util::Vector2f screen_to_world(Util::Vector2i) const;
     Util::Vector2i world_to_screen(Util::Vector2f) const;
@@ -30,10 +30,10 @@ protected:
 
 private:
     float m_zoom = 1;
-    Util::Vector2f m_offset;
+    Util::Cs::Vector2f m_offset;
 
     Util::Cs::Point2i m_drag_start_mouse;
-    Util::Cs::Vector2i m_drag_start_offset;
+    Util::Cs::Vector2f m_drag_start_offset;
     bool m_dragging = false;
     bool m_actually_dragging = false;
     llgl::MouseButton m_pan_button = llgl::MouseButton::Middle;

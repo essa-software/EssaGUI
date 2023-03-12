@@ -24,7 +24,7 @@ public:
         return *this;
     }
     Shape& move(Util::Cs::Vector2f const& t) {
-        m_transform = m_transform.translate(Util::Cs::Vector3f { t, 0 });
+        m_transform = m_transform.translate(Util::Cs::Vector3f { t, 0.f });
         return *this;
     }
     Shape& rotate(float t) {

@@ -96,7 +96,7 @@ Transform Transform::scale_z(float scale) const {
 }
 
 Util::Cs::Point3f Transform::transform_point(Util::Cs::Point3f const& vector) const {
-    auto vector4 = Util::Cs::Point4f { vector, 1 };
+    auto vector4 = Util::Cs::Point4f { vector, 1.f };
     if (m_matrix == Util::Matrix4x4f::identity())
         return vector;
     auto result = m_matrix * vector4;
@@ -105,7 +105,7 @@ Util::Cs::Point3f Transform::transform_point(Util::Cs::Point3f const& vector) co
 }
 
 Util::Cs::Point2f Transform::transform_point_2d(Util::Cs::Point2f const& vec) const {
-    return Util::Cs::Point2f { transform_point(Util::Cs::Point3f { vec, 0 }) };
+    return Util::Cs::Point2f { transform_point(Util::Cs::Point3f { vec, 0.f }) };
 }
 
 std::vector<Util::Cs::Point3f> Transform::transform_points(std::vector<Util::Cs::Point3f> const& points) const {
