@@ -2,6 +2,7 @@
 
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Config.hpp>
+#include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <span>
 
@@ -28,6 +29,7 @@ public:
 
     auto size() const { return m_size; }
     size_t pixel_count() const { return m_size.x() * m_size.y(); }
+    bool is_point_in_bounds(Util::Cs::Point2f const&) const;
 
 private:
     Image(Util::Vector2u size);

@@ -42,6 +42,10 @@ void Image::insert_image_in_bounds(Image const& other, Util::Vector2u where) {
     }
 }
 
+bool Image::is_point_in_bounds(Util::Cs::Point2f const& point) const {
+    return point.x() >= 0 && point.x() < m_size.x() && point.y() >= 0 && point.y() < m_size.y();
+}
+
 Image::Image(Util::Vector2u size) {
     m_size = size;
     m_pixels = new Util::Color[pixel_count()];
