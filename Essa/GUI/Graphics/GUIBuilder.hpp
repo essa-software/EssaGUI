@@ -43,7 +43,7 @@ public:
         add_render_range_for_last_vertices(vertices.size(), mode, m_projection, m_view, m_model, m_submodel, texture);
     }
 
-    void set_projection(llgl::Projection projection) { m_projection = std::move(projection); }
+    void set_projection(llgl::Projection projection) { m_projection = projection; }
     auto projection() const { return m_projection; }
     void set_view(llgl::Transform const& transform) { m_view = transform; }
     auto view() const { return m_view; }

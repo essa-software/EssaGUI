@@ -10,7 +10,7 @@ class TTFFont;
 
 class GlyphCache {
 public:
-    explicit GlyphCache(int font_size);
+    explicit GlyphCache(uint32_t font_size);
 
     struct Glyph {
         Util::Rectu texture_rect;
@@ -20,7 +20,7 @@ public:
     Texture const& atlas() const { return m_atlas; }
 
 private:
-    int m_font_size {};
+    uint32_t m_font_size {};
     Texture m_atlas;
     std::map<uint32_t, Glyph> m_glyphs;
     Util::Vector2u m_current_atlas_position;

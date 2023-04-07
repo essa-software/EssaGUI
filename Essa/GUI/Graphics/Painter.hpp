@@ -63,7 +63,7 @@ public:
     }
 
     void draw_outline(std::span<Util::Vector2f const>, Util::Color color, float thickness);
-    void draw_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const>, llgl::Texture const* = nullptr);
+    void draw_vertices(llgl::PrimitiveType type, std::span<Gfx::DefaultGUIShader::Vertex const>, llgl::Texture const* = nullptr);
 
     void reset() {
         m_builder.reset();

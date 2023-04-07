@@ -88,8 +88,8 @@ RoundingResult round(RoundingSettings settings) {
     auto tg_gamma_rec = -(d_a.x() * d_b.x() + d_a.y() * d_b.y()) / (d_a.y() * d_b.x() - d_a.x() * d_b.y());
 
     // 2a)
-    auto cos_gamma = d_a.normalized().dot(d_b.normalized());
-    auto sin_gamma = tg_gamma_rec == 0 ? 1 : cos_gamma / tg_gamma_rec;
+    auto cos_gamma = static_cast<float>(d_a.normalized().dot(d_b.normalized()));
+    auto sin_gamma = static_cast<float>(tg_gamma_rec == 0 ? 1 : cos_gamma / tg_gamma_rec);
     // fmt::print("sin={}, cos={}\n", sin_gamma, cos_gamma);
 
     // 2b)
@@ -102,8 +102,8 @@ RoundingResult round(RoundingSettings settings) {
     auto a = expected_a;
 
     // Scale everything down if doesn't fit.
-    a = std::min<float>(a, d_a.length() / 2);
-    a = std::min<float>(a, d_b.length() / 2);
+    a = std::min<float>(a, static_cast<float>(d_a.length()) / 2);
+    a = std::min<float>(a, static_cast<float>(d_b.length()) / 2);
     r *= a / expected_a;
     // fmt::print("a ..= {} {}\n", expected_a, a);
 
@@ -119,8 +119,8 @@ RoundingResult round(RoundingSettings settings) {
     auto center = C + (ca_p + cb_p).with_length(d);
 
     // 5)
-    float alpha = ((C + ca_p) - center).angle();
-    float beta = ((C + cb_p) - center).angle();
+    auto alpha = ((C + ca_p) - center).angle();
+    auto beta = ((C + cb_p) - center).angle();
     if (beta - alpha > M_PI) {
         alpha += M_PI * 2;
     }
@@ -130,7 +130,7 @@ RoundingResult round(RoundingSettings settings) {
     assert(std::abs(alpha - beta) < M_PI + 10e-6);
 
     // fmt::print("{} {}\n", fmt::streamed(settings.tip), fmt::streamed(center));
-    return { center, alpha, beta, r };
+    return { center, static_cast<float>(alpha), static_cast<float>(beta), r };
 }
 
 static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
@@ -171,8 +171,9 @@ static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing:
 
         auto rounding = round({ left, right, tip, r });
 
-        for (size_t s = 0; s <= 12; s++) {
-            float angle = rounding.angle_start + (rounding.angle_end - rounding.angle_start) * s / 12.0;
+        constexpr size_t RoundingResolution = 12;
+        for (size_t s = 0; s <= RoundingResolution; s++) {
+            float angle = rounding.angle_start + (rounding.angle_end - rounding.angle_start) * static_cast<float>(s) / static_cast<float>(RoundingResolution);
             // fmt::print("{}\n", fmt::streamed(rounding.center));
             auto point = rounding.center + Util::Vector2f::create_polar(angle, rounding.scaled_radius);
 

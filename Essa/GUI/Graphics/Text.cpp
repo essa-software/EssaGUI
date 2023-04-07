@@ -4,7 +4,7 @@ namespace Gfx {
 
 void Text::draw(Gfx::Painter& painter) const {
     float line_y = 0;
-    auto cache = m_font.cache(m_font_size);
+    auto* cache = m_font.cache(m_font_size);
     if (!cache)
         return;
     m_string.for_each_line([this, &painter, &line_y, cache](std::span<uint32_t const> span) {

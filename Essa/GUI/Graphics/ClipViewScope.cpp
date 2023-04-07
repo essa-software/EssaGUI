@@ -29,7 +29,7 @@ ClipViewScope::~ClipViewScope() {
     m_target.builder().set_projection(m_old_projection);
 }
 
-llgl::Projection ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2f offset_position, Util::Vector2u host_window_size) const {
+llgl::Projection ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2f offset_position, Util::Vector2u host_window_size) {
     return llgl::Projection::ortho({ { offset_position.x(), offset_position.y(), static_cast<double>(rect.width), static_cast<double>(rect.height) } },
         Util::Recti { static_cast<int>(rect.left), static_cast<int>(host_window_size.y() - rect.top - rect.height), static_cast<int>(rect.width), static_cast<int>(rect.height) });
 }

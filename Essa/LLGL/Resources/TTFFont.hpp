@@ -19,34 +19,34 @@ public:
     TTFFont(TTFFont&& other) = default;
     TTFFont& operator=(TTFFont&& other) = default;
 
-    static TTFFont open_from_file(std::string const& papth);
+    static TTFFont open_from_file(std::string const& path);
 
-    int ascent(int font_size) const;
-    int descent(int font_size) const;
-    int line_height(int font_size) const;
-    int kerning(int font_size, uint32_t previous, uint32_t current) const;
+    int ascent(uint32_t font_size) const;
+    int descent(uint32_t font_size) const;
+    int line_height(uint32_t font_size) const;
+    int kerning(uint32_t font_size, uint32_t previous, uint32_t current) const;
 
-    std::optional<llgl::Image> render_text(Util::UString const& text, int font_size) const;
-    Util::Vector2u calculate_text_size(Util::UString const& text, int font_size) const;
-    GlyphCache* cache(int font_size) const;
+    std::optional<llgl::Image> render_text(Util::UString const& text, uint32_t font_size) const;
+    Util::Vector2u calculate_text_size(Util::UString const& text, uint32_t font_size) const;
+    GlyphCache* cache(uint32_t font_size) const;
 
 private:
     struct FontFace {
         TTF_Font* sdl_font;
         GlyphCache cache;
 
-        FontFace(TTF_Font* font, int font_size)
+        FontFace(TTF_Font* font, uint32_t font_size)
             : sdl_font(font)
             , cache(font_size) { }
     };
 
-    FontFace* load_font_if_needed(int font_size) const;
+    FontFace* load_font_if_needed(uint32_t font_size) const;
 
     explicit TTFFont(std::string const& path)
         : m_path(path) {
     }
 
-    mutable std::map<int, FontFace> m_cached_fonts;
+    mutable std::map<uint32_t, FontFace> m_cached_fonts;
     std::string m_path;
 };
 

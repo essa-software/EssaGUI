@@ -52,7 +52,7 @@ RichText& RichText::append_image(llgl::Texture const& texture) {
 }
 
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
-    float const line_height = m_context.default_font.line_height(m_context.font_size);
+    float const line_height = static_cast<float>(m_context.default_font.line_height(m_context.font_size));
 
     // 1. Calculate how many lines we need.
     size_t line_count = 1;
@@ -87,12 +87,12 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
         case GUI::Align::CenterLeft:
         case GUI::Align::Center:
         case GUI::Align::CenterRight:
-            current_position.y() = m_rect.height / 2.f - line_count * line_height / 2.f;
+            current_position.y() = m_rect.height / 2.f - static_cast<float>(line_count) * line_height / 2.f;
             break;
         case GUI::Align::BottomLeft:
         case GUI::Align::Bottom:
         case GUI::Align::BottomRight:
-            current_position.y() = m_rect.height - line_count * line_height;
+            current_position.y() = m_rect.height - static_cast<float>(line_count) * line_height;
             break;
         }
         for (auto const& frag : m_text.fragments()) {

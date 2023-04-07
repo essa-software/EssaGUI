@@ -15,7 +15,7 @@ public:
     ~ClipViewScope();
 
 private:
-    llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2f offset_position, Util::Vector2u host_window_size) const;
+    static llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2f offset_position, Util::Vector2u host_window_size);
 
     Gfx::Painter& m_target;
     llgl::Projection m_old_projection;
