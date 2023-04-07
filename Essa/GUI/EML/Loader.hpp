@@ -27,7 +27,7 @@ public:
     void push_scope(Scope const* scope);
     void pop_scope();
 
-    EMLErrorOr<std::unique_ptr<EMLObject>> construct_object(std::string const& class_name) const;
+    static EMLErrorOr<std::unique_ptr<EMLObject>> construct_object(std::string const& class_name);
 
     template<class T>
     static void register_class(std::string const& name) {
@@ -39,7 +39,7 @@ public:
 private:
     static void register_constructor(std::string const& name, std::unique_ptr<EMLObjectConstructorBase>);
 
-    EMLObjectConstructorBase* lookup_constructor(std::string const& name) const;
+    static EMLObjectConstructorBase* lookup_constructor(std::string const& name);
 
     std::list<Scope const*> m_scope_stack;
 };

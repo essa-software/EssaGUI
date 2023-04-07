@@ -117,7 +117,7 @@ Value Object::get_property(std::string const& name, Value&& fallback) const {
 
 EMLErrorOr<std::unique_ptr<EMLObject>> Object::construct_impl(EML::Loader& loader) const {
     // 1. Try to construct the object with specified class name
-    auto object = loader.construct_object(class_name);
+    auto object = EML::Loader::construct_object(class_name);
     if (!object.is_error())
         return object.release_value();
 
@@ -125,7 +125,7 @@ EMLErrorOr<std::unique_ptr<EMLObject>> Object::construct_impl(EML::Loader& loade
     //    from base without C++ wrapper defined for this exact
     //    type. E.g if there is `define EssaSplash : @ToolWindow`
     //    and EssaSplash isn't registered, construct ToolWindow.
-    auto class_definition = loader.find_class_definition(class_name);
+    const auto *class_definition = loader.find_class_definition(class_name);
     if (class_definition) {
         return class_definition->base.construct_impl(loader);
     }
@@ -139,7 +139,7 @@ EMLErrorOr<void> Object::populate_impl(EML::Loader& loader, EMLObject& construct
     Object object_to_load = *this;
 
     // 1. Load EML defined defaults into this object (`define` declaration)
-    auto class_definition = loader.find_class_definition(class_name);
+    const auto *class_definition = loader.find_class_definition(class_name);
     if (class_definition)
         object_to_load.merge(class_definition->base);
 
@@ -151,7 +151,7 @@ EMLErrorOr<void> Object::populate_impl(EML::Loader& loader, EMLObject& construct
 
 void Object::merge(Object const& other) {
     for (auto const& property : other.properties) {
-        properties.insert_or_assign(property.first, std::move(property.second));
+        properties.insert_or_assign(property.first, property.second);
     }
 }
 

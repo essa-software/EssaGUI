@@ -205,7 +205,7 @@ Util::ParseErrorOr<Gfx::ResourceId> Parser::parse_resource_id() {
 
 Util::ParseErrorOr<Util::Color> Parser::parse_hexcolor() {
     auto color_token = peek();
-    std::string str = "";
+    std::string str;
 
     while (color_token->type() == TokenType::Identifier || color_token->type() == TokenType::Number) {
         str += color_token->value().encode();

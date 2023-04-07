@@ -11,7 +11,7 @@ void Loader::pop_scope() {
     m_scope_stack.pop_back();
 }
 
-EMLErrorOr<std::unique_ptr<EMLObject>> Loader::construct_object(std::string const& class_name) const {
+EMLErrorOr<std::unique_ptr<EMLObject>> Loader::construct_object(std::string const& class_name) {
     auto constructor = lookup_constructor(class_name);
     if (!constructor) {
         return EMLError { "No native constructor found for class `" + class_name + "`" };
@@ -35,7 +35,7 @@ void Loader::register_constructor(std::string const& name, std::unique_ptr<EMLOb
     s_constructor_registry.insert({ name, std::move(constructor) });
 }
 
-EMLObjectConstructorBase* Loader::lookup_constructor(std::string const& name) const {
+EMLObjectConstructorBase* Loader::lookup_constructor(std::string const& name) {
     auto it = s_constructor_registry.find(name);
     if (it == s_constructor_registry.end())
         return nullptr;
