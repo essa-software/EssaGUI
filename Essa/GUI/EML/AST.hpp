@@ -121,6 +121,10 @@ public:
     VALUE_TYPE(Array, array)
     VALUE_TYPE(Util::Color, color)
 
+    // Normally C++ would convert this to bool, because... pointer ??
+    Value(const char* str)
+        : Value(Util::UString { str }) { }
+
     template<class T>
     EMLErrorOr<T> to() const {
         if (!std::holds_alternative<T>(*this))
