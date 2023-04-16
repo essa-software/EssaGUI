@@ -14,6 +14,7 @@ private:
             {
                 .default_font = GUI::Application::the().fixed_width_font(),
                 .font_size = static_cast<int>(theme().label_font_size),
+                .text_alignment = GUI::Align::Center,
             } };
         drawable.set_rect(local_rect());
         drawable.draw(painter);
