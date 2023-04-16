@@ -4,7 +4,7 @@
 
 namespace llgl {
 
-GlyphCache::GlyphCache(int font_size)
+GlyphCache::GlyphCache(uint32_t font_size)
     : m_font_size(font_size)
     , m_atlas(Texture::create_empty({ 1024, 1024 })) {
 }
