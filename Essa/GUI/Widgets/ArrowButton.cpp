@@ -61,8 +61,8 @@ void ArrowButton::draw(Gfx::Painter& painter) const {
 
 EML::EMLErrorOr<void> ArrowButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Button::load_from_eml_object(object, loader));
-    m_arrow_size = TRY(object.get_property("arrow_size", 8.0_px).to_length());
-    auto type = TRY(object.get_property("arrow_type", Util::UString { "left" }).to_string());
+    m_arrow_size = TRY(object.get_property("arrow_size", EML::Value(8.0_px)).to_length());
+    auto type = TRY(object.get_property("arrow_type", EML::Value(Util::UString { "left" })).to_string());
 
     if (type == "left") {
         m_arrow_type = ArrowType::LEFTARROW;

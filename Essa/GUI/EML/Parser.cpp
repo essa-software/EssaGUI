@@ -115,7 +115,7 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
     switch (token->type()) {
     case TokenType::Hash: {
         get();
-        return TRY(parse_hexcolor());
+        return EML::Value(TRY(parse_hexcolor()));
     }
     case TokenType::Number: {
         get();
@@ -125,44 +125,44 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
             return error("Expected unit, got EOF");
         if (maybe_unit->type() == TokenType::PercentSign) {
             get();
-            return Util::Length { static_cast<float>(number), Util::Length::Percent };
+            return EML::Value(Util::Length { static_cast<float>(number), Util::Length::Percent });
         }
         if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px") {
             get();
-            return Util::Length { static_cast<float>(number), Util::Length::Px };
+            return EML::Value(Util::Length { static_cast<float>(number), Util::Length::Px });
         }
         if (maybe_unit->type() == TokenType::DoubleDot) {
             get();
             auto range_max = TRY(expect(TokenType::Number));
-            return Range { static_cast<double>(number), MUST(range_max.value().parse<float>()) };
+            return EML::Value(Range { static_cast<double>(number), MUST(range_max.value().parse<float>()) });
         }
-        return static_cast<double>(number);
+        return EML::Value(static_cast<double>(number));
     }
     case TokenType::Identifier: {
         get();
         if (token->value() == "auto")
-            return Util::Length { Util::Length::Auto };
+            return EML::Value(Util::Length { Util::Length::Auto });
         if (token->value() == "initial")
-            return Util::Length { Util::Length::Initial };
+            return EML::Value(Util::Length { Util::Length::Initial });
         if (token->value() == "true")
-            return true;
+            return EML::Value(true);
         if (token->value() == "false")
-            return false;
+            return EML::Value(false);
         return error("Invalid identifier in value, expected 'auto', 'initial', 'true' or 'false'");
     }
     case TokenType::String: {
         get();
-        return Util::UString { token->value() };
+        return EML::Value(Util::UString { token->value() });
     }
     case TokenType::At: {
-        return TRY(parse_object());
+        return EML::Value(TRY(parse_object()));
     }
     case TokenType::BraceOpen: {
-        return TRY(parse_array());
+        return EML::Value(TRY(parse_array()));
     }
     case TokenType::KeywordAsset:
     case TokenType::KeywordExternal: {
-        return TRY(parse_resource_id());
+        return EML::Value(TRY(parse_resource_id()));
     }
     default:
         return error_in_already_read("Value cannot start with '" + token->value().encode() + "'");

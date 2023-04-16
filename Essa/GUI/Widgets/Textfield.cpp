@@ -46,10 +46,10 @@ LengthVector Textfield::initial_size() const {
 
 EML::EMLErrorOr<void> Textfield::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
-    m_content = TRY(object.get_property("content", Util::UString { "" }).to_string());
-    m_font_size = TRY(object.get_property("font_size", static_cast<double>(m_font_size)).to_double());
+    m_content = TRY(object.get_property("content", EML::Value("")).to_string());
+    m_font_size = TRY(object.get_property("font_size", EML::Value(static_cast<double>(m_font_size))).to_double());
     // TODO: Alignment
-    m_padding = TRY(object.get_property("padding", static_cast<double>(m_padding)).to_double());
+    m_padding = TRY(object.get_property("padding", EML::Value(static_cast<double>(m_padding))).to_double());
     return {};
 }
 

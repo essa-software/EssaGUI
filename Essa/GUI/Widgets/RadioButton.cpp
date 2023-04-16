@@ -48,7 +48,7 @@ Theme::ButtonColors RadioButton::default_button_colors() const {
 EML::EMLErrorOr<void> RadioButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_caption = TRY(object.get_property("caption", Util::UString {}).to_string());
+    m_caption = TRY(object.get_property("caption", EML::Value(Util::UString {})).to_string());
 
     return {};
 }

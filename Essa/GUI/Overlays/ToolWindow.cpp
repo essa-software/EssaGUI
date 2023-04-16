@@ -246,10 +246,10 @@ Util::Rectf ToolWindow::resize_rect(ResizeDirection direction) const {
 EML::EMLErrorOr<void> ToolWindow::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Overlay::load_from_eml_object(object, loader));
 
-    m_title = TRY(object.get_property("title", Util::UString {}).to_string());
-    m_size.x() = TRY(object.get_property("width", 0.0).to_double());
-    m_size.y() = TRY(object.get_property("height", 0.0).to_double());
-    if (TRY(object.get_property("center_on_screen", false).to_bool())) {
+    m_title = TRY(object.get_property("title", EML::Value(Util::UString {})).to_string());
+    m_size.x() = TRY(object.get_property("width", EML::Value(0.0)).to_double());
+    m_size.y() = TRY(object.get_property("height", EML::Value(0.0)).to_double());
+    if (TRY(object.get_property("center_on_screen", EML::Value(false)).to_bool())) {
         center_on_screen();
     }
 

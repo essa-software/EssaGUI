@@ -62,13 +62,13 @@ EML::EMLErrorOr<void> ValueSlider::load_from_eml_object(EML::Object const& objec
     // Deliberately skipping Container so that you can't override things like layout here
     TRY(Widget::load_from_eml_object(object, loader));
 
-    set_min(TRY(object.get_property("min", static_cast<double>(min())).to_double()));
-    set_max(TRY(object.get_property("max", static_cast<double>(max())).to_double()));
-    set_step(TRY(object.get_property("step", static_cast<double>(step())).to_double()));
-    set_name(TRY(object.get_property("name", Util::UString {}).to_string()));
-    set_unit(TRY(object.get_property("unit", Util::UString {}).to_string()));
-    set_name_textfield_size(TRY(object.get_property("name_textfield_size", 100.0_px).to_length()));
-    set_unit_textfield_size(TRY(object.get_property("unit_textfield_size", 50.0_px).to_length()));
+    set_min(TRY(object.get_property("min", EML::Value(static_cast<double>(min()))).to_double()));
+    set_max(TRY(object.get_property("max", EML::Value(static_cast<double>(max()))).to_double()));
+    set_step(TRY(object.get_property("step", EML::Value(static_cast<double>(step()))).to_double()));
+    set_name(TRY(object.get_property("name", EML::Value("")).to_string()));
+    set_unit(TRY(object.get_property("unit", EML::Value("")).to_string()));
+    set_name_textfield_size(TRY(object.get_property("name_textfield_size", EML::Value(100.0_px)).to_length()));
+    set_unit_textfield_size(TRY(object.get_property("unit_textfield_size", EML::Value(50.0_px)).to_length()));
     return {};
 }
 

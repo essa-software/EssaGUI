@@ -819,8 +819,8 @@ void TextEditor::draw(Gfx::Painter& painter) const {
 
 EML::EMLErrorOr<void> TextEditor::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
-    m_placeholder = TRY(object.get_property("placeholder", Util::UString { "" }).to_string());
-    m_multiline = TRY(object.get_property("multiline", false).to_bool());
+    m_placeholder = TRY(object.get_property("placeholder", EML::Value("")).to_string());
+    m_multiline = TRY(object.get_property("multiline", EML::Value(false)).to_bool());
     return {};
 }
 

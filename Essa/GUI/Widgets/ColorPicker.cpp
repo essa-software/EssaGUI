@@ -198,7 +198,7 @@ void ColorPicker::draw(Gfx::Painter& painter) const {
 EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_color = TRY(object.get_property("color", Util::Color()).to_color());
+    m_color = TRY(object.get_property("color", EML::Value(Util::Color())).to_color());
 
     return {};
 }

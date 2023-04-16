@@ -11,7 +11,7 @@
 namespace GUI {
 
 EML::EMLErrorOr<void> Layout::load_from_eml_object(EML::Object const& object, EML::Loader&) {
-    auto padding = object.get_property("padding", 0.0);
+    auto padding = object.get_property("padding", EML::Value(0.0));
     if (padding.is_array()) {
         auto padding_array = TRY(padding.as_array().to_static<double, 4>());
         fmt::print("padding: {}\n", fmt::join(padding_array, ", "));
@@ -131,7 +131,7 @@ Util::Vector2f BoxLayout::total_size(Container const& container) const {
 EML::EMLErrorOr<void> BoxLayout::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Layout::load_from_eml_object(object, loader));
 
-    m_spacing = TRY(object.get_property("spacing", 0.0).to_double());
+    m_spacing = TRY(object.get_property("spacing", EML::Value(0.0)).to_double());
     return {};
 }
 

@@ -273,16 +273,16 @@ void Widget::dump(unsigned depth) {
 
 EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
     m_id = object.id;
-    m_tooltip_text = TRY(object.get_property("tooltip_text", Util::UString {}).to_string());
+    m_tooltip_text = TRY(object.get_property("tooltip_text", EML::Value("")).to_string());
     m_vertical_alignment = TRY(object.get_enum<Alignment>("vertical_alignment", alignment_from_string, Alignment::Start));
     m_horizontal_alignment = TRY(object.get_enum<Alignment>("horizontal_alignment", alignment_from_string, Alignment::Start));
-    m_input_size.x = TRY(object.get_property("width", Util::Length { Util::Length::Initial }).to_length());
-    m_input_size.y = TRY(object.get_property("height", Util::Length { Util::Length::Initial }).to_length());
-    m_expected_pos.x = TRY(object.get_property("left", Util::Length { Util::Length::Initial }).to_length());
-    m_expected_pos.y = TRY(object.get_property("top", Util::Length { Util::Length::Initial }).to_length());
-    m_background_color = TRY(object.get_property("background_color", Util::Color { 0x000000 }).to_color());
-    m_enabled = TRY(object.get_property("enabled", true).to_bool());
-    m_visible = TRY(object.get_property("visible", true).to_bool());
+    m_input_size.x = TRY(object.get_property("width", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_input_size.y = TRY(object.get_property("height", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_expected_pos.x = TRY(object.get_property("left", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_expected_pos.y = TRY(object.get_property("top", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_background_color = TRY(object.get_property("background_color", EML::Value(Util::Color { 0x000000 })).to_color());
+    m_enabled = TRY(object.get_property("enabled", EML::Value(true)).to_bool());
+    m_visible = TRY(object.get_property("visible", EML::Value(true)).to_bool());
     return {};
 }
 

@@ -94,8 +94,8 @@ Theme::ButtonColors Checkbox::default_button_colors() const {
 EML::EMLErrorOr<void> Checkbox::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_caption = TRY(object.get_property("caption", Util::UString {}).to_string());
-    auto mark_type = TRY(object.get_property("box_type", Util::UString("cross")).to_string());
+    m_caption = TRY(object.get_property("caption", EML::Value(Util::UString {})).to_string());
+    auto mark_type = TRY(object.get_property("box_type", EML::Value("cross")).to_string());
 
     if (mark_type == "cross") {
         m_style = Style::CROSS;

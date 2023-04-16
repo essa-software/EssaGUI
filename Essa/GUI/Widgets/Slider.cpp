@@ -96,10 +96,10 @@ double Slider::value_clamped_to_min_max() const {
 EML::EMLErrorOr<void> Slider::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_min = TRY(object.get_property("min", m_min).to_double());
-    m_max = TRY(object.get_property("max", m_max).to_double());
-    m_step = TRY(object.get_property("step", m_step).to_double());
-    m_val = TRY(object.get_property("value", m_val).to_double());
+    m_min = TRY(object.get_property("min", EML::Value(m_min)).to_double());
+    m_max = TRY(object.get_property("max", EML::Value(m_max)).to_double());
+    m_step = TRY(object.get_property("step", EML::Value(m_step)).to_double());
+    m_val = TRY(object.get_property("value", EML::Value(m_val)).to_double());
 
     return {};
 }

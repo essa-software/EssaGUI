@@ -51,7 +51,7 @@ struct Object : public Scope {
     EMLErrorOr<std::unique_ptr<T>> require_and_construct_object(std::string const& name, Loader& loader, Args&&... args) const;
 
     template<class T, class... Args>
-    requires(sizeof...(Args) == 0) || requires(T t, Args... args) { t.eml_construct(args...); }
+        requires(sizeof...(Args) == 0) || requires(T t, Args... args) { t.eml_construct(args...); }
     EMLErrorOr<std::unique_ptr<T>> construct(EML::Loader& loader, Args&&... args) const {
         auto object = TRY(construct_impl(loader)).release();
         // MANUAL MEMORY MANAGEMENT OF object STARTS HERE
@@ -97,7 +97,7 @@ private:
 using ValueVariant = std::variant<double, bool, Util::UString, Object, Util::Length, Gfx::ResourceId, Range, Array, Util::Color>;
 
 #define VALUE_TYPE(Type, camel_case)                                                                              \
-    Value(Type v)                                                                                                 \
+    explicit Value(Type v)                                                                                        \
         : ValueVariant(std::move(v)) { }                                                                          \
                                                                                                                   \
     EMLErrorOr<Type> to_##camel_case() const {                                                                    \

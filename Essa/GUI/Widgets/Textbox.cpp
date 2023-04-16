@@ -68,9 +68,9 @@ void Textbox::on_content_change() {
 
 EML::EMLErrorOr<void> Textbox::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(TextEditor::load_from_eml_object(object, loader));
-    m_limit = TRY(object.get_property("limit", static_cast<double>(m_limit)).to_double());
-    m_min = TRY(object.get_property("min_value", m_min).to_double());
-    m_max = TRY(object.get_property("max_value", m_min).to_double());
+    m_limit = TRY(object.get_property("limit", EML::Value(static_cast<double>(m_limit))).to_double());
+    m_min = TRY(object.get_property("min_value", EML::Value(m_min)).to_double());
+    m_max = TRY(object.get_property("max_value", EML::Value(m_min)).to_double());
     return {};
 }
 

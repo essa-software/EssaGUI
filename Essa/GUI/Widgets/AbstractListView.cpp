@@ -27,7 +27,7 @@ Util::Vector2f AbstractListView::cell_size(size_t, size_t column) const {
 EML::EMLErrorOr<void> AbstractListView::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(ScrollableWidget::load_from_eml_object(object, loader));
 
-    m_display_header = TRY(object.get_property("display_header", false).to_bool());
+    m_display_header = TRY(object.get_property("display_header", EML::Value(false)).to_bool());
     return {};
 }
 
