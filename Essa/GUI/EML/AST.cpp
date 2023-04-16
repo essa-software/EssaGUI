@@ -3,6 +3,7 @@
 #include "EMLObject.hpp"
 #include "Loader.hpp"
 
+#include <EssaUtil/Config.hpp>
 #include <EssaUtil/ScopeGuard.hpp>
 #include <EssaUtil/UStringBuilder.hpp>
 #include <fmt/format.h>
@@ -52,22 +53,46 @@ void Property::print(size_t depth) const {
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
 template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
 
 std::string Value::string() const {
     return std::visit(
         overloaded {
-            [](bool b) -> std::string {
-                return b ? "true" : "false";
-            },
             [](double d) -> std::string {
                 return fmt::format("{}", d);
+            },
+            [](bool b) -> std::string {
+                return b ? "true" : "false";
             },
             [](Util::UString const& str) -> std::string {
                 return "\"" + str.encode() + "\"";
             },
             [](Object const&) -> std::string {
                 return "@TODO";
+            },
+            [](Util::Length const& length) -> std::string {
+                switch (length.unit()) {
+                case Util::Length::Initial:
+                    return "initial";
+                case Util::Length::Auto:
+                    return "auto";
+                case Util::Length::Px:
+                    return fmt::format("{}px", length.value());
+                case Util::Length::Percent:
+                    return fmt::format("{}%", length.value());
+                }
+                ESSA_UNREACHABLE;
+            },
+            [](Gfx::ResourceId const& id) -> std::string {
+                switch (id.type()) {
+                case Gfx::ResourceId::Type::Asset:
+                    return fmt::format("asset({})", id.path());
+                case Gfx::ResourceId::Type::External:
+                    return fmt::format("external({})", id.path());
+                }
+                ESSA_UNREACHABLE;
             },
             [](Range const& r) -> std::string {
                 return fmt::format("{}..{}", r.min, r.max);
@@ -86,9 +111,10 @@ std::string Value::string() const {
                 builder.append("]");
                 return builder.release_string().encode();
             },
-            [](auto const&) -> std::string {
-                return "???";
-            } },
+            [](Util::Color const& color) -> std::string {
+                return color.to_html_string().encode();
+            },
+        },
         *this);
 }
 
@@ -125,7 +151,7 @@ EMLErrorOr<std::unique_ptr<EMLObject>> Object::construct_impl(EML::Loader& loade
     //    from base without C++ wrapper defined for this exact
     //    type. E.g if there is `define EssaSplash : @ToolWindow`
     //    and EssaSplash isn't registered, construct ToolWindow.
-    const auto *class_definition = loader.find_class_definition(class_name);
+    const auto* class_definition = loader.find_class_definition(class_name);
     if (class_definition) {
         return class_definition->base.construct_impl(loader);
     }
@@ -139,7 +165,7 @@ EMLErrorOr<void> Object::populate_impl(EML::Loader& loader, EMLObject& construct
     Object object_to_load = *this;
 
     // 1. Load EML defined defaults into this object (`define` declaration)
-    const auto *class_definition = loader.find_class_definition(class_name);
+    const auto* class_definition = loader.find_class_definition(class_name);
     if (class_definition)
         object_to_load.merge(class_definition->base);
 
