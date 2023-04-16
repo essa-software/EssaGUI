@@ -21,6 +21,7 @@ public:
     bool dragging() const { return m_dragging; }
     bool actually_dragging() const { return m_actually_dragging; }
     void set_pan_button(llgl::MouseButton button) { m_pan_button = button; }
+    void set_zoom_enabled(bool enabled) { m_zoom_enabled = enabled; }
 
 protected:
     virtual EventHandlerResult on_mouse_scroll(Event::MouseScroll const& event) override;
@@ -37,6 +38,8 @@ private:
     bool m_dragging = false;
     bool m_actually_dragging = false;
     llgl::MouseButton m_pan_button = llgl::MouseButton::Middle;
+
+    bool m_zoom_enabled = true;
 };
 
 }

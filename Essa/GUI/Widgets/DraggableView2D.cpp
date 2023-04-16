@@ -34,15 +34,17 @@ Util::Vector2i DraggableView2D::world_to_screen(Util::Vector2f world) const {
 }
 
 Widget::EventHandlerResult DraggableView2D::on_mouse_scroll(Event::MouseScroll const& event) {
-    if (event.delta() > 0) {
-        m_zoom *= 2;
-        auto delta = (event.local_position().cast<float>() - Util::Cs::Vector2f::from_deprecated_vector(raw_size()) / 2.f) / m_zoom;
-        m_offset += delta.to_vector();
-    }
-    else {
-        m_zoom /= 2;
-        auto delta = (event.local_position().cast<float>() - Util::Cs::Vector2f::from_deprecated_vector(raw_size()) / 2.f) / m_zoom;
-        m_offset -= delta.to_vector() / 2.f;
+    if (m_zoom_enabled) {
+        if (event.delta() > 0) {
+            m_zoom *= 2;
+            auto delta = (event.local_position().cast<float>() - Util::Cs::Vector2f::from_deprecated_vector(raw_size()) / 2.f) / m_zoom;
+            m_offset += delta.to_vector();
+        }
+        else {
+            m_zoom /= 2;
+            auto delta = (event.local_position().cast<float>() - Util::Cs::Vector2f::from_deprecated_vector(raw_size()) / 2.f) / m_zoom;
+            m_offset -= delta.to_vector() / 2.f;
+        }
     }
     return Widget::EventHandlerResult::NotAccepted;
 }
