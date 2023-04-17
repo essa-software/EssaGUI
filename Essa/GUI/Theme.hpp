@@ -36,6 +36,7 @@ public:
         BgFgTextColors unhovered;
 
         BgFgTextColors value(Widget const& w) const;
+        BgFgTextColors value(bool hovered) const { return hovered ? this->hovered : this->unhovered; }
 
         void set_colors(Util::Color const& color) {
             unhovered = { .background = color, .foreground = {}, .text = Util::Colors::White };
