@@ -1,5 +1,8 @@
 #include "RichText.hpp"
 
+#include <Essa/GUI/Graphics/Drawing/Fill.hpp>
+#include <Essa/GUI/Graphics/Drawing/Outline.hpp>
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/RichText/Fragments.hpp>
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/Is.hpp>
@@ -55,100 +58,92 @@ RichText& RichText::append_image(llgl::Texture const& texture) {
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
     float const line_height = static_cast<float>(m_context.default_font.line_height(m_context.font_size));
 
+    using namespace Gfx::Drawing;
+    // painter.draw(Rectangle(m_rect, Fill::none(), Outline::normal(Util::Colors::Cyan, 1)));
+
     // 1. Calculate how many lines we need and how wide they are.
-    size_t line_count = 1;
-    std::vector<float> line_widths;
+    struct Line {
+        std::vector<RichTextFragments::Base*> fragments;
+        float width;
+    };
+
+    std::vector<Line> lines;
     {
-        Util::Vector2f current_position;
+        Line line;
         for (auto const& frag : m_text.fragments()) {
             if (Util::is<RichTextFragments::LineBreak>(*frag)) {
-                line_widths.push_back(current_position.x());
-                current_position.x() = 0;
-                current_position.y() += line_height;
-                line_count++;
+                lines.push_back(std::move(line));
+                line = {};
                 continue;
             }
             auto wanted_size = frag->wanted_size(m_context);
-            if (current_position.x() + wanted_size > m_rect.width) {
-                line_widths.push_back(current_position.x());
-                current_position.x() = 0;
-                current_position.y() += line_height;
-                line_count++;
+            if (line.width + wanted_size > m_rect.width) {
+                lines.push_back(std::move(line));
+                line = {};
             }
-            current_position.x() += wanted_size;
+            line.fragments.push_back(frag.get());
+            line.width += wanted_size;
         }
-        line_widths.push_back(current_position.x());
+        lines.push_back(std::move(line));
     }
 
     // 2. Render lines, aligning them properly.
     {
-        Util::Vector2f current_position;
         size_t current_line = 0;
 
         auto get_line_starting_x = [&]() -> float {
+            assert(current_line < lines.size());
             switch (m_context.text_alignment) {
             case GUI::Align::TopLeft:
             case GUI::Align::CenterLeft:
             case GUI::Align::BottomLeft:
-                return 0;
+                return m_rect.left;
             case GUI::Align::Top:
             case GUI::Align::Center:
             case GUI::Align::Bottom:
-                return m_rect.center().x() - line_widths[current_line] / 2;
+                return m_rect.center().x() - lines[current_line].width / 2;
             case GUI::Align::TopRight:
             case GUI::Align::CenterRight:
             case GUI::Align::BottomRight:
-                return m_rect.left + m_rect.width - line_widths[current_line];
+                return m_rect.left + m_rect.width - lines[current_line].width;
             }
             ESSA_UNREACHABLE;
         };
-        current_position.x() = get_line_starting_x();
 
-        // Y
-        switch (m_context.text_alignment) {
-        case GUI::Align::TopLeft:
-        case GUI::Align::Top:
-        case GUI::Align::TopRight:
-            current_position.y() = 0;
-            break;
-        case GUI::Align::CenterLeft:
-        case GUI::Align::Center:
-        case GUI::Align::CenterRight:
-            current_position.y() = m_rect.height / 2.f - static_cast<float>(line_count) * line_height / 2.f;
-            break;
-        case GUI::Align::BottomLeft:
-        case GUI::Align::Bottom:
-        case GUI::Align::BottomRight:
-            current_position.y() = m_rect.height - static_cast<float>(line_count) * line_height;
-            break;
-        }
-
-        for (auto const& frag : m_text.fragments()) {
-            if (Util::is<RichTextFragments::LineBreak>(*frag)) {
-                current_line++;
-                current_position.x() = get_line_starting_x();
-                current_position.y() += line_height;
-
-                continue;
+        float y = [&]() -> float {
+            switch (m_context.text_alignment) {
+            case GUI::Align::TopLeft:
+            case GUI::Align::Top:
+            case GUI::Align::TopRight:
+                return m_rect.top;
+            case GUI::Align::CenterLeft:
+            case GUI::Align::Center:
+            case GUI::Align::CenterRight:
+                return m_rect.top + m_rect.height / 2.f - static_cast<float>(lines.size()) * line_height / 2.f;
+            case GUI::Align::BottomLeft:
+            case GUI::Align::Bottom:
+            case GUI::Align::BottomRight:
+                return m_rect.top + m_rect.height - static_cast<float>(lines.size()) * line_height;
             }
-            auto wanted_size = frag->wanted_size(m_context);
-            if (current_position.x() + wanted_size > m_rect.width) {
-                current_line++;
-                current_position.x() = get_line_starting_x();
-                current_position.y() += line_height;
+            ESSA_UNREACHABLE;
+        }();
+
+        for (auto const& line : lines) {
+            float x = get_line_starting_x();
+            for (auto const& frag : line.fragments) {
+                Util::Vector2f position { x, y };
+                float wanted_size = frag->wanted_size(m_context);
+                x += wanted_size;
+
+                Util::Cs::Size2f size { wanted_size, line_height };
+                // painter.draw(Rectangle(Util::Rectf(Util::Cs::Point2f::from_deprecated_vector(position), size),
+                //     Fill::none(),
+                //     Outline::normal(Util::Colors::Magenta, 1)));
+
+                frag->draw(m_context, position, painter);
             }
-
-            auto position = (Util::Cs::Point2f::from_deprecated_vector(current_position) + m_rect.position().to_vector()).to_deprecated_vector();
-
-            // Uncomment to get debug outlines :)
-            // Util::Cs::Size2f size { wanted_size, line_height };
-            // using namespace Gfx::Drawing;
-            // painter.draw(Rectangle(Util::Rectf(Util::Cs::Point2f::from_deprecated_vector(position), size),
-            //     Fill::none(),
-            //     Outline::normal(Util::Colors::Magenta, 1)));
-
-            frag->draw(m_context, position, painter);
-            current_position.x() += wanted_size;
+            y += line_height;
+            current_line++;
         }
     }
 }
