@@ -64,7 +64,7 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
     // 1. Calculate how many lines we need and how wide they are.
     struct Line {
         std::vector<RichTextFragments::Base*> fragments;
-        float width;
+        float width = 0;
     };
 
     std::vector<Line> lines;
