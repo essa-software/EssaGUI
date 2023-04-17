@@ -64,11 +64,11 @@ Theme& Theme::default_theme() {
     return theme;
 }
 
-using ThemeOption = std::variant<Util::Color*, uint32_t*>;
+using ThemeOption = std::variant<Util::Color*, uint32_t*, float*>;
 using ThemeOptionMap = std::map<std::string, ThemeOption>;
 
 template<class T>
-requires requires(ThemeOption t) { std::get<T>(t); }
+    requires requires(ThemeOption t) { std::get<T>(t); }
 static void add_theme_option(ThemeOptionMap& options, std::string key, T& var) {
     options.insert({ key, &var });
 }
@@ -149,35 +149,42 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         return options;
     }();
 
-    auto theme_ini_file
-        = TRY(Util::ConfigFile::open_ini(path));
+    auto theme_ini_file = TRY(Util::ConfigFile::open_ini(path));
 
     for (auto const& keys : theme_options) {
-        std::visit([&theme_ini_file, &keys](auto a) {
-            if constexpr (std::is_same_v<decltype(a), Util::Color*>) {
-                auto color = theme_ini_file.get_color(keys.first);
-                if (!color) {
-                    std::cout << "Theme: Missing or invalid color value for " << keys.first << std::endl;
-                    *a = Util::Colors::Magenta; // So that you easily see the bug
-                }
-                else {
-                    *a = *color;
-                }
-            }
-            else if constexpr (std::is_same_v<decltype(a), uint32_t*>) {
-                auto value = theme_ini_file.get_u32(keys.first);
-                if (!value) {
-                    std::cout << "Theme: Missing or invalid u32 value for " << keys.first << std::endl;
-                    *a = 32;
-                }
-                else {
-                    *a = *value;
-                }
-            }
-            else {
-                std::cout << "FIXME: This should be a compile-time error!" << std::endl;
-            }
-        },
+        std::visit(
+            Util::Overloaded {
+                [&](Util::Color* param) {
+                    auto color = theme_ini_file.get_color(keys.first);
+                    if (!color) {
+                        std::cout << "Theme: Missing or invalid color value for " << keys.first << std::endl;
+                        *param = Util::Colors::Magenta; // So that you easily see the bug
+                    }
+                    else {
+                        *param = *color;
+                    }
+                },
+                [&](uint32_t* param) {
+                    auto value = theme_ini_file.get_u32(keys.first);
+                    if (!value) {
+                        std::cout << "Theme: Missing or invalid u32 value for " << keys.first << std::endl;
+                        *param = 32;
+                    }
+                    else {
+                        *param = *value;
+                    }
+                },
+                [&](float* param) {
+                    auto value = theme_ini_file.get_float(keys.first);
+                    if (!value) {
+                        std::cout << "Theme: Missing or invalid float value for " << keys.first << std::endl;
+                        *param = 1;
+                    }
+                    else {
+                        *param = *value;
+                    }
+                },
+            },
             keys.second);
     }
 
