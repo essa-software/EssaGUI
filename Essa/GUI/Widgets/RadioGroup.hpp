@@ -31,6 +31,12 @@ public:
         }
     }
 
+    RadioButton* add_radio(Util::UString const& label) {
+        auto* radio_button = add_widget<RadioButton>();
+        radio_button->set_caption(label);
+        return radio_button;
+    }
+
     void set_index(size_t index);
     size_t get_index() const { return m_index; }
 
