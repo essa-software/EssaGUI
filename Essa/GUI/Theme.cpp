@@ -123,6 +123,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(tooltip);
 
         DEFINE_THEME_OPTION(placeholder);
+        DEFINE_THEME_OPTION(window_background);
         DEFINE_THEME_OPTION(sidebar);
         DEFINE_THEME_OPTION(focus_frame);
 
@@ -143,6 +144,8 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(tool_window_title_bar_border_radius);
         DEFINE_THEME_OPTION(tool_window_min_size);
         DEFINE_THEME_OPTION(tool_window_resize_border_width);
+
+        DEFINE_THEME_OPTION(hover_highlight_factor);
 
 #undef DEFINE_THEME_OPTION
 

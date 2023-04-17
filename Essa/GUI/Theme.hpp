@@ -83,6 +83,7 @@ public:
     BgFgTextColors tooltip;
 
     Util::Color placeholder;
+    Util::Color window_background;
     Util::Color sidebar;
     Util::Color focus_frame;
 
@@ -104,6 +105,8 @@ public:
     uint32_t tool_window_title_bar_border_radius;
     uint32_t tool_window_min_size;
     uint32_t tool_window_resize_border_width;
+
+    float hover_highlight_factor;
 
     template<class T>
     void set_renderer() { m_renderer = std::make_unique<T>(*this); }

@@ -177,21 +177,21 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     Util::Cs::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
     Gfx::RectangleDrawOptions background;
-    background.fill_color = { 50, 50, 50, 220 };
+    background.fill_color = theme().window_background;
     painter.deprecated_draw_rectangle({ position, size }, background);
 
-    auto titlebar_color = host_window().focused_overlay() == this ? Util::Color { 120, 120, 120, 220 } : Util::Color { 80, 80, 80, 220 };
+    auto titlebar_color = host_window().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
 
     Gfx::RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = theme().tool_window_title_bar_border_radius;
     rs_titlebar.border_radius_top_right = theme().tool_window_title_bar_border_radius;
-    rs_titlebar.fill_color = titlebar_color;
+    rs_titlebar.fill_color = titlebar_color.background;
     painter.deprecated_draw_rectangle({ position - Util::Cs::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
 
     Gfx::Text text { title(), Application::the().bold_font() };
     text.set_position((position + Util::Cs::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)).to_deprecated_vector());
     text.set_font_size(theme().label_font_size);
-    text.set_fill_color(Util::Colors::White);
+    text.set_fill_color(titlebar_color.text);
     text.draw(painter);
 
     float titlebar_button_position_x = position.x() + size.x() - theme().tool_window_title_bar_size + 1;
@@ -201,27 +201,30 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         //        (And make it more generic)
         Gfx::RectangleDrawOptions tbb_background;
         tbb_background.border_radius_top_right = theme().tool_window_title_bar_border_radius;
-        tbb_background.fill_color = button.hovered ? Util::Color { 240, 80, 80, 100 } : Util::Color { 200, 50, 50, 100 };
+        tbb_background.fill_color = theme().negative;
+        if (button.hovered) {
+            tbb_background.fill_color = tbb_background.fill_color * theme().hover_highlight_factor;
+        }
         painter.deprecated_draw_rectangle({ { titlebar_button_position_x, position.y() - theme().tool_window_title_bar_size }, { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } }, tbb_background);
 
         Util::Vector2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f), std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
 
         std::array<Gfx::Vertex, 4> varr;
-        Util::Color const CloseButtonColor { 200, 200, 200 };
-        varr[0] = Gfx::Vertex { button_center - Util::Vector2f(5, 5), CloseButtonColor, {} };
-        varr[1] = Gfx::Vertex { button_center + Util::Vector2f(5, 5), CloseButtonColor, {} };
-        varr[2] = Gfx::Vertex { button_center - Util::Vector2f(-5, 5), CloseButtonColor, {} };
-        varr[3] = Gfx::Vertex { button_center + Util::Vector2f(-5, 5), CloseButtonColor, {} };
+        auto close_button_cross_color = theme().text_button.active.unhovered.text;
+        varr[0] = Gfx::Vertex { button_center - Util::Vector2f(5, 5), close_button_cross_color, {} };
+        varr[1] = Gfx::Vertex { button_center + Util::Vector2f(5, 5), close_button_cross_color, {} };
+        varr[2] = Gfx::Vertex { button_center - Util::Vector2f(-5, 5), close_button_cross_color, {} };
+        varr[3] = Gfx::Vertex { button_center + Util::Vector2f(-5, 5), close_button_cross_color, {} };
         painter.draw_vertices(llgl::PrimitiveType::Lines, varr);
 
         titlebar_button_position_x -= theme().tool_window_title_bar_size;
     }
 
     std::array<Gfx::Vertex, 4> varr_border;
-    varr_border[0] = Gfx::Vertex { { position.to_deprecated_vector() }, titlebar_color, {} };
-    varr_border[1] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(-1, size.y()) }, titlebar_color, {} };
-    varr_border[2] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color, {} };
-    varr_border[3] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, 0) }, titlebar_color, {} };
+    varr_border[0] = Gfx::Vertex { { position.to_deprecated_vector() }, titlebar_color.background, {} };
+    varr_border[1] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(-1, size.y()) }, titlebar_color.background, {} };
+    varr_border[2] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
+    varr_border[3] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
         Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect() }, Gfx::ClipViewScope::Mode::Override);
