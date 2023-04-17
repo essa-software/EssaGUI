@@ -1,6 +1,7 @@
 #include "ConfigFile.hpp"
 
 #include <sstream>
+#include <utility>
 
 namespace Util {
 
@@ -147,7 +148,7 @@ std::optional<std::string> ConfigFile::get(std::string key) const {
 }
 
 std::optional<Util::Color> ConfigFile::get_color(std::string key) const {
-    auto value = get(key);
+    auto value = get(std::move(key));
     if (!value)
         return {};
     if (auto color = parse_color(*value))
@@ -156,7 +157,7 @@ std::optional<Util::Color> ConfigFile::get_color(std::string key) const {
 }
 
 std::optional<uint32_t> ConfigFile::get_u32(std::string key) const {
-    auto value = get(key);
+    auto value = get(std::move(key));
     if (!value)
         return {};
 
@@ -164,6 +165,19 @@ std::optional<uint32_t> ConfigFile::get_u32(std::string key) const {
         return std::stoul(*value);
     } catch (...) {
         std::cerr << "ConfigFile: could not parse i32" << std::endl;
+        return {};
+    }
+}
+
+std::optional<float> ConfigFile::get_float(std::string key) const {
+    auto value = get(std::move(key));
+    if (!value)
+        return {};
+
+    try {
+        return std::stof(*value);
+    } catch (...) {
+        std::cerr << "ConfigFile: could not parse float" << std::endl;
         return {};
     }
 }

@@ -15,6 +15,7 @@ public:
     std::optional<std::string> get(std::string key) const;
     std::optional<Util::Color> get_color(std::string key) const;
     std::optional<uint32_t> get_u32(std::string key) const;
+    std::optional<float> get_float(std::string key) const;
 
 private:
     explicit ConfigFile(std::ifstream);
