@@ -18,6 +18,9 @@ void RadioGroup::add_radio_button(RadioButton& button) {
         for (auto other : m_radio_buttons) {
             other->set_active(other == &button, NotifyUser::No);
         }
+        if (on_change) {
+            on_change(index);
+        }
     };
 }
 
