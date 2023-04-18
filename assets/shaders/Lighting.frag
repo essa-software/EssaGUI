@@ -29,10 +29,10 @@ void main()
     vec3 lightDir = normalize(lightPosVS - f_position);
     float diff = min(max((dot(norm, lightDir) + 1) / 2, MinDiffuse), 1);
     vec4 diffuse = diff * diffuseColor * lightColor;
-        
-    vec4 result = (ambient + diffuse) * f_color;
+    
+    vec4 source = textureSet ? texture2D(texture, f_texCoord) : f_color;
+
+    vec4 result = (ambient + diffuse) * source;
     result += emissionColor;
-    if (textureSet)
-        result *= texture2D(texture, f_texCoord);
-    gl_FragColor = vec4(result.rgb, 1.0);
+    gl_FragColor = vec4(result.rgb, source.a);
 }
