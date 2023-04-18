@@ -1,4 +1,5 @@
 #include "Textfield.hpp"
+#include "Essa/GUI/Widgets/Widget.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
@@ -48,6 +49,7 @@ EML::EMLErrorOr<void> Textfield::load_from_eml_object(EML::Object const& object,
     TRY(Widget::load_from_eml_object(object, loader));
     m_content = TRY(object.get_property("content", EML::Value("")).to_string());
     m_font_size = TRY(object.get_property("font_size", EML::Value(static_cast<double>(m_font_size))).to_double());
+    m_alignment = TRY(object.get_enum("alignment", text_align_from_string, Align::CenterLeft));
     // TODO: Alignment
     m_padding = TRY(object.get_property("padding", EML::Value(static_cast<double>(m_padding))).to_double());
     return {};
