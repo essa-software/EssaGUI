@@ -4,12 +4,6 @@ if [ ! -e build ]; then
 fi
 cd build
 
-rm -rf util
-git clone https://github.com/essa-software/util
-cd util
-./install.sh || exit 1
-cd ..
-
 cmake .. -GNinja -DESSAGUI_EXAMPLES=0
 ninja
 sudo ninja install

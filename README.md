@@ -13,8 +13,6 @@ A GUI framework written in C++. It was initially a component of [ESSA](https://g
 
 ## Build
 
-You need to install [EssaUtil](https://github.com/essa-software/util) according to its build instructions.
-
 From the project root directory:
 ```sh
 mkdir build
