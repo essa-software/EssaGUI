@@ -267,7 +267,8 @@ void Widget::dump(unsigned depth) {
     std::cout << typeid(*this).name() << " @" << this;
     if (!m_id.empty())
         std::cout << " #" << m_id;
-    std::cout << ": pos=" << m_raw_position.x() << "," << m_raw_position.y() << " size=" << m_raw_size.x() << "," << m_raw_size.y();
+    std::cout << ": pos=(" << m_expected_pos.x << "," << m_expected_pos.y << ")=" << m_raw_position;
+    std::cout << ", size=(" << m_input_size.x << "," << m_input_size.y << ")=" << m_raw_size;
     std::cout << std::endl;
 }
 
