@@ -101,7 +101,7 @@ EML::EMLErrorOr<void> TabWidget::load_from_eml_object(EML::Object const& object,
     TRY(Widget::load_from_eml_object(object, loader));
     for (auto const& child : object.objects) {
         std::shared_ptr<Container> container = TRY(child.construct<Container>(loader, widget_tree_root()));
-        add_created_widget(container);
+        m_tab_container->add_created_widget(container);
         setup_tab(TRY(TRY(child.require_property("caption")).to_string()), container.get());
     }
     return {};
