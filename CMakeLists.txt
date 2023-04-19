@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 option(ESSAGUI_EXAMPLES "Compile examples" ON)
 
 include_directories(${Essa_SOURCE_DIR})
+
 add_subdirectory(EssaUtil)
 add_subdirectory(Essa)
 
@@ -24,5 +25,3 @@ install(EXPORT Essa DESTINATION lib/cmake/Essa NAMESPACE Essa::)
 if(ESSAGUI_EXAMPLES)
     add_subdirectory(examples)
 endif()
-
-include(CPack)
