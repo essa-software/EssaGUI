@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 option(ESSAGUI_EXAMPLES "Compile examples" ON)
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${Essa_SOURCE_DIR})
 add_subdirectory(EssaUtil)
 add_subdirectory(Essa)
 
