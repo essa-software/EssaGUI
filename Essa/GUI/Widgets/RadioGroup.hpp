@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaUtil/Config.hpp"
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/RadioButton.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>

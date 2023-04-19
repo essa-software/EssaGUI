@@ -42,8 +42,8 @@ ModelColumn FileModel::column(size_t column) const {
     return {};
 }
 
-Variant FileModel::data(Node const& row, size_t column) const {
-    auto const& file = *static_cast<File const*>(row.data);
+Variant FileModel::data(Node row, size_t column) const {
+    auto const& file = *static_cast<File const*>(row.data.data);
 
     switch (column) {
     case 0:

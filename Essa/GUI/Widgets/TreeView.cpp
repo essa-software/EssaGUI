@@ -88,14 +88,14 @@ void TreeView::draw(Gfx::Painter& wnd) const {
         current_y_pos += row_height;
     }
 
-    render_rows(wnd, current_y_pos, {}, nullptr);
+    render_rows(wnd, current_y_pos, {}, {});
 
     ScrollableWidget::draw_scrollbar(wnd);
 
     theme().renderer().draw_text_editor_border(*this, false, wnd);
 }
 
-void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vector<size_t> path, Model::Node const* parent) const {
+void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vector<size_t> path, std::optional<Model::Node> parent) const {
     auto& model = *this->model();
     auto columns = model.column_count();
     auto depth = path.size();
@@ -116,7 +116,8 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
 
             float current_x_pos = 0;
 
-            auto child = model.child(parent, r);
+            auto child_data = model.child(parent, r);
+            auto child = Model::Node { r, child_data };
 
             Gfx::RectangleDrawOptions line_rect;
             line_rect.fill_color = theme().placeholder;
@@ -125,7 +126,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
             painter.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(line_position), { IndentSize / 2, 1 } }, line_rect);
 
             float first_column_position = depth * IndentSize;
-            if (model.children_count(&child) > 0) {
+            if (model.children_count(child) > 0) {
                 auto base_position = Util::Vector2f { first_column_position + 13, current_y_pos + row_height / 2.f } + scroll_offset();
 
                 std::vector<Util::Vector2f> vertices;
@@ -195,7 +196,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
             current_y_pos += row_height;
 
             lines_end_y = current_y_pos - row_height / 2.f;
-            render_rows(painter, current_y_pos, child_path, &child);
+            render_rows(painter, current_y_pos, child_path, child);
         }
 
         if (children_count > 0) {
@@ -209,10 +210,11 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
 }
 
 size_t TreeView::displayed_row_count() const {
-    return recursive_displayed_row_count(nullptr, {});
+    return recursive_displayed_row_count({}, {});
 }
 
-size_t TreeView::recursive_displayed_row_count(Model::Node const* node, std::vector<size_t> path) const {
+size_t TreeView::recursive_displayed_row_count(std::optional<Model::Node> node, std::vector<size_t> path) const {
+
     if (!model()) {
         return 0;
     }
@@ -223,18 +225,18 @@ size_t TreeView::recursive_displayed_row_count(Model::Node const* node, std::vec
         auto child_path = path;
         child_path.push_back(s);
         total_count += is_expanded(child_path)
-            ? recursive_displayed_row_count(&child, std::move(child_path))
+            ? recursive_displayed_row_count(Model::Node { s, child }, std::move(child_path))
             : 0;
     }
     return total_count;
 }
 
-std::pair<std::vector<size_t>, Model::Node> TreeView::displayed_row_at_index(size_t row) const {
+std::pair<std::vector<size_t>, Model::NodeData> TreeView::displayed_row_at_index(size_t row) const {
     row += 1;
-    return recursive_displayed_row_at_index(nullptr, {}, row);
+    return recursive_displayed_row_at_index({}, {}, row);
 }
 
-std::pair<std::vector<size_t>, Model::Node> TreeView::recursive_displayed_row_at_index(Model::Node const* parent, std::vector<size_t> path, size_t& index) const {
+std::pair<std::vector<size_t>, Model::NodeData> TreeView::recursive_displayed_row_at_index(std::optional<Model::Node> parent, std::vector<size_t> path, size_t& index) const {
     if (!model()) {
         return {};
     }
@@ -250,7 +252,7 @@ std::pair<std::vector<size_t>, Model::Node> TreeView::recursive_displayed_row_at
         if (index == 0) {
             return { child_path, child };
         }
-        auto node = recursive_displayed_row_at_index(&child, std::move(child_path), index);
+        auto node = recursive_displayed_row_at_index(Model::Node { s, child }, std::move(child_path), index);
         if (index == 0) {
             return node;
         }

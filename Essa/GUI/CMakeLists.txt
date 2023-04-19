@@ -76,7 +76,9 @@ add_library(Essa::GUI ALIAS GUI)
 set_target_properties(GUI PROPERTIES OUTPUT_NAME "essa-gui")
 essautil_setup_target(GUI)
 install(TARGETS GUI EXPORT Essa DESTINATION lib)
-target_link_libraries(GUI PUBLIC essautil LLGL-OpenGL LLGL-Window LLGL-Resources)
+target_link_libraries(GUI PUBLIC Util LLGL-OpenGL LLGL-Window LLGL-Resources)
 
 # FIXME: This breaks build of eml/AST.cpp somewhere in Value::string()
 target_compile_options(GUI PRIVATE -Wno-restrict)
+# FIXME: This breaks build of RadioGroup::add_widget().
+target_compile_options(GUI PUBLIC -Wno-address)

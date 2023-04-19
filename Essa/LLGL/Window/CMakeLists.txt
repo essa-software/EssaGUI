@@ -7,4 +7,4 @@ set(SOURCES
     Window.cpp
 )
 add_llgl_library(Window window)
-target_link_libraries(LLGL-Window essautil SDL2 Xrender)
+target_link_libraries(LLGL-Window Util SDL2 Xrender)

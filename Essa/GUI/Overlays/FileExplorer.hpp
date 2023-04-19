@@ -16,7 +16,7 @@ namespace GUI {
 
 class FileModel : public Model {
 public:
-    virtual size_t children_count(Model::Node const* node) const override {
+    virtual size_t children_count(std::optional<Model::Node> node) const override {
         return node ? 0 : m_files.size();
     }
 
@@ -24,12 +24,12 @@ public:
         return 5;
     }
 
-    virtual Variant data(Model::Node const& node, size_t column) const override;
+    virtual Variant data(Model::Node node, size_t column) const override;
 
     virtual ModelColumn column(size_t column) const override;
 
-    virtual Node child(Node const*, size_t idx) const override {
-        return Node { .type = 0, .data = &m_files[idx] };
+    virtual NodeData child(std::optional<Model::Node>, size_t idx) const override {
+        return NodeData { .type = 0, .data = &m_files[idx] };
     }
 
     std::filesystem::path get_path(size_t row) const {
