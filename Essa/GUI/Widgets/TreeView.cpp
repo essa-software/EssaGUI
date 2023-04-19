@@ -91,6 +91,8 @@ void TreeView::draw(Gfx::Painter& wnd) const {
     render_rows(wnd, current_y_pos, {}, nullptr);
 
     ScrollableWidget::draw_scrollbar(wnd);
+
+    theme().renderer().draw_text_editor_border(*this, false, wnd);
 }
 
 void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vector<size_t> path, Model::Node const* parent) const {
