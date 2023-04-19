@@ -55,6 +55,9 @@ void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
     if (m_y_scrollbar_visible) {
         float scroll_area_size = this->scroll_area_size().y();
         float content_size = this->content_size().y();
+        if (content_size == 0) {
+            return;
+        }
         if (content_size > scroll_area_size) {
             Gfx::RectangleDrawOptions scrollbar;
             scrollbar.fill_color = Util::Color { 200, 200, 200 };
