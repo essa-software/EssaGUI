@@ -40,6 +40,7 @@ add_library(GUI SHARED
     Widgets/ArrowButton.cpp
     Widgets/Border.cpp
     Widgets/Button.cpp
+    Widgets/ButtonBehavior.cpp
     Widgets/Canvas.cpp
     Widgets/Checkbox.cpp
     Widgets/ColorPicker.cpp
