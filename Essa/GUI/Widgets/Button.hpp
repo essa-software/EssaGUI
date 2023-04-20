@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Essa/GUI/Widgets/ButtonBehavior.hpp"
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <functional>
@@ -9,11 +10,10 @@ namespace GUI {
 
 class Button : public Widget {
 public:
+    Button();
+
     std::function<void()> on_click;
 
-    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
-    virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) override;
-    virtual Widget::EventHandlerResult on_key_press(Event::KeyPress const&) override;
     virtual void draw(Gfx::Painter& window) const override = 0;
 
     bool is_active() const { return m_active; }
@@ -47,12 +47,16 @@ protected:
     virtual bool accepts_focus() const override { return true; }
 
 private:
+    virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
+    virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) override;
+    virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
+    virtual Widget::EventHandlerResult on_key_press(Event::KeyPress const&) override;
     void click();
 
     std::optional<Theme::ButtonColors> m_button_colors_override;
 
     bool m_active { false };
-    bool m_pressed_on_button { false };
+    ButtonBehavior m_behavior;
 };
 
 }

@@ -4,16 +4,25 @@
 
 namespace GUI {
 
-Widget::EventHandlerResult Button::on_mouse_button_press(Event::MouseButtonPress const&) {
-    return Widget::EventHandlerResult::Accepted;
+Button::Button()
+    : m_behavior([&](Util::Cs::Point2i point) {
+        return local_rect().contains(point);
+    }) {
+    m_behavior.on_click = [&]() {
+        click();
+    };
 }
 
-Widget::EventHandlerResult Button::on_mouse_button_release(Event::MouseButtonRelease const&) {
-    if (is_hover() && was_hovered_on_mouse_press()) {
-        click();
-        m_pressed_on_button = false;
-    }
-    return Widget::EventHandlerResult::Accepted;
+Widget::EventHandlerResult Button::on_mouse_move(Event::MouseMove const& event) {
+    return m_behavior.on_mouse_move(event);
+}
+
+Widget::EventHandlerResult Button::on_mouse_button_press(Event::MouseButtonPress const& event) {
+    return m_behavior.on_mouse_button_press(event);
+}
+
+Widget::EventHandlerResult Button::on_mouse_button_release(Event::MouseButtonRelease const& event) {
+    return m_behavior.on_mouse_button_release(event);
 }
 
 Widget::EventHandlerResult Button::on_key_press(Event::KeyPress const& event) {
