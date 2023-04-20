@@ -24,6 +24,7 @@ public:
     virtual void handle_event(GUI::Event const&) override;
 
     enum class NotificationLevel {
+        Info,
         Error
     };
     void spawn_notification(Util::UString message, NotificationLevel);

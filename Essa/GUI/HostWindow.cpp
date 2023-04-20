@@ -119,6 +119,9 @@ void HostWindow::draw_notification(Notification const& notification, float y) {
     text.set_font_size(theme().label_font_size);
     text.align(GUI::Align::Top, rect().move_y(y));
     switch (notification.level) {
+    case NotificationLevel::Info:
+        text.set_fill_color(Util::Colors::Lime);
+        break;
     case NotificationLevel::Error:
         text.set_fill_color(Util::Colors::Red);
         break;
