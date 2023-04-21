@@ -1,6 +1,7 @@
 #include "ObjLoader.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Debug.hpp>
 
 #include <filesystem>
 #include <fstream>
@@ -10,6 +11,8 @@
 #include <stddef.h>
 
 namespace Essa {
+
+DBG_DECLARE(Engine_ObjLoader_DumpUnimplementedMTLCommands);
 
 std::optional<Model> ObjLoader::load_object_from_file(std::string const& filename) {
     std::ifstream file { filename };
@@ -272,7 +275,9 @@ bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& b
             || command == "Ni"
             || command == "d"
             || command == "illum") {
-            std::cout << "ObjLoader: Ignoring unimplemented mtl command: " << command << std::endl;
+            if (DBG_ENABLED(Engine_ObjLoader_DumpUnimplementedMTLCommands)) {
+                std::cout << "ObjLoader: Ignoring unimplemented mtl command: " << command << std::endl;
+            }
             mtl_in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
