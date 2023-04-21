@@ -22,13 +22,16 @@ FBO::FBO(Util::Vector2u size) {
     }
 }
 
+static unsigned s_current_fbo = 0;
+
 FBO::~FBO() {
+    if (s_current_fbo == m_fbo) {
+        s_current_fbo = 0;
+    }
     glDeleteFramebuffers(1, &m_fbo);
     if (m_depth_renderbuffer)
         glDeleteRenderbuffers(1, &m_depth_renderbuffer);
 }
-
-static unsigned s_current_fbo = 0;
 
 void FBO::bind(Target target) const {
     s_current_fbo = m_fbo;
