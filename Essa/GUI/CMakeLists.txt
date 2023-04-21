@@ -1,6 +1,7 @@
 add_library(GUI SHARED
     Application.cpp
     EventLoop.cpp
+    Debug.cpp
     HostWindow.cpp
     Model.cpp
     Theme.cpp

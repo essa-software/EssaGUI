@@ -1,5 +1,6 @@
 #include "RichText.hpp"
 
+#include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/Graphics/Drawing/Fill.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
@@ -8,6 +9,8 @@
 #include <EssaUtil/Is.hpp>
 
 namespace Gfx {
+
+DBG_DECLARE(Gfx_DrawRichTextBoxes);
 
 RichText::RichText(RichText const& other) {
     for (auto const& fragment : other.fragments()) {
@@ -59,7 +62,9 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
     float const line_height = static_cast<float>(m_context.default_font.line_height(m_context.font_size));
 
     using namespace Gfx::Drawing;
-    // painter.draw(Rectangle(m_rect, Fill::none(), Outline::normal(Util::Colors::Cyan, 1)));
+    if (DBG_ENABLED(Gfx_DrawRichTextBoxes)) {
+        painter.draw(Rectangle(m_rect, Fill::none(), Outline::normal(Util::Colors::Cyan, 1)));
+    }
 
     // 1. Calculate how many lines we need and how wide they are.
     struct Line {
@@ -136,9 +141,12 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
                 x += wanted_size;
 
                 Util::Cs::Size2f size { wanted_size, line_height };
-                // painter.draw(Rectangle(Util::Rectf(Util::Cs::Point2f::from_deprecated_vector(position), size),
-                //     Fill::none(),
-                //     Outline::normal(Util::Colors::Magenta, 1)));
+
+                if (DBG_ENABLED(Gfx_DrawRichTextBoxes)) {
+                    painter.draw(Rectangle(Util::Rectf(Util::Cs::Point2f::from_deprecated_vector(position), size),
+                        Fill::none(),
+                        Outline::normal(Util::Colors::Green, 1)));
+                }
 
                 frag->draw(m_context, position, painter);
             }

@@ -1,7 +1,10 @@
 #include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
+#include <Essa/GUI/Graphics/Drawing/Outline.hpp>
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
@@ -14,6 +17,8 @@
 #include <typeinfo>
 
 namespace GUI {
+
+DBG_DECLARE(GUI_DrawWidgetLayoutBounds);
 
 Widget::~Widget() {
     if (m_widget_tree_root && m_widget_tree_root->focused_widget() == this)
@@ -219,6 +224,11 @@ void Widget::do_draw(Gfx::Painter& painter) const {
     painter.deprecated_draw_rectangle(local_rect(), background);
 
     this->draw(painter);
+
+    if (DBG_ENABLED(GUI_DrawWidgetLayoutBounds)) {
+        using namespace Gfx::Drawing;
+        painter.draw(Rectangle(local_rect(), Fill::none(), Outline::normal(Util::Colors::Magenta, -1)));
+    }
 }
 
 Util::Rectf Widget::rect() const {
