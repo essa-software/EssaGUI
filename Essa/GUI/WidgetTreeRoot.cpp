@@ -1,6 +1,7 @@
 #include "WidgetTreeRoot.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
@@ -8,6 +9,8 @@
 #include <iostream>
 
 namespace GUI {
+
+DBG_DECLARE(GUI_DumpLayout);
 
 void WidgetTreeRoot::draw(Gfx::Painter& painter) {
     if (!m_main_widget)
@@ -17,7 +20,9 @@ void WidgetTreeRoot::draw(Gfx::Painter& painter) {
         m_main_widget->set_size({ { size().x(), Util::Length::Px }, { size().y(), Util::Length::Px } });
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
-        m_main_widget->dump(0);
+        if (DBG_ENABLED(GUI_DumpLayout)) {
+            m_main_widget->dump(0);
+        }
         m_needs_relayout = false;
     }
     m_main_widget->do_draw(painter);
