@@ -14,6 +14,7 @@ option(ESSAGUI_EXAMPLES "Compile examples" ON)
 
 include_directories(${Essa_SOURCE_DIR})
 
+add_subdirectory(EssaTools)
 add_subdirectory(EssaUtil)
 add_subdirectory(Essa)
 

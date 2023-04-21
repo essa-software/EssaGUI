@@ -9,7 +9,7 @@
 
 int main() {
     GUI::Application app;
-    auto& host_window = app.create_host_window({ 500, 500 }, "EML test");
+    auto& host_window = app.create_host_window({ 500, 500 }, "EML Playground");
 
     auto& container = host_window.set_main_widget<GUI::Container>();
     container.set_layout<GUI::VerticalBoxLayout>();
