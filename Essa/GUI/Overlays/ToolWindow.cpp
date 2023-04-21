@@ -75,7 +75,9 @@ void ToolWindow::handle_event(Event const& event) {
             for (auto direction : { ResizeDirection::Top, ResizeDirection::Right, ResizeDirection::Bottom, ResizeDirection::Left }) {
                 auto resize_rect = this->resize_rect(direction);
                 if (resize_rect.contains(mouse_position)) {
-                    assert(i < m_resize_directions.size());
+                    if (i >= m_resize_directions.size()) {
+                        break;
+                    }
                     m_resize_directions[i++] = direction;
                     start_dragging();
                 }
