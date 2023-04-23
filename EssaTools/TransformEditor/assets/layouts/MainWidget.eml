@@ -1,0 +1,77 @@
+@Container {
+    layout: @VerticalBoxLayout
+
+    // Toolbar
+    @Container {
+        layout: @HorizontalBoxLayout
+
+        height: 32px
+
+        @TextButton load_model {
+            content: "Load model"
+            width: 100px
+        }
+
+        @RadioGroup axis_coordinate_system {
+            layout: @HorizontalBoxLayout { spacing: 10 }
+            @Textfield { content: "Axis coordinate system: " }
+            @RadioButton { caption: "Local (M+V+P)" }
+            @RadioButton { caption: "World (V+P)" }
+            @RadioButton { caption: "View (P)" }
+            @RadioButton { caption: "Clip (I)" }
+        }
+    }
+    
+    // Main View
+    @Container {
+        layout: @HorizontalBoxLayout
+        
+        @Container {
+            layout: @VerticalBoxLayout {
+                spacing: 5
+                padding: 10
+            }
+            width: 300px
+            
+            @Textfield {
+                content: "Model"
+            }
+            
+            @TextEditor model_editor {
+                height: auto
+                multiline: true
+            }
+            
+            @Textfield {
+                content: "View"
+            }
+            
+            @TextEditor view_editor {
+                height: auto
+                multiline: true
+            }
+            
+            @Textfield {
+                content: "Projection"
+            }
+            
+            @TextEditor projection_editor {
+                height: auto
+                multiline: true
+            }
+        }
+        
+        @Container {
+            layout: @VerticalBoxLayout {
+                padding: [10,10,10,0]
+                spacing: 5
+            }
+        
+            @Textfield {
+                content: "Camera View"
+            }
+        
+            @CameraView camera_view
+        }
+    }
+}
