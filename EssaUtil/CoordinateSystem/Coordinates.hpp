@@ -81,30 +81,30 @@ public:
 
     // Component setters
     template<size_t I>
-    constexpr void set_component(float v)
+    constexpr void set_component(T v)
         requires(Components > 0)
     {
         assert(std::isfinite(v));
         static_assert(I < Components);
         this->m_components[I] = v;
     };
-    constexpr void set_component(size_t s, float v)
+    constexpr void set_component(size_t s, T v)
         requires(Components > 0)
     {
         assert(std::isfinite(v));
         assert(s < Components);
         this->m_components[s] = v;
     };
-    constexpr void set_x(float v)
+    constexpr void set_x(T v)
         requires(Components > 0)
     { set_component(0, v); }
-    constexpr void set_y(float v)
+    constexpr void set_y(T v)
         requires(Components > 1)
     { set_component(1, v); }
-    constexpr void set_z(float v)
+    constexpr void set_z(T v)
         requires(Components > 2)
     { set_component(2, v); }
-    constexpr void set_w(float v)
+    constexpr void set_w(T v)
         requires(Components > 3)
     { set_component(3, v); }
 
