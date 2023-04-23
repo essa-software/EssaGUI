@@ -22,7 +22,13 @@ void TextButton::draw(Gfx::Painter& painter) const {
         if (m_content.is_empty()) {
             painter.deprecated_draw_rectangle(
                 {
-                    Util::Cs::Point2f::from_deprecated_vector(raw_size() / 2.f - Util::Vector2f { m_image->size() } / 2.f),
+                    (raw_size() / 2
+                        - Util::Cs::Size2i::from_deprecated_vector(
+                              m_image->size())
+                            / 2.f)
+                        .cast<float>()
+                        .to_vector()
+                        .to_point(),
                     Util::Cs::Size2f::from_deprecated_vector(m_image->size()),
                 },
                 image);
@@ -32,7 +38,8 @@ void TextButton::draw(Gfx::Painter& painter) const {
             text_offset = 5 + m_image->size().x();
             painter.deprecated_draw_rectangle(
                 { { 5, raw_size().y() / 2 - m_image->size().y() / 2.f },
-                    { static_cast<float>(m_image->size().x()), static_cast<float>(m_image->size().y()) } },
+                    { static_cast<float>(m_image->size().x()),
+                        static_cast<float>(m_image->size().y()) } },
                 image);
         }
     }
@@ -50,7 +57,7 @@ void TextButton::draw(Gfx::Painter& painter) const {
     else
         text.set_string(m_content);
 
-    text.align(GUI::Align::Center, text_rect);
+    text.align(GUI::Align::Center, text_rect.cast<float>());
     text.draw(painter);
 
     if (is_focused()) {
@@ -58,15 +65,19 @@ void TextButton::draw(Gfx::Painter& painter) const {
         focus_rect.fill_color = Util::Colors::Transparent;
         focus_rect.outline_color = theme().focus_frame;
         focus_rect.outline_thickness = -1;
-        painter.deprecated_draw_rectangle(local_rect(), focus_rect);
+        painter.deprecated_draw_rectangle(
+            local_rect().cast<float>(), focus_rect);
     }
 }
 
-EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> TextButton::load_from_eml_object(
+    EML::Object const& object, EML::Loader& loader) {
     TRY(Button::load_from_eml_object(object, loader));
     m_content = TRY(object.get_property("content", EML::Value("")).to_string());
-    m_active_content = TRY(object.get_property("active_content", EML::Value("")).to_string());
-    auto image = object.get_property("image", EML::Value(false)).to_resource_id();
+    m_active_content = TRY(
+        object.get_property("active_content", EML::Value("")).to_string());
+    auto image
+        = object.get_property("image", EML::Value(false)).to_resource_id();
     if (!image.is_error())
         m_image = resource_manager().get<Gfx::Texture>(image.release_value());
     return {};

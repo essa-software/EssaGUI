@@ -30,7 +30,7 @@ public:
     Border* get_cell(size_t x, size_t y);
 
 private:
-    float m_spacing = 0, m_line_height = 50;
+    int m_spacing = 0, m_line_height = 50;
     size_t m_width = 0, m_height = 0;
 
     std::vector<std::vector<Border*>> m_cells;

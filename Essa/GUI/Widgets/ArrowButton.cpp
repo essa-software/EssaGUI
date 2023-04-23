@@ -10,9 +10,9 @@ void ArrowButton::draw(Gfx::Painter& painter) const {
 
     Gfx::RectangleDrawOptions options;
     options.fill_color = colors.background;
-    painter.deprecated_draw_rectangle({ {}, Util::Cs::Size2f::from_deprecated_vector(raw_size()) }, options);
+    painter.deprecated_draw_rectangle({ {}, raw_size().cast<float>() }, options);
 
-    const Util::Vector2f midpoint = raw_size() / 2.f;
+    const auto midpoint = raw_size() / 2;
 
     // std::cout << Vector3(midpoint) << "\n";
 

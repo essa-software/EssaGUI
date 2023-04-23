@@ -12,11 +12,14 @@
 class MainWidget : public GUI::Widget {
 private:
     virtual void draw(Gfx::Painter& painter) const override {
-        painter.draw(Gfx::Drawing::Rectangle { rect(), Gfx::Drawing::Fill::solid(Util::Color { 0x00ff0040 }) });
+        painter.draw(Gfx::Drawing::Rectangle { rect().cast<float>(),
+            Gfx::Drawing::Fill::solid(Util::Color { 0x00ff0040 }) });
 
-        Gfx::Text text { "Use the command line you used to open this window to close it. There is no other way.", GUI::Application::the().font() };
+        Gfx::Text text { "Use the command line you used to open this window to "
+                         "close it. There is no other way.",
+            GUI::Application::the().font() };
         text.set_font_size(30);
-        text.align(GUI::Align::Center, rect());
+        text.align(GUI::Align::Center, rect().cast<float>());
         text.draw(painter);
     }
 
@@ -26,7 +29,9 @@ private:
 int main() {
     GUI::Application app;
     auto& window = app.create_host_window({ 700, 400 }, "TEST",
-        { .flags = llgl::WindowFlags::Resizable | llgl::WindowFlags::TransparentBackground | llgl::WindowFlags::Borderless });
+        { .flags = llgl::WindowFlags::Resizable
+                | llgl::WindowFlags::TransparentBackground
+                | llgl::WindowFlags::Borderless });
     window.set_size(window.screen_size());
     window.center_on_screen();
 
@@ -39,7 +44,8 @@ int main() {
         fmt::print("SDL_GetWindowWMInfo: {}\n", SDL_GetError());
     }
     auto region = XFixesCreateRegion(wminfo.info.x11.display, nullptr, 0);
-    XFixesSetWindowShapeRegion(wminfo.info.x11.display, wminfo.info.x11.window, ShapeInput, 0, 0, region);
+    XFixesSetWindowShapeRegion(wminfo.info.x11.display, wminfo.info.x11.window,
+        ShapeInput, 0, 0, region);
 #else
 #    warning This works only on X11.
 #endif

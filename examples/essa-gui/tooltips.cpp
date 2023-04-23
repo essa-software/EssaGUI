@@ -11,17 +11,20 @@ public:
     }
 
 private:
-    virtual bool should_display_tooltip(Util::Vector2f const& position) const override {
+    virtual bool should_display_tooltip(
+        Util::Cs::Point2i const& position) const override {
         return position.x() > raw_size().x() / 2;
     }
-    virtual Util::UString create_tooltip(Util::Vector2f const& position) const override {
+    virtual Util::UString create_tooltip(
+        Util::Cs::Point2i const& position) const override {
         if (m_show_position)
-            return Util::UString { fmt::format("[{}, {{}}]", position.x(), position.y()) };
+            return Util::UString { fmt::format("{}", position) };
         return Widget::create_tooltip(position);
     }
-    virtual void update_tooltip(Util::Vector2f const& position, Util::UString& string) const override {
+    virtual void update_tooltip(Util::Cs::Point2i const& position,
+        Util::UString& string) const override {
         if (m_show_position)
-            string = Util::UString { fmt::format("[{}, {}]", position.x(), position.y()) };
+            string = Util::UString { fmt::format("{}", position) };
     }
 
     bool m_show_position = false;
@@ -35,7 +38,7 @@ int main() {
     auto& container = window.set_main_widget<GUI::Container>();
     auto& layout = container.set_layout<GUI::VerticalBoxLayout>();
     layout.set_spacing(40);
-    layout.set_padding(GUI::Boxf::all_equal(40));
+    layout.set_padding(GUI::Boxi::all_equal(40));
 
     {
         auto layer1 = container.add_widget<GUI::Container>();

@@ -12,21 +12,22 @@ void ImageButton::draw(Gfx::Painter& painter) const {
     cs_bg.fill_color = colors.background;
     cs_bg.outline_color = colors.foreground;
     cs_bg.outline_thickness = -0.05;
-    painter.draw_ellipse(raw_size() / 2.f, raw_size(), cs_bg);
+    painter.draw_ellipse(raw_size().cast<float>().to_deprecated_vector() / 2.f,
+        raw_size().cast<float>().to_deprecated_vector(), cs_bg);
 
     if (!m_image)
         return;
     Gfx::RectangleDrawOptions sprite;
     sprite.texture = m_image;
-    painter.deprecated_draw_rectangle(local_rect(), sprite);
+    painter.deprecated_draw_rectangle(local_rect().cast<float>(), sprite);
 }
 
 LengthVector ImageButton::initial_size() const {
     // FIXME: More convenient way to convert theme values to pixels. Maybe
     //        just support units in themes.
     return {
-        { static_cast<float>(theme().image_button_size), Util::Length::Px },
-        { static_cast<float>(theme().image_button_size), Util::Length::Px },
+        { static_cast<int>(theme().image_button_size), Util::Length::Px },
+        { static_cast<int>(theme().image_button_size), Util::Length::Px },
     };
 }
 

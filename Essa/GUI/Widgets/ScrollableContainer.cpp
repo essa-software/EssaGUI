@@ -4,20 +4,22 @@ namespace GUI {
 
 ScrollableContainer::ScrollableContainer() {
     on_scroll = [&]() {
-        m_widget->set_raw_position(scroll_offset());
+        m_widget->set_raw_position(scroll_offset().to_point());
 
-        // FIXME: The relayout is needed because widgets use wtr-relative (i.e global) position
-        //        for rendering. If they used container-relative position, we could avoid relayouting
-        //        ScrollableContainer contents on every scroll!
+        // FIXME: The relayout is needed because widgets use wtr-relative (i.e
+        // global) position for rendering. If they used container-relative
+        // position, we could avoid relayouting ScrollableContainer contents on
+        // every scroll!
         m_widget->do_relayout();
     };
 }
 
-Util::Vector2f ScrollableContainer::content_size() const {
+Util::Cs::Size2i ScrollableContainer::content_size() const {
     return m_widget->total_size();
 }
 
-Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& event) {
+Widget::EventHandlerResult ScrollableContainer::do_handle_event(
+    Event const& event) {
     Widget::do_handle_event(event);
     if (ScrollableWidget::handle_event(event) == EventHandlerResult::Accepted) {
         return EventHandlerResult::Accepted;
@@ -37,16 +39,16 @@ void ScrollableContainer::do_relayout() {
     m_widget->set_raw_size(raw_size());
     m_widget->do_relayout();
 
-    // 2. If the widget doesn't fit, relayout once more (because
-    //    we will add scrollbars, which will change available size).
-    Util::Vector2f actually_needed_size = raw_size();
+    // 2. If the widget doesn't fit, relayout once more (because we will add
+    // scrollbars, which will change available size).
+    auto actually_needed_size = raw_size();
     if (m_widget->total_size().x() > raw_size().x()) {
-        actually_needed_size.y() -= 5;
+        actually_needed_size.set_y(actually_needed_size.x() - 5);
     }
     if (m_widget->total_size().y() > raw_size().y()) {
-        actually_needed_size.x() -= 5;
+        actually_needed_size.set_x(actually_needed_size.x() - 5);
     }
-    fmt::print("{} != {} ?\n", fmt::streamed(actually_needed_size), fmt::streamed(raw_size()));
+    fmt::print("{} != {} ?\n", actually_needed_size, raw_size());
     if (actually_needed_size != raw_size()) {
         m_widget->set_raw_size(actually_needed_size);
         m_widget->do_relayout();

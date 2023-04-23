@@ -121,7 +121,7 @@ void Datebox::create_container() {
     for (unsigned i = 0; i < 6; i++) {
         auto row = day_selection_container->add_widget<Container>();
         row->set_layout<HorizontalBoxLayout>().set_spacing(2);
-        row->set_size({ Util::Length::Auto, { 100.0 / 6, Util::Length::Percent } });
+        row->set_size({ Util::Length::Auto, { 100 / 6, Util::Length::Percent } });
         m_calendar_rows.push_back(row);
         for (unsigned i = 0; i < 7; i++)
             m_calendar_contents.push_back({ create_calendar_button(*row), {} });
@@ -129,7 +129,7 @@ void Datebox::create_container() {
 
     auto daytime_container = m_calendar_container->add_widget<Container>();
     daytime_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(5);
-    daytime_container->set_size({ Util::Length::Auto, { 100.0 / 6, Util::Length::Percent } });
+    daytime_container->set_size({ Util::Length::Auto, { 100 / 6, Util::Length::Percent } });
     auto hours = daytime_container->add_widget<Textbox>();
     hours->set_limit(2);
     hours->set_min(0);

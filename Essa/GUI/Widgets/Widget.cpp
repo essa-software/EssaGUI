@@ -25,20 +25,21 @@ Widget::~Widget() {
         m_widget_tree_root->set_focused_widget(nullptr);
 }
 
-bool Widget::is_mouse_over(Util::Vector2i mouse_pos) const {
-    return Util::Rectf {
-        Util::Cs::Point2f::from_deprecated_vector(m_raw_position),
-        Util::Cs::Size2f::from_deprecated_vector(m_raw_size),
-    }
-        .contains(Util::Cs::Point2f::from_deprecated_vector(mouse_pos));
+bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const {
+    return Util::Recti(m_raw_position, m_raw_size).contains(mouse_pos);
 }
 
 void Widget::update() {
-    Util::Vector2f tooltip_position { m_tooltip_position };
-    Util::Vector2f widget_relative_mouse_position { llgl::mouse_position() };
-    widget_relative_mouse_position -= widget_tree_root().position() + raw_position();
+    Util::Cs::Point2i tooltip_position { m_tooltip_position };
+    auto widget_relative_mouse_position
+        = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
+    widget_relative_mouse_position
+        -= Util::Cs::Vector2i::from_deprecated_vector(
+               widget_tree_root().position())
+        + raw_position().to_vector();
 
-    bool should_display = should_display_tooltip(widget_relative_mouse_position);
+    bool should_display
+        = should_display_tooltip(widget_relative_mouse_position);
     if (m_tooltip && !should_display) {
         m_tooltip->close();
         m_tooltip = nullptr;
@@ -54,7 +55,8 @@ void Widget::update() {
             m_tooltip = nullptr;
         }
         else if (should_display) {
-            m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(tooltip_position), {} });
+            m_tooltip = &host_window().add_tooltip(
+                Tooltip { create_tooltip(tooltip_position), {} });
         }
         m_tooltip_counter = -1;
     }
@@ -64,29 +66,37 @@ void Widget::update() {
         auto text = m_tooltip->text();
         update_tooltip(widget_relative_mouse_position, text);
         m_tooltip->set_text(text);
-        m_tooltip->set_position(m_widget_tree_root->position() + raw_position() + tooltip_position + Util::Vector2f { 32, 32 });
+        m_tooltip->set_position((Util::Cs::Point2i::from_deprecated_vector(
+                                     m_widget_tree_root->position())
+            + raw_position().to_vector() + tooltip_position.to_vector()
+            + Util::Cs::Vector2i(32, 32))
+                                    .cast<float>()
+                                    .to_deprecated_vector());
     }
 }
 
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
-    auto transformed_event = event.relativized(Util::Cs::Vector2i::from_deprecated_vector(m_raw_position));
+    auto transformed_event = event.relativized(m_raw_position.to_vector());
 
     // Check if widget is actually affected by the event, this
     // must be here so that event handler will actually run if
     // line below will change widget state (e.g hover)
     bool should_run_event_handler = is_affected_by_event(transformed_event);
-    EventHandlerResult result = should_run_event_handler ? handle_event(transformed_event) : EventHandlerResult::NotAccepted;
+    EventHandlerResult result = should_run_event_handler
+        ? handle_event(transformed_event)
+        : EventHandlerResult::NotAccepted;
 
     // Handle events common to all widgets
     auto result2 = transformed_event.visit(
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position.to_deprecated_vector() + Util::Vector2i { m_raw_position });
+            m_hover
+                = is_mouse_over(mouse_position + m_raw_position.to_vector());
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
                 if (m_hover && !m_tooltip) {
                     m_tooltip_counter = 40;
-                    m_tooltip_position = mouse_position.to_deprecated_vector();
+                    m_tooltip_position = mouse_position;
                 }
                 if (!m_hover) {
                     if (m_tooltip)
@@ -97,7 +107,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 break;
             }
             case TooltipMode::Realtime: {
-                m_tooltip_position = mouse_position.to_deprecated_vector();
+                m_tooltip_position = mouse_position;
                 if (m_hover) {
                     if (!m_tooltip)
                         m_tooltip_counter = 0;
@@ -112,7 +122,8 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position.to_deprecated_vector() + Util::Vector2i { m_raw_position });
+            m_hover
+                = is_mouse_over(mouse_position + m_raw_position.to_vector());
             if (m_hover) {
                 m_hovered_on_click = true;
             }
@@ -124,7 +135,8 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position.to_deprecated_vector() + Util::Vector2i { m_raw_position });
+            m_hover
+                = is_mouse_over(mouse_position + m_raw_position.to_vector());
             m_hovered_on_click = false;
             return EventHandlerResult::NotAccepted;
         },
@@ -132,9 +144,12 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             set_needs_relayout();
             return EventHandlerResult::NotAccepted;
         },
-        [&](auto const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; });
+        [&](auto const&) -> EventHandlerResult {
+            return EventHandlerResult::NotAccepted;
+        });
 
-    return result2 == EventHandlerResult::Accepted || result == EventHandlerResult::Accepted
+    return result2 == EventHandlerResult::Accepted
+            || result == EventHandlerResult::Accepted
         ? EventHandlerResult::Accepted
         : EventHandlerResult::NotAccepted;
 }
@@ -172,18 +187,6 @@ void Widget::do_update() {
     update();
 }
 
-Util::Vector2f Widget::position_on_host_window() const {
-    return widget_tree_root().position() + position_on_widget_tree_root();
-}
-
-Util::Vector2f Widget::position_on_widget_tree_root() const {
-    auto position = raw_position();
-    if (m_parent) {
-        position += m_parent->position_on_widget_tree_root();
-    }
-    return position;
-}
-
 void Widget::set_focused() {
     assert(accepts_focus());
     m_widget_tree_root->set_focused_widget(this);
@@ -193,9 +196,7 @@ bool Widget::is_focused() const {
     return m_widget_tree_root->focused_widget() == this;
 }
 
-void Widget::focus_first_child_or_self() {
-    set_focused();
-}
+void Widget::focus_first_child_or_self() { set_focused(); }
 
 bool Widget::are_all_parents_enabled() const {
     return is_enabled() && (m_parent ? m_parent->is_enabled() : true);
@@ -206,7 +207,8 @@ bool Widget::is_affected_by_event(Event const& event) const {
     case llgl::EventTargetType::KeyboardFocused:
         return is_focused();
     case llgl::EventTargetType::MouseFocused:
-        return local_rect().contains(event.local_mouse_position()) || m_hovered_on_click;
+        return local_rect().contains(event.local_mouse_position())
+            || m_hovered_on_click;
     case llgl::EventTargetType::Specific:
         return false;
     case llgl::EventTargetType::Global:
@@ -217,40 +219,42 @@ bool Widget::is_affected_by_event(Event const& event) const {
 
 void Widget::do_draw(Gfx::Painter& painter) const {
     auto rect = this->rect();
-    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
+    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() },
+        Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = m_background_color;
-    painter.deprecated_draw_rectangle(local_rect(), background);
+    painter.deprecated_draw_rectangle(local_rect().cast<float>(), background);
 
     this->draw(painter);
 
     if (DBG_ENABLED(GUI_DrawWidgetLayoutBounds)) {
         using namespace Gfx::Drawing;
-        painter.draw(Rectangle(local_rect(), Fill::none(), Outline::normal(Util::Colors::Magenta, -1)));
+        painter.draw(Rectangle(local_rect().cast<float>(), Fill::none(),
+            Outline::normal(Util::Colors::Magenta, -1)));
     }
 }
 
-Util::Rectf Widget::rect() const {
+Util::Recti Widget::rect() const {
     return {
-        Util::Cs::Point2f::from_deprecated_vector(raw_position() + m_widget_tree_root->position()),
-        Util::Cs::Size2f::from_deprecated_vector(raw_size()),
+        raw_position()
+            + Util::Cs::Vector2i::from_deprecated_vector(
+                m_widget_tree_root->position()),
+        raw_size(),
     };
 }
 
 void Widget::do_relayout() {
     if (this->m_visible)
         this->relayout();
-    // std::cout << "do_relayout "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
+    // std::cout << "do_relayout "  << this << ":" << typeid(*this).name() <<
+    // m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y <<
+    // std::endl;
 }
 
-void Widget::set_needs_relayout() {
-    m_widget_tree_root->set_needs_relayout();
-}
+void Widget::set_needs_relayout() { m_widget_tree_root->set_needs_relayout(); }
 
-Theme const& Widget::theme() const {
-    return Application::the().theme();
-}
+Theme const& Widget::theme() const { return Application::the().theme(); }
 
 Gfx::ResourceManager const& Widget::resource_manager() const {
     return Application::the().resource_manager();
@@ -271,27 +275,54 @@ void Widget::set_parent(Container& parent) {
 }
 
 void Widget::dump(unsigned depth) {
-    for (unsigned i = 0; i < depth; i++)
-        std::cout << "-   ";
-    std::cout << (m_visible ? "(-) " : "(+) ");
-    std::cout << typeid(*this).name() << " @" << this;
-    if (!m_id.empty())
-        std::cout << " #" << m_id;
-    std::cout << ": pos=(" << m_expected_pos.x << "," << m_expected_pos.y << ")=" << m_raw_position;
-    std::cout << ", size=(" << m_input_size.x << "," << m_input_size.y << ")=" << m_raw_size;
-    std::cout << std::endl;
+    for (unsigned i = 0; i < depth; i++) {
+        fmt::print("-   ");
+    }
+    fmt::print("({}) ", (m_visible ? "-" : "+"));
+    fmt::print("{} @{}", typeid(*this).name(), fmt::ptr(this));
+    if (!m_id.empty()) {
+        fmt::print(" #{}", m_id);
+    }
+    fmt::print(": pos=({}, {})={}", fmt::streamed(m_expected_pos.x),
+        fmt::streamed(m_expected_pos.y), m_raw_position);
+    fmt::print(", size=({}, {})={}", fmt::streamed(m_input_size.x),
+        fmt::streamed(m_input_size.y), m_raw_size);
+    fmt::print("\n");
 }
 
-EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+EML::EMLErrorOr<void> Widget::load_from_eml_object(
+    EML::Object const& object, EML::Loader&) {
     m_id = object.id;
-    m_tooltip_text = TRY(object.get_property("tooltip_text", EML::Value("")).to_string());
-    m_vertical_alignment = TRY(object.get_enum<Alignment>("vertical_alignment", alignment_from_string, Alignment::Start));
-    m_horizontal_alignment = TRY(object.get_enum<Alignment>("horizontal_alignment", alignment_from_string, Alignment::Start));
-    m_input_size.x = TRY(object.get_property("width", EML::Value(Util::Length { Util::Length::Initial })).to_length());
-    m_input_size.y = TRY(object.get_property("height", EML::Value(Util::Length { Util::Length::Initial })).to_length());
-    m_expected_pos.x = TRY(object.get_property("left", EML::Value(Util::Length { Util::Length::Initial })).to_length());
-    m_expected_pos.y = TRY(object.get_property("top", EML::Value(Util::Length { Util::Length::Initial })).to_length());
-    m_background_color = TRY(object.get_property("background_color", EML::Value(Util::Color { 0x000000 })).to_color());
+    m_tooltip_text
+        = TRY(object.get_property("tooltip_text", EML::Value("")).to_string());
+    m_vertical_alignment = TRY(object.get_enum<Alignment>(
+        "vertical_alignment", alignment_from_string, Alignment::Start));
+    m_horizontal_alignment = TRY(object.get_enum<Alignment>(
+        "horizontal_alignment", alignment_from_string, Alignment::Start));
+    m_input_size.x
+        = TRY(object
+                  .get_property("width",
+                      EML::Value(Util::Length { Util::Length::Initial }))
+                  .to_length());
+    m_input_size.y
+        = TRY(object
+                  .get_property("height",
+                      EML::Value(Util::Length { Util::Length::Initial }))
+                  .to_length());
+    m_expected_pos.x
+        = TRY(object
+                  .get_property("left",
+                      EML::Value(Util::Length { Util::Length::Initial }))
+                  .to_length());
+    m_expected_pos.y
+        = TRY(object
+                  .get_property(
+                      "top", EML::Value(Util::Length { Util::Length::Initial }))
+                  .to_length());
+    m_background_color = TRY(object
+                                 .get_property("background_color",
+                                     EML::Value(Util::Color { 0x000000 }))
+                                 .to_color());
     m_enabled = TRY(object.get_property("enabled", EML::Value(true)).to_bool());
     m_visible = TRY(object.get_property("visible", EML::Value(true)).to_bool());
     return {};

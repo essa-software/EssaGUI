@@ -88,11 +88,8 @@ public:
     virtual void do_update();
     virtual void draw(Gfx::Painter&) const { }
 
-    CREATE_VALUE(Util::Vector2f, raw_position, Util::Vector2f())
-    CREATE_VALUE(Util::Vector2f, raw_size, Util::Vector2f())
-
-    Util::Vector2f position_on_host_window() const;
-    Util::Vector2f position_on_widget_tree_root() const;
+    CREATE_VALUE(Util::Cs::Point2i, raw_position, Util::Cs::Point2i())
+    CREATE_VALUE(Util::Cs::Size2i, raw_size, Util::Cs::Size2i())
 
     LengthVector position() const { return m_expected_pos; }
     LengthVector size() const { return m_input_size; }
@@ -136,8 +133,8 @@ public:
         set_needs_relayout();
     }
 
-    Util::Rectf rect() const;
-    Util::Rectf local_rect() const { return { {}, Util::Cs::Size2f::from_deprecated_vector(m_raw_size) }; }
+    Util::Recti rect() const;
+    Util::Recti local_rect() const { return { {}, m_raw_size }; }
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
@@ -189,7 +186,7 @@ public:
     virtual void on_init() { }
 
     // "Total size" size of all children of a widget (with padding included), or a widget itself.
-    virtual Util::Vector2f total_size() const { return raw_size(); }
+    virtual Util::Cs::Size2i total_size() const { return raw_size(); }
 
     void init() {
         if (!m_initialized) {
@@ -219,7 +216,7 @@ protected:
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }
-    virtual bool is_mouse_over(Util::Vector2i) const;
+    virtual bool is_mouse_over(Util::Cs::Point2i) const;
     virtual void update();
     virtual bool accepts_focus() const { return false; }
 
@@ -234,13 +231,13 @@ protected:
     virtual void focus_first_child_or_self();
 
     // Returns whether tooltip should be displayed at specified widget-relative position.
-    virtual bool should_display_tooltip(Util::Vector2f const&) const { return !m_tooltip_text.is_empty(); }
+    virtual bool should_display_tooltip(Util::Cs::Point2i const&) const { return !m_tooltip_text.is_empty(); }
 
     // Called when tooltip is first shown up. Position is widget-relative.
-    virtual Util::UString create_tooltip(Util::Vector2f const&) const { return m_tooltip_text; }
+    virtual Util::UString create_tooltip(Util::Cs::Point2i const&) const { return m_tooltip_text; }
 
     // Called every tick when tooltip is shown. Position is widget-relative.
-    virtual void update_tooltip(Util::Vector2f const&, Util::UString&) const { }
+    virtual void update_tooltip(Util::Cs::Point2i const&, Util::UString&) const { }
 
     void set_needs_relayout();
 
@@ -261,7 +258,7 @@ private:
 
     TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
-    Util::Vector2i m_tooltip_position;
+    Util::Cs::Point2i m_tooltip_position;
 
     bool m_hover = false;
     bool m_hovered_on_click = false;

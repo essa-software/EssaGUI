@@ -17,8 +17,8 @@ void WidgetTreeRoot::draw(Gfx::Painter& painter) {
         return;
     if (m_needs_relayout) {
         // std::cout << m_id << "\n"
-        m_main_widget->set_size({ { size().x(), Util::Length::Px }, { size().y(), Util::Length::Px } });
-        m_main_widget->set_raw_size(size());
+        m_main_widget->set_size({ { static_cast<int>(size().x()), Util::Length::Px }, { static_cast<int>(size().y()), Util::Length::Px } });
+        m_main_widget->set_raw_size(Util::Cs::Size2i::from_deprecated_vector(size()));
         m_main_widget->do_relayout();
         if (DBG_ENABLED(GUI_DumpLayout)) {
             m_main_widget->dump(0);

@@ -1,7 +1,5 @@
 #include "RectangleShape.hpp"
 
-
-
 namespace GUI {
 
 void RectangleShape::draw(Gfx::Painter& painter) const {
@@ -14,7 +12,7 @@ void RectangleShape::draw(Gfx::Painter& painter) const {
     options.border_radius_bottom_left = m_border_radius[2];
     options.border_radius_top_right = m_border_radius[3];
 
-    painter.deprecated_draw_rectangle(rect(), options);
+    painter.deprecated_draw_rectangle(rect().cast<float>(), options);
 }
 
 void RectangleShape::set_border_radius(RectangleVertex vert, float value) {

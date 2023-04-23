@@ -82,8 +82,8 @@ private:
     virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
     virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
 
-    TextPosition text_position_at(Util::Vector2i);
-    Util::Vector2f calculate_cursor_position() const;
+    TextPosition text_position_at(Util::Cs::Point2i);
+    Util::Cs::Point2i calculate_cursor_position() const;
     void erase_selected_text();
     virtual void update() override;
     virtual bool accepts_focus() const override { return true; }
@@ -92,12 +92,12 @@ private:
     virtual void on_content_change() { }
     void did_content_change();
 
-    float line_height() const;
-    float left_margin() const;
-    float character_width() const;
-    virtual Util::Vector2f content_size() const override;
+    int line_height() const;
+    int left_margin() const;
+    int character_width() const;
+    virtual Util::Cs::Size2i content_size() const override;
     virtual LengthVector initial_size() const override;
-    virtual Util::Rectf scrollable_rect() const override;
+    virtual Util::Recti scrollable_rect() const override;
 
     TextPosition real_cursor_position() const;
 

@@ -23,14 +23,13 @@ void Console::append_content(LogLine content) {
     });
 }
 
-void Console::clear() {
-    m_lines.clear();
-}
+void Console::clear() { m_lines.clear(); }
 
 void Console::draw(Gfx::Painter& painter) const {
     size_t s = 0;
     for (auto& line : m_lines) {
-        auto position = Util::Vector2f { 5, s * LINE_SPACING + 19 } + scroll_offset();
+        auto position
+            = Util::Cs::Point2i { 5, s * LINE_SPACING + 19 } + scroll_offset();
         if (position.y() > raw_size().y() + LINE_SPACING || position.y() < 0) {
             s++;
             continue;
@@ -39,7 +38,7 @@ void Console::draw(Gfx::Painter& painter) const {
         Gfx::Text text { line.text, Application::the().fixed_width_font() };
         text.set_fill_color(line.color);
         text.set_font_size(theme().label_font_size);
-        text.set_position(position);
+        text.set_position(position.cast<float>().to_deprecated_vector());
         text.draw(painter);
         s++;
     }
@@ -47,9 +46,11 @@ void Console::draw(Gfx::Painter& painter) const {
     ScrollableWidget::draw_scrollbar(painter);
 }
 
-Util::Vector2f Console::content_size() const {
+Util::Cs::Size2i Console::content_size() const {
     float width = 0;
-    auto character_size = Application::the().fixed_width_font().calculate_text_size("x", theme().label_font_size);
+    auto character_size
+        = Application::the().fixed_width_font().calculate_text_size(
+            "x", theme().label_font_size);
     for (auto& line : m_lines) {
         float line_width = line.text.size() * character_size.x();
         if (line_width > width) {
@@ -58,7 +59,8 @@ Util::Vector2f Console::content_size() const {
     }
     return { width + 10, m_lines.size() * LINE_SPACING + 10 };
 }
-EML::EMLErrorOr<void> Console::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> Console::load_from_eml_object(
+    EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
     for (auto const& line : object.properties) {

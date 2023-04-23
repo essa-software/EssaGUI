@@ -17,7 +17,7 @@ MessageBox::MessageBox(HostWindow& window, Util::UString message, Util::UString 
 
     auto& prompt_container_layout = prompt_container.set_layout<GUI::VerticalBoxLayout>();
     prompt_container_layout.set_spacing(20);
-    prompt_container_layout.set_padding(Boxf::all_equal(20));
+    prompt_container_layout.set_padding(Boxi::all_equal(20));
 
     auto prompt_text = prompt_container.add_widget<GUI::Textfield>();
     prompt_text->set_content(std::move(message));

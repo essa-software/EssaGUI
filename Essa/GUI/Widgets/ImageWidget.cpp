@@ -11,7 +11,7 @@ void ImageWidget::draw(Gfx::Painter& painter) const {
     auto image_size = m_image->size();
     float aspect = raw_size().x() / raw_size().y();
     float image_aspect = static_cast<float>(image_size.x()) / image_size.y();
-    Util::Cs::Size2f rect_size;
+    Util::Cs::Size2i rect_size;
     if (aspect > image_aspect)
         rect_size = { raw_size().y() * image_aspect, raw_size().y() };
     else
@@ -19,13 +19,21 @@ void ImageWidget::draw(Gfx::Painter& painter) const {
 
     Gfx::RectangleDrawOptions rect;
     rect.texture = m_image;
-    painter.deprecated_draw_rectangle({ (Util::Cs::Point2f::from_deprecated_vector(raw_size() / 2.f) - rect_size.to_vector() / 2.f), rect_size }, rect);
+    painter.deprecated_draw_rectangle(
+        { (raw_size() / 2.f - rect_size.to_vector() / 2.f)
+                .cast<float>()
+                .to_vector()
+                .to_point(),
+            rect_size.cast<float>() },
+        rect);
 }
 
-EML::EMLErrorOr<void> ImageWidget::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> ImageWidget::load_from_eml_object(
+    EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_image = resource_manager().get<Gfx::Texture>(TRY(TRY(object.require_property("image")).to_resource_id()));
+    m_image = resource_manager().get<Gfx::Texture>(
+        TRY(TRY(object.require_property("image")).to_resource_id()));
 
     return {};
 }

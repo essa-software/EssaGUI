@@ -50,9 +50,7 @@ int main() {
     rectangle->set_position({ 50.0_px, 50.0_px });
     rectangle->set_size({ 30.0_px, 20.0_px });
 
-    btn1->on_click = [&]() {
-        rectangle->move_by_vec(Util::Vector2f(25, 20));
-    };
+    btn1->on_click = [&]() { rectangle->move_by_vec({ 25, 20 }); };
 
     app.run();
     return 0;

@@ -173,7 +173,7 @@ CameraView::CameraView() {
 
 void CameraView::draw(Gfx::Painter& painter) const {
     using namespace Gfx::Drawing;
-    painter.draw(Rectangle(local_rect(), Fill::solid(Util::Colors::Black)));
+    painter.draw(Rectangle(local_rect().cast<float>(), Fill::solid(Util::Colors::Black)));
 
     painter.render();
     painter.reset();

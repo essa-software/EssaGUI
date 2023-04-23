@@ -20,7 +20,7 @@ public:
     std::shared_ptr<GUI::Widget> widget() { return m_widget; }
 
 private:
-    virtual Util::Vector2f content_size() const override;
+    virtual Util::Cs::Size2i content_size() const override;
     virtual Widget::EventHandlerResult do_handle_event(Event const& event) override;
     virtual void draw(Gfx::Painter&) const override;
     virtual void do_relayout() override;

@@ -10,7 +10,7 @@ int main() {
     auto& widget = app.main_widget();
     auto& container = widget.set_widget<GUI::Container>();
     auto& layout = container.set_layout<GUI::VerticalBoxLayout>();
-    layout.set_padding(GUI::Boxf::all_equal(10));
+    layout.set_padding(GUI::Boxi::all_equal(10));
 
     auto add_button = [&](int idx) {
         auto button = container.add_widget<GUI::TextButton>();

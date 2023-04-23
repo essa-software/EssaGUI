@@ -52,7 +52,7 @@ struct Box {
 
     bool operator==(Box<T> const& other) const = default;
 };
-using Boxf = Box<float>;
+using Boxi = Box<int>;
 
 class Layout : public EML::EMLObject {
 public:
@@ -63,9 +63,9 @@ public:
     virtual ~Layout() = default;
 
     virtual void run(Container&) = 0;
-    virtual Util::Vector2f total_size(Container const&) const = 0;
+    virtual Util::Cs::Size2i total_size(Container const&) const = 0;
 
-    CREATE_VALUE(Boxf, padding, Boxf {})
+    CREATE_VALUE(Boxi, padding, Boxi {})
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 };
@@ -77,9 +77,9 @@ public:
         : m_orientation(o) { }
 
     // Spacing = a gap between widgets (but not between edges and widgets)
-    CREATE_VALUE(float, spacing, 0.f)
+    CREATE_VALUE(int, spacing, 0)
     virtual void run(Container&) override;
-    virtual Util::Vector2f total_size(Container const&) const override;
+    virtual Util::Cs::Size2i total_size(Container const&) const override;
 
     enum class ContentAlignment {
         BoxStart,
@@ -110,14 +110,14 @@ public:
 class BasicLayout : public Layout {
 private:
     virtual void run(Container&) override;
-    virtual Util::Vector2f total_size(Container const&) const override;
+    virtual Util::Cs::Size2i total_size(Container const&) const override;
 };
 
 class Container : public Widget {
 public:
     template<class T, class... Args>
-    requires(std::is_base_of_v<Widget, T>&& requires(Args&&... args) { T(std::forward<Args>(args)...); })
-        T* add_widget(Args&&... args) {
+        requires(std::is_base_of_v<Widget, T> && requires(Args && ... args) { T(std::forward<Args>(args)...); })
+    T* add_widget(Args&&... args) {
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(widget);
         widget->set_parent(*this);
@@ -143,8 +143,8 @@ public:
     void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 
     template<class T, class... Args>
-    requires(std::is_base_of_v<Layout, T>&& requires(Args&&... args) { T(args...); })
-        T& set_layout(Args&&... args) {
+        requires(std::is_base_of_v<Layout, T> && requires(Args && ... args) { T(args...); })
+    T& set_layout(Args&&... args) {
         auto layout = std::make_unique<T>(std::forward<Args>(args)...);
         auto layout_ptr = layout.get();
         m_layout = std::move(layout);
@@ -211,7 +211,7 @@ public:
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() override;
-    virtual Boxf intrinsic_padding() const { return {}; }
+    virtual Boxi intrinsic_padding() const { return {}; }
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;
 
@@ -228,7 +228,7 @@ private:
     friend Layout;
     void m_find_widgets_by_class_name_recursively_helper(std::string_view class_name, std::vector<Widget*>& vec) const;
 
-    virtual Util::Vector2f total_size() const override;
+    virtual Util::Cs::Size2i total_size() const override;
 
     std::unique_ptr<Layout> m_layout;
 };

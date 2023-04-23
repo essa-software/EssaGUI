@@ -36,7 +36,8 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.left += 10;
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
-        if (background_rect.contains(Util::Cs::Point2f::from_deprecated_vector(Util::Vector2f { llgl::mouse_position() } - widget_tree_root().position() - raw_position()))) {
+        if (background_rect.contains(Util::Cs::Point2i::from_deprecated_vector(Util::Vector2f(llgl::mouse_position()) - widget_tree_root().position())
+                - raw_position().to_vector())) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             painter.deprecated_draw_rectangle(background_rect, hovered_background);
@@ -68,7 +69,9 @@ private:
     virtual void draw(Gfx::Painter& painter) const override {
         Gfx::RectangleDrawOptions rect;
         rect.fill_color = theme().menu.foreground;
-        painter.deprecated_draw_rectangle({ 10, raw_size().y() / 2, raw_size().x() - 20, 1 }, rect);
+        painter.deprecated_draw_rectangle({ 10, static_cast<float>(raw_size().y()) / 2,
+                                              static_cast<float>(raw_size().x()) - 20, 1 },
+            rect);
     }
 };
 

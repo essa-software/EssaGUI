@@ -27,7 +27,7 @@ private:
 void ColorField::draw(Gfx::Painter& window) const {
     Gfx::RectangleDrawOptions options;
     options.fill_color = m_color;
-    window.deprecated_draw_rectangle(local_rect(), options);
+    window.deprecated_draw_rectangle(local_rect().cast<float>(), options);
 }
 
 class ColorPickerDialog : public ToolWindow {
@@ -37,13 +37,11 @@ public:
     Util::Color color() const;
     void set_color(Util::Color color);
 
-    static std::optional<Util::Color> exec(HostWindow&, Util::Color initial_color);
+    static std::optional<Util::Color> exec(
+        HostWindow&, Util::Color initial_color);
 
 private:
-    enum class Mode {
-        RGB,
-        HSV
-    };
+    enum class Mode { RGB, HSV };
 
     void update_controls(Mode);
 
@@ -58,7 +56,8 @@ private:
     ValueSlider* m_v_slider = nullptr;
 };
 
-std::optional<Util::Color> ColorPickerDialog::exec(HostWindow& window, Util::Color initial_color) {
+std::optional<Util::Color> ColorPickerDialog::exec(
+    HostWindow& window, Util::Color initial_color) {
     auto& dialog = window.open_overlay<ColorPickerDialog>();
     dialog.set_color(initial_color);
     dialog.run();
@@ -74,11 +73,12 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
     auto& container = set_main_widget<Container>();
     auto& container_layout = container.set_layout<VerticalBoxLayout>();
     container_layout.set_spacing(10);
-    container_layout.set_padding(Boxf::all_equal(10));
+    container_layout.set_padding(Boxi::all_equal(10));
 
     {
         auto main_container = container.add_widget<Container>();
-        auto& main_container_layout = main_container->set_layout<HorizontalBoxLayout>();
+        auto& main_container_layout
+            = main_container->set_layout<HorizontalBoxLayout>();
         main_container_layout.set_spacing(10);
         {
             m_field = main_container->add_widget<ColorField>();
@@ -87,7 +87,8 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
             sliders_container->set_layout<VerticalBoxLayout>().set_spacing(10);
 
             {
-                auto create_color_slider = [&](Util::UString component, int max, Mode mode) {
+                auto create_color_slider = [&](Util::UString component, int max,
+                                               Mode mode) {
                     auto slider = sliders_container->add_widget<ValueSlider>();
                     slider->set_min(0);
                     slider->set_max(max);
@@ -95,9 +96,8 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
                     slider->set_unit_textfield_size(0.0_px);
                     slider->set_step(1);
                     slider->set_name(component);
-                    slider->on_change = [this, mode](double) {
-                        update_controls(mode);
-                    };
+                    slider->on_change
+                        = [this, mode](double) { update_controls(mode); };
                     return slider;
                 };
 
@@ -111,9 +111,11 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
         }
 
         auto submit_container = container.add_widget<Container>();
-        auto& submit_container_layout = submit_container->set_layout<HorizontalBoxLayout>();
+        auto& submit_container_layout
+            = submit_container->set_layout<HorizontalBoxLayout>();
         submit_container_layout.set_spacing(10);
-        submit_container_layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
+        submit_container_layout.set_content_alignment(
+            BoxLayout::ContentAlignment::BoxEnd);
 
         submit_container->set_size({ Util::Length::Auto, 30.0_px });
 
@@ -128,9 +130,7 @@ ColorPickerDialog::ColorPickerDialog(HostWindow& window)
         auto cancel_button = submit_container->add_widget<TextButton>();
         cancel_button->set_size({ 80.0_px, Util::Length::Auto });
         cancel_button->set_content("Cancel");
-        cancel_button->on_click = [this]() {
-            close();
-        };
+        cancel_button->on_click = [this]() { close(); };
     }
 }
 
@@ -186,19 +186,28 @@ void ColorPicker::draw(Gfx::Painter& painter) const {
 
     Gfx::RectangleDrawOptions color_rect;
     color_rect.fill_color = m_color;
-    painter.deprecated_draw_rectangle({ 4, 4, raw_size().y() - 8, raw_size().y() - 8 }, color_rect);
+    painter.deprecated_draw_rectangle(
+        { 4, 4, static_cast<float>(raw_size().y() - 8),
+            static_cast<float>(raw_size().y() - 8) },
+        color_rect);
 
-    Gfx::Text html_display { Util::UString { m_color.to_html_string() }, resource_manager().fixed_width_font() };
+    Gfx::Text html_display { Util::UString { m_color.to_html_string() },
+        resource_manager().fixed_width_font() };
     html_display.set_fill_color(theme_colors.text);
     html_display.set_font_size(theme().label_font_size);
-    html_display.align(GUI::Align::CenterLeft, { raw_size().y(), 4, raw_size().x() - raw_size().y(), raw_size().y() - 8 });
+    html_display.align(GUI::Align::CenterLeft,
+        { static_cast<float>(raw_size().y()), 4,
+            static_cast<float>(raw_size().x() - raw_size().y()),
+            static_cast<float>(raw_size().y() - 8) });
     html_display.draw(painter);
 }
 
-EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(
+    EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_color = TRY(object.get_property("color", EML::Value(Util::Color())).to_color());
+    m_color = TRY(
+        object.get_property("color", EML::Value(Util::Color())).to_color());
 
     return {};
 }

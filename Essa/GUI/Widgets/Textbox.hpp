@@ -31,7 +31,7 @@ private:
     virtual void on_content_change() override;
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 
-    virtual LengthVector initial_size() const override { return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } }; }
+    virtual LengthVector initial_size() const override { return { Util::Length::Auto, { static_cast<int>(theme().line_height), Util::Length::Px } }; }
 
     bool m_has_decimal = false;
 };

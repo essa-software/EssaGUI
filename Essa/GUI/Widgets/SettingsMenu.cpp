@@ -12,15 +12,19 @@ void SettingsMenu::on_init() {
     layout.set_spacing(10);
     m_buttons_container = add_widget<Container>();
     {
-        m_buttons_container->set_size({ { static_cast<float>(theme().image_button_size), Util::Length::Px }, Util::Length::Auto });
-        auto& buttons_container_layout = m_buttons_container->set_layout<VerticalBoxLayout>();
+        m_buttons_container->set_size(
+            { { static_cast<int>(theme().image_button_size), Util::Length::Px },
+                Util::Length::Auto });
+        auto& buttons_container_layout
+            = m_buttons_container->set_layout<VerticalBoxLayout>();
         buttons_container_layout.set_spacing(10);
     }
     m_settings_container = add_widget<Container>();
     m_settings_container->set_layout<BasicLayout>();
 }
 
-SettingsMenu::MenuEntry& SettingsMenu::add_entry(llgl::Texture const& image, Util::UString tooltip, Expandable expandable) {
+SettingsMenu::MenuEntry& SettingsMenu::add_entry(
+    llgl::Texture const& image, Util::UString tooltip, Expandable expandable) {
     auto button = m_buttons_container->add_widget<ImageButton>();
     button->set_image(&image);
     button->set_tooltip_text(std::move(tooltip));
@@ -46,12 +50,13 @@ SettingsMenu::MenuEntry& SettingsMenu::add_entry(llgl::Texture const& image, Uti
         };
         auto settings_container = m_settings_container->add_widget<Frame>();
         settings_container->set_visible(false);
-        return *m_entries.emplace_back(std::make_unique<MenuEntry>(button, settings_container));
+        return *m_entries.emplace_back(
+            std::make_unique<MenuEntry>(button, settings_container));
     }
-    auto entry = m_entries.emplace_back(std::make_unique<MenuEntry>(button, nullptr)).get();
-    button->on_click = [entry]() {
-        entry->on_toggle(true);
-    };
+    auto entry
+        = m_entries.emplace_back(std::make_unique<MenuEntry>(button, nullptr))
+              .get();
+    button->on_click = [entry]() { entry->on_toggle(true); };
     return *m_entries.back();
 }
 

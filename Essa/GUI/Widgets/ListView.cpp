@@ -11,8 +11,7 @@
 namespace GUI {
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
-template<class... Ts>
-struct overloaded : Ts... {
+template<class... Ts> struct overloaded : Ts... {
     using Ts::operator()...;
 };
 
@@ -34,7 +33,8 @@ void ListView::draw(Gfx::Painter& wnd) const {
     size_t first_row = -scroll_offset().y() / row_height;
     if (first_row > 0)
         first_row--;
-    size_t last_row = std::min<size_t>(rows, (-scroll_offset().y() + scroll_area_size().y()) / row_height + 1);
+    size_t last_row = std::min<size_t>(
+        rows, (-scroll_offset().y() + scroll_area_size().y()) / row_height + 1);
     if (last_row < rows - 1)
         last_row++;
 
@@ -47,10 +47,13 @@ void ListView::draw(Gfx::Painter& wnd) const {
     if (rows > 0) {
         for (size_t r = first_row; r < last_row; r++) {
             Gfx::RectangleDrawOptions rs;
-            rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
+            rs.fill_color
+                = r % 2 == 0 ? list_even.background : list_odd.background;
             wnd.deprecated_draw_rectangle(
                 {
-                    Util::Cs::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + Util::Cs::Vector2f::from_deprecated_vector(scroll_offset()),
+                    Util::Cs::Point2f {
+                        0, row_height * (display_header() ? r + 1 : r) }
+                        + scroll_offset().cast<float>(),
                     { row_width, row_height },
                 },
                 rs);
@@ -61,14 +64,19 @@ void ListView::draw(Gfx::Painter& wnd) const {
     if (display_header()) {
         Gfx::RectangleDrawOptions rs;
         rs.fill_color = theme().text_button.normal.unhovered.background;
-        wnd.deprecated_draw_rectangle({ Util::Cs::Point2f::from_deprecated_vector(scroll_offset()), { row_width, row_height } }, rs);
+        wnd.deprecated_draw_rectangle(
+            { scroll_offset().cast<float>().to_point(),
+                { row_width, row_height } },
+            rs);
 
         float x_pos = 0;
         for (size_t c = 0; c < columns; c++) {
             auto column = model.column(c);
             Gfx::Text text { column.name, Application::the().bold_font() };
             text.set_font_size(16);
-            text.set_position(Util::Vector2f { x_pos + 5, 20 } + scroll_offset());
+            text.set_position((Util::Cs::Point2f { x_pos + 5, 20 }
+                + scroll_offset().cast<float>())
+                                  .to_deprecated_vector());
             text.draw(wnd);
             x_pos += column.width;
         }
@@ -81,39 +89,55 @@ void ListView::draw(Gfx::Painter& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = model.root_data(r, c);
-                Util::Cs::Point2f cell_position { current_x_pos, r * row_height };
+                Util::Cs::Point2i cell_position { current_x_pos,
+                    r * row_height };
                 if (display_header())
                     cell_position.set_y(cell_position.y() + row_height);
-                cell_position += Util::Cs::Vector2f::from_deprecated_vector(scroll_offset());
+                cell_position += scroll_offset();
                 auto cell_size = this->cell_size(r, c);
 
                 // TODO: ClipViewScope it
 
-                // TODO: Make this all (font, font raw_size, alignment) configurable
+                // TODO: Make this all (font, font raw_size, alignment)
+                // configurable
 
                 std::visit(
                     overloaded {
                         [&](Util::UString const& data) {
-                            Gfx::Text text { data, Application::the().bold_font() };
+                            Gfx::Text text { data,
+                                Application::the().bold_font() };
                             text.set_font_size(theme().label_font_size);
-                            text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
-                            text.align(Align::CenterLeft, { cell_position + Util::Cs::Vector2f(5, 0), Util::Cs::Size2f::from_deprecated_vector(cell_size) });
+                            text.set_fill_color(
+                                c % 2 == 0 ? list_even.text : list_odd.text);
+                            text.align(Align::CenterLeft,
+                                { (cell_position + Util::Cs::Vector2i(5, 0))
+                                        .cast<float>(),
+                                    cell_size.cast<float>() });
                             text.draw(wnd);
                         },
                         [&](Gfx::RichText const& data) {
                             Gfx::RichTextDrawable drawable { data,
                                 {
                                     .default_font = Application::the().font(),
-                                    .font_size = static_cast<int>(theme().label_font_size),
+                                    .font_size
+                                    = static_cast<int>(theme().label_font_size),
                                     .text_alignment = GUI::Align::CenterLeft,
                                 } };
-                            drawable.set_rect({ cell_position + Util::Cs::Vector2f(5, 0), Util::Cs::Size2f::from_deprecated_vector(cell_size) });
+                            drawable.set_rect(
+                                { (cell_position + Util::Cs::Vector2i(5, 0))
+                                        .cast<float>(),
+                                    cell_size.cast<float>() });
                             drawable.draw(wnd);
                         },
                         [&](llgl::Texture const* data) {
                             Gfx::RectangleDrawOptions rect;
                             rect.texture = data;
-                            wnd.deprecated_draw_rectangle({ { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } }, rect);
+                            wnd.deprecated_draw_rectangle(
+                                { { cell_position.x() + cell_size.x() / 2 - 8,
+                                      cell_position.y() + cell_size.y() / 2
+                                          - 8 },
+                                    { 16, 16 } },
+                                rect);
                         } },
                     data);
             }
@@ -125,7 +149,8 @@ void ListView::draw(Gfx::Painter& wnd) const {
     ScrollableWidget::draw_scrollbar(wnd);
 }
 
-Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPress const& event) {
+Widget::EventHandlerResult ListView::on_mouse_button_press(
+    Event::MouseButtonPress const& event) {
     ScrollableWidget::on_mouse_button_press(event);
 
     if (!model()) {
@@ -136,16 +161,20 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
     auto mouse_pos = event.local_position();
 
     for (size_t row = 0; row < rows; row++) {
-        auto cell_position = Util::Cs::Point2f::from_deprecated_vector(row_position(row));
-        Util::Rectf rect(cell_position, { raw_size().x(), theme().line_height });
+        auto cell_position = row_position(row);
+        Util::Recti rect(
+            cell_position, { raw_size().x(), theme().line_height });
 
         if (rect.contains(mouse_pos)) {
             if (event.button() == llgl::MouseButton::Left && on_click) {
                 on_click(row);
             }
-            else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
+            else if (event.button() == llgl::MouseButton::Right
+                && on_context_menu_request) {
                 if (auto context_menu = on_context_menu_request(row)) {
-                    host_window().open_context_menu(*context_menu, Util::Vector2f { mouse_pos.to_deprecated_vector() } + widget_tree_root().position());
+                    host_window().open_context_menu(*context_menu,
+                        Util::Vector2f { mouse_pos.to_deprecated_vector() }
+                            + widget_tree_root().position());
                 }
             }
             return EventHandlerResult::NotAccepted;
