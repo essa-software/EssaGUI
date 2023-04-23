@@ -60,12 +60,12 @@ void Window::create_impl(Util::Vector2i size, Util::UString const& title, Window
         }
         else {
             SDL_SetHint(SDL_HINT_VIDEO_X11_WINDOW_VISUALID, std::to_string(*forced_visual_id).c_str());
-            SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
         }
 #else
         fmt::print("SDLWindow: Transparent windows not supported for video driver {}\n", SDL_GetVideoDriver(0));
 #endif
     }
+    SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
     m_data = std::make_unique<Detail::SDLWindowData>();
 
