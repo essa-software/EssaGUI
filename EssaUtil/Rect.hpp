@@ -40,6 +40,9 @@ public:
     }
 
     template<class U>
+    Rect<U> cast() const { return Rect<U>(static_cast<U>(left), static_cast<U>(top), static_cast<U>(width), static_cast<U>(height)); }
+
+    template<class U>
     static Rect centered(Cs::Point2<U> center, Cs::Size2<U> size) {
         return Rect { center - size.to_vector() / U { 2 }, size };
     }
