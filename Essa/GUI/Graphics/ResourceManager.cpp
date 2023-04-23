@@ -7,6 +7,10 @@
 #include <type_traits>
 #include <unistd.h>
 
+extern "C" {
+__attribute((weak)) const char* ESSA_RESOURCE_DIR = nullptr;
+}
+
 namespace Gfx {
 
 ResourceManager::ResourceManager()
@@ -79,7 +83,21 @@ void ResourceManager::find_resource_roots() {
         }
     };
 
-    // 1. `$EXEC_DIR/assets`, `$EXEC_DIR/../assets` all the way up to the root directory
+    // 1. Explicitly specified ESSA_RESOURCE_DIR (from essa_resources(), only for debug builds)
+
+#ifndef NDEBUG
+    if (ESSA_RESOURCE_DIR) {
+        fmt::print("ResourceManager: Using ESSA_RESOURCE_DIR = {}\n", ESSA_RESOURCE_DIR);
+        add_resource_root_if_is_essa_resource_root(ESSA_RESOURCE_DIR);
+    }
+    else {
+        fmt::print("ResourceManager: ESSA_RESOURCE_DIR is not set\n");
+    }
+#else
+    fmt::print("NDEBUG\n");
+#endif
+
+    // 2. `$EXEC_DIR/assets`, `$EXEC_DIR/../assets` all the way up to the root directory
     {
         auto base_path = exec_path();
         while (true) {
@@ -90,7 +108,7 @@ void ResourceManager::find_resource_roots() {
         }
     }
 
-    // 2. `$CMAKE_INSTALL_PREFIX/EssaGUI/assets`
+    // 3. `$CMAKE_INSTALL_PREFIX/EssaGUI/assets`
     // FIXME: Do not hardcode install prefix
     add_resource_root_if_is_essa_resource_root("/usr/local/share/Essa/assets");
 

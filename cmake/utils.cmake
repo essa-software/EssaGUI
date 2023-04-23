@@ -32,3 +32,14 @@ function(essautil_add_test targetname)
     target_include_directories(${targetname} PRIVATE ${Essa_SOURCE_DIR})
     essautil_setup_target(${targetname})
 endfunction()
+
+function(essa_resources targetname dir)
+    install(DIRECTORY assets DESTINATION share/${targetname})
+    
+    set(outfile ${CMAKE_BINARY_DIR}/EssaResources.cpp)
+    file(WRITE ${outfile} "extern \"C\" { const char* ESSA_RESOURCE_DIR = \"")
+    file(APPEND ${outfile} ${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+    file(APPEND ${outfile} "\"; }")
+
+    target_sources(${targetname} PRIVATE ${outfile})
+endfunction()
