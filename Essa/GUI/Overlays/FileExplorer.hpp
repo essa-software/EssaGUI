@@ -74,6 +74,8 @@ public:
     CREATE_VALUE(FileExplorerType, type, FileExplorerType::FILE)
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
+    static std::optional<std::filesystem::path> get_path_to_open(HostWindow& host_window);
+
 private:
     Textbox* m_directory_path_textbox {};
     Textbox* m_file_name_textbox {};
