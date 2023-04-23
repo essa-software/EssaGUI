@@ -13,6 +13,7 @@ public:
         : m_matrix(matrix) {
     }
 
+    [[nodiscard]] Transform translate_2d(Util::Cs::Vector2f const& by) const;
     [[nodiscard]] Transform translate(Util::Cs::Vector3f const& by) const;
 
     // Angle is in radians.
