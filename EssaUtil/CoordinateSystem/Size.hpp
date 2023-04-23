@@ -141,6 +141,14 @@ public:
         return { main, cross };
     }
 
+    constexpr T main(Orientation orientation) const
+        requires(Super::Components == 2)
+    { return orientation == Orientation::Vertical ? this->y() : this->x(); }
+
+    constexpr T cross(Orientation orientation) const
+        requires(Super::Components == 2)
+    { return orientation == Orientation::Vertical ? this->x() : this->y(); }
+
     //// Size3 ////
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 3 && OtherC >= 3)

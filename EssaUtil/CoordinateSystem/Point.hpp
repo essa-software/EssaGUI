@@ -118,6 +118,22 @@ public:
         : Point { other.x(), other.y() } {
     }
 
+    constexpr static Point from_main_cross(Orientation orientation, T main, T cross)
+        requires(Super::Components == 2)
+    {
+        if (orientation == Orientation::Vertical)
+            return { cross, main };
+        return { main, cross };
+    }
+
+    constexpr T main(Orientation orientation) const
+        requires(Super::Components == 2)
+    { return orientation == Orientation::Vertical ? this->y() : this->x(); }
+
+    constexpr T cross(Orientation orientation) const
+        requires(Super::Components == 2)
+    { return orientation == Orientation::Vertical ? this->x() : this->y(); }
+
     // Angle is CCW starting from positive X axis.
     constexpr static Point create_polar(Angle angle, double length)
         requires(Super::Components == 2)
