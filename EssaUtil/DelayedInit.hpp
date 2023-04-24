@@ -3,12 +3,9 @@
 #include <cassert>
 #include <utility>
 
-namespace Util
-{
+namespace Util {
 
-template<class T>
-class DelayedInit
-{
+template<class T> class DelayedInit {
 public:
     DelayedInit() = default;
 
@@ -18,56 +15,52 @@ public:
     DelayedInit(DelayedInit&&) = delete;
     DelayedInit& operator=(DelayedInit&&) = delete;
 
-    template<class... Args>
-    DelayedInit(Args&&... object)
-    {
+    template<class... Args> DelayedInit(Args&&... object) {
         construct(std::forward<Args>(object)...);
     }
 
-    ~DelayedInit()
-    {
+    ~DelayedInit() {
         if (m_initialized)
             destruct();
     }
 
-    template<class... Args>
-    void construct(Args&&... args)
-    {
+    template<class... Args> void construct(Args&&... args) {
         if (m_initialized)
             destruct();
         new (m_storage) T { std::forward<Args>(args)... };
         m_initialized = true;
     }
 
-    void destruct()
-    {
+    void destruct() {
         assert(m_initialized);
         ptr()->~T();
         m_initialized = false;
     }
 
-    T* ptr()
-    {
+    T* ptr() {
         if (!m_initialized)
             return nullptr;
         return reinterpret_cast<T*>(m_storage);
     }
-    T const* ptr() const
-    {
+    T const* ptr() const {
         if (!m_initialized)
             return nullptr;
         return reinterpret_cast<T const*>(m_storage);
     }
 
-    T* operator->() { return ptr(); }
-    T const* operator->() const { return ptr(); }
-    T& operator*()
-    {
+    T* operator->() {
+        assert(m_initialized);
+        return ptr();
+    }
+    T const* operator->() const {
+        assert(m_initialized);
+        return ptr();
+    }
+    T& operator*() {
         assert(m_initialized);
         return *ptr();
     }
-    T const& operator*() const
-    {
+    T const& operator*() const {
         assert(m_initialized);
         return *ptr();
     }
