@@ -25,7 +25,8 @@
 #include <EssaUtil/Stream/Reader.hpp>
 
 template<>
-class fmt::formatter<Util::Matrix4x4f> : public fmt::formatter<std::string_view> {
+class fmt::formatter<Util::Matrix4x4f>
+    : public fmt::formatter<std::string_view> {
 public:
     template<typename FormatContext>
     constexpr auto format(Util::Matrix4x4f const& p, FormatContext& ctx) const {
@@ -51,7 +52,9 @@ static Util::OsErrorOr<Util::Matrix4x4f> parse_line(Util::UString const& l) {
 
     auto consume_float = [&]() -> Util::OsErrorOr<float> {
         TRY(reader.consume_while(isspace));
-        return TRY(reader.consume_while([](uint32_t cp) { return isdigit(cp) || cp == '.' || cp == '-'; })).parse<float>();
+        return TRY(reader.consume_while([](uint32_t cp) {
+            return isdigit(cp) || cp == '.' || cp == '-';
+        })).parse<float>();
     };
 
     auto command = MUST(reader.consume_while(isalpha));
@@ -61,7 +64,9 @@ static Util::OsErrorOr<Util::Matrix4x4f> parse_line(Util::UString const& l) {
         float aspect = TRY(consume_float());
         float near = TRY(consume_float());
         float far = TRY(consume_float());
-        return llgl::Projection::perspective(llgl::PerspectiveArgs { fov, aspect, near, far }, {}).matrix();
+        return llgl::Projection::perspective(
+            llgl::PerspectiveArgs { fov, aspect, near, far }, {})
+            .matrix();
     }
     if (command == "ortho") {
         float left = TRY(consume_float());
@@ -70,7 +75,11 @@ static Util::OsErrorOr<Util::Matrix4x4f> parse_line(Util::UString const& l) {
         float bottom = TRY(consume_float());
         float near = TRY(consume_float());
         float far = TRY(consume_float());
-        return llgl::Projection::ortho(llgl::OrthoArgs { { left, top, right - left, bottom - top }, near, far }, {}).matrix();
+        return llgl::Projection::ortho(
+            llgl::OrthoArgs {
+                { left, top, right - left, bottom - top }, near, far },
+            {})
+            .matrix();
     }
     if (command == "scale") {
         float fac = TRY(consume_float());
@@ -96,21 +105,28 @@ static Util::OsErrorOr<Util::Matrix4x4f> parse_line(Util::UString const& l) {
     }
     if (command == "rotx") {
         float deg = TRY(consume_float());
-        return llgl::Transform {}.rotate_x(static_cast<float>(deg / 180 * M_PI)).matrix();
+        return llgl::Transform {}
+            .rotate_x(static_cast<float>(deg / 180 * M_PI))
+            .matrix();
     }
     if (command == "roty") {
         float deg = TRY(consume_float());
-        return llgl::Transform {}.rotate_y(static_cast<float>(deg / 180 * M_PI)).matrix();
+        return llgl::Transform {}
+            .rotate_y(static_cast<float>(deg / 180 * M_PI))
+            .matrix();
     }
     if (command == "rotz") {
         float deg = TRY(consume_float());
-        return llgl::Transform {}.rotate_z(static_cast<float>(deg / 180 * M_PI)).matrix();
+        return llgl::Transform {}
+            .rotate_z(static_cast<float>(deg / 180 * M_PI))
+            .matrix();
     }
 
     return Util::OsError { 0, "invalid command" };
 }
 
-static Util::OsErrorOr<Util::Matrix4x4f> parse_transform(Util::UString const& string) {
+static Util::OsErrorOr<Util::Matrix4x4f> parse_transform(
+    Util::UString const& string) {
     Util::Matrix4x4f matrix;
 
     std::optional<Util::OsError> error;
@@ -130,26 +146,26 @@ static Util::OsErrorOr<Util::Matrix4x4f> parse_transform(Util::UString const& st
 
 class CameraView : public GUI::Widget {
 public:
-    enum class CoordinateSystem {
-        Local,
-        World,
-        View,
-        Clip
-    };
+    enum class CoordinateSystem { Local, World, View, Clip };
 
     CameraView();
 
     void set_model(Util::Matrix4x4f model) { m_uniforms.set_model(model); }
     void set_view(Util::Matrix4x4f view) { m_uniforms.set_view(view); }
-    void set_projection(Util::Matrix4x4f projection) { m_uniforms.set_projection(projection); }
+    void set_projection(Util::Matrix4x4f projection) {
+        m_uniforms.set_projection(projection);
+    }
 
     void set_object(Essa::Model const* object) { m_object = object; }
-    void set_axises_coordinate_system(CoordinateSystem system) { m_axises_coord_system = system; }
+    void set_axises_coordinate_system(CoordinateSystem system) {
+        m_axises_coord_system = system;
+    }
 
 private:
     virtual void draw(Gfx::Painter& painter) const override;
 
-    Essa::Model const* m_object = &resource_manager().require<Essa::Model>("cube.obj");
+    Essa::Model const* m_object
+        = &resource_manager().require<Essa::Model>("cube.obj");
     Essa::Shaders::Lighting::Uniforms m_uniforms;
     llgl::VertexArray<Essa::Model::Vertex> m_axises_vao;
     CoordinateSystem m_axises_coord_system = CoordinateSystem::Clip;
@@ -173,7 +189,8 @@ CameraView::CameraView() {
 
 void CameraView::draw(Gfx::Painter& painter) const {
     using namespace Gfx::Drawing;
-    painter.draw(Rectangle(local_rect().cast<float>(), Fill::solid(Util::Colors::Black)));
+    painter.draw(Rectangle(
+        local_rect().cast<float>(), Fill::solid(Util::Colors::Black)));
 
     painter.render();
     painter.reset();
@@ -190,26 +207,34 @@ void CameraView::draw(Gfx::Painter& painter) const {
         if (m_axises_coord_system > CoordinateSystem::View) {
             axises_uniforms.set_projection({});
         }
-        painter.renderer().draw_vertices(m_axises_vao, llgl::DrawState { shader, axises_uniforms, llgl::PrimitiveType::Lines });
+        painter.renderer().draw_vertices(m_axises_vao,
+            llgl::DrawState {
+                shader, axises_uniforms, llgl::PrimitiveType::Lines });
         m_object->render(painter.renderer(), shader, m_uniforms);
     }
 
     {
-        Gfx::Text text(Util::UString(fmt::format("model:\n{}", m_uniforms.model())), GUI::Application::the().fixed_width_font());
+        Gfx::Text text(
+            Util::UString(fmt::format("model:\n{}", m_uniforms.model())),
+            GUI::Application::the().fixed_width_font());
         text.set_font_size(15);
         text.set_position({ 0, 20 });
         text.draw(painter);
     }
 
     {
-        Gfx::Text text(Util::UString(fmt::format("view:\n{}", m_uniforms.view())), GUI::Application::the().fixed_width_font());
+        Gfx::Text text(
+            Util::UString(fmt::format("view:\n{}", m_uniforms.view())),
+            GUI::Application::the().fixed_width_font());
         text.set_font_size(15);
         text.set_position({ 250, 20 });
         text.draw(painter);
     }
 
     {
-        Gfx::Text text(Util::UString(fmt::format("projection:\n{}", m_uniforms.projection())), GUI::Application::the().fixed_width_font());
+        Gfx::Text text(Util::UString(fmt::format(
+                           "projection:\n{}", m_uniforms.projection())),
+            GUI::Application::the().fixed_width_font());
         text.set_font_size(15);
         text.set_position({ 500, 20 });
         text.draw(painter);
@@ -222,33 +247,42 @@ EML_REGISTER_CLASS(CameraView)
 
 class MainWidget : public GUI::Container {
     virtual void on_init() {
-        assert(load_from_eml_resource(resource_manager().require<EML::EMLResource>("MainWidget.eml")));
-        m_model_editor = find_widget_of_type_by_id_recursively<GUI::TextEditor>("model_editor");
-        m_model_editor->on_change = [&](Util::UString const&) {
-            update_view();
-        };
-        m_view_editor = find_widget_of_type_by_id_recursively<GUI::TextEditor>("view_editor");
-        m_view_editor->on_change = [&](Util::UString const&) {
-            update_view();
-        };
-        m_projection_editor = find_widget_of_type_by_id_recursively<GUI::TextEditor>("projection_editor");
-        m_projection_editor->on_change = [&](Util::UString const&) {
-            update_view();
-        };
-        m_camera_view = find_widget_of_type_by_id_recursively<CameraView>("camera_view");
+        assert(load_from_eml_resource(
+            resource_manager().require<EML::EMLResource>("MainWidget.eml")));
+        m_model_editor = find_widget_of_type_by_id_recursively<GUI::TextEditor>(
+            "model_editor");
+        m_model_editor->on_change
+            = [&](Util::UString const&) { update_view(); };
+        m_view_editor = find_widget_of_type_by_id_recursively<GUI::TextEditor>(
+            "view_editor");
+        m_view_editor->on_change = [&](Util::UString const&) { update_view(); };
+        m_projection_editor
+            = find_widget_of_type_by_id_recursively<GUI::TextEditor>(
+                "projection_editor");
+        m_projection_editor->on_change
+            = [&](Util::UString const&) { update_view(); };
+        m_camera_view
+            = find_widget_of_type_by_id_recursively<CameraView>("camera_view");
 
-        auto* load_model = find_widget_of_type_by_id_recursively<GUI::TextButton>("load_model");
+        auto* load_model
+            = find_widget_of_type_by_id_recursively<GUI::TextButton>(
+                "load_model");
         load_model->on_click = [this]() {
             auto path = GUI::FileExplorer::get_path_to_open(host_window());
             if (!path) {
                 return;
             }
-            m_camera_view->set_object(&resource_manager().require_external<Essa::Model>(path->string()));
+            m_camera_view->set_object(
+                &resource_manager().require_external<Essa::Model>(
+                    path->string()));
         };
 
-        auto* axis_coordinate_system = find_widget_of_type_by_id_recursively<GUI::RadioGroup>("axis_coordinate_system");
+        auto* axis_coordinate_system
+            = find_widget_of_type_by_id_recursively<GUI::RadioGroup>(
+                "axis_coordinate_system");
         axis_coordinate_system->on_change = [this](size_t idx) {
-            m_camera_view->set_axises_coordinate_system(static_cast<CameraView::CoordinateSystem>(idx));
+            m_camera_view->set_axises_coordinate_system(
+                static_cast<CameraView::CoordinateSystem>(idx));
         };
     }
 
@@ -286,7 +320,7 @@ class MainWidget : public GUI::Container {
             m_projection_editor->set_error_spans({
                 GUI::TextEditor::ErrorSpan {
                     .type = GUI::TextEditor::ErrorSpan::Type::Error,
-                    .range = GUI::TextRange { { 1, 0 }, { 1, 2 } },
+                    .range = GUI::TextRange { { 0, 0 }, { 0, 1 } },
                 },
             });
             fmt::print("{}\n", projection.error());
