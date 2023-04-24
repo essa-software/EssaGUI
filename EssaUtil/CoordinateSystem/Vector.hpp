@@ -4,6 +4,10 @@
 #include "Coordinates.hpp"
 #include <fmt/core.h>
 
+#ifdef ESSA_COMPILER_GCC
+#    pragma GCC optimize("O3")
+#endif
+
 namespace Util {
 
 namespace Detail {

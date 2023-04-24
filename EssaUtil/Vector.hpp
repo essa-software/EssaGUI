@@ -10,6 +10,10 @@
 #include <initializer_list>
 #include <ostream>
 
+#ifdef ESSA_COMPILER_GCC
+#    pragma GCC optimize("O3")
+#endif
+
 namespace Util {
 
 namespace Detail {
