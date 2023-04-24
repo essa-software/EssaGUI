@@ -11,6 +11,7 @@ function(essautil_setup_target targetname)
     set_property(TARGET ${targetname} PROPERTY CXX_STANDARD 20)
 
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        target_compile_options(${targetname} PRIVATE -ggdb3 -fno-omit-frame-pointer)
         if (ESSA_ENABLE_SANITIZERS)
             message("Enabling sanitizers for ${targetname}")
             target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address -fno-sanitize-recover)
