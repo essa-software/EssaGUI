@@ -715,15 +715,17 @@ TextPosition TextEditor::index_to_position(size_t offset) const {
 
 static void draw_error_line(Gfx::Painter& painter,
     TextEditor::ErrorSpan::Type type, Util::Vector2f start, float width) {
+
+    int CurlyHeights[] = { 0, -1, -1, 0, 1, 1 };
+
     auto draw_curly
         = [&](Util::Vector2f position, float width, Util::Color color) {
               std::vector<Gfx::Vertex> vertices;
               for (int x = position.x(); x < position.x() + width; x += 1) {
-                  int y = position.y()
-                      + std::floor(std::sin<float>(x / 6.f * (2 * M_PI)) * 1.5);
+                  int y = position.y() + CurlyHeights[x % 6];
                   vertices.push_back(Gfx::Vertex { { x, y }, color, {} });
               }
-              painter.draw_vertices(llgl::PrimitiveType::LineStrip, vertices);
+              painter.draw_vertices(llgl::PrimitiveType::Points, vertices);
           };
 
     switch (type) {
