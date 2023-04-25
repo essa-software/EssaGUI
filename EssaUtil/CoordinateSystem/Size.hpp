@@ -13,11 +13,9 @@ namespace Util {
 
 namespace Detail {
 
-template<size_t C, class T>
-class Vector;
+template<size_t C, class T> class Vector;
 
-template<size_t C, class T>
-class Size : public Coordinates<C, T, Size> {
+template<size_t C, class T> class Size : public Coordinates<C, T, Size> {
 public:
     using Super = Coordinates<C, T, Size>;
     using ThisVector = Vector<C, T>;
@@ -57,9 +55,7 @@ public:
         return result;
     }
 
-    auto diagonal() const {
-        return std::sqrt(diagonal_squared());
-    }
+    auto diagonal() const { return std::sqrt(diagonal_squared()); }
 
     constexpr Size operator+(ThisVector const& b) const {
         Size ab;
@@ -93,9 +89,7 @@ public:
         return ab;
     }
 
-    constexpr Size& operator-=(Size const& b) {
-        return *this = *this - b;
-    }
+    constexpr Size& operator-=(Size const& b) { return *this = *this - b; }
 
     constexpr Size operator*(double x) const {
         Size ab;
@@ -105,9 +99,7 @@ public:
         return ab;
     }
 
-    constexpr Size& operator*=(double x) {
-        return *this = *this * x;
-    }
+    constexpr Size& operator*=(double x) { return *this = *this * x; }
 
     constexpr Size operator/(double x) const {
         assert(x != 0);
@@ -118,9 +110,7 @@ public:
         return ab;
     }
 
-    constexpr Size& operator/=(double x) {
-        return *this = *this / x;
-    }
+    constexpr Size& operator/=(double x) { return *this = *this / x; }
 
     constexpr Size operator-() const {
         Size ab;
@@ -134,10 +124,10 @@ public:
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 2 && OtherC >= 2)
     constexpr explicit Size(Vector<OtherC, OtherT> other)
-        : Size { other.x(), other.y() } {
-    }
+        : Size { other.x(), other.y() } { }
 
-    constexpr static Size from_main_cross(Orientation orientation, T main, T cross)
+    constexpr static Size from_main_cross(
+        Orientation orientation, T main, T cross)
         requires(Super::Components == 2)
     {
         if (orientation == Orientation::Vertical)
@@ -147,26 +137,28 @@ public:
 
     constexpr T main(Orientation orientation) const
         requires(Super::Components == 2)
-    { return orientation == Orientation::Vertical ? this->y() : this->x(); }
+    {
+        return orientation == Orientation::Vertical ? this->y() : this->x();
+    }
 
     constexpr T cross(Orientation orientation) const
         requires(Super::Components == 2)
-    { return orientation == Orientation::Vertical ? this->x() : this->y(); }
+    {
+        return orientation == Orientation::Vertical ? this->x() : this->y();
+    }
 
     //// Size3 ////
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 3 && OtherC >= 3)
     constexpr explicit Size(Vector<OtherC, OtherT> other)
-        : Size { other.x(), other.y(), other.z() } {
-    }
+        : Size { other.x(), other.y(), other.z() } { }
 
     //// Size4 ////
 
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 4 && OtherC >= 4)
     constexpr explicit Size(Vector<OtherC, OtherT> other)
-        : Size { other.x(), other.y(), other.z(), other.w() } {
-    }
+        : Size { other.x(), other.y(), other.z(), other.w() } { }
 
     bool operator==(Size const&) const = default;
 };
@@ -181,12 +173,13 @@ Detail::Size<C, T> operator*(double fac, Detail::Size<C, T> const& vec) {
 } // Util
 
 template<size_t C, class T>
-class fmt::formatter<Util::Detail::Size<C, T>> : public fmt::formatter<std::string_view> {
+class fmt::formatter<Util::Detail::Size<C, T>> : public fmt::formatter<T> {
 public:
     template<typename FormatContext>
-    constexpr auto format(Util::Detail::Size<C, T> const& v, FormatContext& ctx) const {
+    constexpr auto format(
+        Util::Detail::Size<C, T> const& v, FormatContext& ctx) const {
         for (size_t s = 0; s < C; s++) {
-            fmt::format_to(ctx.out(), "{}", v.component(s));
+            ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));
             if (s != C - 1)
                 fmt::format_to(ctx.out(), "x");
         }

@@ -414,13 +414,13 @@ constexpr double get_distance_to_line(Detail::DeprecatedVector<S, T> line_start,
 }
 
 template<size_t C, class T>
-class fmt::formatter<Util::Detail::DeprecatedVector<C, T>> : public fmt::formatter<std::string_view> {
+class fmt::formatter<Util::Detail::DeprecatedVector<C, T>> : public fmt::formatter<T> {
 public:
     template<typename FormatContext>
     constexpr auto format(Util::Detail::DeprecatedVector<C, T> const& v, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "[");
         for (size_t s = 0; s < C; s++) {
-            fmt::format_to(ctx.out(), "{}", v.components[s]);
+            ctx.advance_to(fmt::formatter<T>::format(v.components[s], ctx));
             if (s != C - 1)
                 fmt::format_to(ctx.out(), ", ");
         }

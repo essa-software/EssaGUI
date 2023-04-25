@@ -177,13 +177,13 @@ public:
 } // Util
 
 template<size_t C, class T>
-class fmt::formatter<Util::Detail::Point<C, T>> : public fmt::formatter<std::string_view> {
+class fmt::formatter<Util::Detail::Point<C, T>> : public fmt::formatter<T> {
 public:
     template<typename FormatContext>
     constexpr auto format(Util::Detail::Point<C, T> const& v, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "(");
         for (size_t s = 0; s < C; s++) {
-            fmt::format_to(ctx.out(), "{}", v.component(s));
+            ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));
             if (s != C - 1)
                 fmt::format_to(ctx.out(), ", ");
         }
