@@ -24,4 +24,13 @@ private:
 }
 
 #define DBG_ENABLED(name) __debug_##name
-#define DBG_DECLARE(name) static ::GUI::DebugSwitch __debug_##name { #name }
+#define DBG_DECLARE(name)                      \
+    static ::GUI::DebugSwitch __debug_##name { \
+#        name                                  \
+    }
+#define DBG_PRINTLN(name, fmtstr, ...)                                    \
+    {                                                                     \
+        if (DBG_ENABLED(name)) {                                          \
+            fmt::vprint(fmtstr "\n", fmt::make_format_args(__VA_ARGS__)); \
+        }                                                                 \
+    }
