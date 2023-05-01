@@ -4,7 +4,7 @@ namespace GUI {
 
 llgl::Transform DraggableView2D::transform() const {
     return llgl::Transform {}
-        .translate_2d(raw_size().cast<float>().to_vector() / 2.f)
+        .translate_2d((raw_size().cast<float>().to_vector() / 2.f).rounded())
         .scale(m_zoom)
         .translate_2d(-m_offset);
 }
@@ -13,7 +13,7 @@ llgl::Transform DraggableView2D::inverse_transform() const {
     return llgl::Transform {}
         .translate_2d(m_offset)
         .scale(1 / m_zoom)
-        .translate_2d(-raw_size().cast<float>().to_vector() / 2.f);
+        .translate_2d(-(raw_size().cast<float>().to_vector() / 2.f).rounded());
 }
 
 Util::Rectf DraggableView2D::visible_area() const {
