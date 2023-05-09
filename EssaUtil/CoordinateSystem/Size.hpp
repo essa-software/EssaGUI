@@ -49,7 +49,7 @@ public:
 
     auto diagonal_squared() const {
         double result = 0;
-        for (size_t s = 0; s < Super::Componenets; s++) {
+        for (size_t s = 0; s < Super::Components; s++) {
             result += this->component(s) * this->component(s);
         }
         return result;
