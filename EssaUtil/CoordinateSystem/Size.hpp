@@ -57,6 +57,13 @@ public:
 
     auto diagonal() const { return std::sqrt(diagonal_squared()); }
 
+    // Returns ratio between x and y coordinate.
+    constexpr float aspect_ratio() const
+        requires(Super::Components == 2)
+    {
+        return static_cast<float>(this->x()) / this->y();
+    }
+
     constexpr Size operator+(ThisVector const& b) const {
         Size ab;
         for (size_t s = 0; s < Super::Components; s++) {
