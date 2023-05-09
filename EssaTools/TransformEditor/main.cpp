@@ -240,6 +240,17 @@ void CameraView::draw(Gfx::Painter& painter) const {
         text.draw(painter);
     }
 
+    {
+        Gfx::Text text(
+            Util::UString(fmt::format("aspect: {}", raw_size().aspect_ratio())),
+            GUI::Application::the().fixed_width_font());
+        text.set_font_size(15);
+        text.align(GUI::Align::BottomRight,
+            Util::Rectf::centered(
+                raw_size().to_vector().to_point().cast<float>(), {}));
+        text.draw(painter);
+    }
+
     theme().renderer().draw_text_editor_border(*this, false, painter);
 }
 
