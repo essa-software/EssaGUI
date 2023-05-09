@@ -7,7 +7,8 @@ void Text::draw(Gfx::Painter& painter) const {
     auto* cache = m_font.cache(m_font_size);
     if (!cache)
         return;
-    m_string.for_each_line([this, &painter, &line_y, cache](std::span<uint32_t const> span) {
+    m_string.for_each_line([this, &painter, &line_y, cache](
+                               std::span<uint32_t const> span) {
         auto line_position = m_position;
         line_position.y() -= m_font.ascent(m_font_size);
         line_position.y() += line_y;
@@ -31,7 +32,8 @@ void Text::draw(Gfx::Painter& painter) const {
                     static_cast<float>(std::floor(glyph.texture_rect.height)),
                 },
                 text_rect);
-            x_position += glyph.texture_rect.width + m_font.kerning(m_font_size, previous_codepoint, codepoint);
+            x_position += glyph.texture_rect.width
+                + m_font.kerning(m_font_size, previous_codepoint, codepoint);
             previous_codepoint = codepoint;
         }
     });
@@ -44,27 +46,42 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
     Util::Vector2f offset;
 
     switch (align) {
+    case GUI::Align::TopLeft:
+        offset = { 0, 0 };
+        break;
     case GUI::Align::Top:
-        offset = Util::Vector2f(std::round(size.x() / 2 - text_size.x() / 2.f), 0);
+        offset = { std::round(size.x() / 2 - text_size.x() / 2.f), 0 };
         break;
     case GUI::Align::TopRight:
-        offset = Util::Vector2f(std::round(size.x() - text_size.x()), 0);
+        offset = { std::round(size.x() - text_size.x()), 0 };
         break;
     case GUI::Align::CenterLeft:
-        offset = Util::Vector2f(0, std::round(size.y() / 2 - text_size.y() / 2.f));
+        offset = { 0, std::round(size.y() / 2 - text_size.y() / 2.f) };
         break;
     case GUI::Align::Center:
-        offset = Util::Vector2f(std::round(size.x() / 2 - text_size.x() / 2.f), std::round(size.y() / 2 - text_size.y() / 2.f));
+        offset = { std::round(size.x() / 2 - text_size.x() / 2.f),
+            std::round(size.y() / 2 - text_size.y() / 2.f) };
         break;
     case GUI::Align::CenterRight:
-        offset = Util::Vector2f(std::round(size.x() - text_size.x()), std::round(size.y() / 2 - text_size.y() / 2.f));
+        offset = { std::round(size.x() - text_size.x()),
+            std::round(size.y() / 2 - text_size.y() / 2.f) };
         break;
-    default:
-        // TODO: Handle other alignments
-        offset = {};
+    case GUI::Align::BottomLeft:
+        offset = { 0, std::round(size.y() - text_size.y()) };
+        break;
+    case GUI::Align::Bottom:
+        offset = { std::round(size.x() / 2 - text_size.x() / 2.f),
+            std::round(size.y() - text_size.y()) };
+        break;
+    case GUI::Align::BottomRight:
+        offset = { std::round(size.x() - text_size.x()),
+            std::round(size.y() - text_size.y()) };
+        break;
     }
 
-    m_position = Util::Vector2f { rect.left, rect.top + m_font.ascent(m_font_size) } + offset;
+    m_position
+        = Util::Vector2f { rect.left, rect.top + m_font.ascent(m_font_size) }
+        + offset;
 }
 
 Util::Vector2u Text::calculate_text_size() const {
