@@ -18,9 +18,10 @@ namespace llgl {
 
 #define DEFER(a, ...) Util::ScopeGuard guard##a([&]() { __VA_ARGS__; })
 
-int SDLHelpers::get_sdl_gl_attribute(SDL_GLattr id) {
+int SDLHelpers::get_sdl_gl_attribute([[maybe_unused]] SDL_GLattr id) {
     int value;
-    assert(SDL_GL_GetAttribute(id, &value) >= 0);
+    [[maybe_unused]] int result = SDL_GL_GetAttribute(id, &value);
+    assert(result >= 0);
     return value;
 }
 
