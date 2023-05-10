@@ -11,4 +11,4 @@ BreakBeforeBraces: Custom
 BraceWrapping:
     BeforeElse: true
 NamespaceIndentation: None
-ColumnLimit: 80
+ColumnLimit: 140
