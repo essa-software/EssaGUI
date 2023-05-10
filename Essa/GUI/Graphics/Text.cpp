@@ -2,13 +2,14 @@
 
 namespace Gfx {
 
-void Text::draw(Gfx::Painter& painter) const {
+void Text::generate_vertices() const {
+    std::vector<Gfx::Vertex> vertices;
+
     float line_y = 0;
     auto* cache = m_font.cache(m_font_size);
     if (!cache)
         return;
-    m_string.for_each_line([this, &painter, &line_y, cache](
-                               std::span<uint32_t const> span) {
+    m_string.for_each_line([this, &vertices, &line_y, cache](std::span<uint32_t const> span) {
         auto line_position = m_position;
         line_position.y() -= m_font.ascent(m_font_size);
         line_position.y() += line_y;
@@ -24,22 +25,64 @@ void Text::draw(Gfx::Painter& painter) const {
             auto glyph = cache->ensure_glyph(m_font, codepoint);
             text_rect.texture_rect = glyph.texture_rect;
             // TODO: Take (better) advantage of GUIBuilder
-            painter.deprecated_draw_rectangle(
-                {
-                    std::floor(x_position + line_position.x()),
-                    std::floor(line_position.y()),
-                    static_cast<float>(std::floor(glyph.texture_rect.width)),
-                    static_cast<float>(std::floor(glyph.texture_rect.height)),
-                },
-                text_rect);
-            x_position += glyph.texture_rect.width
-                + m_font.kerning(m_font_size, previous_codepoint, codepoint);
+            auto start = Util::Cs::Point2f { std::floor(x_position + line_position.x()), std::floor(line_position.y()) };
+            auto end = start
+                + Util::Cs::Vector2f {
+                      static_cast<float>(std::floor(glyph.texture_rect.width)),
+                      static_cast<float>(std::floor(glyph.texture_rect.height)),
+                  };
+
+            auto normalized_texture_rect
+                = glyph.texture_rect.cast<float>().componentwise_divide(Util::Cs::Size2f::from_deprecated_vector(cache->atlas().size()));
+            auto tex_start = normalized_texture_rect.position();
+            auto tex_end = normalized_texture_rect.bottom_right();
+
+            vertices.push_back(Gfx::Vertex({ start.x(), start.y() }, Util::Colors::White, { tex_start.x(), tex_start.y() }));
+            vertices.push_back(Gfx::Vertex({ end.x(), start.y() }, Util::Colors::White, { tex_end.x(), tex_start.y() }));
+            vertices.push_back(Gfx::Vertex({ end.x(), end.y() }, Util::Colors::White, { tex_end.x(), tex_end.y() }));
+
+            vertices.push_back(Gfx::Vertex({ end.x(), end.y() }, Util::Colors::White, { tex_end.x(), tex_end.y() }));
+            vertices.push_back(Gfx::Vertex({ start.x(), end.y() }, Util::Colors::White, { tex_start.x(), tex_end.y() }));
+            vertices.push_back(Gfx::Vertex({ start.x(), start.y() }, Util::Colors::White, { tex_start.x(), tex_start.y() }));
+
+            x_position += glyph.texture_rect.width + m_font.kerning(m_font_size, previous_codepoint, codepoint);
             previous_codepoint = codepoint;
         }
     });
+
+    m_vertices = std::move(vertices);
+}
+
+void Text::draw(Gfx::Painter& painter) const {
+    if (!m_vertices) {
+        generate_vertices();
+    }
+    painter.draw_vertices(llgl::PrimitiveType::Triangles, std::span(*m_vertices), &m_font.cache(m_font_size)->atlas());
+}
+
+void Text::set_font_size(uint32_t f) {
+    m_font_size = f;
+    m_vertices = {};
+}
+
+void Text::set_string(Util::UString s) {
+    m_string = std::move(s);
+    m_vertices = {};
+}
+
+void Text::set_fill_color(Util::Color c) {
+    m_fill_color = c;
+    m_vertices = {};
+}
+
+void Text::set_position(Util::Vector2f position) {
+    m_position = position;
+    m_vertices = {};
 }
 
 void Text::align(GUI::Align align, Util::Rectf rect) {
+    m_vertices = {};
+
     auto text_size = calculate_text_size();
 
     Util::Vector2f size { rect.width, rect.height };
@@ -59,34 +102,26 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
         offset = { 0, std::round(size.y() / 2 - text_size.y() / 2.f) };
         break;
     case GUI::Align::Center:
-        offset = { std::round(size.x() / 2 - text_size.x() / 2.f),
-            std::round(size.y() / 2 - text_size.y() / 2.f) };
+        offset = { std::round(size.x() / 2 - text_size.x() / 2.f), std::round(size.y() / 2 - text_size.y() / 2.f) };
         break;
     case GUI::Align::CenterRight:
-        offset = { std::round(size.x() - text_size.x()),
-            std::round(size.y() / 2 - text_size.y() / 2.f) };
+        offset = { std::round(size.x() - text_size.x()), std::round(size.y() / 2 - text_size.y() / 2.f) };
         break;
     case GUI::Align::BottomLeft:
         offset = { 0, std::round(size.y() - text_size.y()) };
         break;
     case GUI::Align::Bottom:
-        offset = { std::round(size.x() / 2 - text_size.x() / 2.f),
-            std::round(size.y() - text_size.y()) };
+        offset = { std::round(size.x() / 2 - text_size.x() / 2.f), std::round(size.y() - text_size.y()) };
         break;
     case GUI::Align::BottomRight:
-        offset = { std::round(size.x() - text_size.x()),
-            std::round(size.y() - text_size.y()) };
+        offset = { std::round(size.x() - text_size.x()), std::round(size.y() - text_size.y()) };
         break;
     }
 
-    m_position
-        = Util::Vector2f { rect.left, rect.top + m_font.ascent(m_font_size) }
-        + offset;
+    m_position = Util::Vector2f { rect.left, rect.top + m_font.ascent(m_font_size) } + offset;
 }
 
-Util::Vector2u Text::calculate_text_size() const {
-    return calculate_text_size(m_string);
-}
+Util::Vector2u Text::calculate_text_size() const { return calculate_text_size(m_string); }
 
 Util::Vector2u Text::calculate_text_size(Util::UString const& string) const {
     Util::Vector2u text_size;
