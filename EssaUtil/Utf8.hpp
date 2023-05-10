@@ -18,34 +18,27 @@ template<class Callback> static bool decode_to_callback(std::string_view string,
         auto byte = std::bit_cast<uint8_t>(string[s]);
         uint32_t codepoint = 0;
         int additional_bytes_to_expect = 0;
-        if (byte >= 0b1111'1110) {
-            // std::cout << "invalid utf8 character: 0x" << std::hex <<
-            // static_cast<uint16_t>(byte) << std::dec << std::endl;
-            error = true;
-            codepoint = replacement;
-        }
-        else if ((byte & 0b1111'1110) == 0b1111'1100) {
-            additional_bytes_to_expect = 5;
-            codepoint = byte & 0b1;
-        }
-        else if ((byte & 0b1111'1100) == 0b1111'1000) {
-            additional_bytes_to_expect = 4;
-            codepoint = byte & 0b11;
-        }
-        else if ((byte & 0b1111'1000) == 0b1111'0000) {
-            additional_bytes_to_expect = 3;
-            codepoint = byte & 0b111;
-        }
-        else if ((byte & 0b1111'0000) == 0b1110'0000) {
-            additional_bytes_to_expect = 2;
-            codepoint = byte & 0b1111;
-        }
-        else if ((byte & 0b1110'0000) == 0b1100'0000) {
+
+        if (!(byte & 0x80)) {
+            codepoint = byte & 0x7f;
+        } else if (!(byte & 0x20)) {
             additional_bytes_to_expect = 1;
             codepoint = byte & 0b11111;
-        }
-        else {
-            codepoint = byte & 0x7f;
+        } else if (!(byte & 0x10)) {
+            additional_bytes_to_expect = 2;
+            codepoint = byte & 0b1111;
+        } else if (!(byte & 0x08)) {
+            additional_bytes_to_expect = 3;
+            codepoint = byte & 0b111;
+        } else if (!(byte & 0x04)) {
+            additional_bytes_to_expect = 4;
+            codepoint = byte & 0b11;
+        } else if (!(byte & 0x02)) {
+            additional_bytes_to_expect = 5;
+            codepoint = byte & 0b1;
+        } else {
+            error = true;
+            codepoint = replacement;
         }
 
         for (int i = 0; i < additional_bytes_to_expect; i++) {
