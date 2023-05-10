@@ -18,14 +18,6 @@ function(essautil_setup_target targetname)
         set(BUILTIN_DIR_INSTALLED 1 CACHE INTERNAL "BUILTIN_DIR_INSTALLED")
     endif()
 
-    get_target_property(target_type ${targetname} TYPE)
-    if (target_type MATCHES ".*_LIBRARY")
-        # FIXME: What to do with MODULE_LIBRARY ????
-        install(TARGETS ${targetname} DESTINATION lib)
-    else()
-        install(TARGETS ${targetname} DESTINATION bin)
-    endif()
-
     set(ESSA_INSTALL_ASSET_ROOT ${CMAKE_INSTALL_PREFIX}/share/${CMAKE_PROJECT_NAME}/${targetname})
     if (ESSA_IS_PRODUCTION)
         set(ESSA_BUILTIN_ASSET_ROOT {})
@@ -33,9 +25,16 @@ function(essautil_setup_target targetname)
         set(ESSA_BUILTIN_ASSET_ROOT "\"${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../assets\"")
     endif()
     set(ESSA_TARGET_NAME ${targetname})
-    
-    configure_file(${CMAKE_CURRENT_FUNCTION_LIST_DIR}/BuildConfig.cpp BuildConfig.cpp)
-    target_sources(${targetname} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp)
+
+    get_target_property(target_type ${targetname} TYPE)
+    if (target_type MATCHES ".*_LIBRARY")
+        # FIXME: What to do with MODULE_LIBRARY ????
+        install(TARGETS ${targetname} DESTINATION lib)
+    else()
+        install(TARGETS ${targetname} DESTINATION bin)
+        configure_file(${CMAKE_CURRENT_FUNCTION_LIST_DIR}/BuildConfig.cpp BuildConfig.cpp)
+        target_sources(${targetname} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp)
+    endif()
 
     target_compile_options(${targetname} PRIVATE
         -fdiagnostics-color=always

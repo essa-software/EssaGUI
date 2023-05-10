@@ -8,6 +8,18 @@
 #include <type_traits>
 #include <unistd.h>
 
+// Add some global variables that are expected to be overridden
+// by apps that link to Essa.
+
+namespace Essa::BuildConfig {
+
+__attribute((weak)) bool is_production = false;
+__attribute((weak)) std::string_view install_asset_root = "UNKNOWN";
+__attribute((weak)) std::optional<std::string_view> builtin_asset_root = {};
+__attribute((weak)) std::string_view target_name = "builtin";
+
+}
+
 extern "C" {
 __attribute((weak)) const char* ESSA_RESOURCE_DIR = nullptr;
 }
