@@ -42,6 +42,8 @@ function(essautil_setup_target targetname)
         target_sources(${targetname} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp)
     endif()
 
+    target_include_directories(${targetname} PUBLIC ${PROJECT_SOURCE_DIR})
+
     target_compile_options(${targetname} PRIVATE
         -fdiagnostics-color=always
         -Wall -Wextra -Werror
