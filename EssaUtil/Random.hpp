@@ -26,6 +26,12 @@ public:
         return std::uniform_int_distribution<T>(min, max)(m_std_random);
     }
 
+    // Generate random T ∈ ℝ ∩ <0; max). By default, <0; 1).
+    template<std::floating_point T>
+    T next_float(T max = 1) {
+        return std::uniform_real_distribution<T>(0, max)(m_std_random);
+    }
+
     // Generate random T ∈ ℝ ∩ <min; max)
     template<std::floating_point T>
     T next_float(T min, T max) {
