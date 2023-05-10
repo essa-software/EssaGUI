@@ -1,6 +1,7 @@
 #include "UString.hpp"
 
 #include "Buffer.hpp"
+#include "Utf8.hpp"
 
 #include <algorithm>
 #include <bit>
@@ -75,141 +76,6 @@ UString::UString(uint32_t codepoint) {
     m_storage[0] = codepoint;
 }
 
-namespace Utf8 {
-
-static int bytes_required_to_store_codepoint(uint32_t codepoint) {
-    if (codepoint < 0x80)
-        return 1;
-    if (codepoint < 0x800)
-        return 2;
-    if (codepoint < 0x10000)
-        return 3;
-    if (codepoint < 0x200000)
-        return 4;
-    if (codepoint < 0x4000000)
-        return 5;
-    return 6;
-}
-
-template<class Callback>
-static bool decode_impl(std::string_view string, uint32_t replacement, Callback callback) {
-    bool error = false;
-    for (size_t s = 0; s < string.size(); s++) {
-        auto byte = std::bit_cast<uint8_t>(string[s]);
-        uint32_t codepoint = 0;
-        int additional_bytes_to_expect = 0;
-        if (byte >= 0b1111'1110) {
-            // std::cout << "invalid utf8 character: 0x" << std::hex << static_cast<uint16_t>(byte) << std::dec << std::endl;
-            error = true;
-            codepoint = replacement;
-        }
-        else if ((byte & 0b1111'1110) == 0b1111'1100) {
-            additional_bytes_to_expect = 5;
-            codepoint = byte & 0b1;
-        }
-        else if ((byte & 0b1111'1100) == 0b1111'1000) {
-            additional_bytes_to_expect = 4;
-            codepoint = byte & 0b11;
-        }
-        else if ((byte & 0b1111'1000) == 0b1111'0000) {
-            additional_bytes_to_expect = 3;
-            codepoint = byte & 0b111;
-        }
-        else if ((byte & 0b1111'0000) == 0b1110'0000) {
-            additional_bytes_to_expect = 2;
-            codepoint = byte & 0b1111;
-        }
-        else if ((byte & 0b1110'0000) == 0b1100'0000) {
-            additional_bytes_to_expect = 1;
-            codepoint = byte & 0b11111;
-        }
-        else {
-            codepoint = byte & 0x7f;
-        }
-
-        for (int i = 0; i < additional_bytes_to_expect; i++) {
-            s++;
-            if (s >= string.size()) {
-                // std::cout << "unfinished utf8 sequence" << std::endl;
-                return false;
-            }
-            codepoint <<= 6;
-            codepoint |= (string[s] & 0b111111);
-        }
-
-        // Check if codepoint was stored optimally
-        auto required_bytes = bytes_required_to_store_codepoint(codepoint);
-        auto got_bytes = additional_bytes_to_expect + 1;
-        if (required_bytes > got_bytes) {
-            // std::cout << "got more bytes than required to encode codepoint " << codepoint << " (" << got_bytes << " > " << required_bytes << ")\n";
-        }
-
-        callback(codepoint);
-    }
-    return !error;
-}
-
-static std::optional<size_t> strlen(std::string_view string) {
-    size_t size = 0;
-    if (!decode_impl(string, 0x0, [&size](auto) { size++; })) {
-        return {};
-    }
-    return size;
-}
-
-static bool decode(std::span<uint32_t> storage, std::string_view string, uint32_t replacement) {
-    size_t offset = 0;
-    return decode_impl(string, replacement, [&offset, &storage](auto cp) {
-        assert(offset < storage.size());
-        storage[offset] = cp;
-        offset++;
-    });
-}
-
-static Buffer encode(std::span<uint32_t const> storage) {
-    Buffer result;
-    // Some random heuristic to make less allocations
-    result.ensure_capacity(storage.size() * 1.1);
-    for (auto codepoint : storage) {
-        if (codepoint < 0x80) {
-            result.append(codepoint);
-        }
-        else if (codepoint < 0x800) {
-            result.append(0b1100'0000 | ((codepoint & 0b11111'000000) >> 6));
-            result.append(0b1000'0000 | ((codepoint & 0b111111)));
-        }
-        else if (codepoint < 0x10000) {
-            result.append(0b1110'0000 | ((codepoint & 0b1111'000000'000000) >> 12));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000) >> 6));
-            result.append(0b1000'0000 | ((codepoint & 0b111111)));
-        }
-        else if (codepoint < 0x200000) {
-            result.append(0b1111'0000 | ((codepoint & 0b1110'000000'000000'000000) >> 18));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000'000000) >> 12));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000) >> 6));
-            result.append(0b1000'0000 | ((codepoint & 0b111111)));
-        }
-        else if (codepoint < 0x4000000) {
-            result.append(0b1111'1000 | ((codepoint & 0b1100'000000'000000'000000'000000) >> 24));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000'000000'000000) >> 18));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000'000000) >> 12));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000) >> 6));
-            result.append(0b1000'0000 | ((codepoint & 0b111111)));
-        }
-        else {
-            result.append(0b1111'1100 | ((codepoint & 0b1000'000000'000000'000000'000000'000000) >> 30));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000'000000'000000'000000) >> 24));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000'000000'000000) >> 18));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000'000000) >> 12));
-            result.append(0b1000'0000 | ((codepoint & 0b111111'000000) >> 6));
-            result.append(0b1000'0000 | ((codepoint & 0b111111)));
-        }
-    }
-    return result;
-}
-
-}
-
 UString::UString(std::string_view string, Encoding encoding, uint32_t replacement) {
     switch (encoding) {
     case Encoding::ASCII:
@@ -217,7 +83,7 @@ UString::UString(std::string_view string, Encoding encoding, uint32_t replacemen
         std::copy(string.begin(), string.end(), m_storage);
         break;
     case Encoding::Utf8: {
-        auto size = Utf8::strlen(string);
+        auto size = Utf8::codepoint_count_if_valid(string);
         if (!size) {
             size = 0;
         }
@@ -235,7 +101,7 @@ UString::UString(std::span<uint8_t const> data, Encoding encoding, uint32_t repl
 ErrorOr<UString, UString::DecodingErrorTag> UString::decode(std::span<uint8_t const> data, Encoding) {
     std::string_view data_sv { reinterpret_cast<char const*>(data.data()), data.size() };
     UString string;
-    auto size = Utf8::strlen(data_sv);
+    auto size = Utf8::codepoint_count_if_valid(data_sv);
     if (!size) {
         return UString::DecodingError;
     }
@@ -273,9 +139,7 @@ uint32_t UString::at(size_t p) const {
     return m_storage[p];
 }
 
-UString UString::substring(size_t start) const {
-    return substring(start, size() - start);
-}
+UString UString::substring(size_t start) const { return substring(start, size() - start); }
 
 UString UString::substring(size_t start, size_t size) const {
     assert(start + size <= m_size);
@@ -404,14 +268,11 @@ std::string UString::dump() const {
     return oss.str();
 }
 
-template<class T>
-using StoiFunction = T(const std::string& __str, size_t* __idx, int __base);
+template<class T> using StoiFunction = T(const std::string& __str, size_t* __idx, int __base);
 
-template<class T>
-using StofFunction = T(const std::string& __str, size_t* __idx);
+template<class T> using StofFunction = T(const std::string& __str, size_t* __idx);
 
-template<class T>
-OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString const& str) {
+template<class T> OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString const& str) {
     try {
         return stot(str.encode(), nullptr, 10);
     } catch (...) {
@@ -419,8 +280,7 @@ OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString const& str) {
     }
 }
 
-template<class T>
-OsErrorOr<T> parse_impl(StofFunction<T>&& stot, Util::UString const& str) {
+template<class T> OsErrorOr<T> parse_impl(StofFunction<T>&& stot, Util::UString const& str) {
     try {
         return stot(str.encode(), nullptr);
     } catch (...) {
@@ -428,53 +288,27 @@ OsErrorOr<T> parse_impl(StofFunction<T>&& stot, Util::UString const& str) {
     }
 }
 
-template<>
-OsErrorOr<int> UString::parse<int>() const {
-    return parse_impl(std::stoi, *this);
-}
+template<> OsErrorOr<int> UString::parse<int>() const { return parse_impl(std::stoi, *this); }
 
-template<>
-OsErrorOr<long> UString::parse<long>() const {
-    return parse_impl(std::stol, *this);
-}
+template<> OsErrorOr<long> UString::parse<long>() const { return parse_impl(std::stol, *this); }
 
-template<>
-OsErrorOr<long long> UString::parse<long long>() const {
-    return parse_impl(std::stoll, *this);
-}
+template<> OsErrorOr<long long> UString::parse<long long>() const { return parse_impl(std::stoll, *this); }
 
-template<>
-OsErrorOr<unsigned long> UString::parse<unsigned long>() const {
-    return parse_impl(std::stoul, *this);
-}
+template<> OsErrorOr<unsigned long> UString::parse<unsigned long>() const { return parse_impl(std::stoul, *this); }
 
-template<>
-OsErrorOr<unsigned long long> UString::parse<unsigned long long>() const {
-    return parse_impl(std::stoull, *this);
-}
+template<> OsErrorOr<unsigned long long> UString::parse<unsigned long long>() const { return parse_impl(std::stoull, *this); }
 
-template<>
-OsErrorOr<float> UString::parse<float>() const {
-    return parse_impl(std::stof, *this);
-}
+template<> OsErrorOr<float> UString::parse<float>() const { return parse_impl(std::stof, *this); }
 
-template<>
-OsErrorOr<double> UString::parse<double>() const {
-    return parse_impl(std::stod, *this);
-}
+template<> OsErrorOr<double> UString::parse<double>() const { return parse_impl(std::stod, *this); }
 
-template<>
-OsErrorOr<long double> UString::parse<long double>() const {
-    return parse_impl(std::stold, *this);
-}
+template<> OsErrorOr<long double> UString::parse<long double>() const { return parse_impl(std::stold, *this); }
 
 std::strong_ordering UString::operator<=>(UString const& other) const {
     return std::lexicographical_compare_three_way(m_storage, m_storage + m_size, other.m_storage, other.m_storage + other.m_size);
 }
 
-bool UString::operator==(UString const& other) const {
-    return (*this <=> other) == std::strong_ordering::equal;
-}
+bool UString::operator==(UString const& other) const { return (*this <=> other) == std::strong_ordering::equal; }
 
 UString operator+(UString const& lhs, UString const& rhs) {
     UString result;

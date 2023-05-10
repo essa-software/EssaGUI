@@ -14,6 +14,7 @@ add_library(Util SHARED
     UnitDisplay.cpp
     UString.cpp
     UStringBuilder.cpp
+    Utf8.cpp
 )
 add_library(Essa::Util ALIAS Util)
 
