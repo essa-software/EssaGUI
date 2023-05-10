@@ -11,16 +11,26 @@ namespace GUI {
 
 constexpr float LINE_SPACING = 20;
 
-void Console::append_line(LogLine line) {
-    m_lines.push_back(line);
-    scroll_to_bottom();
-    set_scroll_x(0);
+void Console::append_line(LogLine line, ScrollToEnd scroll_to_end) {
+    m_lines.push_back(std::move(line));
+    if (scroll_to_end == ScrollToEnd::Yes) {
+        this->scroll_to_end();
+    }
 }
 
-void Console::append_content(LogLine content) {
+void Console::append_content(LogLine content, ScrollToEnd scroll_to_end) {
     content.text.for_each_line([&](std::span<uint32_t const> span) {
-        append_line({ .color = content.color, .text = Util::UString { span } });
+        append_line({ .color = content.color, .text = Util::UString { span } },
+            ScrollToEnd::No);
     });
+    if (scroll_to_end == ScrollToEnd::Yes) {
+        this->scroll_to_end();
+    }
+}
+
+void Console::scroll_to_end() {
+    scroll_to_bottom();
+    set_scroll_x(0);
 }
 
 void Console::clear() { m_lines.clear(); }
