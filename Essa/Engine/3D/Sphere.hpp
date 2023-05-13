@@ -63,7 +63,9 @@ private:
             }
         }
         Model::Vertex bottom_pole_vertex { { 0, 0, -1 }, Util::Colors::White, {}, { 0, 0, -1 } };
-        settings.vertex_callback(M_PI/2, 0, bottom_pole_vertex);
+        if constexpr (!std::is_same_v<Callback, void (*)()>) {
+            settings.vertex_callback(M_PI / 2, 0, bottom_pole_vertex);
+        }
         vertices.push_back(bottom_pole_vertex);
         assert(vertices.size() == settings.sectors * settings.stacks + 1);
 
