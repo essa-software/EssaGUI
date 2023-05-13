@@ -4,7 +4,6 @@ set(SOURCES
     ObjLoader.cpp
     ShaderResource.cpp
     Shapes.cpp
-    Sphere.cpp
 
     Shaders/Basic.cpp
     Shaders/Lighting.cpp
