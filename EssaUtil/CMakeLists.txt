@@ -1,6 +1,7 @@
 add_library(Util SHARED
     Buffer.cpp
     Color.cpp
+    CoordinateSystem/GeoCoords.cpp
     DisplayError.cpp
     Math/Plane.cpp
     Math/Ray.cpp

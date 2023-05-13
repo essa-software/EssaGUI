@@ -1,10 +1,5 @@
 #pragma once
 
-#include "CoordinateSystem/Point.hpp"
-#include "CoordinateSystem/Size.hpp"
-#include "CoordinateSystem/Vector.hpp"
-
-// Keep last!
 #include "CoordinateSystem/Interoperability.hpp"
 
 // clang-format off

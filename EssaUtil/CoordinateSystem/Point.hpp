@@ -10,13 +10,13 @@
 
 namespace Util {
 
+class GeoCoords;
+
 namespace Detail {
 
-template<size_t C, class T>
-class Vector;
+template<size_t C, class T> class Vector;
 
-template<size_t C, class T>
-class Point : public Coordinates<C, T, Point> {
+template<size_t C, class T> class Point : public Coordinates<C, T, Point> {
 public:
     using Super = Coordinates<C, T, Point>;
     using ThisVector = Vector<C, T>;
@@ -29,8 +29,7 @@ public:
     Point(Args... a)
         : Super(std::forward<Args>(a)...) { }
 
-    template<class OtherT>
-    static Point from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
+    template<class OtherT> static Point from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
         Point p;
         for (size_t s = 0; s < Super::Components; s++) {
             p.set_component(s, c.components[s]);
@@ -55,9 +54,7 @@ public:
         return ab;
     }
 
-    constexpr Point& operator+=(ThisVector const& b) {
-        return *this = *this + b;
-    }
+    constexpr Point& operator+=(ThisVector const& b) { return *this = *this + b; }
 
     // Point - Vector
     constexpr Point operator-(ThisVector const& b) const {
@@ -68,9 +65,7 @@ public:
         return ab;
     }
 
-    constexpr Point& operator-=(ThisVector const& b) {
-        return *this = *this - b;
-    }
+    constexpr Point& operator-=(ThisVector const& b) { return *this = *this - b; }
 
     // -Point
     constexpr Point operator-() const {
@@ -98,9 +93,7 @@ public:
         return ab;
     }
 
-    constexpr Point& operator*=(double x) {
-        return *this = *this * x;
-    }
+    constexpr Point& operator*=(double x) { return *this = *this * x; }
 
     constexpr Point operator/(double x) const {
         assert(x != 0);
@@ -111,16 +104,13 @@ public:
         return ab;
     }
 
-    constexpr Point& operator/=(double x) {
-        return *this = *this / x;
-    }
+    constexpr Point& operator/=(double x) { return *this = *this / x; }
 
     //// Point2 ////
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 2 && OtherC >= 2)
     constexpr explicit Point(Point<OtherC, OtherT> other)
-        : Point { other.x(), other.y() } {
-    }
+        : Point { other.x(), other.y() } { }
 
     constexpr static Point from_main_cross(Orientation orientation, T main, T cross)
         requires(Super::Components == 2)
@@ -132,11 +122,15 @@ public:
 
     constexpr T main(Orientation orientation) const
         requires(Super::Components == 2)
-    { return orientation == Orientation::Vertical ? this->y() : this->x(); }
+    {
+        return orientation == Orientation::Vertical ? this->y() : this->x();
+    }
 
     constexpr T cross(Orientation orientation) const
         requires(Super::Components == 2)
-    { return orientation == Orientation::Vertical ? this->x() : this->y(); }
+    {
+        return orientation == Orientation::Vertical ? this->x() : this->y();
+    }
 
     // Angle is CCW starting from positive X axis.
     constexpr static Point create_polar(Angle angle, double length)
@@ -149,25 +143,19 @@ public:
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 3 && OtherC >= 3)
     constexpr explicit Point(Point<OtherC, OtherT> other)
-        : Point { other.x(), other.y(), other.z() } {
-    }
+        : Point { other.x(), other.y(), other.z() } { }
 
     constexpr static Point create_spheric(Angle lat, Angle lon, double radius)
-        requires(Super::Components == 3)
-    {
-        return {
-            static_cast<T>(radius * std::cos(lat.rad()) * std::sin(lon.rad())),
-            static_cast<T>(radius * std::sin(lat.rad()) * std::sin(lon.rad())),
-            static_cast<T>(radius * std::cos(lon.rad())),
-        };
-    }
+        requires(C == 3);
+
+    constexpr static Point create_spheric(GeoCoords const& coords, double radius)
+        requires(C == 3);
 
     //// Point4 ////
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 4 && OtherC >= 4)
     constexpr explicit Point(Point<OtherC, OtherT> other)
-        : Point { other.x(), other.y(), other.z(), other.w() } {
-    }
+        : Point { other.x(), other.y(), other.z(), other.w() } { }
 
     bool operator==(Point const&) const = default;
 };
@@ -176,11 +164,9 @@ public:
 
 } // Util
 
-template<size_t C, class T>
-class fmt::formatter<Util::Detail::Point<C, T>> : public fmt::formatter<T> {
+template<size_t C, class T> class fmt::formatter<Util::Detail::Point<C, T>> : public fmt::formatter<T> {
 public:
-    template<typename FormatContext>
-    constexpr auto format(Util::Detail::Point<C, T> const& v, FormatContext& ctx) const {
+    template<typename FormatContext> constexpr auto format(Util::Detail::Point<C, T> const& v, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "(");
         for (size_t s = 0; s < C; s++) {
             ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));

@@ -1,6 +1,7 @@
 #include <EssaUtil/Testing.hpp>
 
 #include <EssaUtil/CoordinateSystem.hpp>
+#include <EssaUtil/CoordinateSystem/GeoCoords.hpp>
 
 using namespace Cs;
 
@@ -231,6 +232,67 @@ TEST_CASE(normal_part) {
     TRY(test(Cs::Vector2f { -1, 1 }, Cs::Vector2f { 1, 1 }, Cs::Vector2f { -1, 1 }));
     TRY(test(Cs::Vector2f { -1, 1 }, Cs::Vector2f { -1, -1 }, Cs::Vector2f { -1, 1 }));
     // FIXME: Add more interesting cases
+    return {};
+}
+
+TEST_CASE(geo_coords_normalize) {
+    auto test = [](Util::GeoCoords const& input, Util::GeoCoords const& output) -> ErrorOr<void, __TestSuite::TestError> {
+        // fmt::print("{}={} expected={}\n", input, input.normalize(), output);
+        EXPECT(input.normalized().is_approximately_equal(output));
+        return {};
+    };
+
+    // Basic case
+    TRY(test({ 0_deg, 0_deg }, { 0_deg, 0_deg }));
+
+    // No overflow
+    TRY(test({ 89_deg, 179_deg }, { 89_deg, 179_deg }));
+    TRY(test({ -89_deg, -179_deg }, { -89_deg, -179_deg }));
+
+    // Lat overflow +
+    TRY(test({ 91_deg, 0_deg }, { 89_deg, 180_deg }));
+    TRY(test({ 180_deg, 0_deg }, { 0_deg, 180_deg }));
+    TRY(test({ 210_deg, 0_deg }, { -30_deg, 180_deg }));
+    TRY(test({ 271_deg, 0_deg }, { -89_deg, 0_deg }));
+    TRY(test({ 451_deg, 0_deg }, { 89_deg, 180_deg }));
+
+    // Lat overflow -
+    TRY(test({ -91_deg, 0_deg }, { -89_deg, 180_deg }));
+    TRY(test({ -180_deg, 0_deg }, { 0_deg, 180_deg }));
+    TRY(test({ -210_deg, 0_deg }, { 30_deg, 180_deg }));
+    TRY(test({ -271_deg, 0_deg }, { 89_deg, 0_deg }));
+    TRY(test({ -451_deg, 0_deg }, { -89_deg, 180_deg }));
+
+    // Lon overflow +
+    TRY(test({ 0_deg, 370_deg }, { 0_deg, 10_deg }));
+    TRY(test({ 0_deg, 360_deg }, { 0_deg, 0_deg }));
+    TRY(test({ 0_deg, 181_deg }, { 0_deg, -179_deg }));
+    TRY(test({ 0_deg, 180_deg }, { 0_deg, 180_deg }));
+
+    // Lon overflow -
+    TRY(test({ 0_deg, -180_deg }, { 0_deg, -180_deg }));
+    TRY(test({ 0_deg, -181_deg }, { 0_deg, 179_deg }));
+    TRY(test({ 0_deg, -360_deg }, { 0_deg, 0_deg }));
+    TRY(test({ 0_deg, -370_deg }, { 0_deg, -10_deg }));
+
+    return {};
+}
+
+TEST_CASE(geo_coords_to_cartesian) {
+    auto test = [](Util::GeoCoords const& coords, float r, Cs::Point3f expected_result) -> ErrorOr<void, __TestSuite::TestError> {
+        auto real_result = coords.to_cartesian<float>(r);
+        EXPECT(real_result.is_approximately_equal(expected_result));
+        return {};
+    };
+
+    TRY(test({ 0_deg, 0_deg }, 1, { 1, 0, 0 }));
+    TRY(test({ 0_deg, 90_deg }, 1, { 0, 0, 1 }));
+    TRY(test({ 0_deg, 180_deg }, 1, { -1, 0, 0 }));
+    TRY(test({ 0_deg, 270_deg }, 1, { 0, 0, -1 }));
+
+    TRY(test({ 90_deg, 0_deg }, 1, { 0, -1, 0 }));
+    TRY(test({ -90_deg, 0_deg }, 1, { 0, 1, 0 }));
+
     return {};
 }
 

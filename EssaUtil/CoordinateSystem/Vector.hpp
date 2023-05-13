@@ -10,6 +10,8 @@
 
 namespace Util {
 
+class GeoCoords;
+
 namespace Detail {
 
 template<size_t C, class T> class Point;
@@ -223,22 +225,11 @@ public:
     constexpr explicit Vector(Vector<OtherC, OtherT> const& other)
         : Vector { other.x(), other.y(), other.z() } { }
 
-    // This function uses geographical coordinates, i.e
-    // - lat ∈ <-π/2; π/2>
-    // - lon ∈ <-π; π>
-    // TODO: Describe exactly how angles correspond to coordinates.
     constexpr static Vector create_spheric(Angle lat, Angle lon, double radius)
-        requires(Super::Components == 3)
-    {
-        // https://en.wikipedia.org/wiki/Spherical_coordinate_system
-        float inclination = lat.rad() + M_PI / 2; // <0; π>
-        float azimuth = lon.rad() + M_PI; // <0; 2π>
-        return {
-            static_cast<T>(radius * std::sin(inclination) * std::cos(azimuth)),
-            static_cast<T>(radius * std::sin(inclination) * std::sin(azimuth)),
-            static_cast<T>(radius * std::cos(inclination)),
-        };
-    }
+        requires(C == 3);
+
+    constexpr static Vector create_spheric(GeoCoords const& coords, double radius)
+        requires(C == 3);
 
     template<class OtherT = T>
         requires(Super::Components == 3)
