@@ -12,14 +12,11 @@ namespace Util {
 
 namespace Detail {
 
-template<size_t C, class T>
-class Point;
+template<size_t C, class T> class Point;
 
-template<size_t C, class T>
-class Size;
+template<size_t C, class T> class Size;
 
-template<size_t C, class T>
-class Vector : public Coordinates<C, T, Vector> {
+template<size_t C, class T> class Vector : public Coordinates<C, T, Vector> {
 public:
     using Super = Coordinates<C, T, Vector>;
     using ThisPoint = Point<C, T>;
@@ -34,8 +31,7 @@ public:
     Vector(Args... a)
         : Super(std::forward<Args>(a)...) { }
 
-    template<class OtherT>
-    static Vector from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
+    template<class OtherT> static Vector from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
         Vector p;
         for (size_t s = 0; s < Super::Components; s++) {
             p.set_component(s, c.components[s]);
@@ -59,13 +55,9 @@ public:
         return result;
     }
 
-    auto length() const {
-        return std::sqrt(length_squared());
-    }
+    auto length() const { return std::sqrt(length_squared()); }
 
-    double inverted_length() const {
-        return 1 / length();
-    }
+    double inverted_length() const { return 1 / length(); }
 
     // Return unit vector of direction the same as original. If original
     // vector is null, return null.
@@ -115,9 +107,7 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator+=(Vector const& b) {
-        return *this = *this + b;
-    }
+    constexpr Vector& operator+=(Vector const& b) { return *this = *this + b; }
 
     constexpr Vector operator-(Vector const& b) const {
         Vector ab;
@@ -127,9 +117,7 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator-=(Vector const& b) {
-        return *this = *this - b;
-    }
+    constexpr Vector& operator-=(Vector const& b) { return *this = *this - b; }
 
     constexpr Vector operator*(T x) const {
         Vector ab;
@@ -139,9 +127,7 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator*=(T x) {
-        return *this = *this * x;
-    }
+    constexpr Vector& operator*=(T x) { return *this = *this * x; }
 
     constexpr Vector operator/(T x) const {
         assert(x != 0);
@@ -152,9 +138,7 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator/=(T x) {
-        return *this = *this / x;
-    }
+    constexpr Vector& operator/=(T x) { return *this = *this / x; }
 
     constexpr Vector operator-() const {
         Vector ab;
@@ -168,8 +152,7 @@ public:
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 2 && OtherC >= 2)
     constexpr explicit Vector(Vector<OtherC, OtherT> const& other)
-        : Vector { other.x(), other.y() } {
-    }
+        : Vector { other.x(), other.y() } { }
 
     // Angle is CCW starting from positive X axis.
     constexpr static Vector create_polar(Angle angle, double length)
@@ -238,16 +221,22 @@ public:
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 3 && OtherC >= 3)
     constexpr explicit Vector(Vector<OtherC, OtherT> const& other)
-        : Vector { other.x(), other.y(), other.z() } {
-    }
+        : Vector { other.x(), other.y(), other.z() } { }
 
+    // This function uses geographical coordinates, i.e
+    // - lat ∈ <-π/2; π/2>
+    // - lon ∈ <-π; π>
+    // TODO: Describe exactly how angles correspond to coordinates.
     constexpr static Vector create_spheric(Angle lat, Angle lon, double radius)
         requires(Super::Components == 3)
     {
+        // https://en.wikipedia.org/wiki/Spherical_coordinate_system
+        float inclination = lat.rad() + M_PI / 2; // <0; π>
+        float azimuth = lon.rad() + M_PI; // <0; 2π>
         return {
-            static_cast<T>(radius * std::cos(lat.rad()) * std::sin(lon.rad())),
-            static_cast<T>(radius * std::sin(lat.rad()) * std::sin(lon.rad())),
-            static_cast<T>(radius * std::cos(lon.rad())),
+            static_cast<T>(radius * std::sin(inclination) * std::cos(azimuth)),
+            static_cast<T>(radius * std::sin(inclination) * std::sin(azimuth)),
+            static_cast<T>(radius * std::cos(inclination)),
         };
     }
 
@@ -287,26 +276,20 @@ public:
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 4 && OtherC >= 4)
     constexpr explicit Vector(Vector<OtherC, OtherT> other)
-        : Vector { other.x(), other.y(), other.z(), other.w() } {
-    }
+        : Vector { other.x(), other.y(), other.z(), other.w() } { }
 
     bool operator==(Vector const&) const = default;
 };
 
 } // Detail
 
-template<size_t C, class T>
-Detail::Vector<C, T> operator*(double fac, Detail::Vector<C, T> const& vec) {
-    return vec * fac;
-}
+template<size_t C, class T> Detail::Vector<C, T> operator*(double fac, Detail::Vector<C, T> const& vec) { return vec * fac; }
 
 } // Util
 
-template<size_t C, class T>
-class fmt::formatter<Util::Detail::Vector<C, T>> : public fmt::formatter<T> {
+template<size_t C, class T> class fmt::formatter<Util::Detail::Vector<C, T>> : public fmt::formatter<T> {
 public:
-    template<typename FormatContext>
-    constexpr auto format(Util::Detail::Vector<C, T> const& v, FormatContext& ctx) const {
+    template<typename FormatContext> constexpr auto format(Util::Detail::Vector<C, T> const& v, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "[");
         for (size_t s = 0; s < C; s++) {
             ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));

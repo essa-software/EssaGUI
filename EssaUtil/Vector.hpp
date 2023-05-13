@@ -301,13 +301,20 @@ public:
         : DeprecatedVector { other.x(), other.y(), other.z() } {
     }
 
-    constexpr static DeprecatedVector create_spheric(double lat_radians, double lon_radians, double radius)
+    // This function uses geographical coordinates, i.e
+    // - lat ∈ <-π/2; π/2>
+    // - lon ∈ <-π; π>
+    // TODO: Describe exactly how angles correspond to coordinates.
+    constexpr static DeprecatedVector create_spheric(Angle lat, Angle lon, double radius)
         requires(Components == 3)
     {
+        // https://en.wikipedia.org/wiki/Spherical_coordinate_system
+        float inclination = lat.rad() + M_PI / 2; // <0; π>
+        float azimuth = lon.rad() + M_PI; // <0; 2π>
         return {
-            static_cast<T>(radius * std::cos(lat_radians) * std::sin(lon_radians)),
-            static_cast<T>(radius * std::sin(lat_radians) * std::sin(lon_radians)),
-            static_cast<T>(radius * std::cos(lon_radians)),
+            static_cast<T>(radius * std::sin(inclination) * std::cos(azimuth)),
+            static_cast<T>(radius * std::sin(inclination) * std::sin(azimuth)),
+            static_cast<T>(radius * std::cos(inclination)),
         };
     }
 
