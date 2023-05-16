@@ -150,6 +150,23 @@ public:
         return ab;
     }
 
+    constexpr Vector componentwise_multiply(Vector const& other) const {
+        Vector output;
+        for (size_t s = 0; s < Super::Components; s++) {
+            output.set_component(s, this->component(s) * other.component(s));
+        }
+        return output;
+    }
+
+    constexpr Vector componentwise_divide(Vector const& other) const {
+        Vector output;
+        for (size_t s = 0; s < Super::Components; s++) {
+            assert(other.components(s) != 0);
+            output.set_component(s, this->component(s) / other.component(s));
+        }
+        return output;
+    }
+
     //// Vector2 ////
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 2 && OtherC >= 2)
