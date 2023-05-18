@@ -236,6 +236,15 @@ public:
         return *this - normal_part(plane_normal);
     }
 
+    template<class OtherT = T>
+        requires(Super::Components == 2)
+    constexpr Vector<3, OtherT> cross(Vector<2, T> const& b) const {
+        Vector<3, OtherT> result;
+        // https://www.nagwa.com/en/explainers/175169159270/
+        result.set_z(this->x() * b.y() - this->y() * b.x());
+        return result;
+    }
+
     //// Vector3 ////
     template<size_t OtherC, class OtherT>
         requires(Super::Components == 3 && OtherC >= 3)
