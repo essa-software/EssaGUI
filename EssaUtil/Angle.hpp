@@ -17,11 +17,11 @@ class Angle {
 public:
     constexpr Angle() = default;
 
-    constexpr static Angle degrees(float d) { return Angle { deg_to_rad(d) }; }
-    constexpr static Angle radians(float r) { return Angle { r }; }
+    constexpr static Angle degrees(double d) { return Angle { deg_to_rad(d) }; }
+    constexpr static Angle radians(double r) { return Angle { r }; }
 
-    constexpr float deg() const { return rad_to_deg(m_value_in_radians); }
-    constexpr float rad() const { return m_value_in_radians; }
+    constexpr double deg() const { return rad_to_deg(m_value_in_radians); }
+    constexpr double rad() const { return m_value_in_radians; }
 
     constexpr Angle operator-() const { return Angle(-m_value_in_radians); }
 
@@ -29,13 +29,13 @@ public:
 
     constexpr Angle operator-(Angle const& other) const { return Angle { m_value_in_radians - other.m_value_in_radians }; }
 
-    constexpr Angle operator*(float n) const { return Angle { m_value_in_radians * n }; }
+    constexpr Angle operator*(double n) const { return Angle { m_value_in_radians * n }; }
 
     constexpr Angle& operator+=(Angle const& other) { return *this = *this + other; }
 
     constexpr Angle& operator-=(Angle const& other) { return *this = *this - other; }
 
-    constexpr Angle& operator*=(float n) { return *this = *this * n; }
+    constexpr Angle& operator*=(double n) { return *this = *this * n; }
 
     constexpr std::partial_ordering operator<=>(Angle const& other) const { return m_value_in_radians <=> other.m_value_in_radians; }
     constexpr bool operator==(Angle const& other) const = default;
@@ -43,10 +43,10 @@ public:
     friend std::ostream& operator<<(std::ostream& out, Angle alfa) { return out << alfa.rad() << " [rad]"; }
 
 private:
-    constexpr Angle(float rads)
+    constexpr Angle(double rads)
         : m_value_in_radians(rads) { }
 
-    float m_value_in_radians = 0;
+    double m_value_in_radians = 0;
 };
 
 }
