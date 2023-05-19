@@ -195,14 +195,14 @@ public:
         }
     }
 
-    // FIXME: This should probably be private.
-    void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
-
-protected:
     WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
+    // FIXME: This should probably be private.
+    void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
+
+protected:
     EventHandlerResult handle_event(Event const&);
 
     virtual EventHandlerResult on_window_resize(Event::WindowResize const&) { return EventHandlerResult::NotAccepted; }
