@@ -25,21 +25,15 @@ Widget::~Widget() {
         m_widget_tree_root->set_focused_widget(nullptr);
 }
 
-bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const {
-    return Util::Recti(m_raw_position, m_raw_size).contains(mouse_pos);
-}
+bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Recti(m_raw_position, m_raw_size).contains(mouse_pos); }
 
 void Widget::update() {
     Util::Cs::Point2i tooltip_position { m_tooltip_position };
-    auto widget_relative_mouse_position
-        = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
+    auto widget_relative_mouse_position = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
     widget_relative_mouse_position
-        -= Util::Cs::Vector2i::from_deprecated_vector(
-               widget_tree_root().position())
-        + raw_position().to_vector();
+        -= Util::Cs::Vector2i::from_deprecated_vector(widget_tree_root().position()) + raw_position().to_vector();
 
-    bool should_display
-        = should_display_tooltip(widget_relative_mouse_position);
+    bool should_display = should_display_tooltip(widget_relative_mouse_position);
     if (m_tooltip && !should_display) {
         m_tooltip->close();
         m_tooltip = nullptr;
@@ -55,8 +49,7 @@ void Widget::update() {
             m_tooltip = nullptr;
         }
         else if (should_display) {
-            m_tooltip = &host_window().add_tooltip(
-                Tooltip { create_tooltip(tooltip_position), {} });
+            m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(tooltip_position), {} });
         }
         m_tooltip_counter = -1;
     }
@@ -66,10 +59,8 @@ void Widget::update() {
         auto text = m_tooltip->text();
         update_tooltip(widget_relative_mouse_position, text);
         m_tooltip->set_text(text);
-        m_tooltip->set_position((Util::Cs::Point2i::from_deprecated_vector(
-                                     m_widget_tree_root->position())
-            + raw_position().to_vector() + tooltip_position.to_vector()
-            + Util::Cs::Vector2i(32, 32))
+        m_tooltip->set_position((Util::Cs::Point2i::from_deprecated_vector(m_widget_tree_root->position()) + raw_position().to_vector()
+                                 + tooltip_position.to_vector() + Util::Cs::Vector2i(32, 32))
                                     .cast<float>()
                                     .to_deprecated_vector());
     }
@@ -82,16 +73,13 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     // must be here so that event handler will actually run if
     // line below will change widget state (e.g hover)
     bool should_run_event_handler = is_affected_by_event(transformed_event);
-    EventHandlerResult result = should_run_event_handler
-        ? handle_event(transformed_event)
-        : EventHandlerResult::NotAccepted;
+    EventHandlerResult result = should_run_event_handler ? handle_event(transformed_event) : EventHandlerResult::NotAccepted;
 
     // Handle events common to all widgets
     auto result2 = transformed_event.visit(
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover
-                = is_mouse_over(mouse_position + m_raw_position.to_vector());
+            m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
                 if (m_hover && !m_tooltip) {
@@ -122,8 +110,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover
-                = is_mouse_over(mouse_position + m_raw_position.to_vector());
+            m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
             if (m_hover) {
                 m_hovered_on_click = true;
             }
@@ -135,8 +122,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover
-                = is_mouse_over(mouse_position + m_raw_position.to_vector());
+            m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
             m_hovered_on_click = false;
             return EventHandlerResult::NotAccepted;
         },
@@ -144,42 +130,24 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             set_needs_relayout();
             return EventHandlerResult::NotAccepted;
         },
-        [&](auto const&) -> EventHandlerResult {
-            return EventHandlerResult::NotAccepted;
-        });
+        [&](auto const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; }
+    );
 
-    return result2 == EventHandlerResult::Accepted
-            || result == EventHandlerResult::Accepted
-        ? EventHandlerResult::Accepted
-        : EventHandlerResult::NotAccepted;
+    return result2 == EventHandlerResult::Accepted || result == EventHandlerResult::Accepted ? EventHandlerResult::Accepted
+                                                                                             : EventHandlerResult::NotAccepted;
 }
 
 Widget::EventHandlerResult Widget::handle_event(Event const& event) {
     return event.visit(
-        [&](Event::WindowResize const& event) -> EventHandlerResult {
-            return on_window_resize(event);
-        },
-        [&](Event::KeyPress const& event) -> EventHandlerResult {
-            return on_key_press(event);
-        },
-        [&](Event::KeyRelease const& event) -> EventHandlerResult {
-            return on_key_release(event);
-        },
-        [&](Event::MouseMove const& event) -> EventHandlerResult {
-            return on_mouse_move(event);
-        },
-        [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
-            return on_mouse_button_press(event);
-        },
-        [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
-            return on_mouse_button_release(event);
-        },
-        [&](Event::MouseScroll const& event) -> EventHandlerResult {
-            return on_mouse_scroll(event);
-        },
-        [&](Event::TextInput const& event) -> EventHandlerResult {
-            return on_text_input(event);
-        });
+        [&](Event::WindowResize const& event) -> EventHandlerResult { return on_window_resize(event); },
+        [&](Event::KeyPress const& event) -> EventHandlerResult { return on_key_press(event); },
+        [&](Event::KeyRelease const& event) -> EventHandlerResult { return on_key_release(event); },
+        [&](Event::MouseMove const& event) -> EventHandlerResult { return on_mouse_move(event); },
+        [&](Event::MouseButtonPress const& event) -> EventHandlerResult { return on_mouse_button_press(event); },
+        [&](Event::MouseButtonRelease const& event) -> EventHandlerResult { return on_mouse_button_release(event); },
+        [&](Event::MouseScroll const& event) -> EventHandlerResult { return on_mouse_scroll(event); },
+        [&](Event::TextInput const& event) -> EventHandlerResult { return on_text_input(event); }
+    );
 }
 
 void Widget::do_update() {
@@ -192,23 +160,21 @@ void Widget::set_focused() {
     m_widget_tree_root->set_focused_widget(this);
 }
 
-bool Widget::is_focused() const {
-    return m_widget_tree_root->focused_widget() == this;
-}
+bool Widget::is_focused() const { return m_widget_tree_root->focused_widget() == this; }
 
 void Widget::focus_first_child_or_self() { set_focused(); }
 
-bool Widget::are_all_parents_enabled() const {
-    return is_enabled() && (m_parent ? m_parent->is_enabled() : true);
-}
+bool Widget::are_all_parents_enabled() const { return is_enabled() && (m_parent ? m_parent->is_enabled() : true); }
 
 bool Widget::is_affected_by_event(Event const& event) const {
+    if (!are_all_parents_enabled()) {
+        return false;
+    }
     switch (event.target_type()) {
     case llgl::EventTargetType::KeyboardFocused:
         return is_focused();
     case llgl::EventTargetType::MouseFocused:
-        return local_rect().contains(event.local_mouse_position())
-            || m_hovered_on_click;
+        return local_rect().contains(event.local_mouse_position()) || m_hovered_on_click;
     case llgl::EventTargetType::Specific:
         return false;
     case llgl::EventTargetType::Global:
@@ -219,8 +185,7 @@ bool Widget::is_affected_by_event(Event const& event) const {
 
 void Widget::do_draw(Gfx::Painter& painter) const {
     auto rect = this->rect();
-    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() },
-        Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
+    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = m_background_color;
@@ -230,16 +195,13 @@ void Widget::do_draw(Gfx::Painter& painter) const {
 
     if (DBG_ENABLED(GUI_DrawWidgetLayoutBounds)) {
         using namespace Gfx::Drawing;
-        painter.draw(Rectangle(local_rect().cast<float>(), Fill::none(),
-            Outline::normal(Util::Colors::Magenta, -1)));
+        painter.draw(Rectangle(local_rect().cast<float>(), Fill::none(), Outline::normal(Util::Colors::Magenta, -1)));
     }
 }
 
 Util::Recti Widget::rect() const {
     return {
-        raw_position()
-            + Util::Cs::Vector2i::from_deprecated_vector(
-                m_widget_tree_root->position()),
+        raw_position() + Util::Cs::Vector2i::from_deprecated_vector(m_widget_tree_root->position()),
         raw_size(),
     };
 }
@@ -256,9 +218,7 @@ void Widget::set_needs_relayout() { m_widget_tree_root->set_needs_relayout(); }
 
 Theme const& Widget::theme() const { return Application::the().theme(); }
 
-Gfx::ResourceManager const& Widget::resource_manager() const {
-    return Application::the().resource_manager();
-}
+Gfx::ResourceManager const& Widget::resource_manager() const { return Application::the().resource_manager(); }
 
 HostWindow& Widget::host_window() const {
     if (Util::is<HostWindow>(*m_widget_tree_root))
@@ -283,46 +243,21 @@ void Widget::dump(unsigned depth) {
     if (!m_id.empty()) {
         fmt::print(" #{}", m_id);
     }
-    fmt::print(": pos=({}, {})={}", fmt::streamed(m_expected_pos.x),
-        fmt::streamed(m_expected_pos.y), m_raw_position);
-    fmt::print(", size=({}, {})={}", fmt::streamed(m_input_size.x),
-        fmt::streamed(m_input_size.y), m_raw_size);
+    fmt::print(": pos=({}, {})={}", fmt::streamed(m_expected_pos.x), fmt::streamed(m_expected_pos.y), m_raw_position);
+    fmt::print(", size=({}, {})={}", fmt::streamed(m_input_size.x), fmt::streamed(m_input_size.y), m_raw_size);
     fmt::print("\n");
 }
 
-EML::EMLErrorOr<void> Widget::load_from_eml_object(
-    EML::Object const& object, EML::Loader&) {
+EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
     m_id = object.id;
-    m_tooltip_text
-        = TRY(object.get_property("tooltip_text", EML::Value("")).to_string());
-    m_vertical_alignment = TRY(object.get_enum<Alignment>(
-        "vertical_alignment", alignment_from_string, Alignment::Start));
-    m_horizontal_alignment = TRY(object.get_enum<Alignment>(
-        "horizontal_alignment", alignment_from_string, Alignment::Start));
-    m_input_size.x
-        = TRY(object
-                  .get_property("width",
-                      EML::Value(Util::Length { Util::Length::Initial }))
-                  .to_length());
-    m_input_size.y
-        = TRY(object
-                  .get_property("height",
-                      EML::Value(Util::Length { Util::Length::Initial }))
-                  .to_length());
-    m_expected_pos.x
-        = TRY(object
-                  .get_property("left",
-                      EML::Value(Util::Length { Util::Length::Initial }))
-                  .to_length());
-    m_expected_pos.y
-        = TRY(object
-                  .get_property(
-                      "top", EML::Value(Util::Length { Util::Length::Initial }))
-                  .to_length());
-    m_background_color = TRY(object
-                                 .get_property("background_color",
-                                     EML::Value(Util::Color { 0x000000 }))
-                                 .to_color());
+    m_tooltip_text = TRY(object.get_property("tooltip_text", EML::Value("")).to_string());
+    m_vertical_alignment = TRY(object.get_enum<Alignment>("vertical_alignment", alignment_from_string, Alignment::Start));
+    m_horizontal_alignment = TRY(object.get_enum<Alignment>("horizontal_alignment", alignment_from_string, Alignment::Start));
+    m_input_size.x = TRY(object.get_property("width", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_input_size.y = TRY(object.get_property("height", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_expected_pos.x = TRY(object.get_property("left", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_expected_pos.y = TRY(object.get_property("top", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_background_color = TRY(object.get_property("background_color", EML::Value(Util::Color { 0x000000 })).to_color());
     m_enabled = TRY(object.get_property("enabled", EML::Value(true)).to_bool());
     m_visible = TRY(object.get_property("visible", EML::Value(true)).to_bool());
     return {};

@@ -251,7 +251,7 @@ void Container::do_draw(Gfx::Painter& window) const {
 Widget::EventHandlerResult Container::do_handle_event(Event const& event) {
     for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++) {
         auto& widget = *it;
-        if (!widget->is_visible() || !widget->is_enabled())
+        if (!widget->is_visible())
             continue;
 
         if (widget->do_handle_event(event) == EventHandlerResult::Accepted) {
