@@ -2,6 +2,7 @@
 
 #include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/CoordinateSystem/GeoCoords.hpp>
+#include <EssaUtil/Rect.hpp>
 
 using namespace Cs;
 
@@ -292,6 +293,19 @@ TEST_CASE(geo_coords_to_cartesian) {
 
     TRY(test({ 90_deg, 0_deg }, 1, { 0, -1, 0 }));
     TRY(test({ -90_deg, 0_deg }, 1, { 0, 1, 0 }));
+
+    return {};
+}
+
+TEST_CASE(rect_intersection) {
+    auto test = [](Util::Recti const& lhs, Util::Recti const& rhs, Util::Recti const& expected) -> ErrorOr<void, __TestSuite::TestError> {
+        auto result = lhs.intersection(rhs);
+        EXPECT_EQ(result, expected);
+        return {};
+    };
+
+    TRY(test({ 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }));
+    TRY(test({ 0, 0, 500, 500 }, { 10, -20, 480, 480 }, { 10, 0, 480, 460 }));
 
     return {};
 }
