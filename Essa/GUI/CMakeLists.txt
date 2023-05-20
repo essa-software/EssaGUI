@@ -6,6 +6,7 @@ add_library(GUI SHARED
     Model.cpp
     Theme.cpp
     ThemeRenderer.cpp
+    Timer.cpp
     WidgetTreeRoot.cpp
 
     EML/AST.cpp

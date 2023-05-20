@@ -1,3 +1,4 @@
+#include "Essa/GUI/EventLoop.hpp"
 #include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <Essa/GUI/Application.hpp>
@@ -16,6 +17,8 @@
 #include <iostream>
 #include <typeinfo>
 
+using namespace std::chrono_literals;
+
 namespace GUI {
 
 DBG_DECLARE(GUI_DrawWidgetLayoutBounds);
@@ -23,6 +26,7 @@ DBG_DECLARE(GUI_DrawWidgetLayoutBounds);
 Widget::~Widget() {
     if (m_widget_tree_root && m_widget_tree_root->focused_widget() == this)
         m_widget_tree_root->set_focused_widget(nullptr);
+    EventLoop::current().remove_timer(m_tooltip_timer);
 }
 
 bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Recti(m_raw_position, m_raw_size).contains(mouse_pos); }
@@ -32,27 +36,6 @@ void Widget::update() {
     auto widget_relative_mouse_position = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
     widget_relative_mouse_position
         -= Util::Cs::Vector2i::from_deprecated_vector(widget_tree_root().position()) + raw_position().to_vector();
-
-    bool should_display = should_display_tooltip(widget_relative_mouse_position);
-    if (m_tooltip && !should_display) {
-        m_tooltip->close();
-        m_tooltip = nullptr;
-        return;
-    }
-
-    if (m_tooltip_counter > 0)
-        m_tooltip_counter--;
-    if (m_tooltip_counter == 0) {
-        // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
-        if (m_tooltip) {
-            m_tooltip->close();
-            m_tooltip = nullptr;
-        }
-        else if (should_display) {
-            m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(tooltip_position), {} });
-        }
-        m_tooltip_counter = -1;
-    }
 
     if (m_tooltip) {
         // You will soon see why the API here is so twisted...
@@ -82,26 +65,39 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
-                if (m_hover && !m_tooltip) {
-                    m_tooltip_counter = 40;
-                    m_tooltip_position = mouse_position;
+                auto widget_relative_mouse_position = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
+                widget_relative_mouse_position
+                    -= Util::Cs::Vector2i::from_deprecated_vector(widget_tree_root().position()) + raw_position().to_vector();
+                if (m_hover && should_display_tooltip(widget_relative_mouse_position)) {
+                    if (!m_tooltip) {
+                        m_tooltip_position = widget_relative_mouse_position;
+                        if (m_tooltip_timer.expired()) {
+                            m_tooltip_timer = EventLoop::current().set_timeout(667ms, [this]() {
+                                fmt::print("TIMER\n");
+                                m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(m_tooltip_position), {} });
+                            });
+                        }
+                    }
                 }
-                if (!m_hover) {
-                    if (m_tooltip)
-                        m_tooltip_counter = 0;
-                    else
-                        m_tooltip_counter = -1;
+                else {
+                    EventLoop::current().remove_timer(m_tooltip_timer);
+                    if (m_tooltip) {
+                        m_tooltip->close();
+                        m_tooltip = nullptr;
+                    }
                 }
                 break;
             }
             case TooltipMode::Realtime: {
                 m_tooltip_position = mouse_position;
-                if (m_hover) {
-                    if (!m_tooltip)
-                        m_tooltip_counter = 0;
+                if (m_hover && should_display_tooltip(mouse_position)) {
+                    if (!m_tooltip) {
+                        m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(m_tooltip_position), {} });
+                    }
                 }
                 else if (m_tooltip) {
-                    m_tooltip_counter = 0;
+                    m_tooltip->close();
+                    m_tooltip = nullptr;
                 }
                 break;
             }

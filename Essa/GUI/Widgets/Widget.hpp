@@ -3,6 +3,7 @@
 #include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/EventLoop.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Theme.hpp>
@@ -56,9 +57,7 @@ struct LengthVector {
     }
 };
 
-constexpr bool operator==(LengthVector const& a, LengthVector const& b) {
-    return a.x == b.x && a.y == b.y;
-}
+constexpr bool operator==(LengthVector const& a, LengthVector const& b) { return a.x == b.x && a.y == b.y; }
 
 struct Event : public llgl::Event {
 public:
@@ -257,8 +256,8 @@ private:
     Alignment m_vertical_alignment = Alignment::Start;
 
     TooltipOverlay* m_tooltip = nullptr;
-    int m_tooltip_counter = -1;
     Util::Cs::Point2i m_tooltip_position;
+    EventLoop::TimerHandle m_tooltip_timer;
 
     bool m_hover = false;
     bool m_hovered_on_click = false;
