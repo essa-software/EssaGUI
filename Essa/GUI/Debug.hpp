@@ -28,6 +28,11 @@ private:
     static ::GUI::DebugSwitch __debug_##name { \
 #        name                                  \
     }
+#define DBG_DECLARE_EXTERN(name) extern ::GUI::DebugSwitch __debug_##name;
+#define DBG_DEFINE_GLOBAL(name)                    \
+    /*global*/ ::GUI::DebugSwitch __debug_##name { \
+#        name                                      \
+    }
 #define DBG_PRINTLN(name, fmtstr, ...)                                    \
     {                                                                     \
         if (DBG_ENABLED(name)) {                                          \
