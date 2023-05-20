@@ -14,6 +14,7 @@ class EventLoop {
 public:
     virtual ~EventLoop() = default;
 
+    static bool has_current();
     static EventLoop& current();
 
     std::function<bool()> on_close;

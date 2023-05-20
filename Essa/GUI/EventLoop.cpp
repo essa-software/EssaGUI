@@ -18,6 +18,8 @@ EventLoop& EventLoop::current() {
     return *s_current_event_loop;
 }
 
+bool EventLoop::has_current() { return s_current_event_loop != nullptr; }
+
 void EventLoop::run() {
     auto old_event_loop = s_current_event_loop;
     s_current_event_loop = this;
