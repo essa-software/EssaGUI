@@ -78,7 +78,7 @@ int main() {
     };
     varr.upload_vertices(verts);
 
-    llgl::Renderer renderer { 0 };
+    auto& renderer = window.renderer();
 
     MyShader shader;
 

@@ -14,17 +14,22 @@ class Framebuffer {
 public:
     explicit Framebuffer(Util::Vector2u size)
         : m_fbo(size)
-        , m_renderer(m_fbo.id()) { }
+        , m_renderer(m_fbo.id()) {
+        m_renderer.m_size = Util::Cs::Size2u::from_deprecated_vector(size);
+    }
 
     void clear() { m_renderer.clear(); }
 
     template<class VertT, class DSS>
-    requires(std::is_same_v<typename DSS::Vertex, VertT>) void draw_vertices(
-        VertexArray<VertT> const& vbo, DrawState<DSS> const& draw_state) {
+        requires(std::is_same_v<typename DSS::Vertex, VertT>)
+    void draw_vertices(VertexArray<VertT> const& vbo, DrawState<DSS> const& draw_state) {
         m_renderer.draw_vertices(vbo, draw_state);
     }
 
-    void resize(Util::Vector2u size) { m_fbo.resize(size); }
+    void resize(Util::Vector2u size) {
+        m_fbo.resize(size);
+        m_renderer.m_size = Util::Cs::Size2u::from_deprecated_vector(size);
+    }
 
     void set_label(std::string const& label) { m_fbo.set_label(label); }
 

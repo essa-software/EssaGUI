@@ -27,9 +27,9 @@ public:
 
     public:
         static inline auto mapping = llgl::make_uniform_mapping(
-            llgl::Uniform("accum", &Uniforms::accum),
-            llgl::Uniform("pass1", &Uniforms::pass1),
-            llgl::Uniform("fbSize", &Uniforms::m_framebuffer_size));
+            llgl::Uniform("accum", &Uniforms::accum), llgl::Uniform("pass1", &Uniforms::pass1),
+            llgl::Uniform("fbSize", &Uniforms::m_framebuffer_size)
+        );
 
         void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
 
@@ -94,8 +94,7 @@ public:
 Util::Vector2f next_oscilloscope_position() {
     static float angle = 0;
     angle += 0.7;
-    return Util::Vector2f { std::sin(angle), std::cos(angle) } * 20
-        + Util::Vector2f { llgl::mouse_position() };
+    return Util::Vector2f { std::sin(angle), std::cos(angle) } * 20 + Util::Vector2f { llgl::mouse_position() };
 }
 
 int main() {
@@ -105,7 +104,7 @@ int main() {
     Essa::Shaders::Basic basic_shader;
     BlurShader blur_shader;
 
-    llgl::Renderer renderer { 0 };
+    auto& renderer = window.renderer();
 
     llgl::Framebuffer pass1 { { 512, 512 } };
     pass1.set_label("pass1");
@@ -116,7 +115,7 @@ int main() {
         { { -1, -1, 0 }, Util::Colors::White, { 0, 1 } },
         { { 1, -1, 0 }, Util::Colors::White, { 1, 1 } },
         { { -1, 1, 0 }, Util::Colors::White, { 0, 0 } },
-        { { 1, 1, 0 }, Util::Colors::White, { 1, 0 } }
+        { { 1, 1, 0 }, Util::Colors::White, { 1, 0 } },
     };
 
     auto old_oscilloscope_position = next_oscilloscope_position();
@@ -152,9 +151,11 @@ int main() {
             };
 
             Essa::Shaders::Basic::Uniforms basic_shader_uniforms;
-            basic_shader_uniforms.set_transform({},
-                {},
-                llgl::Projection::ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } }, {}).matrix());
+            basic_shader_uniforms.set_transform(
+                {}, {},
+                llgl::Projection::ortho({ { 0, 0, static_cast<double>(window.size().x()), static_cast<double>(window.size().y()) } }, {})
+                    .matrix()
+            );
             pass1.draw_vertices(input_vao, llgl::DrawState { basic_shader, basic_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
 
             old_oscilloscope_position = oscilloscope_position;
