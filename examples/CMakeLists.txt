@@ -38,3 +38,7 @@ add_example("essa-engine/obj-loader" LIBS Engine-3D)
 add_example("essa-engine/obj-loader-resource-manager" LIBS Engine-3D)
 add_example("essa-engine/oscilloscope" LIBS Engine-3D)
 add_example("essa-engine/shapes" LIBS Engine-3D)
+
+if (NOT ESSA_IS_PRODUCTION)
+    essa_resources("essa-engine-obj-loader-resource-manager" essa-engine/obj-loader-resource-manager)
+endif()

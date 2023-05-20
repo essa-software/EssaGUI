@@ -46,8 +46,7 @@ private:
         Essa::Shaders::Lighting::Uniforms shader_uniforms;
         shader_uniforms.set_light_color(Util::Colors::LightGoldenRodYellow);
 
-        auto& model = resource_manager().require_external<Essa::Model>(
-            "../examples/essa-engine/cube.obj");
+        auto& model = resource_manager().require<Essa::Model>("cube.obj");
 
         auto transform = llgl::Transform {}
                              .rotate_x(m_angle_x.rad())
