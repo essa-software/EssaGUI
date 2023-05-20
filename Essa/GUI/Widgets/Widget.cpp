@@ -26,7 +26,9 @@ DBG_DECLARE(GUI_DrawWidgetLayoutBounds);
 Widget::~Widget() {
     if (m_widget_tree_root && m_widget_tree_root->focused_widget() == this)
         m_widget_tree_root->set_focused_widget(nullptr);
-    EventLoop::current().remove_timer(m_tooltip_timer);
+    if (EventLoop::has_current()) {
+        EventLoop::current().remove_timer(m_tooltip_timer);
+    }
 }
 
 bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Recti(m_raw_position, m_raw_size).contains(mouse_pos); }
