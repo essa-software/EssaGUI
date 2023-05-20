@@ -15,7 +15,7 @@ private:
             llgl::Projection::perspective(
                 { 1.44, static_cast<double>(raw_size().x() / raw_size().y()),
                     0.1, 20 },
-                Util::Recti { rect() })
+                Util::Recti { local_rect() })
         }
             .translate({ 0, 3, 3 })
             .rotate_x(45.0_deg)

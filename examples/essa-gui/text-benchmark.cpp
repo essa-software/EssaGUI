@@ -20,7 +20,7 @@ private:
     virtual void draw(Gfx::Painter& painter) const override {
         Gfx::Text fps(Util::to_ustring(GUI::Application::the().tps()), resource_manager().font());
         fps.set_fill_color(Util::Colors::White);
-        fps.align(GUI::Align::TopLeft, rect().cast<float>());
+        fps.align(GUI::Align::TopLeft, local_rect().cast<float>());
         fps.draw(painter);
 
         Gfx::Text text(m_string, resource_manager().font());

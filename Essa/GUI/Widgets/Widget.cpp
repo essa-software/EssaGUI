@@ -1,4 +1,3 @@
-#include "Essa/GUI/EventLoop.hpp"
 #include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <Essa/GUI/Application.hpp>
@@ -31,7 +30,7 @@ Widget::~Widget() {
     }
 }
 
-bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Recti(m_raw_position, m_raw_size).contains(mouse_pos); }
+bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Recti(raw_position(), m_raw_size).contains(mouse_pos); }
 
 void Widget::update() {
     Util::Cs::Point2i tooltip_position { m_tooltip_position };
@@ -52,7 +51,7 @@ void Widget::update() {
 }
 
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
-    auto transformed_event = event.relativized(m_raw_position.to_vector());
+    auto transformed_event = event.relativized(raw_position().to_vector());
 
     // Check if widget is actually affected by the event, this
     // must be here so that event handler will actually run if
@@ -64,12 +63,11 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto result2 = transformed_event.visit(
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
+            m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
                 auto widget_relative_mouse_position = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
-                widget_relative_mouse_position
-                    -= Util::Cs::Vector2i::from_deprecated_vector(widget_tree_root().position()) + raw_position().to_vector();
+                widget_relative_mouse_position -= host_position().to_vector();
                 if (m_hover && should_display_tooltip(widget_relative_mouse_position)) {
                     if (!m_tooltip) {
                         m_tooltip_position = widget_relative_mouse_position;
@@ -108,7 +106,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
+            m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
             if (m_hover) {
                 m_hovered_on_click = true;
             }
@@ -120,7 +118,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
         },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + m_raw_position.to_vector());
+            m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
             m_hovered_on_click = false;
             return EventHandlerResult::NotAccepted;
         },
@@ -182,7 +180,7 @@ bool Widget::is_affected_by_event(Event const& event) const {
 }
 
 void Widget::do_draw(Gfx::Painter& painter) const {
-    auto rect = this->rect();
+    auto rect = this->host_rect();
     Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
 
     Gfx::RectangleDrawOptions background;
@@ -197,12 +195,22 @@ void Widget::do_draw(Gfx::Painter& painter) const {
     }
 }
 
-Util::Recti Widget::rect() const {
+Util::Cs::Point2i Widget::raw_position() const {
+    return m_position + (m_parent ? m_parent->raw_position().to_vector() : Util::Cs::Vector2i());
+}
+
+void Widget::set_raw_position(Util::Cs::Point2i position) {
+    m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Cs::Vector2i());
+}
+
+Util::Recti Widget::host_rect() const {
     return {
         raw_position() + Util::Cs::Vector2i::from_deprecated_vector(m_widget_tree_root->position()),
         raw_size(),
     };
 }
+
+Util::Recti Widget::absolute_rect() const { return { raw_position(), raw_size() }; }
 
 void Widget::do_relayout() {
     if (this->m_visible)
@@ -241,7 +249,7 @@ void Widget::dump(unsigned depth) {
     if (!m_id.empty()) {
         fmt::print(" #{}", m_id);
     }
-    fmt::print(": pos=({}, {})={}", fmt::streamed(m_expected_pos.x), fmt::streamed(m_expected_pos.y), m_raw_position);
+    fmt::print(": pos=({}, {})={}", fmt::streamed(m_expected_pos.x), fmt::streamed(m_expected_pos.y), m_position);
     fmt::print(", size=({}, {})={}", fmt::streamed(m_input_size.x), fmt::streamed(m_input_size.y), m_raw_size);
     fmt::print("\n");
 }
