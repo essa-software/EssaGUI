@@ -1,15 +1,26 @@
 #include "ClipViewScope.hpp"
 
+#include <Essa/GUI/Graphics/Painter.hpp>
+
 namespace Gfx {
 
-ClipViewScope::ClipViewScope(Gfx::Painter& target,
-    Util::Vector2u host_window_size, Util::Recti rect, Mode mode)
+static thread_local ClipViewScope* s_current = nullptr;
+
+ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
     : m_target(target)
-    , m_old_projection(target.builder().projection()) {
+    , m_old_projection(target.builder().projection())
+    , m_parent(s_current) {
+    s_current = this;
+
+    auto framebuffer_size = target.renderer().size();
 
     auto old_viewport = m_old_projection.viewport();
-    old_viewport.top
-        = host_window_size.y() - old_viewport.top - old_viewport.height;
+    old_viewport.top = static_cast<int>(framebuffer_size.y()) - old_viewport.top - old_viewport.height;
+    rect = rect.move_x(old_viewport.left).move_y(old_viewport.top);
+    if (m_parent) {
+        rect = rect.move_y(-m_parent->m_offset.y());
+    }
+
     auto clip_rect = [&]() {
         switch (mode) {
         case Mode::Override:
@@ -21,29 +32,32 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target,
         __builtin_unreachable();
     }();
 
-    Util::Vector2f offset_position = (mode == Mode::Intersect
-            ? Util::Vector2f { clip_rect.left - rect.left,
-                clip_rect.top - rect.top }
-            : Util::Vector2f {});
+    Util::Cs::Vector2i offset_position
+        = (mode == Mode::Intersect ? Util::Cs::Vector2i(clip_rect.left - rect.left, clip_rect.top - rect.top) : Util::Cs::Vector2i());
 
-    auto clip_view
-        = create_clip_view(clip_rect, offset_position, host_window_size);
+    m_offset = offset_position;
+
+    auto clip_view = create_clip_view(clip_rect, offset_position, framebuffer_size);
 
     m_target.builder().set_projection(clip_view);
 }
 
 ClipViewScope::~ClipViewScope() {
     m_target.builder().set_projection(m_old_projection);
+    s_current = m_parent;
 }
 
-llgl::Projection ClipViewScope::create_clip_view(Util::Recti const& rect,
-    Util::Vector2f offset_position, Util::Vector2u host_window_size) {
-    return llgl::Projection::ortho({ { offset_position.x(), offset_position.y(),
-                                       static_cast<double>(rect.width),
-                                       static_cast<double>(rect.height) } },
-        Util::Recti { static_cast<int>(rect.left),
-            static_cast<int>(host_window_size.y() - rect.top - rect.height),
-            static_cast<int>(rect.width), static_cast<int>(rect.height) });
+llgl::Projection
+ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Cs::Vector2i offset_position, Util::Cs::Size2u framebuffer_size) {
+    return llgl::Projection::ortho(
+        { { offset_position.cast<double>().to_point(), rect.size().cast<double>() } },
+        Util::Recti {
+            static_cast<int>(rect.left),
+            static_cast<int>(framebuffer_size.y() - rect.top - rect.height),
+            static_cast<int>(rect.width),
+            static_cast<int>(rect.height),
+        }
+    );
 }
 
 }

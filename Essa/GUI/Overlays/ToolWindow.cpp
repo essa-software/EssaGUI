@@ -17,10 +17,7 @@ namespace GUI {
 
 ToolWindow::ToolWindow(HostWindow& window, std::string id)
     : Overlay(window, std::move(id)) {
-    m_titlebar_buttons.push_back(TitlebarButton {
-        .on_click = [this]() {
-            close();
-        } });
+    m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
 
 void ToolWindow::handle_event(Event const& event) {
@@ -36,7 +33,8 @@ void ToolWindow::handle_event(Event const& event) {
 
         float titlebar_button_position_x = position().x() + size().x() - theme().tool_window_title_bar_size;
         for (auto& button : m_titlebar_buttons) {
-            Util::Rectf rect { { titlebar_button_position_x, position().y() - theme().tool_window_title_bar_size }, { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } };
+            Util::Rectf rect { { titlebar_button_position_x, position().y() - theme().tool_window_title_bar_size },
+                               { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } };
 
             if (event.is<Event::MouseButtonPress>()) {
                 if (rect.contains(mouse_position)) {
@@ -148,7 +146,8 @@ void ToolWindow::handle_event(Event const& event) {
                 }
 
                 // Send resize event to ToolWindow's widgets
-                WidgetTreeRoot::handle_event(llgl::Event::WindowResize { { static_cast<unsigned>(m_size.x()), static_cast<unsigned>(m_size.y()) } });
+                WidgetTreeRoot::handle_event(llgl::Event::WindowResize {
+                    { static_cast<unsigned>(m_size.x()), static_cast<unsigned>(m_size.y()) } });
                 return;
             }
         }
@@ -182,13 +181,17 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     background.fill_color = theme().window_background;
     painter.deprecated_draw_rectangle({ position, size }, background);
 
-    auto titlebar_color = host_window().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
+    auto titlebar_color
+        = host_window().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
 
     Gfx::RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = theme().tool_window_title_bar_border_radius;
     rs_titlebar.border_radius_top_right = theme().tool_window_title_bar_border_radius;
     rs_titlebar.fill_color = titlebar_color.background;
-    painter.deprecated_draw_rectangle({ position - Util::Cs::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } }, rs_titlebar);
+    painter.deprecated_draw_rectangle(
+        { position - Util::Cs::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } },
+        rs_titlebar
+    );
 
     Gfx::Text text { title(), Application::the().bold_font() };
     text.set_position((position + Util::Cs::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)).to_deprecated_vector());
@@ -207,9 +210,14 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         if (button.hovered) {
             tbb_background.fill_color = tbb_background.fill_color * theme().hover_highlight_factor;
         }
-        painter.deprecated_draw_rectangle({ { titlebar_button_position_x, position.y() - theme().tool_window_title_bar_size }, { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } }, tbb_background);
+        painter.deprecated_draw_rectangle(
+            { { titlebar_button_position_x, position.y() - theme().tool_window_title_bar_size },
+              { theme().tool_window_title_bar_size, theme().tool_window_title_bar_size } },
+            tbb_background
+        );
 
-        Util::Vector2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f), std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
+        Util::Vector2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f),
+                                       std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
 
         std::array<Gfx::Vertex, 4> varr;
         auto close_button_cross_color = theme().text_button.active.unhovered.text;
@@ -225,11 +233,12 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     std::array<Gfx::Vertex, 4> varr_border;
     varr_border[0] = Gfx::Vertex { { position.to_deprecated_vector() }, titlebar_color.background, {} };
     varr_border[1] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(-1, size.y()) }, titlebar_color.background, {} };
-    varr_border[2] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
+    varr_border[2]
+        = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
     varr_border[3] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
     {
-        Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect() }, Gfx::ClipViewScope::Mode::Override);
+        Gfx::ClipViewScope scope(painter, Util::Recti { rect() }, Gfx::ClipViewScope::Mode::Override);
         WidgetTreeRoot::draw(painter);
     }
 }

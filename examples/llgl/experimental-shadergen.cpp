@@ -51,8 +51,8 @@ struct MyShader : public llgl::Shader {
         Util::Matrix4x4f matrix;
 
         static inline auto mapping = llgl::make_uniform_mapping(
-            llgl::Uniform { "otherColor", &Uniforms::other_color },
-            llgl::Uniform { "matrix", &Uniforms::matrix });
+            llgl::Uniform { "otherColor", &Uniforms::other_color }, llgl::Uniform { "matrix", &Uniforms::matrix }
+        );
     };
 
     std::string_view source(llgl::ShaderType type) {
@@ -74,7 +74,7 @@ int main() {
     MyShader::Vertex verts[] {
         { { 50, 50 }, Util::Colors::Red },
         { { 100, 50 }, Util::Colors::Green },
-        { { 50, 100 }, Util::Colors::Blue }
+        { { 50, 100 }, Util::Colors::Blue },
     };
     varr.upload_vertices(verts);
 

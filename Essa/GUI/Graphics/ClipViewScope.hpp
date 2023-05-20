@@ -1,9 +1,23 @@
 #pragma once
 
-#include <Essa/GUI/Graphics/Painter.hpp>
+#include <Essa/LLGL/OpenGL/Projection.hpp>
 
 namespace Gfx {
 
+class Painter;
+
+// A RAII class that handles clipping of Painter's viewport.
+// It maintains a stack of ClipViewScopes so that you don't
+// need to know anything about calling environment (Widget/
+// Overlay) to draw within it.
+//
+// Note that it doesn't actually set the viewport. If you use
+// it with raw LLGL/OpenGL, wrap drawing calls in WorldDrawScope
+// or set viewport manually:
+//
+// ```
+// llgl::set_viewport(painter.builder().projection().viewport())
+// ```
 class ClipViewScope {
 public:
     enum class Mode {
@@ -11,14 +25,17 @@ public:
         Intersect // current = old ∩ new
     };
 
-    ClipViewScope(Gfx::Painter& target, Util::Vector2u host_window_size, Util::Recti rect, Mode);
+    // Rect is relative to the current projection viewport.
+    ClipViewScope(Painter& target, Util::Recti rect, Mode);
     ~ClipViewScope();
 
 private:
-    static llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2f offset_position, Util::Vector2u host_window_size);
+    static llgl::Projection create_clip_view(Util::Recti const&, Util::Cs::Vector2i offset_position, Util::Cs::Size2u framebuffer_size);
 
-    Gfx::Painter& m_target;
+    Painter& m_target;
     llgl::Projection m_old_projection;
+    Util::Cs::Vector2i m_offset;
+    ClipViewScope* m_parent = nullptr;
 };
 
 }

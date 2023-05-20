@@ -20,7 +20,7 @@ using namespace std::chrono_literals;
 
 namespace GUI {
 
-DBG_DECLARE(GUI_DrawWidgetLayoutBounds);
+DBG_DEFINE_GLOBAL(GUI_DrawWidgetLayoutBounds);
 
 Widget::~Widget() {
     if (m_widget_tree_root && m_widget_tree_root->focused_widget() == this)
@@ -180,8 +180,7 @@ bool Widget::is_affected_by_event(Event const& event) const {
 }
 
 void Widget::do_draw(Gfx::Painter& painter) const {
-    auto rect = this->host_rect();
-    Gfx::ClipViewScope scope(painter, Util::Vector2u { host_window().size() }, Util::Recti { rect }, Gfx::ClipViewScope::Mode::Intersect);
+    Gfx::ClipViewScope scope(painter, parent_relative_rect(), Gfx::ClipViewScope::Mode::Intersect);
 
     Gfx::RectangleDrawOptions background;
     background.fill_color = m_background_color;
@@ -209,6 +208,8 @@ Util::Recti Widget::host_rect() const {
         raw_size(),
     };
 }
+
+Util::Recti Widget::parent_relative_rect() const { return { m_position, m_raw_size }; }
 
 Util::Recti Widget::absolute_rect() const { return { raw_position(), raw_size() }; }
 

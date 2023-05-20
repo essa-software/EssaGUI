@@ -1,12 +1,13 @@
 #include <Essa/Engine/3D/Model.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
 #include <Essa/GUI/Application.hpp>
-
+#include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
 #include <Essa/GUI/Widgets/WorldView.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/Transform.hpp>
 
 class WorldView : public GUI::WorldView {
 public:
@@ -21,12 +22,9 @@ public:
 
 private:
     llgl::Camera camera() const {
-        return llgl::Camera {
-            llgl::Projection::perspective(
-                { 1.44, static_cast<double>(raw_size().x()) / raw_size().y(),
-                    0.1, 20 },
-                Util::Recti { local_rect() })
-        }
+        return llgl::Camera { llgl::Projection::perspective(
+                                  { 1.44, static_cast<double>(raw_size().x()) / raw_size().y(), 0.1, 20 }, Util::Recti { local_rect() }
+                              ) }
             .translate({ 0, 3, 3 })
             .rotate_x(45.0_deg)
             .translate({ 0, 0, -1 });
@@ -39,8 +37,7 @@ private:
     }
 
     virtual void draw(Gfx::Painter& painter) const override {
-        GUI::WorldDrawScope scope { painter,
-            GUI::WorldDrawScope::ClearDepth::Yes };
+        GUI::WorldDrawScope scope(painter, GUI::WorldDrawScope::ClearDepth::Yes);
 
         static Essa::Shaders::Lighting shader;
         Essa::Shaders::Lighting::Uniforms shader_uniforms;
@@ -48,12 +45,8 @@ private:
 
         auto& model = resource_manager().require<Essa::Model>("cube.obj");
 
-        auto transform = llgl::Transform {}
-                             .rotate_x(m_angle_x.rad())
-                             .rotate_y(m_angle_y.rad())
-                             .rotate_z(m_angle_z.rad());
-        shader_uniforms.set_transform(transform.matrix(),
-            camera().view_matrix(), camera().projection().matrix());
+        auto transform = llgl::Transform {}.rotate_x(m_angle_x.rad()).rotate_y(m_angle_y.rad()).rotate_z(m_angle_z.rad());
+        shader_uniforms.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
         model.render(painter.renderer(), shader, shader_uniforms);
     }
 
@@ -78,8 +71,7 @@ public:
 
 private:
     virtual void update() override {
-        m_tps_container->set_content(Util::UString {
-            "TPS: " + std::to_string(GUI::Application::the().tps()) });
+        m_tps_container->set_content(Util::UString { "TPS: " + std::to_string(GUI::Application::the().tps()) });
     }
 
     GUI::Textfield* m_tps_container = nullptr;

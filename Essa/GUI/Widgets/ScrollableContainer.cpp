@@ -5,12 +5,6 @@ namespace GUI {
 ScrollableContainer::ScrollableContainer() {
     on_scroll = [&]() {
         m_widget->set_raw_position(scroll_offset().to_point());
-
-        // FIXME: The relayout is needed because widgets use wtr-relative (i.e
-        // global) position for rendering. If they used container-relative
-        // position, we could avoid relayouting ScrollableContainer contents on
-        // every scroll!
-        m_widget->do_relayout();
     };
 }
 
@@ -42,15 +36,26 @@ void ScrollableContainer::do_relayout() {
     // 2. If the widget doesn't fit, relayout once more (because we will add
     // scrollbars, which will change available size).
     auto actually_needed_size = raw_size();
+    bool needs_horizontal_scrollbar = false;
+    bool needs_vertical_scrollbar = false;
     if (m_widget->total_size().x() > raw_size().x()) {
         actually_needed_size.set_y(actually_needed_size.x() - 5);
+        needs_horizontal_scrollbar = true;
     }
     if (m_widget->total_size().y() > raw_size().y()) {
         actually_needed_size.set_x(actually_needed_size.x() - 5);
+        needs_vertical_scrollbar = true;
     }
     fmt::print("{} != {} ?\n", actually_needed_size, raw_size());
     if (actually_needed_size != raw_size()) {
-        m_widget->set_raw_size(actually_needed_size);
+        auto size = m_widget->total_size();
+        if (needs_horizontal_scrollbar) {
+            size.set_y(size.y() - 5);
+        }
+        if (needs_vertical_scrollbar) {
+            size.set_x(size.x() - 5);
+        }
+        m_widget->set_raw_size(size);
         m_widget->do_relayout();
     }
 }

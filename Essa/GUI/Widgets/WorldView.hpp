@@ -8,10 +8,10 @@ namespace GUI {
 
 class WorldView;
 
-// This class ensures that everything in the scope will be drawn using
-// the world states (that is, in 3D, with depth enabled). This must be
-// used when drawing actual 3D things, otherwise the default widget
-// states will be used.
+// This class ensures that everything in the scope will be drawn
+// with depth enabled. It shoud be used when drawing actual 3D
+// things. Note that it also handles actual setting of Painter's
+// viewport, which isn't done by ClipViewScope. 
 class WorldDrawScope {
 public:
     // Can be used for doing multiple layers.

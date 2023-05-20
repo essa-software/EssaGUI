@@ -137,6 +137,9 @@ public:
 
     // Returns bounding box relative to host window's top left corner.
     Util::Recti host_rect() const;
+    // Returns bounding box relative to parent. If this is a main widget,
+    // this will be equal to absolute_rect().
+    Util::Recti parent_relative_rect() const;
     // Returns bounding box relative to widget tree root's top left corner
     Util::Recti absolute_rect() const;
     // Returns bounding box with position = (0, 0)
