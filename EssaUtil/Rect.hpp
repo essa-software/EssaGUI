@@ -70,18 +70,17 @@ public:
     }
 
     Rect<T> move_x(T t) const { return Rect { left + t, top, width, height }; }
-
     Rect<T> move_y(T t) const { return Rect { left, top + t, width, height }; }
-
     Rect<T> take_top(T t) const { return Rect { left, top, width, t }; }
-
     Rect<T> take_right(T t) const { return Rect { left + width - t, top, t, height }; }
-
     Rect<T> take_bottom(T t) const { return Rect { left, top + height - t, width, t }; }
-
     Rect<T> take_left(T t) const { return Rect { left, top, t, height }; }
-
+    // Return rect with all sides moved by `t` outside
     Rect<T> inflated(T t) const { return Rect { left - t, top - t, width + 2 * t, height + 2 * t }; }
+    // Return rect with top and bottom sides moved by `t` outside
+    Rect<T> inflated_vertical(T t) const { return Rect { left, top - t, width, height + 2 * t }; }
+    // Return rect with left and right sides moved by `t` outside
+    Rect<T> inflated_horizontal(T t) const { return Rect { left - t, top, width + 2 * t, height }; }
 
     bool operator==(Rect<T> const&) const = default;
 };

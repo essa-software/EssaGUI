@@ -310,6 +310,18 @@ TEST_CASE(rect_intersection) {
     return {};
 }
 
+TEST_CASE(rect_inflated) {
+    EXPECT_EQ(Recti(50, 50, 30, 30).inflated(10), Recti(40, 40, 50, 50));
+    EXPECT_EQ(Recti(50, 50, 30, 30).inflated(-10), Recti(60, 60, 10, 10));
+    
+    EXPECT_EQ(Recti(50, 50, 30, 30).inflated_horizontal(10), Recti(40, 50, 50, 30));
+    EXPECT_EQ(Recti(50, 50, 30, 30).inflated_horizontal(-10), Recti(60, 50, 10, 30));
+
+    EXPECT_EQ(Recti(50, 50, 30, 30).inflated_vertical(10), Recti(50, 40, 30, 50));
+    EXPECT_EQ(Recti(50, 50, 30, 30).inflated_vertical(-10), Recti(50, 60, 30, 10));
+    return {};
+}
+
 // TODO: Add tests for:
 // - Point
 // - Size
