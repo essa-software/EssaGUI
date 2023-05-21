@@ -144,6 +144,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(tool_window_title_bar_border_radius);
         DEFINE_THEME_OPTION(tool_window_min_size);
         DEFINE_THEME_OPTION(tool_window_resize_border_width);
+        DEFINE_THEME_OPTION(tool_window_opacity);
 
         DEFINE_THEME_OPTION(hover_highlight_factor);
 

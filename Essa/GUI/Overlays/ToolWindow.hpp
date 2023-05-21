@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/LLGL/OpenGL/Framebuffer.hpp>
 
 namespace GUI {
 
@@ -32,12 +33,7 @@ public:
         };
     }
 
-    enum class ResizeDirection {
-        Top,
-        Right,
-        Bottom,
-        Left
-    };
+    enum class ResizeDirection { Top, Right, Bottom, Left };
 
     Util::Rectf resize_rect(ResizeDirection direction) const;
 
@@ -68,6 +64,8 @@ private:
         bool mousedown = false;
     };
     std::vector<TitlebarButton> m_titlebar_buttons;
+    llgl::Framebuffer m_backing_buffer { Util::Vector2u(size()) };
+    Gfx::Painter m_offscreen_painter { m_backing_buffer.renderer() };
 };
 
 }

@@ -173,7 +173,8 @@ static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing:
 
         constexpr size_t RoundingResolution = 12;
         for (size_t s = 0; s <= RoundingResolution; s++) {
-            float angle = rounding.angle_start + (rounding.angle_end - rounding.angle_start) * static_cast<float>(s) / static_cast<float>(RoundingResolution);
+            float angle = rounding.angle_start
+                + (rounding.angle_end - rounding.angle_start) * static_cast<float>(s) / static_cast<float>(RoundingResolution);
             // fmt::print("{}\n", fmt::streamed(rounding.center));
             auto point = rounding.center + Util::Vector2f::create_polar(angle, rounding.scaled_radius);
 
@@ -205,7 +206,8 @@ void Painter::draw(Drawing::Shape const& shape) {
         return calculate_vertices_for_rounded_shape(shape);
     }();
 
-    m_builder.set_submodel(shape.transform().translate(Util::Cs::Vector3f { Util::Cs::Vector2f::from_deprecated_vector(-shape.origin()), 0.f }));
+    m_builder.set_submodel(shape.transform().translate(Util::Cs::Vector3f { Util::Cs::Vector2f::from_deprecated_vector(-shape.origin()),
+                                                                            0.f }));
     if (shape.fill().is_visible()) {
         draw_fill(shape, vertices_for_rounded_shape);
     }
@@ -218,10 +220,7 @@ void Painter::draw(Drawing::Shape const& shape) {
 void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOptions const& options) {
     draw(Drawing::Rectangle {
         bounds,
-        Drawing::Fill {}
-            .set_color(options.fill_color)
-            .set_texture(options.texture)
-            .set_texture_rect(Util::Rectf { options.texture_rect }),
+        Drawing::Fill {}.set_color(options.fill_color).set_texture(options.texture).set_texture_rect(Util::Rectf { options.texture_rect }),
         Drawing::Outline::normal(options.outline_color, options.outline_thickness)
             .set_round_radius({
                 options.border_radius_top_left,
@@ -233,11 +232,9 @@ void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOp
 }
 
 void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& options) {
-    draw(Gfx::Drawing::Ellipse { center, size / 2.f,
-        Drawing::Fill {}
-            .set_color(options.fill_color)
-            .set_texture(options.texture)
-            .set_texture_rect(Util::Rectf { options.texture_rect }),
+    draw(Gfx::Drawing::Ellipse {
+        center, size / 2.f,
+        Drawing::Fill {}.set_color(options.fill_color).set_texture(options.texture).set_texture_rect(Util::Rectf { options.texture_rect }),
         Drawing::Outline::normal(options.outline_color, options.outline_thickness) }
              .set_point_count(30));
 }
@@ -279,7 +276,12 @@ void Painter::draw_vertices(llgl::PrimitiveType type, std::span<Gfx::Vertex cons
 
 void Painter::apply_states() {
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(
+        static_cast<GLenum>(m_blending.src_rgb),   //
+        static_cast<GLenum>(m_blending.dst_rgb),   //
+        static_cast<GLenum>(m_blending.src_alpha), //
+        static_cast<GLenum>(m_blending.dst_alpha)
+    );
 }
 
 }

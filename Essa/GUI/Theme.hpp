@@ -105,6 +105,7 @@ public:
     uint32_t tool_window_title_bar_border_radius;
     uint32_t tool_window_min_size;
     uint32_t tool_window_resize_border_width;
+    float tool_window_opacity;
 
     float hover_highlight_factor;
 

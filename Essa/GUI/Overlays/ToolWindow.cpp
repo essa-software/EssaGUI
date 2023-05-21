@@ -2,13 +2,15 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/LLGL/OpenGL/Framebuffer.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <EssaUtil/Config.hpp>
+
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -168,6 +170,8 @@ void ToolWindow::center_on_screen() {
 }
 
 void ToolWindow::draw(Gfx::Painter& painter) {
+    using namespace Gfx::Drawing;
+
     if (is_modal()) {
         Gfx::RectangleDrawOptions modal_backdrop;
         modal_backdrop.fill_color = theme().modal_backdrop;
@@ -176,10 +180,6 @@ void ToolWindow::draw(Gfx::Painter& painter) {
 
     Util::Cs::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
     Util::Cs::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
-
-    Gfx::RectangleDrawOptions background;
-    background.fill_color = theme().window_background;
-    painter.deprecated_draw_rectangle({ position, size }, background);
 
     auto titlebar_color
         = host_window().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
@@ -237,10 +237,43 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
     varr_border[3] = Gfx::Vertex { { position.to_deprecated_vector() + Util::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
+
+    // Flush because of text being draw with incorrect blending mode otherwise
+    painter.render();
+    painter.reset();
+
+    m_backing_buffer.resize(size.cast<unsigned>().to_deprecated_vector());
+    m_offscreen_painter.reset();
+    m_offscreen_painter.renderer().clear(Util::Colors::Transparent);
     {
-        Gfx::ClipViewScope scope(painter, Util::Recti { rect() }, Gfx::ClipViewScope::Mode::Override);
-        WidgetTreeRoot::draw(painter);
+        Gfx::ClipViewScope scope(m_offscreen_painter, Util::Recti { {}, size.cast<int>() }, Gfx::ClipViewScope::Mode::NewStack);
+
+        m_offscreen_painter.draw(
+            Rectangle(Util::Rectf({}, size), Fill::solid(theme().window_background.with_alpha(255 * theme().tool_window_opacity)))
+        );
+
+        WidgetTreeRoot::draw(m_offscreen_painter);
     }
+    m_offscreen_painter.render();
+
+    auto const& texture = m_backing_buffer.color_texture();
+    painter.draw(Rectangle(
+        Util::Rectf(position.cast<float>(), size.cast<float>()),
+        Fill::textured(texture, { 0, 0, static_cast<float>(texture.size().x()), -static_cast<float>(texture.size().y()) })
+            .set_color(Util::Colors::White.with_alpha(255 * theme().tool_window_opacity))
+    ));
+    auto blending = painter.blending();
+    // Disable alpha premultiplying because it was already done
+    painter.set_blending(Gfx::Painter::Blending {
+        .src_rgb = Gfx::Painter::BlendingFunc::One,
+        .dst_rgb = Gfx::Painter::BlendingFunc::OneMinusSrcAlpha,
+        .src_alpha = Gfx::Painter::BlendingFunc::One,
+        .dst_alpha = Gfx::Painter::BlendingFunc::OneMinusSrcAlpha,
+    });
+    // Flush because of blending
+    painter.render();
+    painter.reset();
+    painter.set_blending(blending);
 }
 
 Util::Rectf ToolWindow::resize_rect(ResizeDirection direction) const {
@@ -269,5 +302,4 @@ EML::EMLErrorOr<void> ToolWindow::load_from_eml_object(EML::Object const& object
 
     return {};
 }
-
 }

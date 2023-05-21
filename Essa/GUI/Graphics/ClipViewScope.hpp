@@ -21,8 +21,9 @@ class Painter;
 class ClipViewScope {
 public:
     enum class Mode {
-        Override, // current = new
-        Intersect // current = old ∩ new
+        Override,  // current = new
+        Intersect, // current = old ∩ new
+        NewStack,  // current = new and ignore parent CSV
     };
 
     // Rect is relative to the current projection viewport.

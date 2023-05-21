@@ -16,14 +16,17 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
 
     auto old_viewport = m_old_projection.viewport();
     old_viewport.top = static_cast<int>(framebuffer_size.y()) - old_viewport.top - old_viewport.height;
-    rect = rect.move_x(old_viewport.left).move_y(old_viewport.top);
-    if (m_parent) {
-        rect = rect.move_y(-m_parent->m_offset.y());
+    if (mode != Mode::NewStack) {
+        rect = rect.move_x(old_viewport.left).move_y(old_viewport.top);
+        if (m_parent) {
+            rect = rect.move_y(-m_parent->m_offset.y());
+        }
     }
 
     auto clip_rect = [&]() {
         switch (mode) {
         case Mode::Override:
+        case Mode::NewStack:
             return rect;
         case Mode::Intersect: {
             return Util::Recti { old_viewport }.intersection(rect);
