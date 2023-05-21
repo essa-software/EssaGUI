@@ -12,6 +12,11 @@ class ConfigFile {
 public:
     static Util::OsErrorOr<ConfigFile> open_ini(std::string const& path);
 
+    // The path is relative to system-specific path:
+    // - $HOME/.config/$path on linux
+    // - windows is not supported
+    static Util::OsErrorOr<ConfigFile> open_user(std::string const& path);
+
     std::optional<std::string> get(std::string key) const;
     std::optional<Util::Color> get_color(std::string key) const;
     std::optional<uint32_t> get_u32(std::string key) const;

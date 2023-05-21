@@ -18,7 +18,8 @@
 namespace GUI {
 
 ToolWindow::ToolWindow(HostWindow& window, std::string id)
-    : Overlay(window, std::move(id)) {
+    : Overlay(window, std::move(id))
+    , m_window_shadow(GUI::Application::the().resource_manager().require_texture("misc/window_shadow.png")) {
     m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
 
@@ -180,6 +181,70 @@ void ToolWindow::draw(Gfx::Painter& painter) {
 
     Util::Cs::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
     Util::Cs::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
+
+    {
+        // FIXME: Assuming that shadow is equal in x and y.
+        auto shadow_radius = (static_cast<float>(m_window_shadow.size().x()) - 1) / 2;
+        auto shadow_rect = full_rect()
+                               .inflated(shadow_radius - static_cast<float>(theme().tool_window_resize_border_width) / 2)
+                               .inflated_horizontal(1)
+                               .cast<float>();
+
+        auto texture_rect = Util::Rectf({}, Util::Cs::Size2f::from_deprecated_vector(m_window_shadow.size()));
+
+        Util::Color const shadow_color = Util::Colors::White.with_alpha(255 * theme().tool_window_shadow_opacity);
+
+        // Sides
+        painter.draw(Rectangle(
+            shadow_rect.take_left(shadow_radius).inflated_vertical(-shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_left(shadow_radius).inflated_vertical(-shadow_radius)) //
+                .set_color(shadow_color)
+        ));
+        painter.draw(Rectangle(
+            shadow_rect.take_right(shadow_radius).inflated_vertical(-shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_right(shadow_radius).inflated_vertical(-shadow_radius))
+                .set_color(shadow_color)
+        ));
+        painter.draw(Rectangle(
+            shadow_rect.take_top(shadow_radius).inflated_horizontal(-shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_top(shadow_radius).inflated_horizontal(-shadow_radius))
+                .set_color(shadow_color)
+        ));
+        painter.draw(Rectangle(
+            shadow_rect.take_bottom(shadow_radius).inflated_horizontal(-shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_bottom(shadow_radius).inflated_horizontal(-shadow_radius))
+                .set_color(shadow_color)
+        ));
+
+        // Corners
+        painter.draw(Rectangle(
+            shadow_rect.take_left(shadow_radius).take_top(shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_left(shadow_radius).take_top(shadow_radius)) //
+                .set_color(shadow_color)
+        ));
+        painter.draw(Rectangle(
+            shadow_rect.take_left(shadow_radius).take_bottom(shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_left(shadow_radius).take_bottom(shadow_radius)) //
+                .set_color(shadow_color)
+        ));
+        painter.draw(Rectangle(
+            shadow_rect.take_right(shadow_radius).take_top(shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_right(shadow_radius).take_top(shadow_radius)) //
+                .set_color(shadow_color)
+        ));
+        painter.draw(Rectangle(
+            shadow_rect.take_right(shadow_radius).take_bottom(shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.take_right(shadow_radius).take_bottom(shadow_radius)) //
+                .set_color(shadow_color)
+        ));
+
+        // Fill
+        painter.draw(Rectangle(
+            shadow_rect.inflated(-shadow_radius),
+            Fill::textured(m_window_shadow, texture_rect.inflated(-shadow_radius)) //
+                .set_color(shadow_color)
+        ));
+    }
 
     auto titlebar_color
         = host_window().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;

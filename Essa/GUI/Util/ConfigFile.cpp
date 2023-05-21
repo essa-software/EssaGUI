@@ -1,5 +1,6 @@
 #include "ConfigFile.hpp"
 
+#include <EssaUtil/System.hpp>
 #include <sstream>
 #include <utility>
 
@@ -140,6 +141,10 @@ Util::OsErrorOr<ConfigFile> ConfigFile::open_ini(std::string const& path) {
     return ConfigFile { std::move(file) };
 }
 
+Util::OsErrorOr<ConfigFile> ConfigFile::open_user(std::string const& path) {
+    return open_ini(TRY(Util::System::getenv_or_error("HOME")).encode() + "/.config/" + path);
+}
+
 std::optional<std::string> ConfigFile::get(std::string key) const {
     auto it = m_values.find(key);
     if (it == m_values.end())
@@ -161,6 +166,7 @@ std::optional<uint32_t> ConfigFile::get_u32(std::string key) const {
     if (!value)
         return {};
 
+    // TODO: Convert to ustring
     try {
         return std::stoul(*value);
     } catch (...) {

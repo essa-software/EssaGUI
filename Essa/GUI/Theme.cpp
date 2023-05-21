@@ -17,9 +17,7 @@
 
 namespace GUI {
 
-Theme::Theme() {
-    set_renderer<DefaultThemeRenderer>();
-}
+Theme::Theme() { set_renderer<DefaultThemeRenderer>(); }
 
 Theme::BgFgTextColors Theme::ButtonColors::value(Button const& w) const {
     if (!w.are_all_parents_enabled())
@@ -145,6 +143,7 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
         DEFINE_THEME_OPTION(tool_window_min_size);
         DEFINE_THEME_OPTION(tool_window_resize_border_width);
         DEFINE_THEME_OPTION(tool_window_opacity);
+        DEFINE_THEME_OPTION(tool_window_shadow_opacity);
 
         DEFINE_THEME_OPTION(hover_highlight_factor);
 
@@ -189,7 +188,8 @@ Util::OsErrorOr<void> Theme::load_ini(std::string const& path) {
                     }
                 },
             },
-            keys.second);
+            keys.second
+        );
     }
 
     return {};
