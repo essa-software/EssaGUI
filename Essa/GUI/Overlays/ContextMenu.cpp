@@ -12,17 +12,11 @@ namespace GUI {
 constexpr float MenuWidth = 200;
 constexpr float MenuItemHeight = 30;
 
-Util::Vector2f MenuWidget::wanted_size() const {
-    return { MenuWidth, MenuItemHeight * m_actions.size() };
-}
+Util::Cs::Size2i MenuWidget::wanted_size() const { return { MenuWidth, MenuItemHeight * m_actions.size() }; }
 
-void MenuWidget::add_action(Util::UString label) {
-    m_actions.push_back(std::move(label));
-}
+void MenuWidget::add_action(Util::UString label) { m_actions.push_back(std::move(label)); }
 
-Util::Rectf MenuWidget::item_rect(size_t index) const {
-    return { 0, index * MenuItemHeight, MenuWidth, MenuItemHeight };
-}
+Util::Rectf MenuWidget::item_rect(size_t index) const { return { 0, index * MenuItemHeight, MenuWidth, MenuItemHeight }; }
 
 void MenuWidget::draw(Gfx::Painter& painter) const {
     Gfx::Text text { "", Application::the().font() };
@@ -36,8 +30,10 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.left += 10;
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
-        if (background_rect.contains(Util::Cs::Point2i::from_deprecated_vector(Util::Vector2f(llgl::mouse_position()) - widget_tree_root().position())
-                - raw_position().to_vector())) {
+        if (background_rect.contains(
+                Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position()) - widget_tree_root().position().to_vector()
+                - raw_position().to_vector()
+            )) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             painter.deprecated_draw_rectangle(background_rect, hovered_background);
@@ -69,13 +65,11 @@ private:
     virtual void draw(Gfx::Painter& painter) const override {
         Gfx::RectangleDrawOptions rect;
         rect.fill_color = theme().menu.foreground;
-        painter.deprecated_draw_rectangle({ 10, static_cast<float>(raw_size().y()) / 2,
-                                              static_cast<float>(raw_size().x()) - 20, 1 },
-            rect);
+        painter.deprecated_draw_rectangle({ 10, static_cast<float>(raw_size().y()) / 2, static_cast<float>(raw_size().x()) - 20, 1 }, rect);
     }
 };
 
-ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_menu, Util::Vector2f position)
+ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_menu, Util::Cs::Point2i position)
     : Overlay(window, "ContextMenu")
     , m_context_menu(context_menu)
     , m_position(position) {
@@ -103,10 +97,10 @@ ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_m
     };
 }
 
-Util::Vector2f ContextMenuOverlay::size() const {
+Util::Cs::Size2i ContextMenuOverlay::size() const {
     auto options_size = m_menu_widget->wanted_size();
     if (!m_context_menu.title().is_empty()) {
-        options_size.y() += 40;
+        options_size.set_y(options_size.y() + 40);
     }
     return options_size;
 }
@@ -116,7 +110,7 @@ void ContextMenuOverlay::handle_event(Event const& event) {
 
     // FIXME: Add something like close_when_clicked_outside()
     if (auto mousepress = event.get<Event::MouseButtonPress>();
-        full_rect().contains(mousepress->local_position() + Util::Cs::Vector2i::from_deprecated_vector(position()))) {
+        full_rect().contains(mousepress->local_position() + position().to_vector())) {
         close();
     }
     if (auto keypress = event.get<Event::KeyPress>(); keypress->code() == llgl::KeyCode::Escape) {
@@ -129,7 +123,7 @@ void ContextMenuOverlay::draw(Gfx::Painter& painter) {
     background.fill_color = theme().menu.background;
     background.outline_color = theme().menu.foreground;
     background.outline_thickness = -1;
-    painter.deprecated_draw_rectangle(rect(), background);
+    painter.deprecated_draw_rectangle(rect().cast<float>(), background);
 
     WidgetTreeRoot::draw(painter);
 }

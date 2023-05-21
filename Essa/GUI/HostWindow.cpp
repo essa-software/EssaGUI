@@ -1,10 +1,10 @@
 #include "HostWindow.hpp"
-#include "Essa/LLGL/OpenGL/Error.hpp"
-#include "Essa/LLGL/Window/Event.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/LLGL/OpenGL/Error.hpp>
+#include <Essa/LLGL/Window/Event.hpp>
 
 #include <cassert>
 
@@ -29,7 +29,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
 
     if (event.target_type() == llgl::EventTargetType::Global) {
         for (auto const& overlay : m_overlays) {
-            overlay->handle_event(event.relativized(Util::Cs::Vector2i::from_deprecated_vector(overlay->position())));
+            overlay->handle_event(event.relativized(overlay->position().to_vector()));
         }
         WidgetTreeRoot::handle_event(event);
         return;
@@ -52,7 +52,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
 
     // Pass events to focused tool window
     if (m_focused_overlay) {
-        m_focused_overlay->handle_event(event.relativized(Util::Cs::Vector2i::from_deprecated_vector(m_focused_overlay->position())));
+        m_focused_overlay->handle_event(event.relativized(m_focused_overlay->position().to_vector()));
         bool scroll_outside_window = event.is<llgl::Event::MouseScroll>()
             && !m_focused_overlay->full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
         if (!(event.is<llgl::Event::MouseMove>() || event.is<llgl::Event::MouseButtonRelease>() || scroll_outside_window))
@@ -65,12 +65,12 @@ void HostWindow::handle_event(GUI::Event const& event) {
     for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
         auto& overlay = **it;
         if (event.is<llgl::Event::MouseMove>()) {
-            overlay.handle_event(event.relativized(Util::Cs::Vector2i::from_deprecated_vector(overlay.position())));
+            overlay.handle_event(event.relativized(overlay.position().to_vector()));
             break;
         }
 
-        bool scroll_on_window = event.is<llgl::Event::MouseScroll>()
-            && overlay.full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
+        bool scroll_on_window
+            = event.is<llgl::Event::MouseScroll>() && overlay.full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
 
         if (scroll_on_window)
             should_pass_event_to_main_window = false;
@@ -97,8 +97,8 @@ void HostWindow::do_draw() {
     glClear(GL_DEPTH_BUFFER_BIT);
     m_painter.reset();
 
-    Util::Rectf viewport { {}, Util::Cs::Size2f::from_deprecated_vector(size()) };
-    m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, Util::Cs::Size2d::from_deprecated_vector(size()) } }, Util::Recti { viewport }));
+    Util::Recti viewport { {}, size() };
+    m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
 
     WidgetTreeRoot::draw(m_painter);
     for (auto& overlay : m_overlays)
@@ -117,7 +117,7 @@ void HostWindow::do_draw() {
 void HostWindow::draw_notification(Notification const& notification, float y) {
     Gfx::Text text { notification.message, GUI::Application::the().font() };
     text.set_font_size(theme().label_font_size);
-    text.align(GUI::Align::Top, rect().move_y(y));
+    text.align(GUI::Align::Top, rect().move_y(y).cast<float>());
     switch (notification.level) {
     case NotificationLevel::Info:
         text.set_fill_color(Util::Colors::Lime);
@@ -136,7 +136,8 @@ void HostWindow::spawn_notification(Util::UString message, NotificationLevel lev
 Overlay& HostWindow::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
     auto overlay_ptr = overlay.get();
     m_next_overlay_position += Util::Vector2f(theme().tool_window_title_bar_size * 2, theme().tool_window_title_bar_size * 2);
-    if (m_next_overlay_position.x() > size().x() - theme().tool_window_title_bar_size || m_next_overlay_position.y() > size().y() - theme().tool_window_title_bar_size)
+    if (m_next_overlay_position.x() > size().x() - theme().tool_window_title_bar_size
+        || m_next_overlay_position.y() > size().y() - theme().tool_window_title_bar_size)
         m_next_overlay_position = { 10, 10 };
     m_overlays.push_back(std::move(overlay));
     focus_overlay(*overlay_ptr);
@@ -156,7 +157,7 @@ HostWindow::OpenOrFocusResult HostWindow::open_or_focus_tool_window(Util::UStrin
     return result;
 }
 
-void HostWindow::open_context_menu(ContextMenu context_menu, Util::Vector2f position) {
+void HostWindow::open_context_menu(ContextMenu context_menu, Util::Cs::Point2i position) {
     auto& menu = open_overlay<ContextMenuOverlay>(context_menu, position);
     menu.show_modal();
 }
@@ -179,9 +180,7 @@ void HostWindow::update() {
     for (auto& notification : m_notifications) {
         notification.remaining_ticks--;
     }
-    std::erase_if(m_notifications, [](auto const& notification) {
-        return notification.remaining_ticks <= 0;
-    });
+    std::erase_if(m_notifications, [](auto const& notification) { return notification.remaining_ticks <= 0; });
 }
 
 void HostWindow::remove_closed_overlays() {

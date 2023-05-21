@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaUtil/Rect.hpp"
 #include "EventLoop.hpp"
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
@@ -10,7 +11,8 @@
 
 namespace GUI {
 
-class WidgetTreeRoot : public EventLoop
+class WidgetTreeRoot
+    : public EventLoop
     , public EML::EMLObject {
 public:
     WidgetTreeRoot() = default;
@@ -35,8 +37,7 @@ public:
         return *widget_ptr;
     }
 
-    template<class T, class... Args>
-    auto& set_created_main_widget(std::shared_ptr<T> w) {
+    template<class T, class... Args> auto& set_created_main_widget(std::shared_ptr<T> w) {
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
         m_main_widget->set_widget_tree_root(*this);
@@ -57,16 +58,13 @@ public:
             m_main_widget->do_update();
     }
 
-    virtual Util::Vector2f position() const = 0;
-    virtual Util::Vector2f size() const = 0;
-    Util::Rectf rect() const { return {
-        Util::Cs::Point2f::from_deprecated_vector(position()),
-        Util::Cs::Size2f::from_deprecated_vector(size()),
-    }; }
+    virtual Util::Cs::Point2i position() const = 0;
+    virtual Util::Cs::Size2i size() const = 0;
+    Util::Recti rect() const { return { position(), size() }; }
 
     // The rect that the WidgetTreeRoot should consume events from. For
     // ToolWindows, it is content + titlebar + resize rect.
-    virtual Util::Rectf full_rect() const { return rect(); }
+    virtual Util::Recti full_rect() const { return rect(); }
 
     void show_modal() {
         m_modal = true;

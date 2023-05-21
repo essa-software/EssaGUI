@@ -31,7 +31,7 @@ void ToolWindow::handle_event(Event const& event) {
     bool should_pass_event_to_widgets = true;
     if (event.is_mouse_related()) {
         auto mouse_position = event.local_mouse_position();
-        mouse_position += Util::Cs::Vector2i::from_deprecated_vector(position());
+        mouse_position += position().to_vector();
 
         float titlebar_button_position_x = position().x() + size().x() - theme().tool_window_title_bar_size;
         for (auto& button : m_titlebar_buttons) {
@@ -88,21 +88,21 @@ void ToolWindow::handle_event(Event const& event) {
                 return r.has_value();
             });
 
-            auto delta = mouse_position - Util::Cs::Point2i::from_deprecated_vector(m_drag_position);
+            auto delta = mouse_position - m_drag_position.to_vector();
 
             auto constrain_position = [this, &window]() {
-                if (m_position.y() < theme().tool_window_title_bar_size)
-                    m_position.y() = theme().tool_window_title_bar_size;
-                if (m_position.y() > window.size().y())
-                    m_position.y() = window.size().y();
-                if (m_position.x() < -size().x() + theme().tool_window_title_bar_size)
-                    m_position.x() = -size().x() + theme().tool_window_title_bar_size;
-                if (m_position.x() > window.size().x() - theme().tool_window_title_bar_size)
-                    m_position.x() = window.size().x() - theme().tool_window_title_bar_size;
+                if (m_position.y() < static_cast<int>(theme().tool_window_title_bar_size))
+                    m_position.set_y(theme().tool_window_title_bar_size);
+                if (m_position.y() > static_cast<int>(window.size().y()))
+                    m_position.set_y(window.size().y());
+                if (m_position.x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
+                    m_position.set_x(-size().x() + theme().tool_window_title_bar_size);
+                if (m_position.x() > static_cast<int>(window.size().x() - theme().tool_window_title_bar_size))
+                    m_position.set_x(window.size().x() - theme().tool_window_title_bar_size);
             };
 
             if (m_moving) {
-                m_position = m_initial_dragging_position + Util::Vector2f { delta.x(), delta.y() };
+                m_position = m_initial_dragging_position + delta.to_vector();
                 constrain_position();
                 return;
             }
@@ -113,36 +113,36 @@ void ToolWindow::handle_event(Event const& event) {
                     }
                     switch (*direction) {
                     case ResizeDirection::Left:
-                        if (m_initial_dragging_size.x() - delta.x() < theme().tool_window_min_size) {
+                        if (m_initial_dragging_size.x() - delta.x() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_x(m_initial_dragging_size.x() - theme().tool_window_min_size);
                         }
                         if (m_initial_dragging_position.x() + delta.x() < 0) {
                             delta.set_x(-m_initial_dragging_position.x());
                         }
-                        m_size.x() = m_initial_dragging_size.x() - delta.x();
-                        m_position.x() = m_initial_dragging_position.x() + delta.x();
+                        m_size.set_x(m_initial_dragging_size.x() - delta.x());
+                        m_position.set_x(m_initial_dragging_position.x() + delta.x());
                         break;
                     case ResizeDirection::Top:
-                        if (m_initial_dragging_size.y() - delta.y() < theme().tool_window_min_size) {
+                        if (m_initial_dragging_size.y() - delta.y() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_y(m_initial_dragging_size.y() - theme().tool_window_min_size);
                         }
-                        if (m_initial_dragging_position.y() + delta.y() < theme().tool_window_title_bar_size) {
+                        if (m_initial_dragging_position.y() + delta.y() < static_cast<int>(theme().tool_window_title_bar_size)) {
                             delta.set_y(-m_initial_dragging_position.y() + theme().tool_window_title_bar_size);
                         }
-                        m_size.y() = m_initial_dragging_size.y() - delta.y();
-                        m_position.y() = m_initial_dragging_position.y() + delta.y();
+                        m_size.set_y(m_initial_dragging_size.y() - delta.y());
+                        m_position.set_y(m_initial_dragging_position.y() + delta.y());
                         break;
                     case ResizeDirection::Right:
-                        if (m_initial_dragging_size.x() + delta.x() < theme().tool_window_min_size) {
+                        if (m_initial_dragging_size.x() + delta.x() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_x(theme().tool_window_min_size - m_initial_dragging_size.x());
                         }
-                        m_size.x() = m_initial_dragging_size.x() + delta.x();
+                        m_size.set_x(m_initial_dragging_size.x() + delta.x());
                         break;
                     case ResizeDirection::Bottom:
-                        if (m_initial_dragging_size.y() + delta.y() < theme().tool_window_min_size) {
+                        if (m_initial_dragging_size.y() + delta.y() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_y(theme().tool_window_min_size - m_initial_dragging_size.y());
                         }
-                        m_size.y() = m_initial_dragging_size.y() + delta.y();
+                        m_size.set_y(m_initial_dragging_size.y() + delta.y());
                         break;
                     }
                 }
@@ -166,7 +166,7 @@ void ToolWindow::handle_event(Event const& event) {
 
 void ToolWindow::center_on_screen() {
     auto& window = host_window();
-    m_position = Util::Vector2f(window.size().x() / 2, window.size().y() / 2) - m_size / 2.f;
+    m_position = (window.size() / 2 - m_size / 2.f).to_vector().to_point();
 }
 
 void ToolWindow::draw(Gfx::Painter& painter) {
@@ -175,7 +175,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     if (is_modal()) {
         Gfx::RectangleDrawOptions modal_backdrop;
         modal_backdrop.fill_color = theme().modal_backdrop;
-        painter.deprecated_draw_rectangle(host_window().rect(), modal_backdrop);
+        painter.deprecated_draw_rectangle(host_window().rect().cast<float>(), modal_backdrop);
     }
 
     Util::Cs::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
@@ -276,7 +276,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     painter.set_blending(blending);
 }
 
-Util::Rectf ToolWindow::resize_rect(ResizeDirection direction) const {
+Util::Recti ToolWindow::resize_rect(ResizeDirection direction) const {
     switch (direction) {
     case ResizeDirection::Top:
         return full_rect().take_top(theme().tool_window_resize_border_width);
@@ -294,8 +294,8 @@ EML::EMLErrorOr<void> ToolWindow::load_from_eml_object(EML::Object const& object
     TRY(Overlay::load_from_eml_object(object, loader));
 
     m_title = TRY(object.get_property("title", EML::Value(Util::UString {})).to_string());
-    m_size.x() = TRY(object.get_property("width", EML::Value(0.0)).to_double());
-    m_size.y() = TRY(object.get_property("height", EML::Value(0.0)).to_double());
+    m_size.set_x(TRY(object.get_property("width", EML::Value(0.0)).to_double()));
+    m_size.set_y(TRY(object.get_property("height", EML::Value(0.0)).to_double()));
     if (TRY(object.get_property("center_on_screen", EML::Value(false)).to_bool())) {
         center_on_screen();
     }

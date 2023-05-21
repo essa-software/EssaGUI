@@ -18,7 +18,7 @@ void WidgetTreeRoot::draw(Gfx::Painter& painter) {
     if (m_needs_relayout) {
         // std::cout << m_id << "\n"
         m_main_widget->set_size({ { static_cast<int>(size().x()), Util::Length::Px }, { static_cast<int>(size().y()), Util::Length::Px } });
-        m_main_widget->set_raw_size(Util::Cs::Size2i::from_deprecated_vector(size()));
+        m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
         if (DBG_ENABLED(GUI_DumpLayout)) {
             m_main_widget->dump(0);
@@ -57,7 +57,7 @@ void WidgetTreeRoot::handle_events() {
             if (!event) {
                 break;
             }
-            handle_event(event->relativized(Util::Cs::Vector2i::from_deprecated_vector(position())));
+            handle_event(event->relativized(position().to_vector()));
 
             // We need to inform host window about global events, as now we act as
             // main event loop!
@@ -90,13 +90,9 @@ void WidgetTreeRoot::tick() {
         host_window.remove_closed_overlays();
 }
 
-Theme const& WidgetTreeRoot::theme() const {
-    return Application::the().theme();
-}
+Theme const& WidgetTreeRoot::theme() const { return Application::the().theme(); }
 
-Gfx::ResourceManager const& WidgetTreeRoot::resource_manager() const {
-    return Application::the().resource_manager();
-}
+Gfx::ResourceManager const& WidgetTreeRoot::resource_manager() const { return Application::the().resource_manager(); }
 
 EML::EMLErrorOr<void> WidgetTreeRoot::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     m_main_widget = TRY(object.require_and_construct_object<Widget>("main_widget", loader, *this));

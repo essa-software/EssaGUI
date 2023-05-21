@@ -11,7 +11,8 @@ namespace GUI {
 
 // The WTR that can "host" Overlays (ToolWindows etc.). It corresponds
 // to the operating system's window.
-class HostWindow : public WidgetTreeRoot
+class HostWindow
+    : public WidgetTreeRoot
     , public llgl::Window {
 public:
     explicit HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
@@ -23,10 +24,7 @@ public:
 
     virtual void handle_event(GUI::Event const&) override;
 
-    enum class NotificationLevel {
-        Info,
-        Error
-    };
+    enum class NotificationLevel { Info, Error };
     void spawn_notification(Util::UString message, NotificationLevel);
 
     template<class T = Overlay, class... Args>
@@ -45,12 +43,11 @@ public:
     // NOTE: The opened context menu is modal, meaning that this
     //       function won't return until user chooses an action
     //       or dismisses the menu.
-    void open_context_menu(ContextMenu, Util::Vector2f position);
+    void open_context_menu(ContextMenu, Util::Cs::Point2i position);
 
     Overlay* focused_overlay() const { return m_focused_overlay; }
 
-    template<class Callback>
-    void for_each_overlay(Callback&& callback) {
+    template<class Callback> void for_each_overlay(Callback&& callback) {
         for (auto& wnd : m_overlays)
             callback(*wnd);
     }
@@ -58,8 +55,8 @@ public:
     TooltipOverlay& add_tooltip(Tooltip t);
     void remove_closed_overlays();
 
-    virtual Util::Vector2f position() const override { return {}; }
-    virtual Util::Vector2f size() const override { return Util::Vector2f { llgl::Window::size() }; }
+    virtual Util::Cs::Point2i position() const override { return {}; }
+    virtual Util::Cs::Size2i size() const override { return Util::Cs::Size2i::from_deprecated_vector(llgl::Window::size()); }
 
     void focus_overlay(Overlay&);
 

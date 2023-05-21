@@ -11,7 +11,7 @@ public:
     std::function<void(size_t)> on_action;
 
     void add_action(Util::UString);
-    Util::Vector2f wanted_size() const;
+    Util::Cs::Size2i wanted_size() const;
 
 private:
     std::vector<Util::UString> m_actions;
@@ -37,10 +37,10 @@ private:
 
 class ContextMenuOverlay : public Overlay {
 public:
-    ContextMenuOverlay(HostWindow&, ContextMenu, Util::Vector2f position);
+    ContextMenuOverlay(HostWindow&, ContextMenu, Util::Cs::Point2i position);
 
-    virtual Util::Vector2f position() const override { return m_position; }
-    virtual Util::Vector2f size() const override;
+    virtual Util::Cs::Point2i position() const override { return m_position; }
+    virtual Util::Cs::Size2i size() const override;
 
 private:
     virtual void handle_event(GUI::Event const&) override;
@@ -48,7 +48,7 @@ private:
 
     MenuWidget* m_menu_widget = nullptr;
     ContextMenu m_context_menu;
-    Util::Vector2f m_position;
+    Util::Cs::Point2i m_position;
 };
 
 }
