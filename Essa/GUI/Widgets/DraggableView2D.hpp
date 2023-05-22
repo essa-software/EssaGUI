@@ -16,8 +16,8 @@ public:
     auto offset() const { return m_offset; }
     void set_offset(Util::Cs::Vector2f off) { m_offset = off; }
     Util::Rectf visible_area() const;
-    Util::Vector2f screen_to_world(Util::Vector2i) const;
-    Util::Vector2i world_to_screen(Util::Vector2f) const;
+    Util::Cs::Point2f screen_to_world(Util::Cs::Point2i const&) const;
+    Util::Cs::Point2i world_to_screen(Util::Cs::Point2f const&) const;
     bool dragging() const { return m_dragging; }
     bool actually_dragging() const { return m_actually_dragging; }
     void set_pan_button(llgl::MouseButton button) { m_pan_button = button; }
