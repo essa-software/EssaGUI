@@ -17,7 +17,7 @@
 
 class BlurShader : public llgl::Shader {
 public:
-    using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f>;
+    using Vertex = llgl::Vertex<Util::Cs::Point3f, Util::Colorf, Util::Cs::Point2f>;
 
     struct Uniforms {
     private:
@@ -111,6 +111,12 @@ int main() {
     llgl::Framebuffer accum { { 512, 512 } };
     accum.set_label("accum");
 
+    llgl::VertexArray<BlurShader::Vertex> fullscreen_vao_blur {
+        { { -1, -1, 0 }, Util::Colors::White, { 0, 1 } },
+        { { 1, -1, 0 }, Util::Colors::White, { 1, 1 } },
+        { { -1, 1, 0 }, Util::Colors::White, { 0, 0 } },
+        { { 1, 1, 0 }, Util::Colors::White, { 1, 0 } },
+    };
     llgl::VertexArray<Essa::Shaders::Basic::Vertex> fullscreen_vao {
         { { -1, -1, 0 }, Util::Colors::White, { 0, 1 } },
         { { 1, -1, 0 }, Util::Colors::White, { 1, 1 } },
@@ -143,7 +149,7 @@ int main() {
             auto diff_norm = diff.normalized();
             auto cross = diff_norm.perpendicular() * PointSize;
 
-            llgl::VertexArray<BlurShader::Vertex> input_vao {
+            llgl::VertexArray<Essa::Shaders::Basic::Vertex> input_vao {
                 { Util::Vector3f((old_oscilloscope_position - cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
                 { Util::Vector3f((old_oscilloscope_position + cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
                 { Util::Vector3f((old_oscilloscope_position + diff - cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
@@ -166,7 +172,7 @@ int main() {
             // Do not clear because we want previous frames
             blur_shader_uniforms.set_accum(&accum.color_texture());
             blur_shader_uniforms.set_pass1(&pass1.color_texture());
-            accum.draw_vertices(fullscreen_vao, llgl::DrawState { blur_shader, blur_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
+            accum.draw_vertices(fullscreen_vao_blur, llgl::DrawState { blur_shader, blur_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
         }
 
         // Draw the result to backbuffer

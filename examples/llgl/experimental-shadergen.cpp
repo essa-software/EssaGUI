@@ -44,7 +44,7 @@ void main()
 )~~~";
 
 struct MyShader : public llgl::Shader {
-    using Vertex = llgl::Vertex<Util::Vector2f, Util::Colorf>;
+    using Vertex = llgl::Vertex<Util::Cs::Point2f, Util::Colorf>;
 
     struct Uniforms {
         Util::Color other_color;

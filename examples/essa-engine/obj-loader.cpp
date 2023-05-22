@@ -43,7 +43,7 @@ int main() {
     bool w_pressed = false;
     bool s_pressed = false;
 
-    Util::Vector3f camera_position;
+    Util::Cs::Point3f camera_position;
     double yaw = 0;
     double pitch = 0;
 
@@ -80,7 +80,8 @@ int main() {
                     yaw += Util::deg_to_rad<float>(event.delta().x());
                     pitch += Util::deg_to_rad<float>(event.delta().y());
                 },
-                [&](auto const&) -> void {});
+                [&](auto const&) -> void {}
+            );
         }
 
         // TODO: Port to llgl.
@@ -91,15 +92,16 @@ int main() {
         model_transform = model_transform.rotate_x(0.05);
 
         if (a_pressed)
-            camera_position.x() += 0.1;
+            camera_position.set_x(camera_position.x() + 0.1);
         if (d_pressed)
-            camera_position.x() -= 0.1;
+            camera_position.set_x(camera_position.x() - 0.1);
         if (w_pressed)
-            camera_position.z() += 0.1;
+            camera_position.set_z(camera_position.z() + 0.1);
         if (s_pressed)
-            camera_position.z() -= 0.1;
+            camera_position.set_z(camera_position.z() - 0.1);
+
         llgl::Transform view_transform;
-        view_transform = view_transform.rotate_y(yaw).rotate_x(pitch).translate(Util::Cs::Vector3f::from_deprecated_vector(camera_position));
+        view_transform = view_transform.rotate_y(yaw).rotate_x(pitch).translate(camera_position.to_vector());
 
         light_angle += 0.01;
 
@@ -108,18 +110,20 @@ int main() {
 
         {
             Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
-            uniforms.set_transform(model_transform.matrix(),
-                view_transform.matrix(),
-                llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix());
+            uniforms.set_transform(
+                model_transform.matrix(), view_transform.matrix(),
+                llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix()
+            );
             uniforms.set_light_color(Util::Colors::Red * 0.8);
             object->render(window.renderer(), lighting_shader, uniforms);
         }
 
         {
             Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
-            uniforms.set_transform(model_transform.translate({ 3, 0, 0 }).matrix(),
-                view_transform.matrix(),
-                llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix());
+            uniforms.set_transform(
+                model_transform.translate({ 3, 0, 0 }).matrix(), view_transform.matrix(),
+                llgl::Projection::perspective({ 1.22, window.aspect(), 0.1, 20 }, {}).matrix()
+            );
             uniforms.set_light_color(Util::Colors::Blue * 0.8);
             object->render(window.renderer(), lighting_shader, uniforms);
         }
