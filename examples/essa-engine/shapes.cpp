@@ -1,3 +1,4 @@
+#include "Essa/GUI/Application.hpp"
 #include <Essa/Engine/3D/Cube.hpp>
 #include <Essa/Engine/3D/Shaders/Lighting.hpp>
 #include <Essa/Engine/3D/Sphere.hpp>
@@ -8,6 +9,9 @@
 #include <EssaUtil/Angle.hpp>
 
 int main() {
+    // FIXME: This is needed for ResourceManager used by OBJ loader
+    GUI::Application app;
+
     llgl::Window window { { 500, 500 }, "Primitive Shapes" };
 
     glEnable(GL_DEPTH_TEST);

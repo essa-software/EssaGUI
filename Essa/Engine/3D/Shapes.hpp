@@ -11,8 +11,8 @@
 namespace Essa::Shapes {
 
 struct CubeProperties {
-    Util::Vector3f position {};
-    Util::Vector3f dimensions { 1, 1, 1 };
+    Util::Cs::Point3f position {};
+    Util::Cs::Size3f dimensions { 1, 1, 1 };
     llgl::Transform transform {}; // Is applied after position+dimensions
     Util::Color color = Util::Colors::White;
 };
