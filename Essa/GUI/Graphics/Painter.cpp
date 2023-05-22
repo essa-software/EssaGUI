@@ -1,4 +1,5 @@
 #include "Painter.hpp"
+#include "EssaUtil/Angle.hpp"
 
 #include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
@@ -11,7 +12,7 @@
 
 namespace Gfx {
 
-void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f> const& vertices) {
+void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Cs::Point2f> const& vertices) {
     auto fill = shape.fill();
     auto local_bounds = shape.local_bounds();
 
@@ -22,16 +23,16 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f>
         texture_rect.height = texture_size.y();
     }
 
-    auto normalized_texture_coord_for_point = [&](Util::Vector2f point) -> Util::Vector2f {
+    auto normalized_texture_coord_for_point = [&](Util::Cs::Point2f point) -> Util::Cs::Point2f {
         if (texture_rect.size().is_zero()) {
             return {};
         }
 
-        Util::Vector2f point_normalized_coords {
+        Util::Cs::Point2f point_normalized_coords {
             (point.x() - local_bounds.left) / local_bounds.width,
             (point.y() - local_bounds.top) / local_bounds.height,
         };
-        Util::Vector2f texture_coords {
+        Util::Cs::Point2f texture_coords {
             texture_rect.left + point_normalized_coords.x() * texture_rect.width,
             texture_rect.top + point_normalized_coords.y() * texture_rect.height,
         };
@@ -43,29 +44,29 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f>
     fill_vertices.reserve(vertices.size());
     for (auto const& point : vertices) {
         fill_vertices.push_back(Gfx::Vertex {
-            point,
+            point.to_deprecated_vector(),
             fill.color(),
-            normalized_texture_coord_for_point(point),
+            normalized_texture_coord_for_point(point).to_deprecated_vector(),
         });
     }
 
     draw_vertices(llgl::PrimitiveType::TriangleFan, fill_vertices, fill.texture());
 }
 
-void Painter::draw_outline(Drawing::Shape const& shape, std::vector<Util::Vector2f> const& vertices) {
+void Painter::draw_outline(Drawing::Shape const& shape, std::vector<Util::Cs::Point2f> const& vertices) {
     draw_outline(vertices, shape.outline().color(), shape.outline().thickness());
 }
 
 struct RoundingResult {
-    Util::Vector2f center;
+    Util::Cs::Point2f center;
     float angle_start;
     float angle_end;
     float scaled_radius;
 };
 struct RoundingSettings {
-    Util::Vector2f left;
-    Util::Vector2f right;
-    Util::Vector2f tip;
+    Util::Cs::Point2f left;
+    Util::Cs::Point2f right;
+    Util::Cs::Point2f tip;
     float radius;
 };
 
@@ -121,20 +122,20 @@ RoundingResult round(RoundingSettings settings) {
     // 5)
     auto alpha = ((C + ca_p) - center).angle();
     auto beta = ((C + cb_p) - center).angle();
-    if (beta - alpha > M_PI) {
-        alpha += M_PI * 2;
+    if (beta - alpha > 180_deg) {
+        alpha += 360_deg;
     }
-    if (alpha - beta > M_PI) {
-        beta += M_PI * 2;
+    if (alpha - beta > 180_deg) {
+        beta += 360_deg;
     }
-    assert(std::abs(alpha - beta) < M_PI + 10e-6);
+    assert(std::abs((alpha - beta).rad()) < M_PI + 10e-6);
 
     // fmt::print("{} {}\n", fmt::streamed(settings.tip), fmt::streamed(center));
-    return { center, static_cast<float>(alpha), static_cast<float>(beta), r };
+    return { center, static_cast<float>(alpha.rad()), static_cast<float>(beta.rad()), r };
 }
 
-static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
-    std::vector<Util::Vector2f> vertices;
+static std::vector<Util::Cs::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
+    std::vector<Util::Cs::Point2f> vertices;
 
     auto round_radius_for_vertex = [&](size_t idx) {
         if (shape.point_count() == 4) {
@@ -176,7 +177,7 @@ static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing:
             float angle = rounding.angle_start
                 + (rounding.angle_end - rounding.angle_start) * static_cast<float>(s) / static_cast<float>(RoundingResolution);
             // fmt::print("{}\n", fmt::streamed(rounding.center));
-            auto point = rounding.center + Util::Vector2f::create_polar(angle, rounding.scaled_radius);
+            auto point = rounding.center + Util::Cs::Vector2f::create_polar(Util::Angle::radians(angle), rounding.scaled_radius);
 
             // Don't allow duplicates
             if (vertices.empty() || !point.is_approximately_equal(vertices.back())) {
@@ -199,15 +200,14 @@ static std::vector<Util::Vector2f> calculate_vertices_for_rounded_shape(Drawing:
 }
 
 void Painter::draw(Drawing::Shape const& shape) {
-    std::vector<Util::Vector2f> vertices_for_rounded_shape = [&]() {
+    std::vector<Util::Cs::Point2f> vertices_for_rounded_shape = [&]() {
         if (!shape.outline().is_rounded()) {
             return shape.points().to_vector();
         }
         return calculate_vertices_for_rounded_shape(shape);
     }();
 
-    m_builder.set_submodel(shape.transform().translate(Util::Cs::Vector3f { Util::Cs::Vector2f::from_deprecated_vector(-shape.origin()),
-                                                                            0.f }));
+    m_builder.set_submodel(shape.transform().translate(Util::Cs::Vector3f { -shape.origin().to_vector(), 0.f }));
     if (shape.fill().is_visible()) {
         draw_fill(shape, vertices_for_rounded_shape);
     }
@@ -233,21 +233,21 @@ void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOp
 
 void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& options) {
     draw(Gfx::Drawing::Ellipse {
-        center, size / 2.f,
+        Util::Cs::Point2f::from_deprecated_vector(center), Util::Cs::Vector2f::from_deprecated_vector(size) / 2.f,
         Drawing::Fill {}.set_color(options.fill_color).set_texture(options.texture).set_texture_rect(Util::Rectf { options.texture_rect }),
         Drawing::Outline::normal(options.outline_color, options.outline_thickness) }
              .set_point_count(30));
 }
 
-void Painter::draw_line(std::span<Util::Vector2f const> positions, LineDrawOptions const& options) {
+void Painter::draw_line(std::span<Util::Cs::Point2f const> positions, LineDrawOptions const& options) {
     std::vector<Gfx::Vertex> vertices;
     for (auto const& position : positions) {
-        vertices.push_back({ position, options.color, {} });
+        vertices.push_back({ position.to_deprecated_vector(), options.color, {} });
     }
     draw_vertices(llgl::PrimitiveType::LineStrip, vertices);
 }
 
-void Painter::draw_outline(std::span<Util::Vector2f const> positions, Util::Color color, float thickness) {
+void Painter::draw_outline(std::span<Util::Cs::Point2f const> positions, Util::Color color, float thickness) {
     if (thickness == 0)
         return;
 
@@ -264,8 +264,8 @@ void Painter::draw_outline(std::span<Util::Vector2f const> positions, Util::Colo
             outer_corner = outer_corner + (C - outer_corner) * 2.f;
         }
 
-        vertices.push_back(Gfx::Vertex { outer_corner, color, {} });
-        vertices.push_back(Gfx::Vertex { C, color, {} });
+        vertices.push_back(Gfx::Vertex { outer_corner.to_deprecated_vector(), color, {} });
+        vertices.push_back(Gfx::Vertex { C.to_deprecated_vector(), color, {} });
     }
     draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);
 }

@@ -147,34 +147,28 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos,
                     first_column_position + 13, current_y_pos + row_height / 2.f
                 } + scroll_offset();
 
-                std::vector<Util::Vector2f> vertices;
+                std::vector<Util::Cs::Point2f> vertices;
                 if (is_expanded(child_path)) {
                     vertices.push_back(
                         (base_position + Util::Cs::Vector2i { -6, -3 })
-                            .cast<float>()
-                            .to_deprecated_vector());
+                            .cast<float>());
                     vertices.push_back(
                         (base_position + Util::Cs::Vector2i { 0, 3 })
-                            .cast<float>()
-                            .to_deprecated_vector());
+                            .cast<float>());
                     vertices.push_back(
                         (base_position + Util::Cs::Vector2i { 6, -3 })
-                            .cast<float>()
-                            .to_deprecated_vector());
+                            .cast<float>());
                 }
                 else {
                     vertices.push_back(
                         (base_position + Util::Cs::Vector2i { -3, -6 })
-                            .cast<float>()
-                            .to_deprecated_vector());
+                            .cast<float>());
                     vertices.push_back(
                         (base_position + Util::Cs::Vector2i { 3, 0 })
-                            .cast<float>()
-                            .to_deprecated_vector());
+                            .cast<float>());
                     vertices.push_back(
                         (base_position + Util::Cs::Vector2i { -3, 6 })
-                            .cast<float>()
-                            .to_deprecated_vector());
+                            .cast<float>());
                 }
                 painter.draw_line(vertices,
                     Gfx::LineDrawOptions {

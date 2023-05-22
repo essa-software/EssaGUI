@@ -19,7 +19,7 @@ public:
         m_transform = t;
         return *this;
     }
-    Shape& set_origin(Util::Vector2f o) {
+    Shape& set_origin(Util::Cs::Point2f o) {
         m_origin = o;
         return *this;
     }
@@ -31,19 +31,19 @@ public:
         m_transform = m_transform.rotate_z(t);
         return *this;
     }
-    Shape& scale(Util::Vector2f vec) {
+    Shape& scale(Util::Cs::Vector2f vec) {
         m_transform = m_transform.scale_x(vec.x()).scale_y(vec.y());
         return *this;
     }
 
     llgl::Transform transform() const { return m_transform; }
     // All points are offsetted by -origin() before transforming.
-    Util::Vector2f origin() const { return m_origin; }
+    Util::Cs::Point2f origin() const { return m_origin; }
     Fill fill() const { return m_fill; }
     Outline outline() const { return m_outline; }
 
     virtual size_t point_count() const = 0;
-    virtual Util::Vector2f point(size_t idx) const = 0;
+    virtual Util::Cs::Point2f point(size_t idx) const = 0;
 
     // Bounds that are used for calculating texture rect. That is,
     // point at [size()] will use bottom right corner of texture rect.
@@ -54,8 +54,8 @@ public:
             Shape const* shape = nullptr;
             size_t index;
 
-            Util::Vector2f operator*() const { return shape->point(index); }
-            Util::Vector2f operator->() const { return shape->point(index); }
+            Util::Cs::Point2f operator*() const { return shape->point(index); }
+            Util::Cs::Point2f operator->() const { return shape->point(index); }
             PointIterator& operator++() {
                 index++;
                 return *this;
@@ -71,8 +71,8 @@ public:
         PointIterator begin() const { return PointIterator { &m_shape, 0 }; }
         PointIterator end() const { return PointIterator { &m_shape, m_shape.point_count() }; }
 
-        std::vector<Util::Vector2f> to_vector() const {
-            std::vector<Util::Vector2f> vector;
+        std::vector<Util::Cs::Point2f> to_vector() const {
+            std::vector<Util::Cs::Point2f> vector;
             for (size_t s = 0; s < m_shape.point_count(); s++) {
                 vector.push_back(m_shape.point(s));
             }
@@ -88,7 +88,7 @@ public:
 
 private:
     llgl::Transform m_transform;
-    Util::Vector2f m_origin;
+    Util::Cs::Point2f m_origin;
     Fill m_fill;
     Outline m_outline;
 };
@@ -99,4 +99,4 @@ private:
     Subclass& set_transform(llgl::Transform t) { return static_cast<Subclass&>(Shape::set_transform(t)); } \
     Subclass& move(Util::Cs::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }         \
     Subclass& rotate(float t) { return static_cast<Subclass&>(Shape::rotate(t)); }                         \
-    Subclass& scale(Util::Vector2f t) { return static_cast<Subclass&>(Shape::scale(t)); }
+    Subclass& scale(Util::Cs::Vector2f const& t) { return static_cast<Subclass&>(Shape::scale(t)); }

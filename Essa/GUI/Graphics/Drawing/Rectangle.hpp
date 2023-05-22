@@ -6,20 +6,22 @@ namespace Gfx::Drawing {
 
 class Rectangle : public Shape {
 public:
-    Rectangle(Util::Vector2f size, Fill fill, Outline outline = Outline::none())
+    Rectangle(Util::Cs::Size2f size, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
-        , m_size(Util::Cs::Size2f::from_deprecated_vector(size)) { }
+        , m_size(size) { }
 
     Rectangle(Util::Rectf rect, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
-        , m_size(rect.size()) { move({ rect.position().x(), rect.position().y() }); }
+        , m_size(rect.size()) {
+        move({ rect.position().x(), rect.position().y() });
+    }
 
     __ESSA_DEFINE_SHAPE_CHAINABLES(Rectangle)
 
     Util::Cs::Size2f size() const { return m_size; }
 
     virtual size_t point_count() const override { return 4; }
-    virtual Util::Vector2f point(size_t idx) const override {
+    virtual Util::Cs::Point2f point(size_t idx) const override {
         switch (idx) {
         case 0:
             return { 0, 0 };
