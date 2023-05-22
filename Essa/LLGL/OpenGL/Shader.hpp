@@ -12,10 +12,7 @@
 
 namespace llgl {
 
-enum class ShaderType {
-    Fragment,
-    Vertex
-};
+enum class ShaderType { Fragment, Vertex };
 
 struct TextureUnit {
     int id = 0;
@@ -36,42 +33,25 @@ inline void set_uniform(int location, Util::Color const& color) {
     glUniform4f(location, colorf.r, colorf.g, colorf.b, colorf.a);
 }
 
-inline void set_uniform(int location, Util::Matrix4x4f const& matrix) {
-    glUniformMatrix4fv(location, 1, true, matrix.raw_data());
-}
-
-inline void set_uniform(int location, Util::Vector2f const& vec) {
-    glUniform2f(location, vec.x(), vec.y());
-}
-
-inline void set_uniform(int location, Util::Vector3f const& vec) {
-    glUniform3f(location, vec.x(), vec.y(), vec.z());
-}
-
-inline void set_uniform(int location, int value) {
-    glUniform1i(location, value);
-}
-
-inline void set_uniform(int location, bool value) {
-    glUniform1i(location, value);
-}
-
-inline void set_uniform(int location, float value) {
-    glUniform1f(location, value);
-}
+inline void set_uniform(int location, Util::Matrix4x4f const& matrix) { glUniformMatrix4fv(location, 1, true, matrix.raw_data()); }
+inline void set_uniform(int location, Util::Cs::Point2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Cs::Point3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Cs::Vector2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Cs::Vector3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Cs::Size2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Cs::Size3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, int value) { glUniform1i(location, value); }
+inline void set_uniform(int location, bool value) { glUniform1i(location, value); }
+inline void set_uniform(int location, float value) { glUniform1f(location, value); }
 
 // Concat tuples
 template<class T1, size_t... Id1, class T2, size_t... Id2>
-decltype(auto) concat_tuples_impl(T1 const& t1, std::index_sequence<Id1...>,
-    T2 const& t2,
-    std::index_sequence<Id2...>) noexcept {
+decltype(auto) concat_tuples_impl(T1 const& t1, std::index_sequence<Id1...>, T2 const& t2, std::index_sequence<Id2...>) noexcept {
     return std::make_tuple(get<Id1>(t1)..., get<Id2>(t2)...);
 }
 
-template<class... T1, class... T2>
-auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
-    return concat_tuples_impl(t1, std::make_index_sequence<sizeof...(T1)>(), t2,
-        std::make_index_sequence<sizeof...(T2)>());
+template<class... T1, class... T2> auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
+    return concat_tuples_impl(t1, std::make_index_sequence<sizeof...(T1)>(), t2, std::make_index_sequence<sizeof...(T2)>());
 }
 
 } // namespace Detail
@@ -79,16 +59,15 @@ auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
 // ShaderImpl
 template<class T>
 concept ShaderImplPartial = requires(T t, ShaderType st) {
-    typename T::Vertex;
-    typename T::Uniforms;
-    { t.source(st) } -> std::convertible_to<std::string_view>;
-    { T::Uniforms::mapping };
-};
+                                typename T::Vertex;
+                                typename T::Uniforms;
+                                { t.source(st) } -> std::convertible_to<std::string_view>;
+                                { T::Uniforms::mapping };
+                            };
 
 class Shader;
 
-template<class MT>
-struct Uniform {
+template<class MT> struct Uniform {
     const char* name;
     MT member;
     int location = 0;
@@ -99,39 +78,31 @@ struct Uniform {
 };
 
 // Uniform Mapping - stores uniforms and their locations, responsible for binding them
-template<class... Members>
-class UniformMapping {
+template<class... Members> class UniformMapping {
 public:
     UniformMapping(Uniform<Members>&&... pairs)
         : m_uniforms(std::move(pairs)...) { }
 
-    void bind(Shader& program, auto const& uniforms) {
-        bind_impl(program, uniforms, std::make_index_sequence<sizeof...(Members)>());
-    }
+    void bind(Shader& program, auto const& uniforms) { bind_impl(program, uniforms, std::make_index_sequence<sizeof...(Members)>()); }
 
-    template<class... Members2>
-    auto operator|(UniformMapping<Members2...> const& other) const {
+    template<class... Members2> auto operator|(UniformMapping<Members2...> const& other) const {
         return UniformMapping<Members..., Members2...>(Detail::concat_tuples(m_uniforms, other.m_uniforms));
     }
 
 private:
-    template<class... M2>
-    friend class UniformMapping;
+    template<class... M2> friend class UniformMapping;
 
     explicit UniformMapping(std::tuple<Uniform<Members>...> pairs)
         : m_uniforms(std::move(pairs)) { }
 
-    template<size_t... Idx>
-    void bind_impl(Shader& shader, auto const& uniforms, std::index_sequence<Idx...>);
+    template<size_t... Idx> void bind_impl(Shader& shader, auto const& uniforms, std::index_sequence<Idx...>);
 
-    template<class MT>
-    int resolve_uniform_location(Shader& program, Uniform<MT>& member);
+    template<class MT> int resolve_uniform_location(Shader& program, Uniform<MT>& member);
 
     std::tuple<Uniform<Members>...> m_uniforms;
 };
 
-template<class... Members>
-UniformMapping<Members...> make_uniform_mapping(Uniform<Members>&&... members) {
+template<class... Members> UniformMapping<Members...> make_uniform_mapping(Uniform<Members>&&... members) {
     return { std::move(members)... };
 }
 
@@ -173,11 +144,10 @@ namespace Detail {
 unsigned compile_shader(GLenum type, std::string_view source);
 
 template<class... Args>
-requires(std::is_same_v<Args, unsigned>&&...) unsigned link_shader(
-    Args... ids) {
+    requires(std::is_same_v<Args, unsigned> && ...)
+unsigned link_shader(Args... ids) {
     assert((ids && ...));
-    std::cout << "Program: Linking " << sizeof...(Args) << " shader objects"
-              << std::endl;
+    std::cout << "Program: Linking " << sizeof...(Args) << " shader objects" << std::endl;
     auto id = glCreateProgram();
     (glAttachShader(id, ids), ...);
 
@@ -191,8 +161,7 @@ requires(std::is_same_v<Args, unsigned>&&...) unsigned link_shader(
         std::string error_message;
         error_message.resize(max_length);
         glGetProgramInfoLog(id, max_length, &max_length, error_message.data());
-        std::cout << "Program: Failed to link shader program: " << error_message
-                  << std::endl;
+        std::cout << "Program: Failed to link shader program: " << error_message << std::endl;
         glDeleteProgram(id);
         return 0;
     }
@@ -201,8 +170,7 @@ requires(std::is_same_v<Args, unsigned>&&...) unsigned link_shader(
     return id;
 }
 
-template<ShaderImpl Shader>
-inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
+template<ShaderImpl Shader> inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
     if (!shader.program()) {
         auto fragment_shader = compile_shader(GL_FRAGMENT_SHADER, shader.source(ShaderType::Fragment));
         auto vertex_shader = compile_shader(GL_VERTEX_SHADER, shader.source(ShaderType::Vertex));

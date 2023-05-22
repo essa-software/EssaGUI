@@ -16,7 +16,7 @@ public:
     struct Uniforms : public llgl::ShaderBases::Transform
         , public llgl::ShaderBases::Texture {
     private:
-        Util::Vector3f m_light_position;
+        Util::Cs::Point3f m_light_position;
         Util::Colorf m_light_color = Util::Colors::White;
         Util::Colorf m_ambient_color = Util::Colors::White;
         Util::Colorf m_diffuse_color = Util::Colors::White;
@@ -27,7 +27,7 @@ public:
             set_material(Material { .ambient = {}, .diffuse = { Util::Colors::White }, .emission = {} });
         }
 
-        void set_light_position(Util::Vector3f lp) { m_light_position = lp; }
+        void set_light_position(Util::Cs::Point3f lp) { m_light_position = lp; }
         void set_light_color(Util::Colorf lc) { m_light_color = lc; }
 
         static inline auto mapping = llgl::make_uniform_mapping(

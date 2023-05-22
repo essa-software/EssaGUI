@@ -23,7 +23,7 @@ public:
     private:
         llgl::TextureUnit accum { 0 };
         llgl::TextureUnit pass1 { 1 };
-        Util::Vector2f m_framebuffer_size;
+        Util::Cs::Size2f m_framebuffer_size;
 
     public:
         static inline auto mapping = llgl::make_uniform_mapping(
@@ -31,7 +31,7 @@ public:
             llgl::Uniform("fbSize", &Uniforms::m_framebuffer_size)
         );
 
-        void set_framebuffer_size(Util::Vector2f size) { m_framebuffer_size = size; }
+        void set_framebuffer_size(Util::Cs::Size2f size) { m_framebuffer_size = size; }
 
         void set_accum(llgl::Texture const* tex) { accum.texture = tex; }
         void set_pass1(llgl::Texture const* tex) { pass1.texture = tex; }
@@ -127,7 +127,7 @@ int main() {
         renderer.clear();
 
         BlurShader::Uniforms blur_shader_uniforms;
-        blur_shader_uniforms.set_framebuffer_size(window.size().cast<float>().to_deprecated_vector());
+        blur_shader_uniforms.set_framebuffer_size(window.size().cast<float>());
         pass1.resize(window.size());
         accum.resize(window.size());
 
