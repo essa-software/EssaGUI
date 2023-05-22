@@ -1,9 +1,10 @@
 #include "Plane.hpp"
+
 #include <iomanip>
 
 namespace Util::Math {
 
-Plane::Plane(Util::Vector3d A, Util::Vector3d B, Util::Vector3d C) {
+Plane::Plane(Util::Cs::Point3d A, Util::Cs::Point3d B, Util::Cs::Point3d C) {
     // https://keisan.casio.com/exec/system/1223596129
     m_a = (B.y() - A.y()) * (C.z() - A.z()) - (C.y() - A.y()) * (B.z() - A.z());
     m_b = (B.z() - A.z()) * (C.x() - A.x()) - (C.z() - A.z()) * (B.x() - A.x());
@@ -12,14 +13,13 @@ Plane::Plane(Util::Vector3d A, Util::Vector3d B, Util::Vector3d C) {
 }
 
 std::ostream& operator<<(std::ostream& out, Math::Plane const& plane) {
-    return out << std::fixed << std::setprecision(10) << plane.a() << "x + " << plane.b() << "y + " << plane.c() << "z + " << plane.d() << " = 0";
+    return out << std::fixed << std::setprecision(10) << plane.a() << "x + " << plane.b() << "y + " << plane.c() << "z + " << plane.d()
+               << " = 0";
 }
 
-Util::Vector3d Plane::normal() const {
-    return Util::Vector3d(m_a, m_b, m_c).normalized();
-}
+Util::Cs::Vector3d Plane::normal() const { return Util::Cs::Vector3d(m_a, m_b, m_c).normalized(); }
 
-Util::Vector3d Plane::point() const {
+Util::Cs::Point3d Plane::point() const {
     if (m_a == 0) {
         if (m_b == 0) {
             if (m_c == 0) {
@@ -34,8 +34,8 @@ Util::Vector3d Plane::point() const {
 
 Plane Plane::transformed(Util::Matrix4x4d const& matrix) const {
     // https://stackoverflow.com/questions/7685495/transforming-a-3d-plane-using-a-4x4-matrix
-    auto normal = Util::Cs::Point4d { Util::Cs::Point3d::from_deprecated_vector(this->normal()), 0.0 };
-    auto point = Util::Cs::Point4d { Util::Cs::Point3d::from_deprecated_vector(this->point()), 1.0 };
+    auto normal = Util::Cs::Vector4d { this->normal(), 0.0 };
+    auto point = Util::Cs::Point4d { this->point(), 1.0 };
     // std::cout << normal << "," << point << std::endl;
 
     auto transformed_point = matrix * point;
@@ -43,13 +43,8 @@ Plane Plane::transformed(Util::Matrix4x4d const& matrix) const {
     auto transformed_normal = matrix.inverted().transposed() * normal;
     transformed_normal /= transformed_normal.w();
 
-    double d = transformed_normal.to_vector().dot(transformed_point.to_vector());
-    return Plane {
-        transformed_normal.x(),
-        transformed_normal.y(),
-        transformed_normal.z(),
-        -d
-    };
+    double d = transformed_normal.dot(transformed_point.to_vector());
+    return Plane { transformed_normal.x(), transformed_normal.y(), transformed_normal.z(), -d };
 }
 
 }

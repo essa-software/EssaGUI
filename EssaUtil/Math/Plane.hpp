@@ -15,17 +15,17 @@ public:
         , m_c(c)
         , m_d(d) { }
 
-    Plane(Util::Vector3d p1, Util::Vector3d p2, Util::Vector3d p3);
+    Plane(Util::Cs::Point3d p1, Util::Cs::Point3d p2, Util::Cs::Point3d p3);
 
     double a() const { return m_a; }
     double b() const { return m_b; }
     double c() const { return m_c; }
     double d() const { return m_d; }
 
-    Util::Vector3d normal() const;
+    Util::Cs::Vector3d normal() const;
 
     // *one of points that is known to be on the plane
-    Util::Vector3d point() const;
+    Util::Cs::Point3d point() const;
 
     Plane transformed(Util::Matrix4x4d const&) const;
 
