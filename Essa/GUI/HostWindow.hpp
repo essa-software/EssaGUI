@@ -79,7 +79,7 @@ private:
     void focus_window(OverlayList::iterator);
 
     OverlayList m_overlays;
-    Util::Vector2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
+    Util::Cs::Point2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
     Util::Color m_background_color;
