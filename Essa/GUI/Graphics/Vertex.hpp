@@ -3,18 +3,19 @@
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <Essa/LLGL/OpenGL/VertexMapping.hpp>
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/Vector.hpp>
 
 namespace Gfx {
 
-using LLGLVertex = llgl::Vertex<Util::Vector2f, Util::Colorf, Util::Vector2f>;
+using LLGLVertex = llgl::Vertex<Util::Cs::Point2f, Util::Colorf, Util::Cs::Point2f>;
 
-class Vertex : public llgl::Vertex<Util::Vector2f, Util::Colorf, Util::Vector2f> {
+class Vertex : public LLGLVertex {
 public:
     Vertex()
         : LLGLVertex { {}, {}, {} } { }
 
-    Vertex(Util::Vector2f p, Util::Colorf c, Util::Vector2f t)
+    Vertex(Util::Cs::Point2f p, Util::Colorf c, Util::Cs::Point2f t)
         : LLGLVertex(p, c, t) { }
 
     auto& position() { return value<0>(); }
@@ -27,8 +28,7 @@ public:
 
 }
 
-template<>
-struct llgl::VertexMapping<Gfx::Vertex> {
+template<> struct llgl::VertexMapping<Gfx::Vertex> {
     static inline constexpr size_t position = 0;
     static inline constexpr size_t color = 1;
     static inline constexpr size_t tex_coord = 2;

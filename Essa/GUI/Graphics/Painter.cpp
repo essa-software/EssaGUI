@@ -44,9 +44,9 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Cs::Point
     fill_vertices.reserve(vertices.size());
     for (auto const& point : vertices) {
         fill_vertices.push_back(Gfx::Vertex {
-            point.to_deprecated_vector(),
+            point,
             fill.color(),
-            normalized_texture_coord_for_point(point).to_deprecated_vector(),
+            normalized_texture_coord_for_point(point),
         });
     }
 
@@ -242,7 +242,7 @@ void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptio
 void Painter::draw_line(std::span<Util::Cs::Point2f const> positions, LineDrawOptions const& options) {
     std::vector<Gfx::Vertex> vertices;
     for (auto const& position : positions) {
-        vertices.push_back({ position.to_deprecated_vector(), options.color, {} });
+        vertices.push_back({ position, options.color, {} });
     }
     draw_vertices(llgl::PrimitiveType::LineStrip, vertices);
 }
@@ -264,8 +264,8 @@ void Painter::draw_outline(std::span<Util::Cs::Point2f const> positions, Util::C
             outer_corner = outer_corner + (C - outer_corner) * 2.f;
         }
 
-        vertices.push_back(Gfx::Vertex { outer_corner.to_deprecated_vector(), color, {} });
-        vertices.push_back(Gfx::Vertex { C.to_deprecated_vector(), color, {} });
+        vertices.push_back(Gfx::Vertex { outer_corner, color, {} });
+        vertices.push_back(Gfx::Vertex { C, color, {} });
     }
     draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);
 }

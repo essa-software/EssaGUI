@@ -32,18 +32,18 @@ void Checkbox::draw(Gfx::Painter& painter) const {
             Gfx::Vertex vert;
             vert.color() = theme().placeholder;
 
-            vert.position() = Util::Vector2f(box.left + 3, box.top + 3);
+            vert.position() = { box.left + 3, box.top + 3 };
             vertex_arr[0] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width - 3, box.top + box.height - 3);
+            vert.position() = { box.left + box.width - 3, box.top + box.height - 3 };
             vertex_arr[1] = vert;
 
             painter.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
 
-            vert.position() = Util::Vector2f(box.left + 3, box.top + box.height - 3);
+            vert.position() = { box.left + 3, box.top + box.height - 3 };
             vertex_arr[0] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width - 3, box.top + 3);
+            vert.position() = { box.left + box.width - 3, box.top + 3 };
             vertex_arr[1] = vert;
 
             painter.draw_vertices(llgl::PrimitiveType::Lines, vertex_arr);
@@ -54,13 +54,13 @@ void Checkbox::draw(Gfx::Painter& painter) const {
             Gfx::Vertex vert;
             vert.color() = theme().placeholder;
 
-            vert.position() = Util::Vector2f(box.left + 3, box.top + box.height / 2);
+            vert.position() = { box.left + 3, box.top + box.height / 2 };
             vertex_arr[0] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width / 2 - 2, box.top + box.height - 3);
+            vert.position() = { box.left + box.width / 2 - 2, box.top + box.height - 3 };
             vertex_arr[1] = vert;
 
-            vert.position() = Util::Vector2f(box.left + box.width - 3, box.top + 3);
+            vert.position() = { box.left + box.width - 3, box.top + 3 };
             vertex_arr[2] = vert;
 
             painter.draw_vertices(llgl::PrimitiveType::LineStrip, vertex_arr);
