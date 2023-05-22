@@ -190,7 +190,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
                                .inflated_horizontal(1)
                                .cast<float>();
 
-        auto texture_rect = Util::Rectf({}, Util::Cs::Size2f::from_deprecated_vector(m_window_shadow.size()));
+        auto texture_rect = Util::Rectf({}, m_window_shadow.size().cast<float>());
 
         Util::Color const shadow_color = Util::Colors::White.with_alpha(255 * theme().tool_window_shadow_opacity);
 

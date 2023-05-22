@@ -33,7 +33,7 @@ void Text::generate_vertices() const {
                   };
 
             auto normalized_texture_rect
-                = glyph.texture_rect.cast<float>().componentwise_divide(Util::Cs::Size2f::from_deprecated_vector(cache->atlas().size()));
+                = glyph.texture_rect.cast<float>().componentwise_divide(cache->atlas().size().cast<float>());
             auto tex_start = normalized_texture_rect.position();
             auto tex_end = normalized_texture_rect.bottom_right();
 

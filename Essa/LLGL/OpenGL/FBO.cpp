@@ -40,12 +40,12 @@ void FBO::bind(Target target) const {
 
 void FBO::resize(Util::Cs::Size2u size) {
     FBOScope scope { *this };
-    if (m_color_texture.size() == size.to_deprecated_vector())
+    if (m_color_texture.size() == size)
         return;
     if (!m_color_texture.id())
-        m_color_texture = Texture::create_empty(size.to_deprecated_vector(), Texture::Format::RGBA);
+        m_color_texture = Texture::create_empty(size, Texture::Format::RGBA);
     else
-        m_color_texture.recreate(size.to_deprecated_vector(), Texture::Format::RGBA);
+        m_color_texture.recreate(size, Texture::Format::RGBA);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_color_texture.id(), 0);
     if (m_depth_renderbuffer)
         glDeleteRenderbuffers(1, &m_depth_renderbuffer);

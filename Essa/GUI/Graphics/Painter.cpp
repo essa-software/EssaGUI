@@ -15,7 +15,7 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Vector2f>
     auto fill = shape.fill();
     auto local_bounds = shape.local_bounds();
 
-    Util::Vector2f texture_size { fill.texture() ? fill.texture()->size() : Util::Vector2u {} };
+    Util::Cs::Size2f texture_size { fill.texture() ? fill.texture()->size().cast<float>() : Util::Cs::Size2f {} };
     auto texture_rect = fill.texture_rect();
     if (texture_rect.size().is_zero()) {
         texture_rect.width = texture_size.x();

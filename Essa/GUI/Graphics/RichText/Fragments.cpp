@@ -4,13 +4,14 @@
 
 namespace Gfx::RichTextFragments {
 
-float Text::wanted_size(RichTextContext const& context) const {
-    return text(context).calculate_text_size().x();
-}
+float Text::wanted_size(RichTextContext const& context) const { return text(context).calculate_text_size().x(); }
 
 void Text::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     auto text = this->text(context);
-    text.align(GUI::Align::CenterLeft, { Util::Cs::Point2f::from_deprecated_vector(position), { 0, context.default_font.line_height(context.font_size) } });
+    text.align(
+        GUI::Align::CenterLeft,
+        { Util::Cs::Point2f::from_deprecated_vector(position), { 0, context.default_font.line_height(context.font_size) } }
+    );
     text.draw(painter);
 }
 
@@ -27,8 +28,8 @@ float Image::wanted_size(RichTextContext const& context) const {
     return size.x();
 }
 
-Util::Vector2f Image::scaled_image_size(RichTextContext const& context) const {
-    Util::Vector2f size { m_texture.size() };
+Util::Cs::Size2f Image::scaled_image_size(RichTextContext const& context) const {
+    auto size = m_texture.size().cast<float>();
     if (size.y() > context.default_font.line_height(context.font_size)) {
         size *= context.default_font.line_height(context.font_size) / size.y();
     }
@@ -38,7 +39,7 @@ Util::Vector2f Image::scaled_image_size(RichTextContext const& context) const {
 void Image::draw(RichTextContext const& context, Util::Vector2f position, Gfx::Painter& painter) const {
     Gfx::RectangleDrawOptions rect;
     rect.texture = &m_texture;
-    auto size = Util::Cs::Size2f::from_deprecated_vector(scaled_image_size(context));
+    auto size = scaled_image_size(context);
     auto height = context.default_font.line_height(context.font_size);
     painter.deprecated_draw_rectangle({ { position.x(), position.y() + height / 2.f - size.y() / 2.f }, size }, rect);
 }

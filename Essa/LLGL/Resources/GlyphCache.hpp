@@ -23,7 +23,7 @@ private:
     uint32_t m_font_size {};
     Texture m_atlas;
     std::map<uint32_t, Glyph> m_glyphs;
-    Util::Vector2u m_current_atlas_position;
+    Util::Cs::Point2u m_current_atlas_position;
     int m_max_row_height = 0;
 };
 

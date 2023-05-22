@@ -21,18 +21,18 @@ Image& Image::operator=(Image&& other) {
     return *this;
 }
 
-Image Image::create_uninitialized(Util::Vector2u size) {
+Image Image::create_uninitialized(Util::Cs::Size2u size) {
     Image image { size };
     return image;
 }
 
-Image Image::create_filled_with_color(Util::Vector2u size, Util::Color color) {
+Image Image::create_filled_with_color(Util::Cs::Size2u size, Util::Color color) {
     Image image { size };
     std::fill(image.m_pixels, image.m_pixels + image.pixel_count(), color);
     return image;
 }
 
-void Image::insert_image_in_bounds(Image const& other, Util::Vector2u where) {
+void Image::insert_image_in_bounds(Image const& other, Util::Cs::Point2u where) {
     assert(where.x() + other.size().x() <= m_size.x());
     assert(where.y() + other.size().y() <= m_size.y());
     for (unsigned x = 0; x < other.size().x(); x++) {
@@ -46,7 +46,7 @@ bool Image::is_point_in_bounds(Util::Cs::Point2f const& point) const {
     return point.x() >= 0 && point.x() < m_size.x() && point.y() >= 0 && point.y() < m_size.y();
 }
 
-Image::Image(Util::Vector2u size) {
+Image::Image(Util::Cs::Size2u size) {
     m_size = size;
     m_pixels = new Util::Color[pixel_count()];
 }
