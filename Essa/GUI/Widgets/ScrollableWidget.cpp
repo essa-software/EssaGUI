@@ -40,9 +40,9 @@ Widget::EventHandlerResult ScrollableWidget::on_mouse_scroll(
     return Widget::EventHandlerResult::Accepted;
 }
 
-Util::Cs::Vector2i ScrollableWidget::scroll_offset() const { return -m_scroll; }
+Util::Vector2i ScrollableWidget::scroll_offset() const { return -m_scroll; }
 
-void ScrollableWidget::set_scroll(Util::Cs::Vector2i scroll) {
+void ScrollableWidget::set_scroll(Util::Vector2i scroll) {
     m_scroll = scroll;
 }
 
@@ -105,7 +105,7 @@ void ScrollableWidget::scroll_to_bottom() {
     }
 }
 
-Util::Cs::Size2i ScrollableWidget::scroll_area_size() const {
+Util::Size2i ScrollableWidget::scroll_area_size() const {
     auto scrollable_rect = this->scrollable_rect();
     auto size = scrollable_rect.size();
 

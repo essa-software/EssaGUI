@@ -7,7 +7,7 @@
 
 namespace llgl {
 
-Window::Window(Util::Cs::Size2u size, Util::UString const& title, WindowSettings const& settings) { create(size, title, settings); }
+Window::Window(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) { create(size, title, settings); }
 
 Window Window::create_foreign(std::unique_ptr<Detail::SDLWindowData> data) {
     Window window;
@@ -18,13 +18,13 @@ Window Window::create_foreign(std::unique_ptr<Detail::SDLWindowData> data) {
 
 Window::~Window() { close(); }
 
-void Window::create(Util::Cs::Size2u size, Util::UString const& title, WindowSettings const& settings) {
+void Window::create(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) {
     m_size = size;
     m_renderer.m_size = m_size;
     create_impl(size, std::move(title), settings);
 }
 
-void Window::set_size(Util::Cs::Size2u size) {
+void Window::set_size(Util::Size2u size) {
     m_size = size;
     m_renderer.m_size = m_size;
     set_size_impl(size);

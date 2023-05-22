@@ -34,12 +34,12 @@ inline void set_uniform(int location, Util::Color const& color) {
 }
 
 inline void set_uniform(int location, Util::Matrix4x4f const& matrix) { glUniformMatrix4fv(location, 1, true, matrix.raw_data()); }
-inline void set_uniform(int location, Util::Cs::Point2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Cs::Point3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, Util::Cs::Vector2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Cs::Vector3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, Util::Cs::Size2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Cs::Size3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Point2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Point3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Vector2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Vector3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Size2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Size3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
 inline void set_uniform(int location, int value) { glUniform1i(location, value); }
 inline void set_uniform(int location, bool value) { glUniform1i(location, value); }
 inline void set_uniform(int location, float value) { glUniform1f(location, value); }

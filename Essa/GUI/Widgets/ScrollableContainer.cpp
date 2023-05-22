@@ -8,7 +8,7 @@ ScrollableContainer::ScrollableContainer() {
     };
 }
 
-Util::Cs::Size2i ScrollableContainer::content_size() const {
+Util::Size2i ScrollableContainer::content_size() const {
     return m_widget->total_size();
 }
 

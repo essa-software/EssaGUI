@@ -134,11 +134,11 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
         for (auto const& line : lines) {
             float x = get_line_starting_x();
             for (auto const& frag : line.fragments) {
-                Util::Cs::Point2f position { x, y };
+                Util::Point2f position { x, y };
                 float wanted_size = frag->wanted_size(m_context);
                 x += wanted_size;
 
-                Util::Cs::Size2f size { wanted_size, line_height };
+                Util::Size2f size { wanted_size, line_height };
 
                 if (DBG_ENABLED(Gfx_DrawRichTextBoxes)) {
                     painter.draw(Rectangle(Util::Rectf(position, size), Fill::none(), Outline::normal(Util::Colors::Green, 1)));

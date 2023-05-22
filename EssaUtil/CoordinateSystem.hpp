@@ -28,13 +28,9 @@
 
 namespace Util {
 
-namespace Cs {
-
 CREATE_TYPED_ALIASES(Point)
 CREATE_TYPED_ALIASES(Size)
 CREATE_TYPED_ALIASES(Vector)
 #undef CREATE_TYPED_ALIASES
-
-}
 
 }

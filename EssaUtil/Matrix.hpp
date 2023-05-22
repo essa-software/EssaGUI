@@ -188,8 +188,8 @@ inline Matrix<T, Size> Matrix<T, Size>::adjoint() const {
     return cofactors.transposed();
 }
 
-template<class T> inline Cs::Point4<T> operator*(Matrix<T, 4> const& mat, Cs::Point4<T> const& vec) {
-    Cs::Point4<T> result;
+template<class T> inline Point4<T> operator*(Matrix<T, 4> const& mat, Point4<T> const& vec) {
+    Point4<T> result;
     result.set_x(vec.x() * mat.element(0, 0) + vec.y() * mat.element(0, 1) + vec.z() * mat.element(0, 2) + vec.w() * mat.element(0, 3));
     result.set_y(vec.x() * mat.element(1, 0) + vec.y() * mat.element(1, 1) + vec.z() * mat.element(1, 2) + vec.w() * mat.element(1, 3));
     result.set_z(vec.x() * mat.element(2, 0) + vec.y() * mat.element(2, 1) + vec.z() * mat.element(2, 2) + vec.w() * mat.element(2, 3));
@@ -197,8 +197,8 @@ template<class T> inline Cs::Point4<T> operator*(Matrix<T, 4> const& mat, Cs::Po
     return result;
 }
 
-template<class T> inline Cs::Vector4<T> operator*(Matrix<T, 4> const& mat, Cs::Vector4<T> const& vec) {
-    Cs::Vector4<T> result;
+template<class T> inline Vector4<T> operator*(Matrix<T, 4> const& mat, Vector4<T> const& vec) {
+    Vector4<T> result;
     result.set_x(vec.x() * mat.element(0, 0) + vec.y() * mat.element(0, 1) + vec.z() * mat.element(0, 2) + vec.w() * mat.element(0, 3));
     result.set_y(vec.x() * mat.element(1, 0) + vec.y() * mat.element(1, 1) + vec.z() * mat.element(1, 2) + vec.w() * mat.element(1, 3));
     result.set_z(vec.x() * mat.element(2, 0) + vec.y() * mat.element(2, 1) + vec.z() * mat.element(2, 2) + vec.w() * mat.element(2, 3));

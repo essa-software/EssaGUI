@@ -63,7 +63,7 @@ public:
     virtual ~Layout() = default;
 
     virtual void run(Container&) = 0;
-    virtual Util::Cs::Size2i total_size(Container const&) const = 0;
+    virtual Util::Size2i total_size(Container const&) const = 0;
 
     CREATE_VALUE(Boxi, padding, Boxi {})
 
@@ -79,7 +79,7 @@ public:
     // Spacing = a gap between widgets (but not between edges and widgets)
     CREATE_VALUE(int, spacing, 0)
     virtual void run(Container&) override;
-    virtual Util::Cs::Size2i total_size(Container const&) const override;
+    virtual Util::Size2i total_size(Container const&) const override;
 
     enum class ContentAlignment {
         BoxStart,
@@ -110,7 +110,7 @@ public:
 class BasicLayout : public Layout {
 private:
     virtual void run(Container&) override;
-    virtual Util::Cs::Size2i total_size(Container const&) const override;
+    virtual Util::Size2i total_size(Container const&) const override;
 };
 
 class Container : public Widget {
@@ -228,7 +228,7 @@ private:
     friend Layout;
     void m_find_widgets_by_class_name_recursively_helper(std::string_view class_name, std::vector<Widget*>& vec) const;
 
-    virtual Util::Cs::Size2i total_size() const override;
+    virtual Util::Size2i total_size() const override;
 
     std::unique_ptr<Layout> m_layout;
 };

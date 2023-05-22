@@ -53,14 +53,14 @@ public:
     void draw(Drawing::Shape const&);
 
     void deprecated_draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});
-    /*deprecated: use draw(Ellipse(...))*/ void draw_ellipse(Util::Cs::Point2f center, Util::Cs::Size2f size, DrawOptions const& = {});
-    void draw_line(std::span<Util::Cs::Point2f const>, LineDrawOptions const&);
-    void draw_line(std::initializer_list<Util::Cs::Point2f> vertices, LineDrawOptions const& options) {
+    /*deprecated: use draw(Ellipse(...))*/ void draw_ellipse(Util::Point2f center, Util::Size2f size, DrawOptions const& = {});
+    void draw_line(std::span<Util::Point2f const>, LineDrawOptions const&);
+    void draw_line(std::initializer_list<Util::Point2f> vertices, LineDrawOptions const& options) {
         draw_line(std::span { vertices }, options);
     }
-    void draw_line(Util::Cs::Point2f start, Util::Cs::Point2f end, LineDrawOptions const& options) { draw_line({ start, end }, options); }
+    void draw_line(Util::Point2f start, Util::Point2f end, LineDrawOptions const& options) { draw_line({ start, end }, options); }
 
-    void draw_outline(std::span<Util::Cs::Point2f const>, Util::Color color, float thickness);
+    void draw_outline(std::span<Util::Point2f const>, Util::Color color, float thickness);
     void draw_vertices(llgl::PrimitiveType type, std::span<Gfx::DefaultGUIShader::Vertex const>, llgl::Texture const* = nullptr);
 
     void reset() { m_builder.reset(); }
@@ -102,8 +102,8 @@ private:
     void apply_states();
 
     // In these functions, vertices are and after rounding, but not transformed.
-    void draw_fill(Drawing::Shape const& shape, std::vector<Util::Cs::Point2f> const& vertices);
-    void draw_outline(Drawing::Shape const& shape, std::vector<Util::Cs::Point2f> const& vertices);
+    void draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices);
+    void draw_outline(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices);
 
     GUIBuilder m_builder;
     llgl::Renderer& m_renderer;

@@ -17,7 +17,7 @@ public:
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
 
-    virtual Util::Cs::Size2i content_size() const override;
+    virtual Util::Size2i content_size() const override;
     void render_rows(Gfx::Painter& window, float& current_y_pos, std::vector<size_t> path, std::optional<Model::Node> parent) const;
 
     size_t recursive_displayed_row_count(std::optional<Model::Node>, std::vector<size_t> path) const;

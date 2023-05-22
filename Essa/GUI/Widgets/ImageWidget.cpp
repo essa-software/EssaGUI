@@ -11,7 +11,7 @@ void ImageWidget::draw(Gfx::Painter& painter) const {
     auto image_size = m_image->size();
     float aspect = raw_size().x() / raw_size().y();
     float image_aspect = static_cast<float>(image_size.x()) / image_size.y();
-    Util::Cs::Size2i rect_size;
+    Util::Size2i rect_size;
     if (aspect > image_aspect)
         rect_size = { raw_size().y() * image_aspect, raw_size().y() };
     else

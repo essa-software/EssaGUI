@@ -12,7 +12,7 @@ class Sprite : public Widget {
 public:
     virtual void draw(Gfx::Painter&) const override = 0;
 
-    void move_by_vec(Util::Cs::Vector2i const& vec) { set_raw_position(raw_position() + vec); }
+    void move_by_vec(Util::Vector2i const& vec) { set_raw_position(raw_position() + vec); }
 
     void rotate(Util::Angle angle) { m_rotation = angle; }
 

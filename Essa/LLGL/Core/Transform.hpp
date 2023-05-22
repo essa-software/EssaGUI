@@ -13,8 +13,8 @@ public:
         : m_matrix(matrix) {
     }
 
-    [[nodiscard]] Transform translate_2d(Util::Cs::Vector2f const& by) const;
-    [[nodiscard]] Transform translate(Util::Cs::Vector3f const& by) const;
+    [[nodiscard]] Transform translate_2d(Util::Vector2f const& by) const;
+    [[nodiscard]] Transform translate(Util::Vector3f const& by) const;
 
     // Angle is in radians.
     [[nodiscard]] Transform rotate_x(float angle) const;
@@ -28,13 +28,13 @@ public:
 
     Util::Matrix4x4f matrix() const { return m_matrix; }
 
-    Util::Cs::Point3f transform_point(Util::Cs::Point3f const&) const;
+    Util::Point3f transform_point(Util::Point3f const&) const;
 
     // Transform a point using z = 0 and ignoring z on return.
-    Util::Cs::Point2f transform_point_2d(Util::Cs::Point2f const&) const;
+    Util::Point2f transform_point_2d(Util::Point2f const&) const;
 
-    std::vector<Util::Cs::Point3f> transform_points(std::vector<Util::Cs::Point3f> const&) const;
-    std::vector<Util::Cs::Point2f> transform_points_2d(std::vector<Util::Cs::Point2f> const&) const;
+    std::vector<Util::Point3f> transform_points(std::vector<Util::Point3f> const&) const;
+    std::vector<Util::Point2f> transform_points_2d(std::vector<Util::Point2f> const&) const;
 
 private:
     Util::Matrix4x4f m_matrix = Util::Matrix4x4f::identity();

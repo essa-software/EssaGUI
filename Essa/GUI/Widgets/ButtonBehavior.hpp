@@ -9,7 +9,7 @@ namespace GUI {
 // A class that encapsulates button-like mouse behavior.
 class ButtonBehavior {
 public:
-    using HitTester = std::function<bool(Util::Cs::Point2i)>;
+    using HitTester = std::function<bool(Util::Point2i)>;
 
     // Ensure that `rect` uses the same coordinate system as
     // incoming events!

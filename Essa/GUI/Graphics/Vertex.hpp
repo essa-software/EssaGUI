@@ -8,14 +8,14 @@
 
 namespace Gfx {
 
-using LLGLVertex = llgl::Vertex<Util::Cs::Point2f, Util::Colorf, Util::Cs::Point2f>;
+using LLGLVertex = llgl::Vertex<Util::Point2f, Util::Colorf, Util::Point2f>;
 
 class Vertex : public LLGLVertex {
 public:
     Vertex()
         : LLGLVertex { {}, {}, {} } { }
 
-    Vertex(Util::Cs::Point2f p, Util::Colorf c, Util::Cs::Point2f t)
+    Vertex(Util::Point2f p, Util::Colorf c, Util::Point2f t)
         : LLGLVertex(p, c, t) { }
 
     auto& position() { return value<0>(); }

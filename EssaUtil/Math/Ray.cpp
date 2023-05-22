@@ -4,14 +4,14 @@
 
 namespace Util::Math {
 
-double Ray::distance_to_point(Util::Cs::Point3d point) const {
+double Ray::distance_to_point(Util::Point3d point) const {
     // https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
     double num = (point - m_start).cross(point - m_end).length();
     double den = (m_end - m_start).length();
     return num / den;
 }
 
-std::optional<Util::Cs::Point3d> Ray::intersection_with_plane(Plane const& plane) const {
+std::optional<Util::Point3d> Ray::intersection_with_plane(Plane const& plane) const {
     // https://stackoverflow.com/questions/5666222/3d-line-plane-intersection
     // TODO: Do ray&plane, not line&plane intersection
     auto plane_normal = plane.normal();

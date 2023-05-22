@@ -6,7 +6,7 @@ namespace Gfx::Drawing {
 
 class Rectangle : public Shape {
 public:
-    Rectangle(Util::Cs::Size2f size, Fill fill, Outline outline = Outline::none())
+    Rectangle(Util::Size2f size, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
         , m_size(size) { }
 
@@ -18,10 +18,10 @@ public:
 
     __ESSA_DEFINE_SHAPE_CHAINABLES(Rectangle)
 
-    Util::Cs::Size2f size() const { return m_size; }
+    Util::Size2f size() const { return m_size; }
 
     virtual size_t point_count() const override { return 4; }
-    virtual Util::Cs::Point2f point(size_t idx) const override {
+    virtual Util::Point2f point(size_t idx) const override {
         switch (idx) {
         case 0:
             return { 0, 0 };
@@ -37,7 +37,7 @@ public:
     virtual Util::Rectf local_bounds() const override { return { {}, m_size }; }
 
 private:
-    Util::Cs::Size2f m_size;
+    Util::Size2f m_size;
 };
 
 }

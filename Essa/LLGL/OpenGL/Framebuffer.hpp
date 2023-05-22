@@ -12,7 +12,7 @@ namespace llgl {
 
 class Framebuffer {
 public:
-    explicit Framebuffer(Util::Cs::Size2u size)
+    explicit Framebuffer(Util::Size2u size)
         : m_fbo(size)
         , m_renderer(m_fbo.id()) {
         m_renderer.m_size = size;
@@ -26,7 +26,7 @@ public:
         m_renderer.draw_vertices(vbo, draw_state);
     }
 
-    void resize(Util::Cs::Size2u size) {
+    void resize(Util::Size2u size) {
         m_fbo.resize(size);
         m_renderer.m_size = size;
     }

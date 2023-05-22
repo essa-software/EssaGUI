@@ -58,8 +58,8 @@ public:
             m_main_widget->do_update();
     }
 
-    virtual Util::Cs::Point2i position() const = 0;
-    virtual Util::Cs::Size2i size() const = 0;
+    virtual Util::Point2i position() const = 0;
+    virtual Util::Size2i size() const = 0;
     Util::Recti rect() const { return { position(), size() }; }
 
     // The rect that the WidgetTreeRoot should consume events from. For

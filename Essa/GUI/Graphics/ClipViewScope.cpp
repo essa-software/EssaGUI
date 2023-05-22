@@ -35,8 +35,8 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
         __builtin_unreachable();
     }();
 
-    Util::Cs::Vector2i offset_position
-        = (mode == Mode::Intersect ? Util::Cs::Vector2i(clip_rect.left - rect.left, clip_rect.top - rect.top) : Util::Cs::Vector2i());
+    Util::Vector2i offset_position
+        = (mode == Mode::Intersect ? Util::Vector2i(clip_rect.left - rect.left, clip_rect.top - rect.top) : Util::Vector2i());
 
     m_offset = offset_position;
 
@@ -51,7 +51,7 @@ ClipViewScope::~ClipViewScope() {
 }
 
 llgl::Projection
-ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Cs::Vector2i offset_position, Util::Cs::Size2u framebuffer_size) {
+ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2i offset_position, Util::Size2u framebuffer_size) {
     return llgl::Projection::ortho(
         { { offset_position.cast<double>().to_point(), rect.size().cast<double>() } },
         Util::Recti {

@@ -25,9 +25,9 @@ void Text::generate_vertices() const {
             auto glyph = cache->ensure_glyph(m_font, codepoint);
             text_rect.texture_rect = glyph.texture_rect;
             // TODO: Take (better) advantage of GUIBuilder
-            auto start = Util::Cs::Point2f { std::floor(x_position + line_position.x()), std::floor(line_position.y()) };
+            auto start = Util::Point2f { std::floor(x_position + line_position.x()), std::floor(line_position.y()) };
             auto end = start
-                + Util::Cs::Vector2f {
+                + Util::Vector2f {
                       static_cast<float>(std::floor(glyph.texture_rect.width)),
                       static_cast<float>(std::floor(glyph.texture_rect.height)),
                   };
@@ -75,7 +75,7 @@ void Text::set_fill_color(Util::Color c) {
     m_vertices = {};
 }
 
-void Text::set_position(Util::Cs::Point2f position) {
+void Text::set_position(Util::Point2f position) {
     m_position = position;
     m_vertices = {};
 }
@@ -85,8 +85,8 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
 
     auto text_size = calculate_text_size();
 
-    Util::Cs::Size2f size { rect.width, rect.height };
-    Util::Cs::Vector2f offset;
+    Util::Size2f size { rect.width, rect.height };
+    Util::Vector2f offset;
 
     switch (align) {
     case GUI::Align::TopLeft:
@@ -118,13 +118,13 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
         break;
     }
 
-    m_position = Util::Cs::Point2f(rect.left, rect.top + m_font.ascent(m_font_size)) + offset;
+    m_position = Util::Point2f(rect.left, rect.top + m_font.ascent(m_font_size)) + offset;
 }
 
-Util::Cs::Size2u Text::calculate_text_size() const { return calculate_text_size(m_string); }
+Util::Size2u Text::calculate_text_size() const { return calculate_text_size(m_string); }
 
-Util::Cs::Size2u Text::calculate_text_size(Util::UString const& string) const {
-    Util::Cs::Size2u text_size;
+Util::Size2u Text::calculate_text_size(Util::UString const& string) const {
+    Util::Size2u text_size;
     string.for_each_line([&text_size, this](std::span<uint32_t const> span) {
         auto text = Util::UString { span };
         auto line_size = m_font.calculate_text_size(text, m_font_size);

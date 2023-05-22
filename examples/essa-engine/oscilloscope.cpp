@@ -17,13 +17,13 @@
 
 class BlurShader : public llgl::Shader {
 public:
-    using Vertex = llgl::Vertex<Util::Cs::Point3f, Util::Colorf, Util::Cs::Point2f>;
+    using Vertex = llgl::Vertex<Util::Point3f, Util::Colorf, Util::Point2f>;
 
     struct Uniforms {
     private:
         llgl::TextureUnit accum { 0 };
         llgl::TextureUnit pass1 { 1 };
-        Util::Cs::Size2f m_framebuffer_size;
+        Util::Size2f m_framebuffer_size;
 
     public:
         static inline auto mapping = llgl::make_uniform_mapping(
@@ -31,7 +31,7 @@ public:
             llgl::Uniform("fbSize", &Uniforms::m_framebuffer_size)
         );
 
-        void set_framebuffer_size(Util::Cs::Size2f size) { m_framebuffer_size = size; }
+        void set_framebuffer_size(Util::Size2f size) { m_framebuffer_size = size; }
 
         void set_accum(llgl::Texture const* tex) { accum.texture = tex; }
         void set_pass1(llgl::Texture const* tex) { pass1.texture = tex; }
@@ -91,10 +91,10 @@ public:
     };
 };
 
-Util::Cs::Point2f next_oscilloscope_position() {
+Util::Point2f next_oscilloscope_position() {
     static float angle = 0;
     angle += 0.7;
-    return Util::Cs::Point2f { std::sin(angle), std::cos(angle) } * 20 + llgl::mouse_position().to_vector().cast<float>();
+    return Util::Point2f { std::sin(angle), std::cos(angle) } * 20 + llgl::mouse_position().to_vector().cast<float>();
 }
 
 int main() {

@@ -19,7 +19,7 @@ namespace llgl {
 ESSA_ENUM_WITH_VALUES(MouseButton, ENUMERATE_MOUSE_BUTTONS)
 ESSA_ENUM_TO_STRING(MouseButton, ENUMERATE_MOUSE_BUTTONS)
 
-Util::Cs::Point2i mouse_position();
+Util::Point2i mouse_position();
 bool is_mouse_button_pressed(MouseButton);
 
 }

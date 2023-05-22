@@ -30,10 +30,10 @@ Widget::~Widget() {
     }
 }
 
-bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Recti(raw_position(), m_raw_size).contains(mouse_pos); }
+bool Widget::is_mouse_over(Util::Point2i mouse_pos) const { return Util::Recti(raw_position(), m_raw_size).contains(mouse_pos); }
 
 void Widget::update() {
-    Util::Cs::Point2i tooltip_position { m_tooltip_position };
+    Util::Point2i tooltip_position { m_tooltip_position };
     auto widget_relative_mouse_position = llgl::mouse_position();
     widget_relative_mouse_position -= widget_tree_root().position().to_vector() + raw_position().to_vector();
 
@@ -43,7 +43,7 @@ void Widget::update() {
         update_tooltip(widget_relative_mouse_position, text);
         m_tooltip->set_text(text);
         m_tooltip->set_position(
-            (m_widget_tree_root->position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Cs::Vector2i(32, 32))
+            (m_widget_tree_root->position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Vector2i(32, 32))
         );
     }
 }
@@ -192,12 +192,12 @@ void Widget::do_draw(Gfx::Painter& painter) const {
     }
 }
 
-Util::Cs::Point2i Widget::raw_position() const {
-    return m_position + (m_parent ? m_parent->raw_position().to_vector() : Util::Cs::Vector2i());
+Util::Point2i Widget::raw_position() const {
+    return m_position + (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());
 }
 
-void Widget::set_raw_position(Util::Cs::Point2i position) {
-    m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Cs::Vector2i());
+void Widget::set_raw_position(Util::Point2i position) {
+    m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());
 }
 
 Util::Recti Widget::host_rect() const {

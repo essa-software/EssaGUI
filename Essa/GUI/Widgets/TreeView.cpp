@@ -60,7 +60,7 @@ void TreeView::draw(Gfx::Painter& wnd) const {
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
             wnd.deprecated_draw_rectangle(
                 {
-                    Util::Cs::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset().cast<float>(),
+                    Util::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset().cast<float>(),
                     { row_width, row_height },
                 },
                 rs
@@ -81,7 +81,7 @@ void TreeView::draw(Gfx::Painter& wnd) const {
 
             Gfx::Text text { column.name, Application::the().bold_font() };
             text.set_font_size(16);
-            text.set_position((Util::Cs::Point2f { x_pos + 5, 20 } + scroll_offset().cast<float>()));
+            text.set_position((Util::Point2f { x_pos + 5, 20 } + scroll_offset().cast<float>()));
             text.draw(wnd);
 
             x_pos += cell_size(0, c).x();
@@ -122,24 +122,24 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
 
             Gfx::RectangleDrawOptions line_rect;
             line_rect.fill_color = theme().placeholder;
-            Util::Cs::Point2i line_position { depth * IndentSize - IndentSize / 2, current_y_pos + row_height / 2.f };
+            Util::Point2i line_position { depth * IndentSize - IndentSize / 2, current_y_pos + row_height / 2.f };
             line_position += scroll_offset();
             painter.deprecated_draw_rectangle({ line_position.cast<float>(), { IndentSize / 2, 1 } }, line_rect);
 
             float first_column_position = depth * IndentSize;
             if (model.children_count(child) > 0) {
-                auto base_position = Util::Cs::Point2i { first_column_position + 13, current_y_pos + row_height / 2.f } + scroll_offset();
+                auto base_position = Util::Point2i { first_column_position + 13, current_y_pos + row_height / 2.f } + scroll_offset();
 
-                std::vector<Util::Cs::Point2f> vertices;
+                std::vector<Util::Point2f> vertices;
                 if (is_expanded(child_path)) {
-                    vertices.push_back((base_position + Util::Cs::Vector2i { -6, -3 }).cast<float>());
-                    vertices.push_back((base_position + Util::Cs::Vector2i { 0, 3 }).cast<float>());
-                    vertices.push_back((base_position + Util::Cs::Vector2i { 6, -3 }).cast<float>());
+                    vertices.push_back((base_position + Util::Vector2i { -6, -3 }).cast<float>());
+                    vertices.push_back((base_position + Util::Vector2i { 0, 3 }).cast<float>());
+                    vertices.push_back((base_position + Util::Vector2i { 6, -3 }).cast<float>());
                 }
                 else {
-                    vertices.push_back((base_position + Util::Cs::Vector2i { -3, -6 }).cast<float>());
-                    vertices.push_back((base_position + Util::Cs::Vector2i { 3, 0 }).cast<float>());
-                    vertices.push_back((base_position + Util::Cs::Vector2i { -3, 6 }).cast<float>());
+                    vertices.push_back((base_position + Util::Vector2i { -3, -6 }).cast<float>());
+                    vertices.push_back((base_position + Util::Vector2i { 3, 0 }).cast<float>());
+                    vertices.push_back((base_position + Util::Vector2i { -3, 6 }).cast<float>());
                 }
                 painter.draw_line(vertices, Gfx::LineDrawOptions { .color = theme().text_button.active.unhovered.text });
                 first_column_position += 22;
@@ -149,7 +149,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
             if (icon) {
                 Gfx::RectangleDrawOptions rect;
                 rect.texture = icon;
-                Util::Cs::Point2i icon_position { first_column_position + 4, current_y_pos + row_height / 2.f - 8 };
+                Util::Point2i icon_position { first_column_position + 4, current_y_pos + row_height / 2.f - 8 };
                 icon_position += scroll_offset();
                 painter.deprecated_draw_rectangle({ icon_position.cast<float>(), { 16, 16 } }, rect);
                 first_column_position += 20;
@@ -159,7 +159,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                 auto column = model.column(c);
 
                 auto data = model.data(child, c);
-                Util::Cs::Point2i cell_position { c == 0 ? first_column_position : current_x_pos, current_y_pos };
+                Util::Point2i cell_position { c == 0 ? first_column_position : current_x_pos, current_y_pos };
                 cell_position += scroll_offset();
                 auto cell_size = this->cell_size(r, c);
 
@@ -173,7 +173,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                             text.set_font_size(theme().label_font_size);
                             text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
                             text.align(
-                                Align::CenterLeft, { (cell_position + Util::Cs::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
+                                Align::CenterLeft, { (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
                             );
                             text.draw(painter);
                         },
@@ -184,7 +184,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                                                                  .font_size = static_cast<int>(theme().label_font_size),
                                                                  .text_alignment = GUI::Align::CenterLeft,
                                                              } };
-                            drawable.set_rect({ (cell_position + Util::Cs::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
+                            drawable.set_rect({ (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
                             drawable.draw(painter);
                         },
                         [&](llgl::Texture const* data) {
@@ -210,7 +210,7 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
         if (children_count > 0) {
             Gfx::RectangleDrawOptions line_rect;
             line_rect.fill_color = theme().placeholder;
-            Util::Cs::Point2i line_position { depth * IndentSize - IndentSize / 2, lines_start_y };
+            Util::Point2i line_position { depth * IndentSize - IndentSize / 2, lines_start_y };
             line_position += scroll_offset();
             painter.deprecated_draw_rectangle({ line_position.cast<float>(), { 1, lines_end_y - lines_start_y + 1 } }, line_rect);
         }
@@ -265,7 +265,7 @@ TreeView::recursive_displayed_row_at_index(std::optional<Model::Node> parent, st
     return {};
 }
 
-Util::Cs::Size2i TreeView::content_size() const {
+Util::Size2i TreeView::content_size() const {
     return { row_width(), (display_header() ? displayed_row_count() + 1 : displayed_row_count()) * theme().line_height };
 }
 

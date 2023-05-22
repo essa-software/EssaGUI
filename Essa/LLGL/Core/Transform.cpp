@@ -6,11 +6,11 @@
 
 namespace llgl {
 
-Transform Transform::translate_2d(Util::Cs::Vector2f const& by) const {
+Transform Transform::translate_2d(Util::Vector2f const& by) const {
     return translate({ by, 0.f });
 }
 
-Transform Transform::translate(Util::Cs::Vector3f const& vector) const {
+Transform Transform::translate(Util::Vector3f const& vector) const {
     auto matrix = m_matrix;
     matrix.element(0, 3) = m_matrix.element(0, 0) * vector.x()
         + m_matrix.element(0, 1) * vector.y()
@@ -84,34 +84,34 @@ Transform Transform::scale_z(float scale) const {
     return Transform { matrix };
 }
 
-Util::Cs::Point3f Transform::transform_point(
-    Util::Cs::Point3f const& vector) const {
-    auto vector4 = Util::Cs::Point4f { vector, 1.f };
+Util::Point3f Transform::transform_point(
+    Util::Point3f const& vector) const {
+    auto vector4 = Util::Point4f { vector, 1.f };
     if (m_matrix == Util::Matrix4x4f::identity())
         return vector;
     auto result = m_matrix * vector4;
     result /= result.w();
-    return Util::Cs::Point3f { result };
+    return Util::Point3f { result };
 }
 
-Util::Cs::Point2f Transform::transform_point_2d(
-    Util::Cs::Point2f const& vec) const {
-    return Util::Cs::Point2f { transform_point(
-        Util::Cs::Point3f { vec, 0.f }) };
+Util::Point2f Transform::transform_point_2d(
+    Util::Point2f const& vec) const {
+    return Util::Point2f { transform_point(
+        Util::Point3f { vec, 0.f }) };
 }
 
-std::vector<Util::Cs::Point3f> Transform::transform_points(
-    std::vector<Util::Cs::Point3f> const& points) const {
-    std::vector<Util::Cs::Point3f> output;
+std::vector<Util::Point3f> Transform::transform_points(
+    std::vector<Util::Point3f> const& points) const {
+    std::vector<Util::Point3f> output;
     for (auto const& p : points) {
         output.push_back(transform_point(p));
     }
     return output;
 }
 
-std::vector<Util::Cs::Point2f> Transform::transform_points_2d(
-    std::vector<Util::Cs::Point2f> const& points) const {
-    std::vector<Util::Cs::Point2f> output;
+std::vector<Util::Point2f> Transform::transform_points_2d(
+    std::vector<Util::Point2f> const& points) const {
+    std::vector<Util::Point2f> output;
     for (auto const& p : points) {
         output.push_back(transform_point_2d(p));
     }

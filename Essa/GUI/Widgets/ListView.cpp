@@ -49,7 +49,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
             wnd.deprecated_draw_rectangle(
                 {
-                    Util::Cs::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset().cast<float>(),
+                    Util::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset().cast<float>(),
                     { row_width, row_height },
                 },
                 rs
@@ -68,7 +68,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
             auto column = model.column(c);
             Gfx::Text text { column.name, Application::the().bold_font() };
             text.set_font_size(16);
-            text.set_position(Util::Cs::Point2f { x_pos + 5, 20 } + scroll_offset().cast<float>());
+            text.set_position(Util::Point2f { x_pos + 5, 20 } + scroll_offset().cast<float>());
             text.draw(wnd);
             x_pos += column.width;
         }
@@ -81,7 +81,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
 
             for (size_t r = first_row; r < last_row; r++) {
                 auto data = model.root_data(r, c);
-                Util::Cs::Point2i cell_position { current_x_pos, r * row_height };
+                Util::Point2i cell_position { current_x_pos, r * row_height };
                 if (display_header())
                     cell_position.set_y(cell_position.y() + row_height);
                 cell_position += scroll_offset();
@@ -99,7 +99,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
                             text.set_font_size(theme().label_font_size);
                             text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
                             text.align(
-                                Align::CenterLeft, { (cell_position + Util::Cs::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
+                                Align::CenterLeft, { (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
                             );
                             text.draw(wnd);
                         },
@@ -110,7 +110,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
                                                                  .font_size = static_cast<int>(theme().label_font_size),
                                                                  .text_alignment = GUI::Align::CenterLeft,
                                                              } };
-                            drawable.set_rect({ (cell_position + Util::Cs::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
+                            drawable.set_rect({ (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
                             drawable.draw(wnd);
                         },
                         [&](llgl::Texture const* data) {

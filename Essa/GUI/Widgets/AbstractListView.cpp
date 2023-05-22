@@ -4,11 +4,11 @@
 
 namespace GUI {
 
-Util::Cs::Point2i AbstractListView::row_position(size_t row) const {
-    return Util::Cs::Point2i { 0, theme().line_height * (display_header() ? row + 1 : row) } + scroll_offset();
+Util::Point2i AbstractListView::row_position(size_t row) const {
+    return Util::Point2i { 0, theme().line_height * (display_header() ? row + 1 : row) } + scroll_offset();
 }
 
-Util::Cs::Size2i AbstractListView::content_size() const {
+Util::Size2i AbstractListView::content_size() const {
     return { row_width(), (display_header() ? m_model->row_count() + 1 : m_model->row_count()) * theme().line_height };
 }
 
@@ -20,7 +20,7 @@ float AbstractListView::row_width() const {
     return width;
 }
 
-Util::Cs::Size2i AbstractListView::cell_size(size_t, size_t column) const {
+Util::Size2i AbstractListView::cell_size(size_t, size_t column) const {
     return { m_model->column(column).width, theme().line_height };
 }
 

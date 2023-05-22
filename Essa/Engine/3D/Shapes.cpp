@@ -3,9 +3,9 @@
 namespace Essa::Shapes {
 
 void add_cube(std::vector<Model::Vertex>& vertices, CubeProperties properties) {
-    auto transform_point = [&](Util::Cs::Point3f vec) {
+    auto transform_point = [&](Util::Point3f vec) {
         return properties.transform.transform_point(
-            Util::Cs::Point3f { vec.x() * properties.dimensions.x() / 2, vec.y() * properties.dimensions.y() / 2,
+            Util::Point3f { vec.x() * properties.dimensions.x() / 2, vec.y() * properties.dimensions.y() / 2,
                                 vec.z() * properties.dimensions.z() / 2 }
             + properties.position.to_vector()
         );

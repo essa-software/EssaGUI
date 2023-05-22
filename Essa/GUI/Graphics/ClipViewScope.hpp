@@ -31,11 +31,11 @@ public:
     ~ClipViewScope();
 
 private:
-    static llgl::Projection create_clip_view(Util::Recti const&, Util::Cs::Vector2i offset_position, Util::Cs::Size2u framebuffer_size);
+    static llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2i offset_position, Util::Size2u framebuffer_size);
 
     Painter& m_target;
     llgl::Projection m_old_projection;
-    Util::Cs::Vector2i m_offset;
+    Util::Vector2i m_offset;
     ClipViewScope* m_parent = nullptr;
 };
 

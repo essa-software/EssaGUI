@@ -88,10 +88,10 @@ public:
     virtual void draw(Gfx::Painter&) const { }
 
     // TODO: Rename to absolute_position
-    Util::Cs::Point2i raw_position() const;
-    /*deprecated*/ void set_raw_position(Util::Cs::Point2i);
-    Util::Cs::Point2i host_position() const { return host_rect().position(); }
-    CREATE_VALUE(Util::Cs::Size2i, raw_size, Util::Cs::Size2i())
+    Util::Point2i raw_position() const;
+    /*deprecated*/ void set_raw_position(Util::Point2i);
+    Util::Point2i host_position() const { return host_rect().position(); }
+    CREATE_VALUE(Util::Size2i, raw_size, Util::Size2i())
 
     LengthVector position() const { return m_expected_pos; }
     LengthVector size() const { return m_input_size; }
@@ -194,7 +194,7 @@ public:
     virtual void on_init() { }
 
     // "Total size" size of all children of a widget (with padding included), or a widget itself.
-    virtual Util::Cs::Size2i total_size() const { return raw_size(); }
+    virtual Util::Size2i total_size() const { return raw_size(); }
 
     void init() {
         if (!m_initialized) {
@@ -225,7 +225,7 @@ protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }
     // Check if mouse at given absolute position is over the widget.
-    virtual bool is_mouse_over(Util::Cs::Point2i) const;
+    virtual bool is_mouse_over(Util::Point2i) const;
     virtual void update();
     virtual bool accepts_focus() const { return false; }
 
@@ -240,13 +240,13 @@ protected:
     virtual void focus_first_child_or_self();
 
     // Returns whether tooltip should be displayed at specified widget-relative position.
-    virtual bool should_display_tooltip(Util::Cs::Point2i const&) const { return !m_tooltip_text.is_empty(); }
+    virtual bool should_display_tooltip(Util::Point2i const&) const { return !m_tooltip_text.is_empty(); }
 
     // Called when tooltip is first shown up. Position is widget-relative.
-    virtual Util::UString create_tooltip(Util::Cs::Point2i const&) const { return m_tooltip_text; }
+    virtual Util::UString create_tooltip(Util::Point2i const&) const { return m_tooltip_text; }
 
     // Called every tick when tooltip is shown. Position is widget-relative.
-    virtual void update_tooltip(Util::Cs::Point2i const&, Util::UString&) const { }
+    virtual void update_tooltip(Util::Point2i const&, Util::UString&) const { }
 
     void set_needs_relayout();
 
@@ -261,14 +261,14 @@ private:
     Container* m_parent = nullptr;
     WidgetTreeRoot* m_widget_tree_root = nullptr;
     // Position, relative to parent container.
-    Util::Cs::Point2i m_position;
+    Util::Point2i m_position;
     LengthVector m_expected_pos;
     LengthVector m_input_size { Util::Length::Initial, Util::Length::Initial };
     Alignment m_horizontal_alignment = Alignment::Start;
     Alignment m_vertical_alignment = Alignment::Start;
 
     TooltipOverlay* m_tooltip = nullptr;
-    Util::Cs::Point2i m_tooltip_position;
+    Util::Point2i m_tooltip_position;
     EventLoop::TimerHandle m_tooltip_timer;
 
     bool m_hover = false;

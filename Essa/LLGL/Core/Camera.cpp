@@ -4,7 +4,7 @@
 
 namespace llgl {
 
-Camera Camera::translate(Util::Cs::Vector3f vector) const {
+Camera Camera::translate(Util::Vector3f vector) const {
     return Camera { m_projection, llgl::Transform {}.translate(-vector).matrix() * m_view_matrix };
 }
 

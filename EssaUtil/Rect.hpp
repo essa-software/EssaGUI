@@ -22,7 +22,7 @@ public:
         , width(width_)
         , height(height_) { }
 
-    Rect(Cs::Point2<T> position, Cs::Size2<T> size)
+    Rect(Point2<T> position, Size2<T> size)
         : left(position.x())
         , top(position.y())
         , width(size.x())
@@ -39,14 +39,14 @@ public:
         return Rect<U>(static_cast<U>(left), static_cast<U>(top), static_cast<U>(width), static_cast<U>(height));
     }
 
-    static Rect centered(Cs::Point2<T> center, Cs::Size2<T> size) { return Rect { center - size.to_vector() / T { 2 }, size }; }
+    static Rect centered(Point2<T> center, Size2<T> size) { return Rect { center - size.to_vector() / T { 2 }, size }; }
 
-    Cs::Point2<T> position() const { return { left, top }; }
-    Cs::Size2<T> size() const { return { width, height }; }
-    Cs::Point2<T> center() const { return { left + width / 2, top + height / 2 }; }
-    Cs::Point2<T> bottom_right() const { return { left + width, top + height }; }
+    Point2<T> position() const { return { left, top }; }
+    Size2<T> size() const { return { width, height }; }
+    Point2<T> center() const { return { left + width / 2, top + height / 2 }; }
+    Point2<T> bottom_right() const { return { left + width, top + height }; }
 
-    template<class U = T> bool contains(Cs::Point2<U> pos) const {
+    template<class U = T> bool contains(Point2<U> pos) const {
         return pos.x() >= left && pos.x() <= left + width && pos.y() >= top && pos.y() <= top + height;
     }
 
@@ -60,7 +60,7 @@ public:
         return max_x < min_x && max_y < min_y ? Rect<U>({ max_x, max_y }, { min_x - max_x, min_y - max_y }) : Rect<U>();
     }
 
-    template<class U = T> Rect<U> componentwise_divide(Cs::Size2<T> const& size) const {
+    template<class U = T> Rect<U> componentwise_divide(Size2<T> const& size) const {
         return {
             static_cast<U>(left) / size.x(),
             static_cast<U>(top) / size.y(),

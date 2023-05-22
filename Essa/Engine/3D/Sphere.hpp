@@ -43,7 +43,7 @@ private:
                 auto stack_angle = stack * delta_stack_angle - M_PI / 2;
                 auto sector_angle = sector * delta_sector_angle - M_PI;
                 auto point_position
-                    = Util::Cs::Point3f::create_spheric(Util::Angle::radians(stack_angle), Util::Angle::radians(sector_angle), 1);
+                    = Util::Point3f::create_spheric(Util::Angle::radians(stack_angle), Util::Angle::radians(sector_angle), 1);
                 Model::Vertex vertex { point_position, Util::Colors::White, {}, point_position.to_vector() };
                 if constexpr (!std::is_same_v<Callback, void (*)()>) {
                     settings.vertex_callback(stack_angle, sector_angle, vertex);

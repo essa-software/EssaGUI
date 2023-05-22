@@ -32,16 +32,16 @@ public:
     static Texture create_from_image(Image const&);
 
     template<class T>
-    static Texture create_from_color_array(Util::Cs::Size2u, std::span<T const> array, Format = Format::RGBA);
+    static Texture create_from_color_array(Util::Size2u, std::span<T const> array, Format = Format::RGBA);
 
-    static Texture create_empty(Util::Cs::Size2u, Format = Format::RGBA);
+    static Texture create_empty(Util::Size2u, Format = Format::RGBA);
 
     Image copy_to_image() const;
 
     template<class T>
-    void update(Util::Cs::Point2u dst_pos, Util::Cs::Size2u src_size, std::span<T const> array, Format format);
+    void update(Util::Point2u dst_pos, Util::Size2u src_size, std::span<T const> array, Format format);
 
-    void recreate(Util::Cs::Size2u, Format);
+    void recreate(Util::Size2u, Format);
 
     enum class Filtering {
         Nearest,
@@ -52,7 +52,7 @@ public:
     void set_filtering(Filtering);
 
     unsigned id() const { return m_id; }
-    Util::Cs::Size2u size() const { return m_size; }
+    Util::Size2u size() const { return m_size; }
 
     void set_label(std::string const&);
 
@@ -62,7 +62,7 @@ private:
     void ensure_initialized(Format);
 
     unsigned m_id { 0 };
-    Util::Cs::Size2u m_size;
+    Util::Size2u m_size;
 };
 
 class TextureBinder {

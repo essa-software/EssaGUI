@@ -6,13 +6,13 @@ namespace Gfx::Drawing {
 
 class Ellipse : public Shape {
 public:
-    Ellipse(Util::Cs::Point2f center, float radius, Fill fill, Outline outline = Outline::none())
+    Ellipse(Util::Point2f center, float radius, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
         , m_extents(radius, radius) {
         move(center.to_vector());
     }
 
-    Ellipse(Util::Cs::Point2f center, Util::Cs::Vector2f extents, Fill fill, Outline outline = Outline::none())
+    Ellipse(Util::Point2f center, Util::Vector2f extents, Fill fill, Outline outline = Outline::none())
         : Shape(fill, outline)
         , m_extents(extents) {
         move(center.to_vector());
@@ -25,9 +25,9 @@ public:
         return *this;
     }
 
-    Util::Cs::Vector2f extents() const { return m_extents; }
+    Util::Vector2f extents() const { return m_extents; }
     virtual size_t point_count() const override { return m_point_count; }
-    virtual Util::Cs::Point2f point(size_t idx) const override {
+    virtual Util::Point2f point(size_t idx) const override {
         assert(idx < m_point_count);
         float angle = static_cast<float>(idx * M_PI * 2) / m_point_count;
         return { std::sin(angle) * m_extents.x(), std::cos(angle) * m_extents.y() };
@@ -41,7 +41,7 @@ public:
 
 private:
     // FIXME: Is this size or vector?
-    Util::Cs::Vector2f m_extents;
+    Util::Vector2f m_extents;
     size_t m_point_count = 16;
 };
 

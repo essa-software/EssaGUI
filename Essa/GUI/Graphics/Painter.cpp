@@ -12,27 +12,27 @@
 
 namespace Gfx {
 
-void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Cs::Point2f> const& vertices) {
+void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices) {
     auto fill = shape.fill();
     auto local_bounds = shape.local_bounds();
 
-    Util::Cs::Size2f texture_size { fill.texture() ? fill.texture()->size().cast<float>() : Util::Cs::Size2f {} };
+    Util::Size2f texture_size { fill.texture() ? fill.texture()->size().cast<float>() : Util::Size2f {} };
     auto texture_rect = fill.texture_rect();
     if (texture_rect.size().is_zero()) {
         texture_rect.width = texture_size.x();
         texture_rect.height = texture_size.y();
     }
 
-    auto normalized_texture_coord_for_point = [&](Util::Cs::Point2f point) -> Util::Cs::Point2f {
+    auto normalized_texture_coord_for_point = [&](Util::Point2f point) -> Util::Point2f {
         if (texture_rect.size().is_zero()) {
             return {};
         }
 
-        Util::Cs::Point2f point_normalized_coords {
+        Util::Point2f point_normalized_coords {
             (point.x() - local_bounds.left) / local_bounds.width,
             (point.y() - local_bounds.top) / local_bounds.height,
         };
-        Util::Cs::Point2f texture_coords {
+        Util::Point2f texture_coords {
             texture_rect.left + point_normalized_coords.x() * texture_rect.width,
             texture_rect.top + point_normalized_coords.y() * texture_rect.height,
         };
@@ -53,20 +53,20 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Cs::Point
     draw_vertices(llgl::PrimitiveType::TriangleFan, fill_vertices, fill.texture());
 }
 
-void Painter::draw_outline(Drawing::Shape const& shape, std::vector<Util::Cs::Point2f> const& vertices) {
+void Painter::draw_outline(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices) {
     draw_outline(vertices, shape.outline().color(), shape.outline().thickness());
 }
 
 struct RoundingResult {
-    Util::Cs::Point2f center;
+    Util::Point2f center;
     float angle_start;
     float angle_end;
     float scaled_radius;
 };
 struct RoundingSettings {
-    Util::Cs::Point2f left;
-    Util::Cs::Point2f right;
-    Util::Cs::Point2f tip;
+    Util::Point2f left;
+    Util::Point2f right;
+    Util::Point2f tip;
     float radius;
 };
 
@@ -134,8 +134,8 @@ RoundingResult round(RoundingSettings settings) {
     return { center, static_cast<float>(alpha.rad()), static_cast<float>(beta.rad()), r };
 }
 
-static std::vector<Util::Cs::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
-    std::vector<Util::Cs::Point2f> vertices;
+static std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
+    std::vector<Util::Point2f> vertices;
 
     auto round_radius_for_vertex = [&](size_t idx) {
         if (shape.point_count() == 4) {
@@ -177,7 +177,7 @@ static std::vector<Util::Cs::Point2f> calculate_vertices_for_rounded_shape(Drawi
             float angle = rounding.angle_start
                 + (rounding.angle_end - rounding.angle_start) * static_cast<float>(s) / static_cast<float>(RoundingResolution);
             // fmt::print("{}\n", fmt::streamed(rounding.center));
-            auto point = rounding.center + Util::Cs::Vector2f::create_polar(Util::Angle::radians(angle), rounding.scaled_radius);
+            auto point = rounding.center + Util::Vector2f::create_polar(Util::Angle::radians(angle), rounding.scaled_radius);
 
             // Don't allow duplicates
             if (vertices.empty() || !point.is_approximately_equal(vertices.back())) {
@@ -200,14 +200,14 @@ static std::vector<Util::Cs::Point2f> calculate_vertices_for_rounded_shape(Drawi
 }
 
 void Painter::draw(Drawing::Shape const& shape) {
-    std::vector<Util::Cs::Point2f> vertices_for_rounded_shape = [&]() {
+    std::vector<Util::Point2f> vertices_for_rounded_shape = [&]() {
         if (!shape.outline().is_rounded()) {
             return shape.points().to_vector();
         }
         return calculate_vertices_for_rounded_shape(shape);
     }();
 
-    m_builder.set_submodel(shape.transform().translate(Util::Cs::Vector3f { -shape.origin().to_vector(), 0.f }));
+    m_builder.set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin().to_vector(), 0.f }));
     if (shape.fill().is_visible()) {
         draw_fill(shape, vertices_for_rounded_shape);
     }
@@ -231,7 +231,7 @@ void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOp
     });
 }
 
-void Painter::draw_ellipse(Util::Cs::Point2f center, Util::Cs::Size2f size, DrawOptions const& options) {
+void Painter::draw_ellipse(Util::Point2f center, Util::Size2f size, DrawOptions const& options) {
     draw(Gfx::Drawing::Ellipse {
         center, size.to_vector() / 2.f,
         Drawing::Fill {}.set_color(options.fill_color).set_texture(options.texture).set_texture_rect(Util::Rectf { options.texture_rect }),
@@ -239,7 +239,7 @@ void Painter::draw_ellipse(Util::Cs::Point2f center, Util::Cs::Size2f size, Draw
              .set_point_count(30));
 }
 
-void Painter::draw_line(std::span<Util::Cs::Point2f const> positions, LineDrawOptions const& options) {
+void Painter::draw_line(std::span<Util::Point2f const> positions, LineDrawOptions const& options) {
     std::vector<Gfx::Vertex> vertices;
     for (auto const& position : positions) {
         vertices.push_back({ position, options.color, {} });
@@ -247,7 +247,7 @@ void Painter::draw_line(std::span<Util::Cs::Point2f const> positions, LineDrawOp
     draw_vertices(llgl::PrimitiveType::LineStrip, vertices);
 }
 
-void Painter::draw_outline(std::span<Util::Cs::Point2f const> positions, Util::Color color, float thickness) {
+void Painter::draw_outline(std::span<Util::Point2f const> positions, Util::Color color, float thickness) {
     if (thickness == 0)
         return;
 

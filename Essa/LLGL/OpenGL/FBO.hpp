@@ -11,7 +11,7 @@ namespace llgl::opengl {
 
 class FBO {
 public:
-    explicit FBO(Util::Cs::Size2u size);
+    explicit FBO(Util::Size2u size);
     ~FBO();
 
     enum class Target {
@@ -21,7 +21,7 @@ public:
     };
 
     void bind(Target = Target::Framebuffer) const;
-    void resize(Util::Cs::Size2u);
+    void resize(Util::Size2u);
     Texture const& color_texture() const { return m_color_texture; }
     unsigned id() const { return m_fbo; }
 

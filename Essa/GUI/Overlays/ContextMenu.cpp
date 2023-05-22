@@ -12,7 +12,7 @@ namespace GUI {
 constexpr float MenuWidth = 200;
 constexpr float MenuItemHeight = 30;
 
-Util::Cs::Size2i MenuWidget::wanted_size() const { return { MenuWidth, MenuItemHeight * m_actions.size() }; }
+Util::Size2i MenuWidget::wanted_size() const { return { MenuWidth, MenuItemHeight * m_actions.size() }; }
 
 void MenuWidget::add_action(Util::UString label) { m_actions.push_back(std::move(label)); }
 
@@ -69,7 +69,7 @@ private:
     }
 };
 
-ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_menu, Util::Cs::Point2i position)
+ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_menu, Util::Point2i position)
     : Overlay(window, "ContextMenu")
     , m_context_menu(context_menu)
     , m_position(position) {
@@ -97,7 +97,7 @@ ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_m
     };
 }
 
-Util::Cs::Size2i ContextMenuOverlay::size() const {
+Util::Size2i ContextMenuOverlay::size() const {
     auto options_size = m_menu_widget->wanted_size();
     if (!m_context_menu.title().is_empty()) {
         options_size.set_y(options_size.y() + 40);

@@ -28,7 +28,7 @@ int TextEditor::left_margin() const {
     return static_cast<int>(m_multiline ? theme().text_editor_gutter_width + theme().text_editor_margin : theme().text_editor_margin);
 }
 
-Util::Cs::Size2i TextEditor::content_size() const {
+Util::Size2i TextEditor::content_size() const {
     auto line_height = this->line_height();
     int first_visible_line = std::min<int>(-scroll_offset().y() / line_height, static_cast<int>(m_lines.size()) - 1);
     int last_visible_line = std::min<int>((raw_size().y() - scroll_offset().y() / line_height), static_cast<int>(m_lines.size()) - 1);
@@ -61,7 +61,7 @@ TextPosition TextEditor::real_cursor_position() const {
     return position;
 }
 
-TextPosition TextEditor::text_position_at(Util::Cs::Point2i position) {
+TextPosition TextEditor::text_position_at(Util::Point2i position) {
     if (line_count() == 0)
         return {};
 
@@ -572,12 +572,12 @@ void TextEditor::insert_codepoint(uint32_t codepoint) {
     did_content_change();
 }
 
-Util::Cs::Point2i TextEditor::calculate_cursor_position() const {
+Util::Point2i TextEditor::calculate_cursor_position() const {
     auto cursor = real_cursor_position();
     Gfx::Text text { m_lines[cursor.line], GUI::Application::the().fixed_width_font() };
     text.set_font_size(theme().label_font_size);
     auto character_position = text.find_character_position(cursor.column);
-    auto position = Util::Cs::Point2i { character_position, 0 } + scroll_offset();
+    auto position = Util::Point2i { character_position, 0 } + scroll_offset();
     auto const cursor_height = std::min<int>(raw_size().y() - 6, line_height());
     if (m_multiline)
         position.set_y(position.y() + line_height() / 2 - cursor_height / 4 + line_height() * static_cast<int>(cursor.line));
@@ -637,11 +637,11 @@ TextPosition TextEditor::index_to_position(size_t offset) const {
     return position;
 }
 
-static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type type, Util::Cs::Point2f start, float width) {
+static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type type, Util::Point2f start, float width) {
 
     int CurlyHeights[] = { 0, -1, -1, 0, 1, 1 };
 
-    auto draw_curly = [&](Util::Cs::Point2f position, float width, Util::Color color) {
+    auto draw_curly = [&](Util::Point2f position, float width, Util::Color color) {
         std::vector<Gfx::Vertex> vertices;
         for (int x = position.x(); x < position.x() + width; x += 1) {
             int y = position.y() + CurlyHeights[x % 6];
@@ -696,7 +696,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
             float y = m_multiline ? line_height() / 2 - cursor_height / 4 + line_height() * line : raw_size().y() / 2 - cursor_height / 2;
             painter.deprecated_draw_rectangle(
                 {
-                    Util::Cs::Point2f(start_x + (m_multiline ? 0 : left_margin()), y) + scroll_offset().cast<float>(),
+                    Util::Point2f(start_x + (m_multiline ? 0 : left_margin()), y) + scroll_offset().cast<float>(),
                     { end_x - start_x, cursor_height },
                 },
                 selected_rect
@@ -766,9 +766,9 @@ void TextEditor::draw(Gfx::Painter& painter) const {
 
                 // Errors
                 for (auto const& error : m_error_spans) {
-                    Util::Cs::Point2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
+                    Util::Point2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
                     for_each_line_in_range(error.range, [&](size_t line, size_t start, size_t end) {
-                        Util::Cs::Point2f start_position { base_position.x() + start * character_width,
+                        Util::Point2f start_position { base_position.x() + start * character_width,
                                                         base_position.y() + line * line_height + 3 };
                         draw_error_line(painter, error.type, start_position, (end - start) * character_width);
                     });
@@ -780,7 +780,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
     // Line numbers
     if (m_multiline) {
         Gfx::Text text { "", GUI::Application::the().fixed_width_font() };
-        Util::Cs::Point2f position;
+        Util::Point2f position;
         position.set_y(5 + scroll_offset().y() + line_height * static_cast<int>(first_visible_line));
         text.set_fill_color(theme().gutter.text);
         text.set_font_size(theme().label_font_size);
@@ -800,7 +800,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
         Gfx::RectangleDrawOptions cursor;
         cursor.fill_color = theme_colors.text;
         painter.deprecated_draw_rectangle(
-            { (position + Util::Cs::Vector2i { left_margin(), 0 }).cast<float>(), { 2, cursor_height } }, cursor
+            { (position + Util::Vector2i { left_margin(), 0 }).cast<float>(), { 2, cursor_height } }, cursor
         );
         // }
     }

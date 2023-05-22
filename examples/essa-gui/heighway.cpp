@@ -56,7 +56,7 @@ private:
 
     llgl::Framebuffer m_framebuffer { { 500, 500 } };
     Gfx::Painter m_painter { m_framebuffer.renderer() };
-    Util::Cs::Point2f m_current_position;
+    Util::Point2f m_current_position;
     uint64_t m_point_count = 0;
     Util::Clock m_clock;
 };

@@ -43,7 +43,7 @@ int main() {
     bool w_pressed = false;
     bool s_pressed = false;
 
-    Util::Cs::Point3f camera_position;
+    Util::Point3f camera_position;
     double yaw = 0;
     double pitch = 0;
 

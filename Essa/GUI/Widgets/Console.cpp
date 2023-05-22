@@ -39,7 +39,7 @@ void Console::draw(Gfx::Painter& painter) const {
     size_t s = 0;
     for (auto& line : m_lines) {
         auto position
-            = Util::Cs::Point2i { 5, s * LINE_SPACING + 19 } + scroll_offset();
+            = Util::Point2i { 5, s * LINE_SPACING + 19 } + scroll_offset();
         if (position.y() > raw_size().y() + LINE_SPACING || position.y() < 0) {
             s++;
             continue;
@@ -56,7 +56,7 @@ void Console::draw(Gfx::Painter& painter) const {
     ScrollableWidget::draw_scrollbar(painter);
 }
 
-Util::Cs::Size2i Console::content_size() const {
+Util::Size2i Console::content_size() const {
     float width = 0;
     auto character_size
         = Application::the().fixed_width_font().calculate_text_size(

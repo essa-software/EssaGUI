@@ -9,7 +9,7 @@ namespace GUI {
 class AbstractListView : public ScrollableWidget {
 public:
     // Calculate row position for index, in widget-local coords.
-    Util::Cs::Point2i row_position(size_t) const;
+    Util::Point2i row_position(size_t) const;
 
     void set_model(std::unique_ptr<Model> model) { m_model = std::move(model); }
 
@@ -29,9 +29,9 @@ public:
     }
 
 protected:
-    virtual Util::Cs::Size2i content_size() const override;
+    virtual Util::Size2i content_size() const override;
     float row_width() const;
-    Util::Cs::Size2i cell_size(size_t row, size_t column) const;
+    Util::Size2i cell_size(size_t row, size_t column) const;
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;
 
 private:

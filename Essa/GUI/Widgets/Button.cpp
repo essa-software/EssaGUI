@@ -5,7 +5,7 @@
 namespace GUI {
 
 Button::Button()
-    : m_behavior([&](Util::Cs::Point2i point) {
+    : m_behavior([&](Util::Point2i point) {
         return local_rect().contains(point);
     }) {
     m_behavior.on_click = [&]() {

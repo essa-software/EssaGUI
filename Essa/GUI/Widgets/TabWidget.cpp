@@ -33,7 +33,7 @@ void TabButton::draw(Gfx::Painter& window) const {
             : local_rect().cast<float>(),
         rect);
 
-    Util::Cs::Point2f text_position;
+    Util::Point2f text_position;
     if (!is_active())
         text_position.set_y(2);
 

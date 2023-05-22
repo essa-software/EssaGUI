@@ -15,7 +15,7 @@ class HostWindow
     : public WidgetTreeRoot
     , public llgl::Window {
 public:
-    explicit HostWindow(Util::Cs::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
+    explicit HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
     // TODO: Find a way for this to be private
     void do_draw();
@@ -43,7 +43,7 @@ public:
     // NOTE: The opened context menu is modal, meaning that this
     //       function won't return until user chooses an action
     //       or dismisses the menu.
-    void open_context_menu(ContextMenu, Util::Cs::Point2i position);
+    void open_context_menu(ContextMenu, Util::Point2i position);
 
     Overlay* focused_overlay() const { return m_focused_overlay; }
 
@@ -55,8 +55,8 @@ public:
     TooltipOverlay& add_tooltip(Tooltip t);
     void remove_closed_overlays();
 
-    virtual Util::Cs::Point2i position() const override { return {}; }
-    virtual Util::Cs::Size2i size() const override { return llgl::Window::size().cast<int>(); }
+    virtual Util::Point2i position() const override { return {}; }
+    virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
 
     void focus_overlay(Overlay&);
 
@@ -79,7 +79,7 @@ private:
     void focus_window(OverlayList::iterator);
 
     OverlayList m_overlays;
-    Util::Cs::Point2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
+    Util::Point2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
     Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
     Util::Color m_background_color;

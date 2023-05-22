@@ -179,8 +179,8 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         painter.deprecated_draw_rectangle(host_window().rect().cast<float>(), modal_backdrop);
     }
 
-    Util::Cs::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
-    Util::Cs::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
+    Util::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
+    Util::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
     {
         // FIXME: Assuming that shadow is equal in x and y.
@@ -254,12 +254,12 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     rs_titlebar.border_radius_top_right = theme().tool_window_title_bar_border_radius;
     rs_titlebar.fill_color = titlebar_color.background;
     painter.deprecated_draw_rectangle(
-        { position - Util::Cs::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } },
+        { position - Util::Vector2f(1, theme().tool_window_title_bar_size), { size.x() + 2, theme().tool_window_title_bar_size } },
         rs_titlebar
     );
 
     Gfx::Text text { title(), Application::the().bold_font() };
-    text.set_position((position + Util::Cs::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)));
+    text.set_position((position + Util::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)));
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(titlebar_color.text);
     text.draw(painter);
@@ -281,15 +281,15 @@ void ToolWindow::draw(Gfx::Painter& painter) {
             tbb_background
         );
 
-        Util::Cs::Point2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f),
+        Util::Point2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f),
                                        std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
 
         std::array<Gfx::Vertex, 4> varr;
         auto close_button_cross_color = theme().text_button.active.unhovered.text;
-        varr[0] = Gfx::Vertex { button_center - Util::Cs::Vector2f(5, 5), close_button_cross_color, {} };
-        varr[1] = Gfx::Vertex { button_center + Util::Cs::Vector2f(5, 5), close_button_cross_color, {} };
-        varr[2] = Gfx::Vertex { button_center - Util::Cs::Vector2f(-5, 5), close_button_cross_color, {} };
-        varr[3] = Gfx::Vertex { button_center + Util::Cs::Vector2f(-5, 5), close_button_cross_color, {} };
+        varr[0] = Gfx::Vertex { button_center - Util::Vector2f(5, 5), close_button_cross_color, {} };
+        varr[1] = Gfx::Vertex { button_center + Util::Vector2f(5, 5), close_button_cross_color, {} };
+        varr[2] = Gfx::Vertex { button_center - Util::Vector2f(-5, 5), close_button_cross_color, {} };
+        varr[3] = Gfx::Vertex { button_center + Util::Vector2f(-5, 5), close_button_cross_color, {} };
         painter.draw_vertices(llgl::PrimitiveType::Lines, varr);
 
         titlebar_button_position_x -= theme().tool_window_title_bar_size;
@@ -297,10 +297,10 @@ void ToolWindow::draw(Gfx::Painter& painter) {
 
     std::array<Gfx::Vertex, 4> varr_border;
     varr_border[0] = Gfx::Vertex { { position }, titlebar_color.background, {} };
-    varr_border[1] = Gfx::Vertex { { position + Util::Cs::Vector2f(-1, size.y()) }, titlebar_color.background, {} };
+    varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(-1, size.y()) }, titlebar_color.background, {} };
     varr_border[2]
-        = Gfx::Vertex { { position + Util::Cs::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
-    varr_border[3] = Gfx::Vertex { { position + Util::Cs::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
+        = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
+    varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
 
     // Flush because of text being draw with incorrect blending mode otherwise

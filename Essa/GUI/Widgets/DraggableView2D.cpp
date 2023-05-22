@@ -18,11 +18,11 @@ Util::Rectf DraggableView2D::visible_area() const {
              raw_size().y() / zoom() };
 }
 
-Util::Cs::Point2f DraggableView2D::screen_to_world(Util::Cs::Point2i const& screen) const {
+Util::Point2f DraggableView2D::screen_to_world(Util::Point2i const& screen) const {
     return inverse_transform().transform_point_2d(screen.cast<float>());
 }
 
-Util::Cs::Point2i DraggableView2D::world_to_screen(Util::Cs::Point2f const& world) const {
+Util::Point2i DraggableView2D::world_to_screen(Util::Point2f const& world) const {
     return transform().transform_point_2d(world).cast<int>();
 }
 

@@ -33,16 +33,16 @@ Texture Texture::create_from_image(Image const& image) {
 }
 
 template<class T>
-Texture Texture::create_from_color_array(Util::Cs::Size2u size, std::span<T const> array, Format format) {
+Texture Texture::create_from_color_array(Util::Size2u size, std::span<T const> array, Format format) {
     Texture texture = create_empty(size);
     texture.update({}, size, array, format);
     return texture;
 }
 
-template Texture Texture::create_from_color_array(Util::Cs::Size2u size, std::span<Util::Color const> array, Format format);
-template Texture Texture::create_from_color_array(Util::Cs::Size2u size, std::span<Util::Colorf const> array, Format format);
+template Texture Texture::create_from_color_array(Util::Size2u size, std::span<Util::Color const> array, Format format);
+template Texture Texture::create_from_color_array(Util::Size2u size, std::span<Util::Colorf const> array, Format format);
 
-Texture Texture::create_empty(Util::Cs::Size2u size, Format format) {
+Texture Texture::create_empty(Util::Size2u size, Format format) {
     Texture texture;
     texture.m_size = size;
     // std::cout << "glGenTextures() = " << texture.m_id << std::endl;
@@ -79,7 +79,7 @@ void Texture::ensure_initialized(Format format) {
     }
 }
 
-void Texture::recreate(Util::Cs::Size2u size, Format format) {
+void Texture::recreate(Util::Size2u size, Format format) {
     m_size = size;
 
     if (m_id) {
@@ -92,7 +92,7 @@ void Texture::recreate(Util::Cs::Size2u size, Format format) {
 }
 
 template<class PixelType>
-static void update_part_of_bound_texture(Util::Cs::Point2u position, Util::Cs::Size2u size, std::span<PixelType const> pixels, Texture::Format format) {
+static void update_part_of_bound_texture(Util::Point2u position, Util::Size2u size, std::span<PixelType const> pixels, Texture::Format format) {
     auto type = [&]() {
         if constexpr (std::is_same_v<PixelType, Util::Colorf>)
             return GL_FLOAT;
@@ -106,7 +106,7 @@ static void update_part_of_bound_texture(Util::Cs::Point2u position, Util::Cs::S
 }
 
 template<class T>
-void Texture::update(Util::Cs::Point2u dst_position, Util::Cs::Size2u src_size, std::span<T const> pixels, Format format) {
+void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<T const> pixels, Format format) {
     assert(dst_position.x() + src_size.x() <= m_size.x());
     assert(dst_position.y() + src_size.y() <= m_size.y());
     // TODO: Support RGB format
@@ -117,8 +117,8 @@ void Texture::update(Util::Cs::Point2u dst_position, Util::Cs::Size2u src_size, 
     update_part_of_bound_texture(dst_position, src_size, pixels, format);
 }
 
-template void Texture::update(Util::Cs::Point2u dst_position, Util::Cs::Size2u src_size, std::span<Util::Color const> pixels, Format format);
-template void Texture::update(Util::Cs::Point2u dst_position, Util::Cs::Size2u src_size, std::span<Util::Colorf const> pixels, Format format);
+template void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<Util::Color const> pixels, Format format);
+template void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<Util::Colorf const> pixels, Format format);
 
 void Texture::set_filtering(Filtering filtering) {
     TextureBinder binder(*this);

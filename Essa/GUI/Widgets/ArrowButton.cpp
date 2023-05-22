@@ -18,7 +18,7 @@ void ArrowButton::draw(Gfx::Painter& painter) const {
 
     double real_size = m_arrow_size.value();
 
-    const Util::Cs::Point2f points[8] = {
+    const Util::Point2f points[8] = {
         { std::round(midpoint.x() - real_size / 2), std::round(midpoint.y() - real_size / 2) },
         { std::round(midpoint.x() + 0), std::round(midpoint.y() - real_size / 2) },
         { std::round(midpoint.x() + real_size / 2), std::round(midpoint.y() - real_size / 2) },

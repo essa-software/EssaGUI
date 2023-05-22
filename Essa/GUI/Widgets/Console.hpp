@@ -25,7 +25,7 @@ private:
         EML::Object const&, EML::Loader& loader) override;
     virtual void draw(Gfx::Painter&) const override;
     virtual bool accepts_focus() const override { return true; }
-    virtual Util::Cs::Size2i content_size() const override;
+    virtual Util::Size2i content_size() const override;
 
     std::deque<LogLine> m_lines;
 };

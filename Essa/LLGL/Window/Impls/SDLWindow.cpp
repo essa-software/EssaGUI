@@ -25,7 +25,7 @@ namespace llgl {
 
 static SDL_GLContext s_context = nullptr;
 
-void Window::create_impl(Util::Cs::Size2u size, Util::UString const& title, WindowSettings const& settings) {
+void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) {
     static bool initialized = false;
     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
     if (!initialized && SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -102,13 +102,13 @@ void Window::set_title(Util::UString const& title) {
 
 Util::UString Window::title() const { return Util::UString { SDL_GetWindowTitle(m_data->window) }; }
 
-void Window::set_size_impl(Util::Cs::Size2u size) {
+void Window::set_size_impl(Util::Size2u size) {
     if (!m_data->window)
         return;
     SDL_SetWindowSize(m_data->window, size.x(), size.y());
 }
 
-void Window::set_position(Util::Cs::Point2i position) { SDL_SetWindowPosition(m_data->window, position.x(), position.y()); }
+void Window::set_position(Util::Point2i position) { SDL_SetWindowPosition(m_data->window, position.x(), position.y()); }
 
 void Window::display() { SDL_GL_SwapWindow(m_data->window); }
 
@@ -210,7 +210,7 @@ std::optional<Event> Window::poll_event_impl() {
     }
 }
 
-void Window::set_mouse_position(Util::Cs::Point2i pos) { SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y()); }
+void Window::set_mouse_position(Util::Point2i pos) { SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y()); }
 
 bool Window::is_focused() const { return m_data->focused; }
 
@@ -218,7 +218,7 @@ void Window::set_active() const { SDL_GL_MakeCurrent(m_data->window, s_context);
 
 void Window::maximize() const { SDL_MaximizeWindow(m_data->window); }
 
-Util::Cs::Size2u Window::screen_size() const {
+Util::Size2u Window::screen_size() const {
     SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_data->window), &mode);
     return { mode.w, mode.h };

@@ -10,7 +10,7 @@
 
 namespace GUI {
 
-HostWindow::HostWindow(Util::Cs::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings)
+HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings)
     : llgl::Window(size, title, settings) {
     llgl::opengl::enable_debug_output();
 }
@@ -135,7 +135,7 @@ void HostWindow::spawn_notification(Util::UString message, NotificationLevel lev
 
 Overlay& HostWindow::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
     auto overlay_ptr = overlay.get();
-    m_next_overlay_position += Util::Cs::Vector2f(theme().tool_window_title_bar_size * 2, theme().tool_window_title_bar_size * 2);
+    m_next_overlay_position += Util::Vector2f(theme().tool_window_title_bar_size * 2, theme().tool_window_title_bar_size * 2);
     if (m_next_overlay_position.x() > size().x() - theme().tool_window_title_bar_size
         || m_next_overlay_position.y() > size().y() - theme().tool_window_title_bar_size)
         m_next_overlay_position = { 10, 10 };
@@ -157,7 +157,7 @@ HostWindow::OpenOrFocusResult HostWindow::open_or_focus_tool_window(Util::UStrin
     return result;
 }
 
-void HostWindow::open_context_menu(ContextMenu context_menu, Util::Cs::Point2i position) {
+void HostWindow::open_context_menu(ContextMenu context_menu, Util::Point2i position) {
     auto& menu = open_overlay<ContextMenuOverlay>(context_menu, position);
     menu.show_modal();
 }

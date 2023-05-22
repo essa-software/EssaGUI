@@ -5,7 +5,7 @@
 
 namespace llgl::opengl {
 
-FBO::FBO(Util::Cs::Size2u size) {
+FBO::FBO(Util::Size2u size) {
     glGenFramebuffers(1, &m_fbo);
 
     resize(size);
@@ -38,7 +38,7 @@ void FBO::bind(Target target) const {
     glBindFramebuffer(static_cast<GLenum>(target), m_fbo);
 }
 
-void FBO::resize(Util::Cs::Size2u size) {
+void FBO::resize(Util::Size2u size) {
     FBOScope scope { *this };
     if (m_color_texture.size() == size)
         return;
