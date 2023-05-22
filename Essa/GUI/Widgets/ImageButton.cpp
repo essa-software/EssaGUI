@@ -10,11 +10,9 @@ void ImageButton::draw(Gfx::Painter& painter) const {
 
     Gfx::DrawOptions cs_bg;
     cs_bg.fill_color = colors.background;
-    cs_bg.outline_color
-        = is_focused() ? theme().focus_frame : Util::Colors::Transparent;
+    cs_bg.outline_color = is_focused() ? theme().focus_frame : Util::Colors::Transparent;
     cs_bg.outline_thickness = -1;
-    painter.draw_ellipse(raw_size().cast<float>().to_deprecated_vector() / 2.f,
-        raw_size().cast<float>().to_deprecated_vector(), cs_bg);
+    painter.draw_ellipse(raw_size().cast<float>().to_vector().to_point() / 2.f, raw_size().cast<float>(), cs_bg);
 
     if (!m_image)
         return;

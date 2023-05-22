@@ -231,9 +231,9 @@ void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOp
     });
 }
 
-void Painter::draw_ellipse(Util::Vector2f center, Util::Vector2f size, DrawOptions const& options) {
+void Painter::draw_ellipse(Util::Cs::Point2f center, Util::Cs::Size2f size, DrawOptions const& options) {
     draw(Gfx::Drawing::Ellipse {
-        Util::Cs::Point2f::from_deprecated_vector(center), Util::Cs::Vector2f::from_deprecated_vector(size) / 2.f,
+        center, size.to_vector() / 2.f,
         Drawing::Fill {}.set_color(options.fill_color).set_texture(options.texture).set_texture_rect(Util::Rectf { options.texture_rect }),
         Drawing::Outline::normal(options.outline_color, options.outline_thickness) }
              .set_point_count(30));
