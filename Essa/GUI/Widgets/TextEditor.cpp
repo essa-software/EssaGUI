@@ -637,11 +637,11 @@ TextPosition TextEditor::index_to_position(size_t offset) const {
     return position;
 }
 
-static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type type, Util::Vector2f start, float width) {
+static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type type, Util::Cs::Point2f start, float width) {
 
     int CurlyHeights[] = { 0, -1, -1, 0, 1, 1 };
 
-    auto draw_curly = [&](Util::Vector2f position, float width, Util::Color color) {
+    auto draw_curly = [&](Util::Cs::Point2f position, float width, Util::Color color) {
         std::vector<Gfx::Vertex> vertices;
         for (int x = position.x(); x < position.x() + width; x += 1) {
             int y = position.y() + CurlyHeights[x % 6];
@@ -766,9 +766,9 @@ void TextEditor::draw(Gfx::Painter& painter) const {
 
                 // Errors
                 for (auto const& error : m_error_spans) {
-                    Util::Vector2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
+                    Util::Cs::Point2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
                     for_each_line_in_range(error.range, [&](size_t line, size_t start, size_t end) {
-                        Util::Vector2f start_position { base_position.x() + start * character_width,
+                        Util::Cs::Point2f start_position { base_position.x() + start * character_width,
                                                         base_position.y() + line * line_height + 3 };
                         draw_error_line(painter, error.type, start_position, (end - start) * character_width);
                     });
