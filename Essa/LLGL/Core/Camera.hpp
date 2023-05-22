@@ -12,7 +12,7 @@ public:
         : m_projection(projection)
         , m_view_matrix(view_matrix) { }
 
-    [[nodiscard]] Camera translate(Util::Vector3f vector) const;
+    [[nodiscard]] Camera translate(Util::Cs::Vector3f vector) const;
     [[nodiscard]] Camera rotate_x(Util::Angle angle) const;
     [[nodiscard]] Camera rotate_y(Util::Angle angle) const;
     [[nodiscard]] Camera rotate_z(Util::Angle angle) const;
