@@ -35,12 +35,9 @@ struct Matrix {
     template<class... T2>
     constexpr Matrix(T2... data)
         requires(sizeof...(data) == Size * Size)
-        : Matrix { std::initializer_list<T> { data... } } {
-    }
+        : Matrix { std::initializer_list<T> { data... } } { }
 
-    static constexpr Matrix identity() {
-        return {};
-    }
+    static constexpr Matrix identity() { return {}; }
 
     T& element(size_t row, size_t column) { return m_data[row][column]; }
     T const& element(size_t row, size_t column) const { return m_data[row][column]; }
@@ -51,8 +48,7 @@ struct Matrix {
     Matrix adjoint() const;
     Matrix<T, Size - 1> minor(size_t row, size_t column) const;
 
-    template<class TT>
-    Matrix<TT, Size> convert() const {
+    template<class TT> Matrix<TT, Size> convert() const {
         Matrix<TT, Size> output;
         for (size_t x = 0; x < Size; x++) {
             for (size_t y = 0; y < Size; y++) {
@@ -72,8 +68,7 @@ private:
     T m_data[Size][Size] {};
 };
 
-template<class T, size_t Size>
-std::ostream& operator<<(std::ostream& out, Matrix<T, Size> const& mat) {
+template<class T, size_t Size> std::ostream& operator<<(std::ostream& out, Matrix<T, Size> const& mat) {
     out << "[";
     for (size_t x = 0; x < Size; x++) {
         for (size_t y = 0; y < Size; y++) {
@@ -91,8 +86,7 @@ std::ostream& operator<<(std::ostream& out, Matrix<T, Size> const& mat) {
 using Matrix4x4f = Matrix<float, 4>;
 using Matrix4x4d = Matrix<double, 4>;
 
-template<class T, size_t Size>
-Matrix<T, Size> operator*(Matrix<T, Size> const& left, T right) {
+template<class T, size_t Size> Matrix<T, Size> operator*(Matrix<T, Size> const& left, T right) {
     Matrix<T, Size> result;
     for (size_t i = 0; i < Size; i++) {
         for (size_t j = 0; j < Size; j++) {
@@ -101,13 +95,9 @@ Matrix<T, Size> operator*(Matrix<T, Size> const& left, T right) {
     }
     return result;
 }
-template<class T, size_t Size>
-Matrix<T, Size> operator*(T left, Matrix<T, Size> const& right) {
-    return right * left;
-}
+template<class T, size_t Size> Matrix<T, Size> operator*(T left, Matrix<T, Size> const& right) { return right * left; }
 
-template<class T, size_t Size>
-Matrix<T, Size> operator*(Matrix<T, Size> const& left, Matrix<T, Size> const& right) {
+template<class T, size_t Size> Matrix<T, Size> operator*(Matrix<T, Size> const& left, Matrix<T, Size> const& right) {
     // FIXME: I am naive
     Matrix<T, Size> result;
     for (size_t i = 0; i < Size; i++) {
@@ -198,9 +188,17 @@ inline Matrix<T, Size> Matrix<T, Size>::adjoint() const {
     return cofactors.transposed();
 }
 
-template<class T>
-inline Cs::Point4<T> operator*(Matrix<T, 4> const& mat, Cs::Point4<T> const& vec) {
+template<class T> inline Cs::Point4<T> operator*(Matrix<T, 4> const& mat, Cs::Point4<T> const& vec) {
     Cs::Point4<T> result;
+    result.set_x(vec.x() * mat.element(0, 0) + vec.y() * mat.element(0, 1) + vec.z() * mat.element(0, 2) + vec.w() * mat.element(0, 3));
+    result.set_y(vec.x() * mat.element(1, 0) + vec.y() * mat.element(1, 1) + vec.z() * mat.element(1, 2) + vec.w() * mat.element(1, 3));
+    result.set_z(vec.x() * mat.element(2, 0) + vec.y() * mat.element(2, 1) + vec.z() * mat.element(2, 2) + vec.w() * mat.element(2, 3));
+    result.set_w(vec.x() * mat.element(3, 0) + vec.y() * mat.element(3, 1) + vec.z() * mat.element(3, 2) + vec.w() * mat.element(3, 3));
+    return result;
+}
+
+template<class T> inline Cs::Vector4<T> operator*(Matrix<T, 4> const& mat, Cs::Vector4<T> const& vec) {
+    Cs::Vector4<T> result;
     result.set_x(vec.x() * mat.element(0, 0) + vec.y() * mat.element(0, 1) + vec.z() * mat.element(0, 2) + vec.w() * mat.element(0, 3));
     result.set_y(vec.x() * mat.element(1, 0) + vec.y() * mat.element(1, 1) + vec.z() * mat.element(1, 2) + vec.w() * mat.element(1, 3));
     result.set_z(vec.x() * mat.element(2, 0) + vec.y() * mat.element(2, 1) + vec.z() * mat.element(2, 2) + vec.w() * mat.element(2, 3));
