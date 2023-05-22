@@ -16,7 +16,7 @@
 
 namespace Essa {
 
-using ModelVertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f, Util::Vector3f>;
+using ModelVertex = llgl::Vertex<Util::Cs::Point3f, Util::Colorf, Util::Cs::Point2f, Util::Cs::Vector3f>;
 
 }
 

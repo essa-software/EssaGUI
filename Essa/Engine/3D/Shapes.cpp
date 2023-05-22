@@ -3,11 +3,12 @@
 namespace Essa::Shapes {
 
 void add_cube(std::vector<Model::Vertex>& vertices, CubeProperties properties) {
-    auto transform_point = [&](Util::Vector3f vec) {
+    auto transform_point = [&](Util::Cs::Point3f vec) {
         return properties.transform.transform_point(
-                                       Util::Cs::Point3f { vec.x() * properties.dimensions.x() / 2, vec.y() * properties.dimensions.y() / 2, vec.z() * properties.dimensions.z() / 2 }
-                                       + Util::Cs::Vector3f::from_deprecated_vector(properties.position))
-            .to_deprecated_vector();
+            Util::Cs::Point3f { vec.x() * properties.dimensions.x() / 2, vec.y() * properties.dimensions.y() / 2,
+                                vec.z() * properties.dimensions.z() / 2 }
+            + Util::Cs::Vector3f::from_deprecated_vector(properties.position)
+        );
     };
 
     // left

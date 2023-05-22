@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EssaUtil/CoordinateSystem.hpp"
 #include "Material.hpp"
 #include "Model.hpp"
 
@@ -29,9 +30,9 @@ private:
     bool load_mtl(std::string const& path, std::filesystem::path const& base_directory);
 
     std::istream& m_in;
-    std::vector<Util::Vector3f> m_positions;
-    std::vector<Util::Vector2f> m_tex_coords;
-    std::vector<Util::Vector3f> m_normals;
+    std::vector<Util::Cs::Point3f> m_positions;
+    std::vector<Util::Cs::Point2f> m_tex_coords;
+    std::vector<Util::Cs::Vector3f> m_normals;
 
     std::map<std::string, Material> m_materials;
 };

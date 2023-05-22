@@ -146,13 +146,13 @@ std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory
                     error("vertex tex coord out of range");
                     return {};
                 }
-                auto tex_coord = vertex.tex_coord ? m_tex_coords[*vertex.tex_coord] : Util::Vector2f {};
+                auto tex_coord = vertex.tex_coord ? m_tex_coords[*vertex.tex_coord] : Util::Cs::Point2f {};
 
                 if (vertex.normal && *vertex.normal >= m_normals.size()) {
                     error("vertex normal out of range");
                     return {};
                 }
-                auto normal = vertex.normal ? m_normals[*vertex.normal] : Util::Vector3f {};
+                auto normal = vertex.normal ? m_normals[*vertex.normal] : Util::Cs::Vector3f {};
 
                 resolved_face.push_back(Model::Vertex { position, Util::Colors::White, tex_coord, normal });
             }
