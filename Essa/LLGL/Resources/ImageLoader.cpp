@@ -7,7 +7,7 @@
 namespace llgl {
 
 // https://stackoverflow.com/questions/53033971/how-to-get-the-color-of-a-specific-pixel-from-sdl-surface
-static Uint32 get_pixel(SDL_Surface& surface, Util::Vector2u position) {
+static Uint32 get_pixel(SDL_Surface& surface, Util::Cs::Point2u position) {
     int bpp = surface.format->BytesPerPixel;
     Uint8* p = reinterpret_cast<uint8_t*>(surface.pixels) + position.y() * surface.pitch + position.x() * bpp;
 
