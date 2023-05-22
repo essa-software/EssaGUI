@@ -15,7 +15,7 @@ class HostWindow
     : public WidgetTreeRoot
     , public llgl::Window {
 public:
-    explicit HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
+    explicit HostWindow(Util::Cs::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
     // TODO: Find a way for this to be private
     void do_draw();
@@ -56,7 +56,7 @@ public:
     void remove_closed_overlays();
 
     virtual Util::Cs::Point2i position() const override { return {}; }
-    virtual Util::Cs::Size2i size() const override { return Util::Cs::Size2i::from_deprecated_vector(llgl::Window::size()); }
+    virtual Util::Cs::Size2i size() const override { return llgl::Window::size().cast<int>(); }
 
     void focus_overlay(Overlay&);
 

@@ -10,7 +10,7 @@
 
 namespace GUI {
 
-HostWindow::HostWindow(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& settings)
+HostWindow::HostWindow(Util::Cs::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings)
     : llgl::Window(size, title, settings) {
     llgl::opengl::enable_debug_output();
 }

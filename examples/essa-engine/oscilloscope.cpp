@@ -127,9 +127,9 @@ int main() {
         renderer.clear();
 
         BlurShader::Uniforms blur_shader_uniforms;
-        blur_shader_uniforms.set_framebuffer_size(Util::Vector2f { window.size() });
-        pass1.resize(Util::Cs::Size2u::from_deprecated_vector(window.size()));
-        accum.resize(Util::Cs::Size2u::from_deprecated_vector(window.size()));
+        blur_shader_uniforms.set_framebuffer_size(window.size().cast<float>().to_deprecated_vector());
+        pass1.resize(window.size());
+        accum.resize(window.size());
 
         {
             // Draw the first (non-blurred) pass

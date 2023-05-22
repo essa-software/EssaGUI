@@ -25,7 +25,7 @@ namespace llgl {
 
 static SDL_GLContext s_context = nullptr;
 
-void Window::create_impl(Util::Vector2i size, Util::UString const& title, WindowSettings const& settings) {
+void Window::create_impl(Util::Cs::Size2u size, Util::UString const& title, WindowSettings const& settings) {
     static bool initialized = false;
     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
     if (!initialized && SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -70,10 +70,13 @@ void Window::create_impl(Util::Vector2i size, Util::UString const& title, Window
     m_data = std::make_unique<Detail::SDLWindowData>();
 
     if (has_flag(settings.flags, WindowFlags::Shaped)) {
-        m_data->window = SDL_CreateShapedWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+        m_data->window = SDL_CreateShapedWindow(
+            (char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags
+        );
     }
     else {
-        m_data->window = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+        m_data->window
+            = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
     }
     if (!s_context)
         s_context = SDL_GL_CreateContext(m_data->window);
@@ -97,23 +100,17 @@ void Window::set_title(Util::UString const& title) {
     SDL_SetWindowTitle(m_data->window, (char*)title.encode().c_str());
 }
 
-Util::UString Window::title() const {
-    return Util::UString { SDL_GetWindowTitle(m_data->window) };
-}
+Util::UString Window::title() const { return Util::UString { SDL_GetWindowTitle(m_data->window) }; }
 
-void Window::set_size_impl(Util::Vector2i size) {
+void Window::set_size_impl(Util::Cs::Size2u size) {
     if (!m_data->window)
         return;
     SDL_SetWindowSize(m_data->window, size.x(), size.y());
 }
 
-void Window::set_position(Util::Vector2i position) {
-    SDL_SetWindowPosition(m_data->window, position.x(), position.y());
-}
+void Window::set_position(Util::Cs::Point2i position) { SDL_SetWindowPosition(m_data->window, position.x(), position.y()); }
 
-void Window::display() {
-    SDL_GL_SwapWindow(m_data->window);
-}
+void Window::display() { SDL_GL_SwapWindow(m_data->window); }
 
 static std::map<uint32_t, std::queue<SDL_Event>> s_event_queues;
 
@@ -190,10 +187,12 @@ std::optional<Event> Window::poll_event_impl() {
             return Event::MouseMove { { sdl_event->motion.x, sdl_event->motion.y }, { sdl_event->motion.xrel, sdl_event->motion.yrel } };
         }
         else if (sdl_event->type == SDL_MOUSEBUTTONDOWN) {
-            return Event::MouseButtonPress { { sdl_event->button.x, sdl_event->button.y }, static_cast<MouseButton>(sdl_event->button.button) };
+            return Event::MouseButtonPress { { sdl_event->button.x, sdl_event->button.y },
+                                             static_cast<MouseButton>(sdl_event->button.button) };
         }
         else if (sdl_event->type == SDL_MOUSEBUTTONUP) {
-            return Event::MouseButtonRelease { { sdl_event->button.x, sdl_event->button.y }, static_cast<MouseButton>(sdl_event->button.button) };
+            return Event::MouseButtonRelease { { sdl_event->button.x, sdl_event->button.y },
+                                               static_cast<MouseButton>(sdl_event->button.button) };
         }
         else if (sdl_event->type == SDL_MOUSEWHEEL) {
             auto mouse = mouse_position();
@@ -211,23 +210,15 @@ std::optional<Event> Window::poll_event_impl() {
     }
 }
 
-void Window::set_mouse_position(Util::Vector2i pos) {
-    SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y());
-}
+void Window::set_mouse_position(Util::Cs::Point2i pos) { SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y()); }
 
-bool Window::is_focused() const {
-    return m_data->focused;
-}
+bool Window::is_focused() const { return m_data->focused; }
 
-void Window::set_active() const {
-    SDL_GL_MakeCurrent(m_data->window, s_context);
-}
+void Window::set_active() const { SDL_GL_MakeCurrent(m_data->window, s_context); }
 
-void Window::maximize() const {
-    SDL_MaximizeWindow(m_data->window);
-}
+void Window::maximize() const { SDL_MaximizeWindow(m_data->window); }
 
-Util::Vector2i Window::screen_size() const {
+Util::Cs::Size2u Window::screen_size() const {
     SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_data->window), &mode);
     return { mode.w, mode.h };

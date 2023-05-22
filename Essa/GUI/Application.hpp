@@ -19,7 +19,7 @@ public:
     llgl::TTFFont& fixed_width_font() const { return m_resource_manager.fixed_width_font(); }
     Theme const& theme() const;
 
-    HostWindow& create_host_window(Util::Vector2i size, Util::UString const& title, llgl::WindowSettings const& = {});
+    HostWindow& create_host_window(Util::Cs::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
     std::list<HostWindow>& host_windows() { return m_host_windows; }
     void redraw_all_host_windows();
 
@@ -34,16 +34,16 @@ private:
     std::list<HostWindow> m_host_windows;
 };
 
-// An application with a single maximized by default window. This assumes
-// that main widget doesn't take any arguments.
+// An application with a single maximized by default window.
 template<class W>
-requires(std::is_base_of_v<Widget, W>) class SimpleApplication : public Application {
+    requires(std::is_base_of_v<Widget, W>)
+class SimpleApplication : public Application {
 public:
     template<class... Args>
-    requires std::is_constructible_v<W, Args...>
-    SimpleApplication(Util::UString const& title, Util::Vector2i window_size = {}, Args&&... args)
+        requires std::is_constructible_v<W, Args...>
+    SimpleApplication(Util::UString const& title, Util::Cs::Size2u window_size = {}, Args&&... args)
         : m_window(create_host_window(window_size, title)) {
-        if (window_size == Util::Vector2i {}) {
+        if (window_size == Util::Cs::Size2u {}) {
             m_window.set_size({ 500, 500 });
             m_window.maximize();
         }
