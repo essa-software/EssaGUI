@@ -91,10 +91,10 @@ public:
     };
 };
 
-Util::Vector2f next_oscilloscope_position() {
+Util::Cs::Point2f next_oscilloscope_position() {
     static float angle = 0;
     angle += 0.7;
-    return Util::Vector2f { std::sin(angle), std::cos(angle) } * 20 + Util::Vector2f { llgl::mouse_position() };
+    return Util::Cs::Point2f { std::sin(angle), std::cos(angle) } * 20 + llgl::mouse_position().to_vector().cast<float>();
 }
 
 int main() {
@@ -144,10 +144,10 @@ int main() {
             auto cross = diff_norm.perpendicular() * PointSize;
 
             llgl::VertexArray<BlurShader::Vertex> input_vao {
-                { Util::Vector3f { old_oscilloscope_position - cross, 0 }, Util::Colors::Green, {} },
-                { Util::Vector3f { old_oscilloscope_position + cross, 0 }, Util::Colors::Green, {} },
-                { Util::Vector3f { old_oscilloscope_position + diff - cross, 0 }, Util::Colors::Green, {} },
-                { Util::Vector3f { old_oscilloscope_position + diff + cross, 0 }, Util::Colors::Green, {} }
+                { Util::Vector3f((old_oscilloscope_position - cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
+                { Util::Vector3f((old_oscilloscope_position + cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
+                { Util::Vector3f((old_oscilloscope_position + diff - cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
+                { Util::Vector3f((old_oscilloscope_position + diff + cross).to_deprecated_vector(), 0), Util::Colors::Green, {} }
             };
 
             Essa::Shaders::Basic::Uniforms basic_shader_uniforms;

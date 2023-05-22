@@ -4,7 +4,7 @@
 
 namespace llgl {
 
-Util::Vector2i mouse_position() {
+Util::Cs::Point2i mouse_position() {
     int x;
     int y;
     SDL_GetMouseState(&x, &y);

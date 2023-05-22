@@ -31,7 +31,7 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
         if (background_rect.contains(
-                Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position()) - widget_tree_root().position().to_vector()
+                llgl::mouse_position() - widget_tree_root().position().to_vector()
                 - raw_position().to_vector()
             )) {
             Gfx::RectangleDrawOptions hovered_background;

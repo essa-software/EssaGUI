@@ -34,7 +34,7 @@ bool Widget::is_mouse_over(Util::Cs::Point2i mouse_pos) const { return Util::Rec
 
 void Widget::update() {
     Util::Cs::Point2i tooltip_position { m_tooltip_position };
-    auto widget_relative_mouse_position = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
+    auto widget_relative_mouse_position = llgl::mouse_position();
     widget_relative_mouse_position -= widget_tree_root().position().to_vector() + raw_position().to_vector();
 
     if (m_tooltip) {
@@ -64,7 +64,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
-                auto widget_relative_mouse_position = Util::Cs::Point2i::from_deprecated_vector(llgl::mouse_position());
+                auto widget_relative_mouse_position = llgl::mouse_position();
                 widget_relative_mouse_position -= host_position().to_vector();
                 if (m_hover && should_display_tooltip(widget_relative_mouse_position)) {
                     if (!m_tooltip) {
