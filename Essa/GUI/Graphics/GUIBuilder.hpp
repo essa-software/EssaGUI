@@ -29,14 +29,6 @@ public:
         Util::Angle rotation {};
     };
 
-    void add_regular_polygon(Util::Vector2f center, float radius, size_t vertices, RegularPolygonDrawOptions options) {
-        for (size_t s = 0; s < vertices + 1; s++) {
-            float angle = M_PI * 2 * s / vertices + options.rotation.rad();
-            add(create_vertex(Util::Vector3f(Util::Vector2f::create_polar(angle, radius) + center, 0), options.color, Util::Vector2f {}, Util::Vector3f {}));
-        }
-        add_render_range_for_last_vertices(vertices + 1, llgl::PrimitiveType::TriangleFan, m_projection, m_view, m_model, m_submodel);
-    }
-
     void add_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const> vertices, llgl::Texture const* texture) {
         for (auto const& v : vertices)
             add(v);
