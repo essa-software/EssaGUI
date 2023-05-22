@@ -5,7 +5,7 @@
 
 namespace llgl::opengl {
 
-FBO::FBO(Util::Vector2u size) {
+FBO::FBO(Util::Cs::Size2u size) {
     glGenFramebuffers(1, &m_fbo);
 
     resize(size);
@@ -38,14 +38,14 @@ void FBO::bind(Target target) const {
     glBindFramebuffer(static_cast<GLenum>(target), m_fbo);
 }
 
-void FBO::resize(Util::Vector2u size) {
+void FBO::resize(Util::Cs::Size2u size) {
     FBOScope scope { *this };
-    if (m_color_texture.size() == size)
+    if (m_color_texture.size() == size.to_deprecated_vector())
         return;
     if (!m_color_texture.id())
-        m_color_texture = Texture::create_empty(Util::Vector2u { size }, Texture::Format::RGBA);
+        m_color_texture = Texture::create_empty(size.to_deprecated_vector(), Texture::Format::RGBA);
     else
-        m_color_texture.recreate(Util::Vector2u { size }, Texture::Format::RGBA);
+        m_color_texture.recreate(size.to_deprecated_vector(), Texture::Format::RGBA);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_color_texture.id(), 0);
     if (m_depth_renderbuffer)
         glDeleteRenderbuffers(1, &m_depth_renderbuffer);

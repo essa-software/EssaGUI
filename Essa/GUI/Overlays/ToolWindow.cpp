@@ -307,7 +307,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     painter.render();
     painter.reset();
 
-    m_backing_buffer.resize(size.cast<unsigned>().to_deprecated_vector());
+    m_backing_buffer.resize(size.cast<unsigned>());
     m_offscreen_painter.reset();
     m_offscreen_painter.renderer().clear(Util::Colors::Transparent);
     {

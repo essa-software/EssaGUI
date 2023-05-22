@@ -12,10 +12,10 @@ namespace llgl {
 
 class Framebuffer {
 public:
-    explicit Framebuffer(Util::Vector2u size)
+    explicit Framebuffer(Util::Cs::Size2u size)
         : m_fbo(size)
         , m_renderer(m_fbo.id()) {
-        m_renderer.m_size = Util::Cs::Size2u::from_deprecated_vector(size);
+        m_renderer.m_size = size;
     }
 
     void clear() { m_renderer.clear(); }
@@ -26,9 +26,9 @@ public:
         m_renderer.draw_vertices(vbo, draw_state);
     }
 
-    void resize(Util::Vector2u size) {
+    void resize(Util::Cs::Size2u size) {
         m_fbo.resize(size);
-        m_renderer.m_size = Util::Cs::Size2u::from_deprecated_vector(size);
+        m_renderer.m_size = size;
     }
 
     void set_label(std::string const& label) { m_fbo.set_label(label); }

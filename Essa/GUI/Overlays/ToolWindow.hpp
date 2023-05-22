@@ -65,7 +65,7 @@ private:
         bool mousedown = false;
     };
     std::vector<TitlebarButton> m_titlebar_buttons;
-    llgl::Framebuffer m_backing_buffer { size().cast<unsigned>().to_deprecated_vector() };
+    llgl::Framebuffer m_backing_buffer { size().cast<unsigned>() };
     Gfx::Painter m_offscreen_painter { m_backing_buffer.renderer() };
     llgl::Texture const& m_window_shadow;
 };
