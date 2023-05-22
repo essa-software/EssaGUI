@@ -150,10 +150,10 @@ int main() {
             auto cross = diff_norm.perpendicular() * PointSize;
 
             llgl::VertexArray<Essa::Shaders::Basic::Vertex> input_vao {
-                { Util::Vector3f((old_oscilloscope_position - cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
-                { Util::Vector3f((old_oscilloscope_position + cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
-                { Util::Vector3f((old_oscilloscope_position + diff - cross).to_deprecated_vector(), 0), Util::Colors::Green, {} },
-                { Util::Vector3f((old_oscilloscope_position + diff + cross).to_deprecated_vector(), 0), Util::Colors::Green, {} }
+                { { old_oscilloscope_position - cross, 0.f }, Util::Colors::Green, {} },
+                { { old_oscilloscope_position + cross, 0.f }, Util::Colors::Green, {} },
+                { { old_oscilloscope_position + diff - cross, 0.f }, Util::Colors::Green, {} },
+                { { old_oscilloscope_position + diff + cross, 0.f }, Util::Colors::Green, {} }
             };
 
             Essa::Shaders::Basic::Uniforms basic_shader_uniforms;
@@ -172,7 +172,9 @@ int main() {
             // Do not clear because we want previous frames
             blur_shader_uniforms.set_accum(&accum.color_texture());
             blur_shader_uniforms.set_pass1(&pass1.color_texture());
-            accum.draw_vertices(fullscreen_vao_blur, llgl::DrawState { blur_shader, blur_shader_uniforms, llgl::PrimitiveType::TriangleStrip });
+            accum.draw_vertices(
+                fullscreen_vao_blur, llgl::DrawState { blur_shader, blur_shader_uniforms, llgl::PrimitiveType::TriangleStrip }
+            );
         }
 
         // Draw the result to backbuffer

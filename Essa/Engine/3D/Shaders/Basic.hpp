@@ -10,7 +10,7 @@ namespace Essa::Shaders {
 
 class Basic : public llgl::Shader {
 public:
-    using Vertex = llgl::Vertex<Util::Vector3f, Util::Colorf, Util::Vector2f>;
+    using Vertex = llgl::Vertex<Util::Cs::Point3f, Util::Colorf, Util::Cs::Point2f>;
 
     struct Uniforms : public llgl::ShaderBases::Transform
         , public llgl::ShaderBases::Texture {
