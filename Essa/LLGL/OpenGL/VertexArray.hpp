@@ -5,6 +5,7 @@
 #include "PrimitiveType.hpp"
 #include "Vertex.hpp"
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <cassert>
 #include <fmt/ostream.h>
@@ -20,45 +21,42 @@ struct GLAttrType {
     GLenum type;
 };
 
-template<class T>
-struct CppTypeToGL {
-};
+template<class T> struct CppTypeToGL { };
 
 template<size_t C, class T>
-struct CppTypeToGL<Util::Detail::DeprecatedVector<C, T>> {
-    static GLAttrType get() {
-        return { .size = C, .type = CppTypeToGL<T>::get().type };
-    }
+/*deprecated*/ struct CppTypeToGL<Util::Detail::DeprecatedVector<C, T>> {
+    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
 };
 
-template<>
-struct CppTypeToGL<Util::Color> {
-    static GLAttrType get() {
-        return { .size = 4, .type = GL_UNSIGNED_BYTE };
-    }
+template<size_t C, class T> struct CppTypeToGL<Util::Detail::Point<C, T>> {
+    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
 };
 
-template<>
-struct CppTypeToGL<Util::Colorf> {
-    static GLAttrType get() {
-        return { .size = 4, .type = GL_FLOAT };
-    }
+template<size_t C, class T> struct CppTypeToGL<Util::Detail::Vector<C, T>> {
+    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
 };
 
-template<>
-struct CppTypeToGL<float> {
-    static GLAttrType get() {
-        return { .size = 1, .type = GL_FLOAT };
-    }
+template<size_t C, class T> struct CppTypeToGL<Util::Detail::Size<C, T>> {
+    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
 };
 
-template<size_t Idx>
-struct Index { };
+template<> struct CppTypeToGL<Util::Color> {
+    static GLAttrType get() { return { .size = 4, .type = GL_UNSIGNED_BYTE }; }
+};
+
+template<> struct CppTypeToGL<Util::Colorf> {
+    static GLAttrType get() { return { .size = 4, .type = GL_FLOAT }; }
+};
+
+template<> struct CppTypeToGL<float> {
+    static GLAttrType get() { return { .size = 1, .type = GL_FLOAT }; }
+};
+
+template<size_t Idx> struct Index { };
 
 }
 
-template<class Vertex>
-class VertexArray {
+template<class Vertex> class VertexArray {
 public:
     VertexArray() {
         opengl::ensure_glew();
@@ -117,9 +115,7 @@ public:
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size_bytes(), indices.data(), GL_STATIC_DRAW);
     }
 
-    void bind() const {
-        glBindVertexArray(m_vertex_array);
-    }
+    void bind() const { glBindVertexArray(m_vertex_array); }
 
     void draw(llgl::PrimitiveType type) const {
         // fmt::print("VAO: Drawing {} vertices with pt={}\n", m_vertex_count, static_cast<int>(type));
@@ -143,16 +139,14 @@ private:
         bind_attributes(Detail::Index<Vertex::AttributeCount - 1> {});
     }
 
-    template<class T>
-    inline void bind_attribute(size_t attrid, size_t offset) {
+    template<class T> inline void bind_attribute(size_t attrid, size_t offset) {
         glEnableVertexAttribArray(attrid);
         Detail::GLAttrType attrtype = Detail::CppTypeToGL<T>::get();
         // fmt::print("glVertexAttribPointer #{} {}/{}\n", attrid, offset, Vertex::stride());
         glVertexAttribPointer(attrid, attrtype.size, attrtype.type, GL_FALSE, Vertex::stride(), reinterpret_cast<void*>(offset));
     }
 
-    template<size_t Idx>
-    inline void bind_attributes(Detail::Index<Idx>) {
+    template<size_t Idx> inline void bind_attributes(Detail::Index<Idx>) {
         bind_attribute<typename Vertex::template AttributeType<Idx>>(Idx, Vertex::template offset<Idx>());
         bind_attributes(Detail::Index<Idx - 1> {});
     }
