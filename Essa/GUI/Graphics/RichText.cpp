@@ -54,9 +54,7 @@ RichText& RichText::append(Util::UString const& string, Util::Color const& color
     return *this;
 }
 
-RichText& RichText::append_image(llgl::Texture const& texture) {
-    return append_fragment<Gfx::RichTextFragments::Image>(texture);
-}
+RichText& RichText::append_image(llgl::Texture const& texture) { return append_fragment<Gfx::RichTextFragments::Image>(texture); }
 
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
     float const line_height = static_cast<float>(m_context.default_font.line_height(m_context.font_size));
@@ -136,16 +134,14 @@ void RichTextDrawable::draw(Gfx::Painter& painter) const {
         for (auto const& line : lines) {
             float x = get_line_starting_x();
             for (auto const& frag : line.fragments) {
-                Util::Vector2f position { x, y };
+                Util::Cs::Point2f position { x, y };
                 float wanted_size = frag->wanted_size(m_context);
                 x += wanted_size;
 
                 Util::Cs::Size2f size { wanted_size, line_height };
 
                 if (DBG_ENABLED(Gfx_DrawRichTextBoxes)) {
-                    painter.draw(Rectangle(Util::Rectf(Util::Cs::Point2f::from_deprecated_vector(position), size),
-                        Fill::none(),
-                        Outline::normal(Util::Colors::Green, 1)));
+                    painter.draw(Rectangle(Util::Rectf(position, size), Fill::none(), Outline::normal(Util::Colors::Green, 1)));
                 }
 
                 frag->draw(m_context, position, painter);
