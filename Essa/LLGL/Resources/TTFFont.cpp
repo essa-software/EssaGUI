@@ -74,7 +74,7 @@ std::optional<llgl::Image> TTFFont::render_text(Util::UString const& text, uint3
     return image;
 }
 
-Util::Vector2u TTFFont::calculate_text_size(Util::UString const& text, uint32_t font_size) const {
+Util::Cs::Size2u TTFFont::calculate_text_size(Util::UString const& text, uint32_t font_size) const {
     if (text.is_empty())
         return {};
 

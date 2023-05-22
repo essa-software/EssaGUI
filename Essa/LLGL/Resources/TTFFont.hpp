@@ -27,7 +27,7 @@ public:
     int kerning(uint32_t font_size, uint32_t previous, uint32_t current) const;
 
     std::optional<llgl::Image> render_text(Util::UString const& text, uint32_t font_size) const;
-    Util::Vector2u calculate_text_size(Util::UString const& text, uint32_t font_size) const;
+    Util::Cs::Size2u calculate_text_size(Util::UString const& text, uint32_t font_size) const;
     GlyphCache* cache(uint32_t font_size) const;
 
 private:
