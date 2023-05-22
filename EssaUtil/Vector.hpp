@@ -378,23 +378,23 @@ template<size_t C, class T> Detail::DeprecatedVector<C, T> operator*(double fac,
     return vec * fac;
 }
 
-template<class T> using Vector2 = Detail::DeprecatedVector<2, T>;
-using Vector2i = Vector2<int>;
-using Vector2u = Vector2<unsigned>;
-using Vector2f = Vector2<float>;
-using Vector2d = Vector2<double>;
+template<class T> using DeprecatedVector2 = Detail::DeprecatedVector<2, T>;
+using DeprecatedVector2i = DeprecatedVector2<int>;
+using DeprecatedVector2u = DeprecatedVector2<unsigned>;
+using DeprecatedVector2f = DeprecatedVector2<float>;
+using DeprecatedVector2d = DeprecatedVector2<double>;
 
-template<class T> using Vector3 = Detail::DeprecatedVector<3, T>;
-using Vector3i = Vector3<int>;
-using Vector3u = Vector3<unsigned>;
-using Vector3f = Vector3<float>;
-using Vector3d = Vector3<double>;
+template<class T> using DeprecatedVector3 = Detail::DeprecatedVector<3, T>;
+using DeprecatedVector3i = DeprecatedVector3<int>;
+using DeprecatedVector3u = DeprecatedVector3<unsigned>;
+using DeprecatedVector3f = DeprecatedVector3<float>;
+using DeprecatedVector3d = DeprecatedVector3<double>;
 
-template<class T> using Vector4 = Detail::DeprecatedVector<4, T>;
-using Vector4i = Vector4<int>;
-using Vector4u = Vector4<unsigned>;
-using Vector4f = Vector4<float>;
-using Vector4d = Vector4<double>;
+template<class T> using DeprecatedVector4 = Detail::DeprecatedVector<4, T>;
+using DeprecatedVector4i = DeprecatedVector4<int>;
+using DeprecatedVector4u = DeprecatedVector4<unsigned>;
+using DeprecatedVector4f = DeprecatedVector4<float>;
+using DeprecatedVector4d = DeprecatedVector4<double>;
 
 template<size_t S, class T>
 constexpr double get_distance(Detail::DeprecatedVector<S, T> const& a, Detail::DeprecatedVector<S, T> const& b) {
