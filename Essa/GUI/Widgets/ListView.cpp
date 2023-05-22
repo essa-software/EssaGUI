@@ -68,7 +68,7 @@ void ListView::draw(Gfx::Painter& wnd) const {
             auto column = model.column(c);
             Gfx::Text text { column.name, Application::the().bold_font() };
             text.set_font_size(16);
-            text.set_position((Util::Cs::Point2f { x_pos + 5, 20 } + scroll_offset().cast<float>()).to_deprecated_vector());
+            text.set_position(Util::Cs::Point2f { x_pos + 5, 20 } + scroll_offset().cast<float>());
             text.draw(wnd);
             x_pos += column.width;
         }

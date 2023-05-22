@@ -259,7 +259,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     );
 
     Gfx::Text text { title(), Application::the().bold_font() };
-    text.set_position((position + Util::Cs::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)).to_deprecated_vector());
+    text.set_position((position + Util::Cs::Vector2f(10, -(theme().tool_window_title_bar_size / 2.f) + 5)));
     text.set_font_size(theme().label_font_size);
     text.set_fill_color(titlebar_color.text);
     text.draw(painter);

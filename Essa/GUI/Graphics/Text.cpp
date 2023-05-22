@@ -11,8 +11,8 @@ void Text::generate_vertices() const {
         return;
     m_string.for_each_line([this, &vertices, &line_y, cache](std::span<uint32_t const> span) {
         auto line_position = m_position;
-        line_position.y() -= m_font.ascent(m_font_size);
-        line_position.y() += line_y;
+        line_position.set_y(line_position.y() - m_font.ascent(m_font_size));
+        line_position.set_y(line_position.y() + line_y);
         line_y += m_font.line_height(m_font_size);
 
         RectangleDrawOptions text_rect;
@@ -75,7 +75,7 @@ void Text::set_fill_color(Util::Color c) {
     m_vertices = {};
 }
 
-void Text::set_position(Util::Vector2f position) {
+void Text::set_position(Util::Cs::Point2f position) {
     m_position = position;
     m_vertices = {};
 }
@@ -85,8 +85,8 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
 
     auto text_size = calculate_text_size();
 
-    Util::Vector2f size { rect.width, rect.height };
-    Util::Vector2f offset;
+    Util::Cs::Size2f size { rect.width, rect.height };
+    Util::Cs::Vector2f offset;
 
     switch (align) {
     case GUI::Align::TopLeft:
@@ -118,21 +118,21 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
         break;
     }
 
-    m_position = Util::Vector2f { rect.left, rect.top + m_font.ascent(m_font_size) } + offset;
+    m_position = Util::Cs::Point2f(rect.left, rect.top + m_font.ascent(m_font_size)) + offset;
 }
 
-Util::Vector2u Text::calculate_text_size() const { return calculate_text_size(m_string); }
+Util::Cs::Size2u Text::calculate_text_size() const { return calculate_text_size(m_string); }
 
-Util::Vector2u Text::calculate_text_size(Util::UString const& string) const {
-    Util::Vector2u text_size;
+Util::Cs::Size2u Text::calculate_text_size(Util::UString const& string) const {
+    Util::Cs::Size2u text_size;
     string.for_each_line([&text_size, this](std::span<uint32_t const> span) {
         auto text = Util::UString { span };
         auto line_size = m_font.calculate_text_size(text, m_font_size);
-        text_size.x() = std::max(text_size.x(), line_size.x());
+        text_size.set_x(std::max(text_size.x(), line_size.x()));
         if (text_size.y() == 0)
-            text_size.y() = line_size.y();
+            text_size.set_y(line_size.y());
         else
-            text_size.y() += m_font.line_height(m_font_size);
+            text_size.set_y(text_size.y() + m_font.line_height(m_font_size));
     });
     return text_size;
 }

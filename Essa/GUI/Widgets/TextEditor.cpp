@@ -727,10 +727,10 @@ void TextEditor::draw(Gfx::Painter& painter) const {
         }
         else {
             if (should_draw_placeholder) {
-                auto position = scroll_offset();
+                auto position = scroll_offset().to_point();
                 position += { left_margin(), line_height };
                 text.set_string(m_placeholder);
-                text.set_position(position.cast<float>().to_deprecated_vector());
+                text.set_position(position.cast<float>());
                 text.draw(painter);
             }
             else {
@@ -744,7 +744,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
 
                 auto character_width = this->character_width();
 
-                auto position = scroll_offset();
+                auto position = scroll_offset().to_point();
                 position.set_y(position.y() + line_height * first_visible_line);
 
                 for (size_t i = first_visible_line; i <= last_visible_line; i++) {
@@ -756,7 +756,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
                         auto const& style = style_idx ? m_styles[*style_idx] : default_style;
                         text.set_string(Util::UString { character });
                         text.set_fill_color(style.color);
-                        text.set_position(position.cast<float>().to_deprecated_vector());
+                        text.set_position(position.cast<float>());
                         text.draw(painter);
                         position.set_x(position.x() + character_width);
                         character_index++;

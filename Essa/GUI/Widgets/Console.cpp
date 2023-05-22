@@ -48,7 +48,7 @@ void Console::draw(Gfx::Painter& painter) const {
         Gfx::Text text { line.text, Application::the().fixed_width_font() };
         text.set_fill_color(line.color);
         text.set_font_size(theme().label_font_size);
-        text.set_position(position.cast<float>().to_deprecated_vector());
+        text.set_position(position.cast<float>());
         text.draw(painter);
         s++;
     }
