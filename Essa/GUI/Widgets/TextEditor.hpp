@@ -74,6 +74,7 @@ protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     void set_content_impl(Util::UString const&);
+    TextPosition real_cursor_position() const;
 
 private:
     virtual Widget::EventHandlerResult on_text_input(Event::TextInput const& event) override;
@@ -98,8 +99,6 @@ private:
     virtual Util::Size2i content_size() const override;
     virtual LengthVector initial_size() const override;
     virtual Util::Recti scrollable_rect() const override;
-
-    TextPosition real_cursor_position() const;
 
     // sf::Clock m_cursor_clock;
 

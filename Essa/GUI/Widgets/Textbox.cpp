@@ -22,16 +22,6 @@ bool Textbox::find_decimal() const {
     return false;
 }
 
-std::string Textbox::m_fix_content(std::string content) const {
-    size_t i = content.size();
-    while (i > 0 && content[i - 1] == '0')
-        i--;
-
-    if (content[i - 1] == '.')
-        return content.substr(0, i) + '0';
-    return content.substr(0, std::min(m_limit, i));
-}
-
 void Textbox::m_fit_in_range() {
     if (is_focused())
         return;
@@ -41,11 +31,12 @@ void Textbox::m_fit_in_range() {
         return;
     }
     double value = maybe_value.release_value();
+    fmt::print("m_fit_in_range {}->{} min={} max={}\n", content().encode(), value, m_min, m_max);
     if (value < m_min)
         value = m_min;
     else if (value > m_max)
         value = m_max;
-    set_content_impl(Util::UString { m_fix_content(fmt::format("{:.1f}", value)) });
+    set_content_impl(Util::UString { fmt::format("{:.1f}", value) });
 }
 
 bool Textbox::can_insert_codepoint(uint32_t ch) const {
@@ -56,7 +47,8 @@ bool Textbox::can_insert_codepoint(uint32_t ch) const {
     case TEXT:
         return isprint(ch);
     case NUMBER:
-        return isdigit(ch) || (ch == '.' && !m_has_decimal);
+        return isdigit(ch) || (ch == '.' && !m_has_decimal)
+            || (ch == '-' && real_cursor_position().column == 0 && (content().is_empty() || content().at(0) != '-'));
     }
     return false;
 }
