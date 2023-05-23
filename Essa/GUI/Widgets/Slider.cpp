@@ -45,11 +45,13 @@ Widget::EventHandlerResult Slider::on_mouse_move(Event::MouseMove const& event) 
         m_val = (mouse_pos_relative_to_slider.x() * (m_max - m_min) / raw_size().x()) + m_min;
 
         if (m_wraparound) {
-            auto middle = (m_min + m_max) / 2;
-            m_val = std::remainder(m_val - m_min - middle, (m_max - m_min)) + m_min + middle;
+            auto unit = (m_val - m_min) / (m_max - m_min); // 0..1
+            auto remainder = std::remainder(unit - 0.5, 1.0) + 0.5;
+            m_val = remainder * (m_max - m_min) + m_min;
         }
-        else
+        else {
             m_val = std::min(std::max(m_min, m_val), m_max);
+        }
 
         round_to_step();
 
@@ -65,9 +67,7 @@ void Slider::round_to_step() {
     m_val *= m_step;
 }
 
-float Slider::calculate_knob_size() const {
-    return std::max(4.0, raw_size().x() / (m_max - m_min) * m_step);
-}
+float Slider::calculate_knob_size() const { return std::max(4.0, raw_size().x() / (m_max - m_min) * m_step); }
 
 void Slider::draw(Gfx::Painter& window) const {
     Gfx::RectangleDrawOptions slider;
@@ -81,17 +81,17 @@ void Slider::draw(Gfx::Painter& window) const {
 
     Gfx::RectangleDrawOptions slider_value;
     auto knob_size_x = calculate_knob_size();
-    slider_value.fill_color = are_all_parents_enabled() ? theme().slider.foreground : theme().slider.foreground - Util::Color { 70, 70, 70, 0 };
+    slider_value.fill_color
+        = are_all_parents_enabled() ? theme().slider.foreground : theme().slider.foreground - Util::Color { 70, 70, 70, 0 };
     window.deprecated_draw_rectangle(
         { { static_cast<float>((value_clamped_to_min_max() - m_min) / (m_max - m_min) * raw_size().x() - knob_size_x / 2),
-              raw_size().y() / 2 - 10.f },
-            { knob_size_x, 20.f } },
-        slider_value);
+            raw_size().y() / 2 - 10.f },
+          { knob_size_x, 20.f } },
+        slider_value
+    );
 }
 
-double Slider::value_clamped_to_min_max() const {
-    return std::min(std::max(value(), m_min), m_max);
-}
+double Slider::value_clamped_to_min_max() const { return std::min(std::max(value(), m_min), m_max); }
 
 EML::EMLErrorOr<void> Slider::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
