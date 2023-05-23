@@ -111,9 +111,7 @@ Util::OsErrorOr<std::vector<Token>> Lexer::lex() {
                 break;
             }
         }
-        TRY(consume_while([](char c) {
-            return isspace(c) && c != '\n';
-        }));
+        TRY(consume_while([](char c) { return isspace(c) && c != '\n'; }));
     }
     return tokens;
 }

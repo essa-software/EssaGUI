@@ -13,8 +13,7 @@ namespace Essa {
 // lat is in range <0; 2π>
 // lon is in range <0; π>
 template<class Callback = void (*)()>
-    requires(std::is_invocable_r<void, Callback, float /*lat_radians*/, float /*lon_radians*/, Essa::Model::Vertex& /*vertex*/>::value
-        || std::is_same_v<Callback, void (*)()>)
+    requires(std::is_invocable_r<void, Callback, float /*lat_radians*/, float /*lon_radians*/, Essa::Model::Vertex& /*vertex*/>::value || std::is_same_v<Callback, void (*)()>)
 struct SphereSettings {
     unsigned stacks = 36;
     unsigned sectors = 36;

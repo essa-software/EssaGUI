@@ -30,7 +30,8 @@ private:
     bool m_owned { false };
 };
 
-class ReadableFileStream : public ReadableStream
+class ReadableFileStream
+    : public ReadableStream
     , public File {
 public:
     static ReadableFileStream adopt_fd(int fd);
@@ -55,7 +56,8 @@ private:
     bool m_eof { false };
 };
 
-class WritableFileStream : public WritableStream
+class WritableFileStream
+    : public WritableStream
     , public File {
 public:
     static WritableFileStream adopt_fd(int fd);

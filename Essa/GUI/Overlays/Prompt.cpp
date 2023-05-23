@@ -42,9 +42,7 @@ Prompt::Prompt(HostWindow& window, Util::UString help_text, Util::UString window
         auto cancel_button = button_container->add_widget<GUI::TextButton>();
         cancel_button->set_alignment(GUI::Align::Center);
         cancel_button->set_content("Cancel");
-        cancel_button->on_click = [this]() {
-            close();
-        };
+        cancel_button->on_click = [this]() { close(); };
 
         auto ok_button = button_container->add_widget<GUI::TextButton>();
         ok_button->set_alignment(GUI::Align::Center);

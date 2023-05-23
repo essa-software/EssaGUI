@@ -40,7 +40,7 @@ TEST_CASE(rounding) {
     EXPECT_EQ(test.floored(), floor_result);
     EXPECT_EQ(test.ceiled(), ceil_result);
     EXPECT_EQ(test.rounded(), round_result);
-    
+
     return {};
 }
 

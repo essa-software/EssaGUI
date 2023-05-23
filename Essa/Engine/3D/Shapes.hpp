@@ -19,8 +19,7 @@ struct CubeProperties {
 
 void add_cube(std::vector<Model::Vertex>& vertices, CubeProperties properties = {});
 
-template<llgl::MappableVertex Vertex>
-void add_wireframe_cube(std::vector<Vertex>& vertices) {
+template<llgl::MappableVertex Vertex> void add_wireframe_cube(std::vector<Vertex>& vertices) {
     auto add = [&](Util::Point3f position) {
         Vertex vertex;
         llgl::MappedVertex<Vertex> mapping { vertex };

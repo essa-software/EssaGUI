@@ -13,42 +13,40 @@ namespace Util {
 
 // FIXME: This could be done at compile time.
 // NOTE: Keep the list sorted by sizes ascending, the algorithm relies on this!
-static const std::map<Quantity, std::vector<Unit>> s_units {
-    { Quantity::Length,
-        {
-            { "m", 1 },
-            { "km", 1000 },
-            { "AU", Constants::AU },
-            { "ly", Constants::Year* Constants::LightSpeed },
-        } },
-    { Quantity::Mass,
-        {
-            { "kg", 1 },
-            { "Tons", 1000 },
-        } },
-    { Quantity::Velocity,
-        {
-            { "m/s", 1 },
-            { "km/s", 1000 },
-            { "c", Constants::LightSpeed },
-        } },
-    { Quantity::Time,
-        {
-            { "s", 1 },
-            { "m", 60 },
-            { "h", 3600 },
-            { "days", 3600 * 24 },
-            { "years", Constants::Year },
-        } },
-    { Quantity::FileSize,
-        {
-            { "B", 1 },
-            { "KiB", 1024 },
-            { "MiB", 1024 * 1024 },
-            { "GiB", 1024 * 1024 * 1024 },
-            { "TiB", 1024LL * 1024 * 1024 * 1024 },
-        } }
-};
+static const std::map<Quantity, std::vector<Unit>> s_units { { Quantity::Length,
+                                                               {
+                                                                   { "m", 1 },
+                                                                   { "km", 1000 },
+                                                                   { "AU", Constants::AU },
+                                                                   { "ly", Constants::Year* Constants::LightSpeed },
+                                                               } },
+                                                             { Quantity::Mass,
+                                                               {
+                                                                   { "kg", 1 },
+                                                                   { "Tons", 1000 },
+                                                               } },
+                                                             { Quantity::Velocity,
+                                                               {
+                                                                   { "m/s", 1 },
+                                                                   { "km/s", 1000 },
+                                                                   { "c", Constants::LightSpeed },
+                                                               } },
+                                                             { Quantity::Time,
+                                                               {
+                                                                   { "s", 1 },
+                                                                   { "m", 60 },
+                                                                   { "h", 3600 },
+                                                                   { "days", 3600 * 24 },
+                                                                   { "years", Constants::Year },
+                                                               } },
+                                                             { Quantity::FileSize,
+                                                               {
+                                                                   { "B", 1 },
+                                                                   { "KiB", 1024 },
+                                                                   { "MiB", 1024 * 1024 },
+                                                                   { "GiB", 1024 * 1024 * 1024 },
+                                                                   { "TiB", 1024LL * 1024 * 1024 * 1024 },
+                                                               } } };
 
 UString to_exponent_string(double value, Options options) {
     std::ostringstream oss;

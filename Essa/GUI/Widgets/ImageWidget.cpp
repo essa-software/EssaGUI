@@ -20,20 +20,14 @@ void ImageWidget::draw(Gfx::Painter& painter) const {
     Gfx::RectangleDrawOptions rect;
     rect.texture = m_image;
     painter.deprecated_draw_rectangle(
-        { (raw_size() / 2.f - rect_size.to_vector() / 2.f)
-                .cast<float>()
-                .to_vector()
-                .to_point(),
-            rect_size.cast<float>() },
-        rect);
+        { (raw_size() / 2.f - rect_size.to_vector() / 2.f).cast<float>().to_vector().to_point(), rect_size.cast<float>() }, rect
+    );
 }
 
-EML::EMLErrorOr<void> ImageWidget::load_from_eml_object(
-    EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> ImageWidget::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
 
-    m_image = resource_manager().get<Gfx::Texture>(
-        TRY(TRY(object.require_property("image")).to_resource_id()));
+    m_image = resource_manager().get<Gfx::Texture>(TRY(TRY(object.require_property("image")).to_resource_id()));
 
     return {};
 }

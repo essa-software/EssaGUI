@@ -8,12 +8,7 @@ namespace GUI {
 
 class ArrowButton : public Button {
 public:
-    enum class ArrowType {
-        LEFTARROW,
-        BOTTOMARROW,
-        RIGHTARROW,
-        TOPARROW
-    };
+    enum class ArrowType { LEFTARROW, BOTTOMARROW, RIGHTARROW, TOPARROW };
 
     CREATE_VALUE(ArrowType, arrow_type, ArrowType::LEFTARROW)
     CREATE_VALUE(Util::Length, arrow_size, 8.0_px)

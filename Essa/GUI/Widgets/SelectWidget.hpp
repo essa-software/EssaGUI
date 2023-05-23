@@ -10,8 +10,7 @@
 
 namespace GUI {
 
-template<typename T>
-class SelectWidget : public Widget {
+template<typename T> class SelectWidget : public Widget {
     std::shared_ptr<Container> m_container;
     std::shared_ptr<Container> m_elements_container;
 

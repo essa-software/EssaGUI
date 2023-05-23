@@ -6,13 +6,7 @@
 
 namespace EML {
 
-enum class HighlightStyle {
-    Keyword,
-    String,
-    Number,
-    Constant,
-    Comment
-};
+enum class HighlightStyle { Keyword, String, Number, Constant, Comment };
 
 std::vector<GUI::TextStyle> SyntaxHighlighter::styles() const {
     return {
@@ -35,11 +29,14 @@ std::vector<GUI::StyledTextSpan> SyntaxHighlighter::spans(Util::UString const& i
     std::vector<GUI::StyledTextSpan> spans;
 
     auto create_span = [](EML::Token const& token, HighlightStyle style) {
-        return GUI::StyledTextSpan { .span_start = token.start().offset, .span_size = token.end().offset - token.start().offset, .style_index = static_cast<size_t>(style) };
+        return GUI::StyledTextSpan { .span_start = token.start().offset,
+                                     .span_size = token.end().offset - token.start().offset,
+                                     .style_index = static_cast<size_t>(style) };
     };
 
     for (auto const& token : tokens) {
-        if (token.type() == EML::TokenType::KeywordAsset || token.type() == EML::TokenType::KeywordDefine || token.type() == EML::TokenType::KeywordExternal) {
+        if (token.type() == EML::TokenType::KeywordAsset || token.type() == EML::TokenType::KeywordDefine
+            || token.type() == EML::TokenType::KeywordExternal) {
             spans.push_back(create_span(token, HighlightStyle::Keyword));
         }
         else if (token.type() == EML::TokenType::String) {

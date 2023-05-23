@@ -10,12 +10,8 @@
 #include <sstream>
 #include <string>
 
-Util::UString const month_names[] = {
-    "January", "February", "March",
-    "April", "May", "June",
-    "July", "August", "September",
-    "October", "November", "December"
-};
+Util::UString const month_names[]
+    = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 namespace GUI {
 
@@ -210,7 +206,9 @@ void Datebox::create_container() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, MUST(str.parse<int>()), local_tm.tm_min, local_tm.tm_sec);
+        m_date = Util::SimulationTime::create(
+            1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, MUST(str.parse<int>()), local_tm.tm_min, local_tm.tm_sec
+        );
         update_calendar();
     };
 
@@ -218,7 +216,9 @@ void Datebox::create_container() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, MUST(str.parse<int>()), local_tm.tm_sec);
+        m_date = Util::SimulationTime::create(
+            1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, MUST(str.parse<int>()), local_tm.tm_sec
+        );
         update_calendar();
     };
 
@@ -226,7 +226,9 @@ void Datebox::create_container() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, MUST(str.parse<int>()));
+        m_date = Util::SimulationTime::create(
+            1900 + local_tm.tm_year, local_tm.tm_mon + 1, local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min, MUST(str.parse<int>())
+        );
         update_calendar();
     };
 }
@@ -238,9 +240,11 @@ void Datebox::update_calendar() {
     mktime(&local_tm);
 
     if (local_tm.tm_year < 0)
-        m_century_textfield->set_content(Util::UString { std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100)) + " - " + std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100) + 99) });
+        m_century_textfield->set_content(Util::UString { std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100)) + " - "
+                                                         + std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100) + 99) });
     else
-        m_century_textfield->set_content(Util::UString { std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100)) + " - " + std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100) + 99) });
+        m_century_textfield->set_content(Util::UString { std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100)) + " - "
+                                                         + std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100) + 99) });
     m_year_textfield->set_content(Util::UString { std::to_string(1900 + local_tm.tm_year) });
     m_month_textfield->set_content(month_names[local_tm.tm_mon]);
 
@@ -251,7 +255,8 @@ void Datebox::update_calendar() {
 
     for (unsigned j = 0; j < m_calendar_contents.size(); j++) {
         current_month_day++;
-        Util::SimulationClock::time_point date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, current_month_day);
+        Util::SimulationClock::time_point date
+            = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, current_month_day);
         auto t = date.time_since_epoch().count();
         tm temp_tm = *localtime(&t);
         m_calendar_contents[j].second = date;
@@ -285,7 +290,8 @@ void Datebox::update_calendar() {
             colors.normal.unhovered.text = Util::Colors::White;
         }
         else {
-            colors.normal.unhovered.background = temp_tm.tm_mon == local_tm.tm_mon ? Util::Color { 150, 150, 150 } : Util::Color { 200, 200, 200 };
+            colors.normal.unhovered.background
+                = temp_tm.tm_mon == local_tm.tm_mon ? Util::Color { 150, 150, 150 } : Util::Color { 200, 200, 200 };
             colors.normal.unhovered.text = temp_tm.tm_mon == local_tm.tm_mon ? Util::Colors::Black : Util::Color { 50, 50, 50 };
         }
     }

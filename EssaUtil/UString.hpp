@@ -34,35 +34,26 @@ public:
     explicit UString(std::span<uint32_t const>);
 
     explicit UString(uint8_t ch)
-        : UString(static_cast<uint32_t>(ch)) {
-    }
+        : UString(static_cast<uint32_t>(ch)) { }
 
     UString(char ch)
-        : UString(static_cast<uint32_t>(ch)) {
-    }
+        : UString(static_cast<uint32_t>(ch)) { }
 
     UString(wchar_t ch)
-        : UString(static_cast<uint32_t>(ch)) {
-    }
+        : UString(static_cast<uint32_t>(ch)) { }
 
-    enum class Encoding {
-        ASCII,
-        Utf8
-    };
+    enum class Encoding { ASCII, Utf8 };
 
     UString(std::span<uint8_t const>, Encoding = Encoding::Utf8, uint32_t replacement = 0xfffd);
     UString(std::string_view, Encoding = Encoding::Utf8, uint32_t replacement = 0xfffd);
     enum DecodingErrorTag { DecodingError };
     static ErrorOr<UString, DecodingErrorTag> decode(std::span<uint8_t const>, Encoding = Encoding::Utf8);
 
-    static auto decoding_error_to_os_error(UString::DecodingErrorTag) {
-        return OsError { .error = 0, .function = "Decoding failed" };
-    }
+    static auto decoding_error_to_os_error(UString::DecodingErrorTag) { return OsError { .error = 0, .function = "Decoding failed" }; }
 
     template<size_t S>
     UString(char const (&string)[S], Encoding encoding = Encoding::Utf8, uint32_t replacement = 0xfffd)
-        : UString({ string, S - 1 }, encoding, replacement) {
-    }
+        : UString({ string, S - 1 }, encoding, replacement) { }
 
     [[nodiscard]] std::string encode(Encoding = Encoding::Utf8) const;
     [[nodiscard]] Buffer encode_buffer(Encoding = Encoding::Utf8) const;
@@ -91,8 +82,7 @@ public:
 
     [[nodiscard]] size_t indent() const;
 
-    template<class Callback>
-    void for_each_split(UString const& splitter, Callback&& callback) const {
+    template<class Callback> void for_each_split(UString const& splitter, Callback&& callback) const {
         size_t index = 0;
         while (true) {
             auto next = find(splitter, index);
@@ -108,20 +98,14 @@ public:
         }
     }
 
-    template<class Callback>
-    void for_each_line(Callback&& callback) const {
-        for_each_split("\n", std::forward<Callback>(callback));
-    }
+    template<class Callback> void for_each_line(Callback&& callback) const { for_each_split("\n", std::forward<Callback>(callback)); }
 
     std::strong_ordering operator<=>(UString const& other) const;
     bool operator==(UString const& other) const;
 
-    friend std::ostream& operator<<(std::ostream& out, UString const& str) {
-        return out << str.encode();
-    }
+    friend std::ostream& operator<<(std::ostream& out, UString const& str) { return out << str.encode(); }
 
-    template<Arithmetic I>
-    OsErrorOr<I> parse() const;
+    template<Arithmetic I> OsErrorOr<I> parse() const;
 
 private:
     friend UString operator+(UString const& lhs, UString const& rhs);
@@ -133,13 +117,9 @@ private:
     size_t m_size {};
 };
 
-template<typename T>
-UString to_ustring(const T& to_convert) {
-    return UString { std::to_string(to_convert) };
-}
+template<typename T> UString to_ustring(const T& to_convert) { return UString { std::to_string(to_convert) }; }
 
 // For some reason, there is no std::stou for that. :(
-template<>
-OsErrorOr<unsigned int> UString::parse<unsigned int>() const = delete;
+template<> OsErrorOr<unsigned int> UString::parse<unsigned int>() const = delete;
 
 }

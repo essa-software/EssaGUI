@@ -26,15 +26,11 @@ int SDLHelpers::get_sdl_gl_attribute([[maybe_unused]] SDL_GLattr id) {
 }
 
 #ifdef SDL_VIDEO_DRIVER_X11
-template<class T>
-class XDeallocator {
+template<class T> class XDeallocator {
 public:
-    void operator()(T* ptr) {
-        XFree(ptr);
-    }
+    void operator()(T* ptr) { XFree(ptr); }
 };
-template<class T>
-using XUniquePtr = std::unique_ptr<T, XDeallocator<T>>;
+template<class T> using XUniquePtr = std::unique_ptr<T, XDeallocator<T>>;
 
 std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
     auto x_display = XOpenDisplay(NULL);
@@ -45,21 +41,31 @@ std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
     auto x_screen = DefaultScreen(x_display);
 
     auto profile_mask = get_sdl_gl_attribute(SDL_GL_CONTEXT_PROFILE_MASK);
-    static int attributes[] = {
-        GLX_RENDER_TYPE, GLX_RGBA_BIT,
-        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-        GLX_DOUBLEBUFFER, get_sdl_gl_attribute(SDL_GL_DOUBLEBUFFER),
-        GLX_CONTEXT_MAJOR_VERSION_ARB, get_sdl_gl_attribute(SDL_GL_CONTEXT_MAJOR_VERSION),
-        GLX_CONTEXT_MINOR_VERSION_ARB, get_sdl_gl_attribute(SDL_GL_CONTEXT_MINOR_VERSION),
-        GL_CONTEXT_CORE_PROFILE_BIT, profile_mask & SDL_GL_CONTEXT_PROFILE_CORE,
-        GL_CONTEXT_COMPATIBILITY_PROFILE_BIT, profile_mask & SDL_GL_CONTEXT_PROFILE_COMPATIBILITY,
-        GLX_RED_SIZE, get_sdl_gl_attribute(SDL_GL_RED_SIZE),
-        GLX_GREEN_SIZE, get_sdl_gl_attribute(SDL_GL_GREEN_SIZE),
-        GLX_BLUE_SIZE, get_sdl_gl_attribute(SDL_GL_BLUE_SIZE),
-        GLX_ALPHA_SIZE, get_sdl_gl_attribute(SDL_GL_ALPHA_SIZE),
-        GLX_DEPTH_SIZE, get_sdl_gl_attribute(SDL_GL_DEPTH_SIZE),
-        None
-    };
+    static int attributes[] = { GLX_RENDER_TYPE,
+                                GLX_RGBA_BIT,
+                                GLX_DRAWABLE_TYPE,
+                                GLX_WINDOW_BIT,
+                                GLX_DOUBLEBUFFER,
+                                get_sdl_gl_attribute(SDL_GL_DOUBLEBUFFER),
+                                GLX_CONTEXT_MAJOR_VERSION_ARB,
+                                get_sdl_gl_attribute(SDL_GL_CONTEXT_MAJOR_VERSION),
+                                GLX_CONTEXT_MINOR_VERSION_ARB,
+                                get_sdl_gl_attribute(SDL_GL_CONTEXT_MINOR_VERSION),
+                                GL_CONTEXT_CORE_PROFILE_BIT,
+                                profile_mask & SDL_GL_CONTEXT_PROFILE_CORE,
+                                GL_CONTEXT_COMPATIBILITY_PROFILE_BIT,
+                                profile_mask & SDL_GL_CONTEXT_PROFILE_COMPATIBILITY,
+                                GLX_RED_SIZE,
+                                get_sdl_gl_attribute(SDL_GL_RED_SIZE),
+                                GLX_GREEN_SIZE,
+                                get_sdl_gl_attribute(SDL_GL_GREEN_SIZE),
+                                GLX_BLUE_SIZE,
+                                get_sdl_gl_attribute(SDL_GL_BLUE_SIZE),
+                                GLX_ALPHA_SIZE,
+                                get_sdl_gl_attribute(SDL_GL_ALPHA_SIZE),
+                                GLX_DEPTH_SIZE,
+                                get_sdl_gl_attribute(SDL_GL_DEPTH_SIZE),
+                                None };
 
     int numfbconfigs = 0;
     auto fbconfigs = glXChooseFBConfig(x_display, x_screen, attributes, &numfbconfigs);

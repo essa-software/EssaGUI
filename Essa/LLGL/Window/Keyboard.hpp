@@ -52,8 +52,7 @@ namespace llgl {
     Ex(Tab, SDLK_TAB)                   \
     Ex(Tilde, SDLK_BACKQUOTE)           \
     Ex(Period, SDLK_PERIOD)             \
-    Ex(Comma, SDLK_COMMA)               \
-// clang-format on
+    Ex(Comma, SDLK_COMMA) // clang-format on
 
 ESSA_ENUM_WITH_VALUES(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
 ESSA_ENUM_TO_STRING(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)

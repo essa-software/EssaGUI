@@ -5,8 +5,7 @@
 namespace Util {
 
 ReadableMemoryStream::ReadableMemoryStream(std::span<uint8_t const> data)
-    : m_data { data } {
-}
+    : m_data { data } { }
 
 OsErrorOr<size_t> ReadableMemoryStream::read(std::span<uint8_t> data) {
     size_t bytes_to_read = m_offset + data.size() > m_data.size() ? m_data.size() - m_offset : data.size();
@@ -17,9 +16,7 @@ OsErrorOr<size_t> ReadableMemoryStream::read(std::span<uint8_t> data) {
     return bytes_to_read;
 }
 
-bool ReadableMemoryStream::is_eof() const {
-    return m_offset >= m_data.size();
-}
+bool ReadableMemoryStream::is_eof() const { return m_offset >= m_data.size(); }
 
 OsErrorOr<void> ReadableMemoryStream::seek(ssize_t count, SeekDirection direction) {
     auto new_offset = [&]() -> ssize_t {
@@ -45,8 +42,6 @@ OsErrorOr<size_t> WritableMemoryStream::write(std::span<uint8_t const> data) {
     return data.size();
 }
 
-OsErrorOr<void> WritableMemoryStream::seek(ssize_t, SeekDirection) {
-    return OsError { ENOTSUP, "WritableMemoryStream::seek: TODO" };
-}
+OsErrorOr<void> WritableMemoryStream::seek(ssize_t, SeekDirection) { return OsError { ENOTSUP, "WritableMemoryStream::seek: TODO" }; }
 
 }

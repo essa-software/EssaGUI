@@ -7,13 +7,11 @@ namespace GUI {
 
 class Border : public Container {
 public:
-    virtual void on_init() override {
-        set_layout<HorizontalBoxLayout>();
-    }
+    virtual void on_init() override { set_layout<HorizontalBoxLayout>(); }
 
     template<class T, class... Args>
-    requires(std::is_base_of_v<Widget, T>&& requires(Args&&... args) { T(std::forward<Args>(args)...); })
-        T* add_child(Args&&... args) {
+        requires(std::is_base_of_v<Widget, T> && requires(Args && ... args) { T(std::forward<Args>(args)...); })
+    T* add_child(Args&&... args) {
 
         m_widgets.clear();
 

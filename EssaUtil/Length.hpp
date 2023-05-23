@@ -7,23 +7,16 @@ namespace Util {
 
 class Length {
 public:
-    enum Unit {
-        Initial,
-        Auto,
-        Px,
-        Percent
-    };
+    enum Unit { Initial, Auto, Px, Percent };
 
     constexpr Length() = default;
 
     constexpr Length(Unit unit)
-        : m_unit(unit) {
-    }
+        : m_unit(unit) { }
 
     constexpr Length(int v, Unit unit)
         : m_value(v)
-        , m_unit(unit) {
-    }
+        , m_unit(unit) { }
 
     constexpr Unit unit() const { return m_unit; }
     constexpr int value() const { return m_value; }
@@ -51,21 +44,13 @@ private:
 
 }
 
-constexpr Util::Length operator""_px(unsigned long long v) {
-    return Util::Length(static_cast<int>(v), Util::Length::Px);
-}
+constexpr Util::Length operator""_px(unsigned long long v) { return Util::Length(static_cast<int>(v), Util::Length::Px); }
 
-constexpr Util::Length operator""_perc(unsigned long long v) {
-    return Util::Length(static_cast<int>(v), Util::Length::Percent);
-}
+constexpr Util::Length operator""_perc(unsigned long long v) { return Util::Length(static_cast<int>(v), Util::Length::Percent); }
 
 // Kept for compatibility, for now.
 // FIXME: Remove these.
 // FIXME 2: Move this thing to GUI, actually.
-constexpr Util::Length operator""_px(long double v) {
-    return Util::Length(v, Util::Length::Px);
-}
+constexpr Util::Length operator""_px(long double v) { return Util::Length(v, Util::Length::Px); }
 
-constexpr Util::Length operator""_perc(long double v) {
-    return Util::Length(v, Util::Length::Percent);
-}
+constexpr Util::Length operator""_perc(long double v) { return Util::Length(v, Util::Length::Percent); }

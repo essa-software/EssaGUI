@@ -17,9 +17,7 @@ public:
 
     ColorScale(std::initializer_list<Point> p)
         : m_points(p) {
-        std::ranges::sort(m_points, [](auto const& l, auto const& r) {
-            return l.position < r.position;
-        });
+        std::ranges::sort(m_points, [](auto const& l, auto const& r) { return l.position < r.position; });
     }
 
     Util::Color get(float position) const {

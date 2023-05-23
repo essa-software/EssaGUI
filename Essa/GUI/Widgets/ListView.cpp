@@ -93,34 +93,34 @@ void ListView::draw(Gfx::Painter& wnd) const {
                 // configurable
 
                 std::visit(
-                    overloaded {
-                        [&](Util::UString const& data) {
-                            Gfx::Text text { data, Application::the().bold_font() };
-                            text.set_font_size(theme().label_font_size);
-                            text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
-                            text.align(
-                                Align::CenterLeft, { (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
-                            );
-                            text.draw(wnd);
-                        },
-                        [&](Gfx::RichText const& data) {
-                            Gfx::RichTextDrawable drawable { data,
-                                                             {
-                                                                 .default_font = Application::the().font(),
-                                                                 .font_size = static_cast<int>(theme().label_font_size),
-                                                                 .text_alignment = GUI::Align::CenterLeft,
-                                                             } };
-                            drawable.set_rect({ (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
-                            drawable.draw(wnd);
-                        },
-                        [&](llgl::Texture const* data) {
-                            Gfx::RectangleDrawOptions rect;
-                            rect.texture = data;
-                            wnd.deprecated_draw_rectangle(
-                                { { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } },
-                                rect
-                            );
-                        } },
+                    overloaded { [&](Util::UString const& data) {
+                                    Gfx::Text text { data, Application::the().bold_font() };
+                                    text.set_font_size(theme().label_font_size);
+                                    text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
+                                    text.align(
+                                        Align::CenterLeft, { (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
+                                    );
+                                    text.draw(wnd);
+                                },
+                                 [&](Gfx::RichText const& data) {
+                                     Gfx::RichTextDrawable drawable { data,
+                                                                      {
+                                                                          .default_font = Application::the().font(),
+                                                                          .font_size = static_cast<int>(theme().label_font_size),
+                                                                          .text_alignment = GUI::Align::CenterLeft,
+                                                                      } };
+                                     drawable.set_rect({ (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
+                                     drawable.draw(wnd);
+                                 },
+                                 [&](llgl::Texture const* data) {
+                                     Gfx::RectangleDrawOptions rect;
+                                     rect.texture = data;
+                                     wnd.deprecated_draw_rectangle(
+                                         { { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 },
+                                           { 16, 16 } },
+                                         rect
+                                     );
+                                 } },
                     data
                 );
             }

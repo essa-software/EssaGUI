@@ -13,8 +13,7 @@ namespace Util {
 namespace Detail {
 
 // A generic class containing some numbers.
-template<size_t C, class T, template<size_t, class> class Derived>
-class Coordinates {
+template<size_t C, class T, template<size_t, class> class Derived> class Coordinates {
 public:
     static constexpr size_t Components = C;
 
@@ -47,8 +46,7 @@ public:
         assert_components_are_finite();
     }
 
-    template<class OtherT>
-    Derived<C, OtherT> cast() const {
+    template<class OtherT> Derived<C, OtherT> cast() const {
         Derived<C, OtherT> v;
         for (size_t s = 0; s < C; s++) {
             v.set_component(s, static_cast<OtherT>(this->component(s)));
@@ -57,8 +55,7 @@ public:
     }
 
     // Component getters
-    template<size_t I>
-    constexpr T component() const {
+    template<size_t I> constexpr T component() const {
         static_assert(I < Components);
         return this->m_components[I];
     }
@@ -68,16 +65,24 @@ public:
     }
     constexpr T x() const
         requires(Components > 0)
-    { return this->m_components[0]; };
+    {
+        return this->m_components[0];
+    };
     constexpr T y() const
         requires(Components > 1)
-    { return this->m_components[1]; };
+    {
+        return this->m_components[1];
+    };
     constexpr T z() const
         requires(Components > 2)
-    { return this->m_components[2]; };
+    {
+        return this->m_components[2];
+    };
     constexpr T w() const
         requires(Components > 3)
-    { return this->m_components[3]; };
+    {
+        return this->m_components[3];
+    };
 
     // Component setters
     template<size_t I>
@@ -97,16 +102,24 @@ public:
     };
     constexpr void set_x(T v)
         requires(Components > 0)
-    { set_component(0, v); }
+    {
+        set_component(0, v);
+    }
     constexpr void set_y(T v)
         requires(Components > 1)
-    { set_component(1, v); }
+    {
+        set_component(1, v);
+    }
     constexpr void set_z(T v)
         requires(Components > 2)
-    { set_component(2, v); }
+    {
+        set_component(2, v);
+    }
     constexpr void set_w(T v)
         requires(Components > 3)
-    { set_component(3, v); }
+    {
+        set_component(3, v);
+    }
 
     bool is_zero() const {
         return std::ranges::all_of(m_components, [](auto n) { return n == 0; });

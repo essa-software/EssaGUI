@@ -20,8 +20,7 @@ using ModelVertex = llgl::Vertex<Util::Point3f, Util::Colorf, Util::Point2f, Uti
 
 }
 
-template<>
-struct llgl::VertexMapping<Essa::ModelVertex> {
+template<> struct llgl::VertexMapping<Essa::ModelVertex> {
     static constexpr size_t position = 0;
     static constexpr size_t color = 1;
     static constexpr size_t tex_coord = 2;
@@ -36,7 +35,8 @@ struct ModelRenderRange : public llgl::RenderRange {
 
 class ModelBuilder : public llgl::Builder<ModelVertex, ModelRenderRange> {
 public:
-    using RangeRenderer = std::function<void(llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range)>;
+    using RangeRenderer
+        = std::function<void(llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range)>;
 
     void set_range_renderer(RangeRenderer rr) { m_renderer = std::move(rr); }
 
@@ -52,22 +52,23 @@ public:
             m_vao.upload_vertices(m_vertices);
             m_was_modified = false;
         }
-        auto range_renderer = [&shader, uniforms](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
-            auto uniforms_copy = uniforms;
-            if constexpr (requires() { uniforms_copy.set_material(*range.material); }) {
-                if (range.material) {
-                    uniforms_copy.set_material(*range.material);
-                }
-                else {
-                    uniforms_copy.set_material(Material {
-                        .ambient = { .color = Util::Colors::Gray },
-                        .diffuse = { .color = Util::Colors::White },
-                        .emission { .color = Util::Colors::Black },
-                    });
-                }
-            }
-            renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.type }, range.first, range.size);
-        };
+        auto range_renderer
+            = [&shader, uniforms](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
+                  auto uniforms_copy = uniforms;
+                  if constexpr (requires() { uniforms_copy.set_material(*range.material); }) {
+                      if (range.material) {
+                          uniforms_copy.set_material(*range.material);
+                      }
+                      else {
+                          uniforms_copy.set_material(Material {
+                              .ambient = { .color = Util::Colors::Gray },
+                              .diffuse = { .color = Util::Colors::White },
+                              .emission { .color = Util::Colors::Black },
+                          });
+                      }
+                  }
+                  renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.type }, range.first, range.size);
+              };
         for (auto const& range : m_ranges) {
             range_renderer(renderer, m_vao, range);
         }
@@ -85,9 +86,7 @@ public:
     // position (xyz), color (rgba), tex coord (st), normal (xyz)
     using Vertex = ModelVertex;
 
-    void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) {
-        m_builder.add_range(vertices, material);
-    }
+    void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) { m_builder.add_range(vertices, material); }
 
     void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms) const {
         m_builder.render(renderer, shader, uniforms);
@@ -99,8 +98,7 @@ private:
 
 }
 
-template<>
-struct Gfx::ResourceTraits<Essa::Model> {
+template<> struct Gfx::ResourceTraits<Essa::Model> {
     static std::optional<Essa::Model> load_from_file(std::string const&);
     static std::string_view base_path() { return "models"; }
 };

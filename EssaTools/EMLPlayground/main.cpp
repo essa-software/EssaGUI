@@ -34,7 +34,8 @@ int main() {
         (void)eml_container->load_from_eml_string(text.encode());
         if (tool_window) {
             (void)tool_window->load_from_eml_string(text.encode());
-            tool_window->set_position({ host_window.size().x() * 3 / 4 - tool_window->size().x() / 2, host_window.size().y() / 2 - tool_window->size().y() / 2 });
+            tool_window->set_position({ host_window.size().x() * 3 / 4 - tool_window->size().x() / 2,
+                                        host_window.size().y() / 2 - tool_window->size().y() / 2 });
         }
     };
     eml_editor->set_syntax_highlighter(std::make_unique<EML::SyntaxHighlighter>());
@@ -42,10 +43,9 @@ int main() {
     open_window->on_click = [&]() {
         tool_window = &host_window.open_overlay<GUI::ToolWindow>();
         (void)tool_window->load_from_eml_string(eml_editor->content().encode());
-        tool_window->set_position({ host_window.size().x() * 3 / 4 - tool_window->size().x() / 2, host_window.size().y() / 2 - tool_window->size().y() / 2 });
-        tool_window->on_close = [&tool_window]() {
-            tool_window = nullptr;
-        };
+        tool_window->set_position({ host_window.size().x() * 3 / 4 - tool_window->size().x() / 2,
+                                    host_window.size().y() / 2 - tool_window->size().y() / 2 });
+        tool_window->on_close = [&tool_window]() { tool_window = nullptr; };
     };
 
     app.run();

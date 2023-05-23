@@ -52,26 +52,17 @@ void Property::print(size_t depth) const {
 }
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
-template<class... Ts>
-struct overloaded : Ts... {
+template<class... Ts> struct overloaded : Ts... {
     using Ts::operator()...;
 };
 
 std::string Value::string() const {
     return std::visit(
         overloaded {
-            [](double d) -> std::string {
-                return fmt::format("{}", d);
-            },
-            [](bool b) -> std::string {
-                return b ? "true" : "false";
-            },
-            [](Util::UString const& str) -> std::string {
-                return "\"" + str.encode() + "\"";
-            },
-            [](Object const&) -> std::string {
-                return "@TODO";
-            },
+            [](double d) -> std::string { return fmt::format("{}", d); },
+            [](bool b) -> std::string { return b ? "true" : "false"; },
+            [](Util::UString const& str) -> std::string { return "\"" + str.encode() + "\""; },
+            [](Object const&) -> std::string { return "@TODO"; },
             [](Util::Length const& length) -> std::string {
                 switch (length.unit()) {
                 case Util::Length::Initial:
@@ -94,9 +85,7 @@ std::string Value::string() const {
                 }
                 ESSA_UNREACHABLE;
             },
-            [](Range const& r) -> std::string {
-                return fmt::format("{}..{}", r.min, r.max);
-            },
+            [](Range const& r) -> std::string { return fmt::format("{}..{}", r.min, r.max); },
             [](Array const& array) -> std::string {
                 Util::UStringBuilder builder;
                 builder.append("[");
@@ -111,19 +100,16 @@ std::string Value::string() const {
                 builder.append("]");
                 return builder.release_string().encode();
             },
-            [](Util::Color const& color) -> std::string {
-                return color.to_html_string().encode();
-            },
+            [](Util::Color const& color) -> std::string { return color.to_html_string().encode(); },
         },
-        *this);
+        *this
+    );
 }
 
 Array::Array(std::vector<Value> values)
     : m_values(std::move(values)) { }
 
-Value Array::at(size_t index) const {
-    return m_values[index];
-}
+Value Array::at(size_t index) const { return m_values[index]; }
 
 EMLErrorOr<Value> Object::require_property(std::string const& name) const {
     auto it = properties.find(name);

@@ -769,7 +769,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
                     Util::Point2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
                     for_each_line_in_range(error.range, [&](size_t line, size_t start, size_t end) {
                         Util::Point2f start_position { base_position.x() + start * character_width,
-                                                        base_position.y() + line * line_height + 3 };
+                                                       base_position.y() + line * line_height + 3 };
                         draw_error_line(painter, error.type, start_position, (end - start) * character_width);
                     });
                 }
@@ -799,9 +799,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
         auto position = calculate_cursor_position();
         Gfx::RectangleDrawOptions cursor;
         cursor.fill_color = theme_colors.text;
-        painter.deprecated_draw_rectangle(
-            { (position + Util::Vector2i { left_margin(), 0 }).cast<float>(), { 2, cursor_height } }, cursor
-        );
+        painter.deprecated_draw_rectangle({ (position + Util::Vector2i { left_margin(), 0 }).cast<float>(), { 2, cursor_height } }, cursor);
         // }
     }
 

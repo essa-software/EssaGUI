@@ -47,9 +47,7 @@ FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UStrin
         for (const auto& ext : m_extensions)
             file_explorer_wnd.model()->add_desired_extension(ext);
 
-        file_explorer_wnd.on_submit = [input](std::filesystem::path path) {
-            input->set_content(Util::UString { path.string() });
-        };
+        file_explorer_wnd.on_submit = [input](std::filesystem::path path) { input->set_content(Util::UString { path.string() }); };
 
         file_explorer_wnd.show_modal();
     };
@@ -62,9 +60,7 @@ FilePrompt::FilePrompt(HostWindow& window, Util::UString help_text, Util::UStrin
         auto cancel_button = button_container->add_widget<TextButton>();
         cancel_button->set_alignment(Align::Center);
         cancel_button->set_content("Cancel");
-        cancel_button->on_click = [&]() {
-            close();
-        };
+        cancel_button->on_click = [&]() { close(); };
 
         auto ok_button = button_container->add_widget<TextButton>();
         ok_button->set_alignment(Align::Center);

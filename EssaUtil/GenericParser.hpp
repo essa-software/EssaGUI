@@ -11,7 +11,8 @@
 namespace Util {
 
 template<class T>
-requires(std::is_enum_v<T>) class Token {
+    requires(std::is_enum_v<T>)
+class Token {
 public:
     using Type = T;
 
@@ -32,14 +33,15 @@ private:
     SourceRange m_range;
 };
 
-template<class T>
-class GenericLexer : protected TextReader {
+template<class T> class GenericLexer : protected TextReader {
 public:
     explicit GenericLexer(ReadableStream& stream)
         : TextReader(stream) { }
 
 protected:
-    auto create_token(T type, UString value, SourceLocation start) requires(!std::is_same_v<T, void>) {
+    auto create_token(T type, UString value, SourceLocation start)
+        requires(!std::is_same_v<T, void>)
+    {
         return Token<T> { type, std::move(value), { start, location() } };
     }
 };
@@ -49,19 +51,15 @@ struct ParseError {
     SourceRange location;
 };
 
-template<class T>
-using ParseErrorOr = ErrorOr<T, ParseError>;
+template<class T> using ParseErrorOr = ErrorOr<T, ParseError>;
 
-template<class T>
-class GenericParser {
+template<class T> class GenericParser {
 public:
     GenericParser(std::vector<Token<T>> tokens)
         : m_tokens(std::move(tokens)) { }
 
 protected:
-    bool is_eof() const {
-        return m_offset >= m_tokens.size();
-    }
+    bool is_eof() const { return m_offset >= m_tokens.size(); }
 
     size_t offset() const { return m_offset; }
 
@@ -81,9 +79,7 @@ protected:
         return &m_tokens[m_offset];
     }
 
-    bool next_token_is(T type) const {
-        return peek() && peek()->type() == type;
-    }
+    bool next_token_is(T type) const { return peek() && peek()->type() == type; }
 
     ParseErrorOr<Token<T>> expect(T type) {
         auto token = get();
@@ -99,35 +95,22 @@ protected:
     ParseError error(std::string message) {
         if (m_tokens.empty())
             return ParseError { .message = message, .location = {} };
-        return ParseError {
-            .message = message,
-            .location = is_eof()
-                ? m_tokens[m_offset - 1].range()
-                : m_tokens[m_offset].range()
-        };
+        return ParseError { .message = message, .location = is_eof() ? m_tokens[m_offset - 1].range() : m_tokens[m_offset].range() };
     }
 
     ParseError error(std::string message, size_t token) {
         assert(token < m_tokens.size());
-        return ParseError {
-            .message = message,
-            .location = m_tokens[token].range()
-        };
+        return ParseError { .message = message, .location = m_tokens[token].range() };
     }
 
     ParseError error_in_already_read(std::string message) {
         if (m_tokens.empty())
             return ParseError { .message = message, .location = {} };
         assert(m_offset > 0);
-        return ParseError {
-            .message = message,
-            .location = m_tokens[m_offset - 1].range()
-        };
+        return ParseError { .message = message, .location = m_tokens[m_offset - 1].range() };
     }
 
-    ParseError expected(std::string what, Token<T> got) {
-        return error("Expected " + what + ", got '" + got.value().encode() + "'");
-    }
+    ParseError expected(std::string what, Token<T> got) { return error("Expected " + what + ", got '" + got.value().encode() + "'"); }
 
     ParseError expected_in_already_read(std::string what, Token<T> got) {
         return error_in_already_read("Expected " + what + ", got '" + got.value().encode() + "'");

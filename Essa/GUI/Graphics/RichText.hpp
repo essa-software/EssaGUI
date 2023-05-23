@@ -17,7 +17,8 @@ public:
     RichText& operator=(RichText&&) = default;
 
     template<class T, class... Args>
-    requires(std::is_base_of_v<RichTextFragments::Base, T>) RichText& append_fragment(Args&&... args) {
+        requires(std::is_base_of_v<RichTextFragments::Base, T>)
+    RichText& append_fragment(Args&&... args) {
         m_fragments.push_back(std::make_unique<T>(std::forward<Args>(args)...));
         return *this;
     }

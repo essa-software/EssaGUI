@@ -42,24 +42,16 @@ LengthVector Textfield::initial_size() const {
     text.set_font_size(m_font_size);
     auto size = text.calculate_text_size();
     return { { (static_cast<int>(size.x()) + m_padding * 2), Util::Length::Px },
-        { (static_cast<int>(size.y()) + m_padding * 2), Util::Length::Px } };
+             { (static_cast<int>(size.y()) + m_padding * 2), Util::Length::Px } };
 }
 
-EML::EMLErrorOr<void> Textfield::load_from_eml_object(
-    EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> Textfield::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
     m_content = TRY(object.get_property("content", EML::Value("")).to_string());
-    m_font_size = TRY(object
-                          .get_property("font_size",
-                              EML::Value(static_cast<double>(m_font_size)))
-                          .to_double());
-    m_alignment = TRY(object.get_enum(
-        "alignment", text_align_from_string, Align::CenterLeft));
+    m_font_size = TRY(object.get_property("font_size", EML::Value(static_cast<double>(m_font_size))).to_double());
+    m_alignment = TRY(object.get_enum("alignment", text_align_from_string, Align::CenterLeft));
     // TODO: Alignment
-    m_padding = TRY(
-        object
-            .get_property("padding", EML::Value(static_cast<double>(m_padding)))
-            .to_double());
+    m_padding = TRY(object.get_property("padding", EML::Value(static_cast<double>(m_padding))).to_double());
     return {};
 }
 

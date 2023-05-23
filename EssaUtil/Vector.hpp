@@ -404,7 +404,8 @@ constexpr double get_distance(Detail::DeprecatedVector<S, T> const& a, Detail::D
 template<size_t S, class T>
     requires(S == 2 || S == 3)
 constexpr double get_distance_to_line(
-    Detail::DeprecatedVector<S, T> line_start, Detail::DeprecatedVector<S, T> line_end, Detail::DeprecatedVector<S, T> point) {
+    Detail::DeprecatedVector<S, T> line_start, Detail::DeprecatedVector<S, T> line_end, Detail::DeprecatedVector<S, T> point
+) {
     auto d = (point - line_end) / get_distance(point, line_end);
     auto v = line_start - line_end;
     double t = v.dot(d);

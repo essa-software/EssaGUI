@@ -8,15 +8,17 @@
 
 namespace GUI {
 
-template<typename T>
-class StateTextButton : public Widget {
+template<typename T> class StateTextButton : public Widget {
     struct State {
         Util::Color bg_color, fg_color, text_color;
         T state;
     };
 
 public:
-    void add_state(Util::UString content, T state, Util::Color bg_color, Util::Color fg_color = Util::Colors::Blue, Util::Color text_color = Util::Colors::White);
+    void add_state(
+        Util::UString content, T state, Util::Color bg_color, Util::Color fg_color = Util::Colors::Blue,
+        Util::Color text_color = Util::Colors::White
+    );
 
     CREATE_VALUE(size_t, font_size, 20)
     CREATE_VALUE(Align, alignment, Align::CenterLeft);

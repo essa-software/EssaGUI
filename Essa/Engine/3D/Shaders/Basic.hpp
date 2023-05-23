@@ -12,7 +12,8 @@ class Basic : public llgl::Shader {
 public:
     using Vertex = llgl::Vertex<Util::Point3f, Util::Colorf, Util::Point2f>;
 
-    struct Uniforms : public llgl::ShaderBases::Transform
+    struct Uniforms
+        : public llgl::ShaderBases::Transform
         , public llgl::ShaderBases::Texture {
         static inline auto mapping = llgl::ShaderBases::Transform::mapping | llgl::ShaderBases::Texture::mapping;
     };
@@ -22,8 +23,7 @@ public:
 
 }
 
-template<>
-struct llgl::VertexMapping<Essa::Shaders::Basic::Vertex> {
+template<> struct llgl::VertexMapping<Essa::Shaders::Basic::Vertex> {
     static constexpr size_t position = 0;
     static constexpr size_t color = 1;
     static constexpr size_t tex_coord = 2;

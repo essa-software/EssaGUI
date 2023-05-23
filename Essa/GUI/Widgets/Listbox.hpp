@@ -12,9 +12,7 @@ namespace GUI {
 
 class Listbox : public Container {
 public:
-    virtual void on_init() override {
-        set_layout<VerticalBoxLayout>();
-    }
+    virtual void on_init() override { set_layout<VerticalBoxLayout>(); }
 
     void add(Util::UString const& label);
     void remove(Util::UString const& label);

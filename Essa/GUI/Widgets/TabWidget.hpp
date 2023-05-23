@@ -31,8 +31,7 @@ class TabWidget : public Container {
 public:
     virtual void on_init() override;
 
-    template<class... Args>
-    Container& add_tab(Util::UString caption, Args&&... args) {
+    template<class... Args> Container& add_tab(Util::UString caption, Args&&... args) {
         auto tab = m_tab_container->add_widget<Container>(std::forward<Args>(args)...);
         setup_tab(caption, tab);
         return *tab;

@@ -20,10 +20,7 @@ public:
             , settings_container(container_) { }
     };
 
-    enum class Expandable {
-        Yes,
-        No
-    };
+    enum class Expandable { Yes, No };
 
     MenuEntry& add_entry(llgl::Texture const& image, Util::UString tooltip, Expandable = Expandable::Yes);
 

@@ -33,34 +33,25 @@ public:
     constexpr Color(Colorf const&);
 
     constexpr Color operator+(Color const& right) const {
-        return { static_cast<uint8_t>(std::clamp(
-                     static_cast<int>(r) + static_cast<int>(right.r), 0, 255)),
-            static_cast<uint8_t>(std::clamp(
-                static_cast<int>(g) + static_cast<int>(right.g), 0, 255)),
-            static_cast<uint8_t>(std::clamp(
-                static_cast<int>(b) + static_cast<int>(right.b), 0, 255)),
-            static_cast<uint8_t>(std::clamp(
-                static_cast<int>(a) + static_cast<int>(right.a), 0, 255)) };
+        return { static_cast<uint8_t>(std::clamp(static_cast<int>(r) + static_cast<int>(right.r), 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(g) + static_cast<int>(right.g), 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(b) + static_cast<int>(right.b), 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(a) + static_cast<int>(right.a), 0, 255)) };
     }
 
     constexpr Color operator-(Color const& right) const {
-        return { static_cast<uint8_t>(std::clamp(
-                     static_cast<int>(r) - static_cast<int>(right.r), 0, 255)),
-            static_cast<uint8_t>(std::clamp(
-                static_cast<int>(g) - static_cast<int>(right.g), 0, 255)),
-            static_cast<uint8_t>(std::clamp(
-                static_cast<int>(b) - static_cast<int>(right.b), 0, 255)),
-            static_cast<uint8_t>(std::clamp(
-                static_cast<int>(a) - static_cast<int>(right.a), 0, 255)) };
+        return { static_cast<uint8_t>(std::clamp(static_cast<int>(r) - static_cast<int>(right.r), 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(g) - static_cast<int>(right.g), 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(b) - static_cast<int>(right.b), 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(a) - static_cast<int>(right.a), 0, 255)) };
     }
 
     constexpr HSV to_hsv() const;
     constexpr Color to_grayscale(float saturation = 0) const;
 
     friend std::ostream& operator<<(std::ostream& out, Color const& color) {
-        return out << "rgba(" << static_cast<int>(color.r) << ", "
-                   << static_cast<int>(color.g) << ", " << static_cast<int>(color.b)
-                   << ", " << static_cast<int>(color.a) << ")";
+        return out << "rgba(" << static_cast<int>(color.r) << ", " << static_cast<int>(color.g) << ", " << static_cast<int>(color.b) << ", "
+                   << static_cast<int>(color.a) << ")";
     }
 
     Util::UString to_html_string() const;
@@ -85,9 +76,8 @@ struct HSV {
 
 constexpr Color operator*(Color const& left, auto fac) {
     using Fac = decltype(fac);
-    return { static_cast<uint8_t>(std::min<Fac>(255, left.r * fac)),
-        static_cast<uint8_t>(std::min<Fac>(255, left.g * fac)),
-        static_cast<uint8_t>(std::min<Fac>(255, left.b * fac)), left.a };
+    return { static_cast<uint8_t>(std::min<Fac>(255, left.r * fac)), static_cast<uint8_t>(std::min<Fac>(255, left.g * fac)),
+             static_cast<uint8_t>(std::min<Fac>(255, left.b * fac)), left.a };
 }
 
 class Colors {
@@ -323,11 +313,9 @@ constexpr Color Color::to_grayscale(float saturation) const {
 
 } // namespace Util
 
-template<>
-class fmt::formatter<Util::Color> : public fmt::formatter<std::string_view> {
+template<> class fmt::formatter<Util::Color> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext>
-    constexpr auto format(Util::Color const& v, FormatContext& ctx) const {
+    template<typename FormatContext> constexpr auto format(Util::Color const& v, FormatContext& ctx) const {
         if (v.a == 255) {
             fmt::format_to(ctx.out(), "rgb({}, {}, {})", v.r, v.g, v.b);
         }

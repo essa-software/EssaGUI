@@ -51,8 +51,6 @@ Image::Image(Util::Size2u size) {
     m_pixels = new Util::Color[pixel_count()];
 }
 
-Image::~Image() {
-    delete[] m_pixels;
-}
+Image::~Image() { delete[] m_pixels; }
 
 }

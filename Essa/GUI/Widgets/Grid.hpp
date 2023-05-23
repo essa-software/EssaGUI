@@ -10,9 +10,7 @@ class Grid : public Container {
 public:
     friend Border;
 
-    virtual void on_init() override {
-        set_layout<VerticalBoxLayout>();
-    }
+    virtual void on_init() override { set_layout<VerticalBoxLayout>(); }
 
     void set_spacing(float spacing);
     float spacing() const { return m_spacing; }

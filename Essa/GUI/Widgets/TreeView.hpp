@@ -21,7 +21,8 @@ private:
     void render_rows(Gfx::Painter& window, float& current_y_pos, std::vector<size_t> path, std::optional<Model::Node> parent) const;
 
     size_t recursive_displayed_row_count(std::optional<Model::Node>, std::vector<size_t> path) const;
-    std::pair<std::vector<size_t>, Model::NodeData> recursive_displayed_row_at_index(std::optional<Model::Node>, std::vector<size_t> path, size_t& depth) const;
+    std::pair<std::vector<size_t>, Model::NodeData>
+    recursive_displayed_row_at_index(std::optional<Model::Node>, std::vector<size_t> path, size_t& depth) const;
 
     std::set<std::vector<size_t>> m_expanded_paths { {} };
 };

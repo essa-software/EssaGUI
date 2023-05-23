@@ -6,8 +6,7 @@
 
 namespace GUI {
 
-template<typename T>
-void SelectWidget<T>::on_init() {
+template<typename T> void SelectWidget<T>::on_init() {
     auto& layout = m_container->set_layout<HorizontalBoxLayout>();
     layout.set_spacing(0);
     m_label = m_container->add_widget<Textfield>();
@@ -17,9 +16,7 @@ void SelectWidget<T>::on_init() {
     m_elements_container->set_layout<VerticalBoxLayout>();
     m_elements_container->set_size({ Util::Length::Auto, 0.0_px });
 
-    m_expand_button->on_change = [this]() {
-        this->m_elements_container->set_size({ Util::Length::Auto, this->m_contents.size() });
-    };
+    m_expand_button->on_change = [this]() { this->m_elements_container->set_size({ Util::Length::Auto, this->m_contents.size() }); };
 }
 
 }

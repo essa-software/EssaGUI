@@ -52,9 +52,8 @@ Variant FileModel::data(Node row, size_t column) const {
         return Util::UString { file.path.filename().string() };
     case 2: {
         try {
-            return file.type != std::filesystem::file_type::directory
-                ? Util::unit_display(file.size, Util::Quantity::FileSize).to_string()
-                : "";
+            return file.type != std::filesystem::file_type::directory ? Util::unit_display(file.size, Util::Quantity::FileSize).to_string()
+                                                                      : "";
         } catch (...) {
             return "...";
         }
@@ -63,8 +62,8 @@ Variant FileModel::data(Node row, size_t column) const {
         return Util::UString { file_type(file) };
     }
     case 3:
-        std::time_t cftime = std::chrono::system_clock::to_time_t(
-            std::chrono::file_clock::to_sys(std::filesystem::last_write_time(file.path)));
+        std::time_t cftime
+            = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(std::filesystem::last_write_time(file.path)));
         std::string string = std::asctime(std::localtime(&cftime));
         string.pop_back(); // trailing \n
         return Util::UString { string };
@@ -100,7 +99,12 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
             .path = o.path(),
             .size = size,
             .type = o.status().type(),
-            .is_executable = o.status().type() == std::filesystem::file_type::regular && static_cast<bool>(o.status().permissions() & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)),
+            .is_executable
+            = o.status().type() == std::filesystem::file_type::regular
+                && static_cast<bool>(
+                    o.status().permissions()
+                    & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)
+                ),
         });
 
         // for(const auto& e : m_content.back())
@@ -126,18 +130,9 @@ std::string FileModel::file_type(File const& file) {
         return "CMake project";
 
     std::map<std::string, std::string> extension_to_name {
-        { ".cmake", "CMake script" },
-        { ".essa", "ESSA config" },
-        { ".md", "Markdown file" },
-        { ".png", "PNG image" },
-        { ".py", "Python script" },
-        { ".ttf", "TTF font" },
-        { ".txt", "Text file" },
-        { ".cpp", "C++ source file" },
-        { ".hpp", "C++ header file" },
-        { ".o", "Object file" },
-        { ".bf", "Brainfuck file" },
-        { ".exe", "Executable file" },
+        { ".cmake", "CMake script" },  { ".essa", "ESSA config" }, { ".md", "Markdown file" },  { ".png", "PNG image" },
+        { ".py", "Python script" },    { ".ttf", "TTF font" },     { ".txt", "Text file" },     { ".cpp", "C++ source file" },
+        { ".hpp", "C++ header file" }, { ".o", "Object file" },    { ".bf", "Brainfuck file" }, { ".exe", "Executable file" },
     };
 
     if (file.type == std::filesystem::file_type::directory)
@@ -207,9 +202,7 @@ FileExplorer::FileExplorer(HostWindow& window)
 
     m_directory_path_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("directory_path");
     m_directory_path_textbox->set_type(Textbox::TEXT);
-    m_directory_path_textbox->on_enter = [this](Util::UString const& str) {
-        open_path(str.encode());
-    };
+    m_directory_path_textbox->on_enter = [this](Util::UString const& str) { open_path(str.encode()); };
 
     // m_file_name_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("file_name");
     // m_file_name_textbox->set_type(Textbox::TEXT);
@@ -249,9 +242,7 @@ FileExplorer::FileExplorer(HostWindow& window)
     };
 
     auto parent_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("parent_directory");
-    parent_directory_button->on_click = [&]() {
-        open_path(m_current_path.parent_path());
-    };
+    parent_directory_button->on_click = [&]() { open_path(m_current_path.parent_path()); };
 
     auto create_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("create_directory");
     create_directory_button->on_click = [&]() {
@@ -276,9 +267,7 @@ FileExplorer::FileExplorer(HostWindow& window)
         auto button = sidebar->add_widget<GUI::TextButton>();
         button->set_content(name);
         button->set_tooltip_text(Util::UString { path.string() });
-        button->on_click = [this, path]() {
-            open_path(path);
-        };
+        button->on_click = [this, path]() { open_path(path); };
     };
 
     add_common_location("Root", "/");
@@ -309,7 +298,9 @@ void FileExplorer::open_path(std::filesystem::path path) {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
         m_model->update_content(m_current_path);
-        GUI::message_box(host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box(
+            host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!", GUI::MessageBox::Buttons::Ok
+        );
         return;
     }
     m_current_path = path;
@@ -321,9 +312,7 @@ std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow& 
     auto& explorer = host_window.open_overlay<FileExplorer>();
     std::optional<std::filesystem::path> result;
     explorer.center_on_screen();
-    explorer.on_submit = [&](const std::filesystem::path& path) {
-        result = path;
-    };
+    explorer.on_submit = [&](const std::filesystem::path& path) { result = path; };
     explorer.show_modal();
     return result;
 }

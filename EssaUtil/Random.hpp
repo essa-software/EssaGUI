@@ -7,8 +7,7 @@
 
 namespace Util::Random {
 
-template<class Random>
-class Engine {
+template<class Random> class Engine {
 public:
     template<class... Args>
         requires requires(Args... args) { Random(args...); }
@@ -16,31 +15,19 @@ public:
         : m_std_random(std::forward<Args>(args)...) { }
 
     // Generate random bool, where 1/`chance` of bools will be true.
-    bool next_bool(int chance) {
-        return next_int(0, chance - 1) == 0;
-    }
+    bool next_bool(int chance) { return next_int(0, chance - 1) == 0; }
 
     // Generate random T ∈ ℤ ∩ <min; max>
-    template<std::integral T>
-    T next_int(T min, T max) {
-        return std::uniform_int_distribution<T>(min, max)(m_std_random);
-    }
+    template<std::integral T> T next_int(T min, T max) { return std::uniform_int_distribution<T>(min, max)(m_std_random); }
 
     // Generate random T ∈ ℝ ∩ <0; max). By default, <0; 1).
-    template<std::floating_point T>
-    T next_float(T max = 1) {
-        return std::uniform_real_distribution<T>(0, max)(m_std_random);
-    }
+    template<std::floating_point T> T next_float(T max = 1) { return std::uniform_real_distribution<T>(0, max)(m_std_random); }
 
     // Generate random T ∈ ℝ ∩ <min; max)
-    template<std::floating_point T>
-    T next_float(T min, T max) {
-        return std::uniform_real_distribution<T>(min, max)(m_std_random);
-    }
+    template<std::floating_point T> T next_float(T min, T max) { return std::uniform_real_distribution<T>(min, max)(m_std_random); }
 
     // Generate random vector [ℝ×ℝ] of length [length]
-    template<class T>
-    Util::Vector2<T> next_vec2(float length) {
+    template<class T> Util::Vector2<T> next_vec2(float length) {
         double angle = next_float<T>(0, 2 * M_PI);
         double x;
         double y;
@@ -49,8 +36,7 @@ public:
     }
 
     // Generate random point [x ∈ ℝ, y ∈ ℝ], where x ∈ <rect_left; rect_right) and y ∈ <rect_top; rect_bottom).
-    template<std::floating_point T>
-    Util::Point2<T> next_point2_in_rect(Util::Rect<T> rect) {
+    template<std::floating_point T> Util::Point2<T> next_point2_in_rect(Util::Rect<T> rect) {
         T x = next_float(rect.left, rect.left + rect.width);
         T y = next_float(rect.top, rect.top + rect.height);
         return { x, y };
@@ -70,27 +56,15 @@ inline DefaultEngine& default_engine() {
 }
 
 // Generate random T ∈ ℤ ∩ <min; max>
-template<std::integral T>
-T integer(T min, T max) {
-    return default_engine().next_int<T>(min, max);
-}
+template<std::integral T> T integer(T min, T max) { return default_engine().next_int<T>(min, max); }
 
 // Generate random T ∈ ℝ ∩ <min; max)
-template<std::floating_point T>
-T floating(T min, T max) {
-    return default_engine().next_float<T>(min, max);
-}
+template<std::floating_point T> T floating(T min, T max) { return default_engine().next_float<T>(min, max); }
 
 // Generate random vector [ℝ×ℝ] of length [length]
-template<class T>
-Util::Vector2<T> vector2(float length) {
-    return default_engine().next_vec2<T>(length);
-}
+template<class T> Util::Vector2<T> vector2(float length) { return default_engine().next_vec2<T>(length); }
 
 // Generate random vector [x ∈ ℝ, y ∈ ℝ], where x ∈ <rect_left; rect_right) and y ∈ <rect_top; rect_bottom).
-template<std::floating_point T>
-Util::Point2<T> point2_in_rect(Util::Rect<T> rect) {
-    return default_engine().next_point2_in_rect<T>(rect);
-}
+template<std::floating_point T> Util::Point2<T> point2_in_rect(Util::Rect<T> rect) { return default_engine().next_point2_in_rect<T>(rect); }
 
 }

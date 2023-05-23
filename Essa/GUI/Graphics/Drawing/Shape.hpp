@@ -65,8 +65,7 @@ public:
 
     public:
         explicit Points(Shape const& s)
-            : m_shape(s) {
-        }
+            : m_shape(s) { }
 
         PointIterator begin() const { return PointIterator { &m_shape, 0 }; }
         PointIterator end() const { return PointIterator { &m_shape, m_shape.point_count() }; }
@@ -97,6 +96,6 @@ private:
 
 #define __ESSA_DEFINE_SHAPE_CHAINABLES(Subclass)                                                           \
     Subclass& set_transform(llgl::Transform t) { return static_cast<Subclass&>(Shape::set_transform(t)); } \
-    Subclass& move(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }         \
+    Subclass& move(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }             \
     Subclass& rotate(float t) { return static_cast<Subclass&>(Shape::rotate(t)); }                         \
     Subclass& scale(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::scale(t)); }

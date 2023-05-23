@@ -54,22 +54,24 @@ Util::ParseErrorOr<Object> Parser::parse_object() {
         if (next_token_is(TokenType::CurlyClose))
             break;
         auto decl = TRY(parse_declaration());
-        std::visit([&object](auto decl) {
-            using Type = decltype(decl);
-            if constexpr (std::is_same_v<Type, Object>) {
-                object.objects.push_back(std::move(decl));
-            }
-            else if constexpr (std::is_same_v<Type, ClassDefinition>) {
-                object.class_definitions.insert({ decl.class_name, std::move(decl) });
-            }
-            else if constexpr (std::is_same_v<Type, Property>) {
-                object.properties.insert({ decl.name, std::move(decl) });
-            }
-            else {
-                ESSA_UNREACHABLE;
-            }
-        },
-            decl);
+        std::visit(
+            [&object](auto decl) {
+                using Type = decltype(decl);
+                if constexpr (std::is_same_v<Type, Object>) {
+                    object.objects.push_back(std::move(decl));
+                }
+                else if constexpr (std::is_same_v<Type, ClassDefinition>) {
+                    object.class_definitions.insert({ decl.class_name, std::move(decl) });
+                }
+                else if constexpr (std::is_same_v<Type, Property>) {
+                    object.properties.insert({ decl.name, std::move(decl) });
+                }
+                else {
+                    ESSA_UNREACHABLE;
+                }
+            },
+            decl
+        );
         ignore_newlines_and_comments();
     }
 
@@ -101,10 +103,7 @@ Util::ParseErrorOr<Property> Parser::parse_property() {
     // Value
     auto value = TRY(parse_value());
 
-    return Property {
-        .name = name.value().encode(),
-        .value = value
-    };
+    return Property { .name = name.value().encode(), .value = value };
 }
 
 Util::ParseErrorOr<Value> Parser::parse_value() {

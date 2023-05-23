@@ -192,9 +192,7 @@ void Widget::do_draw(Gfx::Painter& painter) const {
     }
 }
 
-Util::Point2i Widget::raw_position() const {
-    return m_position + (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());
-}
+Util::Point2i Widget::raw_position() const { return m_position + (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i()); }
 
 void Widget::set_raw_position(Util::Point2i position) {
     m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());

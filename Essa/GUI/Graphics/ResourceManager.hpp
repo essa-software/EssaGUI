@@ -15,26 +15,23 @@
 
 namespace Gfx {
 
-template<class T>
-struct ResourceTraits;
+template<class T> struct ResourceTraits;
 
 template<class T>
 concept Resource = requires() {
-    { ResourceTraits<T>::load_from_file("") } -> std::convertible_to<std::optional<T>>;
-    { ResourceTraits<T>::base_path() } -> std::convertible_to<std::string_view>;
-};
+                       { ResourceTraits<T>::load_from_file("") } -> std::convertible_to<std::optional<T>>;
+                       { ResourceTraits<T>::base_path() } -> std::convertible_to<std::string_view>;
+                   };
 
 using Font = llgl::TTFFont;
 using Texture = llgl::Texture;
 
-template<>
-struct ResourceTraits<Font> {
+template<> struct ResourceTraits<Font> {
     static std::optional<Font> load_from_file(std::string const&);
     static std::string_view base_path() { return "fonts"; }
 };
 
-template<>
-struct ResourceTraits<Texture> {
+template<> struct ResourceTraits<Texture> {
     static std::optional<Texture> load_from_file(std::string const&);
     static std::string_view base_path() { return "textures"; }
 };
@@ -46,13 +43,9 @@ public:
         Asset     // Uses predefined directories and resource-dependend base paths
     };
 
-    static ResourceId external(std::string const& path) {
-        return ResourceId { Type::External, path };
-    }
+    static ResourceId external(std::string const& path) { return ResourceId { Type::External, path }; }
 
-    static ResourceId asset(std::string const& path) {
-        return ResourceId { Type::Asset, path };
-    }
+    static ResourceId asset(std::string const& path) { return ResourceId { Type::Asset, path }; }
 
     Type type() const { return m_type; }
     std::string path() const { return m_path; }
@@ -90,8 +83,7 @@ struct ResourceWrapperBase {
     virtual ~ResourceWrapperBase() = default;
 };
 
-template<Resource T>
-struct ResourceWrapper : public ResourceWrapperBase {
+template<Resource T> struct ResourceWrapper : public ResourceWrapperBase {
     ResourceWrapper(T&& res)
         : resource(std::forward<T>(res)) { }
     T resource;
@@ -108,8 +100,7 @@ public:
     std::optional<std::string> lookup_resource(ResourceIdAndBase const&) const;
     std::string require_lookup_resource(ResourceIdAndBase const&) const;
 
-    template<Resource T>
-    T* get(ResourceId const& id) const {
+    template<Resource T> T* get(ResourceId const& id) const {
         using Traits = ResourceTraits<T>;
         ResourceIdAndBase id_and_base { id, Traits::base_path() };
 
@@ -131,16 +122,22 @@ public:
         auto resource = Traits::load_from_file(*fs_path);
         if (!resource) {
             m_cached_resources.insert({ id_and_base, nullptr });
-            std::cout << "ResourceManager: Failed to load resource (" << typeid(T).name() << ") '" << id_and_base << "' from " << *fs_path << std::endl;
+            std::cout << "ResourceManager: Failed to load resource (" << typeid(T).name() << ") '" << id_and_base << "' from " << *fs_path
+                      << std::endl;
             return nullptr;
         }
         return &static_cast<Detail::ResourceWrapper<T>*>(
-            m_cached_resources.emplace(std::piecewise_construct, std::make_tuple(id_and_base), std::make_tuple(std::make_unique<Detail::ResourceWrapper<T>>(std::forward<T>(*resource)))).first->second.get())
+                    m_cached_resources
+                        .emplace(
+                            std::piecewise_construct, std::make_tuple(id_and_base),
+                            std::make_tuple(std::make_unique<Detail::ResourceWrapper<T>>(std::forward<T>(*resource)))
+                        )
+                        .first->second.get()
+        )
                     ->resource;
     }
 
-    template<Resource T>
-    T& require(ResourceId const& path) const {
+    template<Resource T> T& require(ResourceId const& path) const {
         auto resource = get<T>(path);
         if (!resource) {
             std::cout << "ResourceManager: Aborting because resource '" << path << "' is required to run" << std::endl;
@@ -149,22 +146,12 @@ public:
         return *resource;
     }
 
-    template<Resource T>
-    T& require(std::string path) const {
-        return require<T>(ResourceId::asset(std::move(path)));
-    }
+    template<Resource T> T& require(std::string path) const { return require<T>(ResourceId::asset(std::move(path))); }
 
-    template<Resource T>
-    T& require_external(std::string path) const {
-        return require<T>(ResourceId::external(std::move(path)));
-    }
+    template<Resource T> T& require_external(std::string path) const { return require<T>(ResourceId::external(std::move(path))); }
 
-    Texture& require_texture(std::string path) const {
-        return require<Texture>(std::move(path));
-    }
-    Font& require_font(std::string path) const {
-        return require<Font>(std::move(path));
-    }
+    Texture& require_texture(std::string path) const { return require<Texture>(std::move(path)); }
+    Font& require_font(std::string path) const { return require<Font>(std::move(path)); }
 
     llgl::TTFFont& font() const;
     llgl::TTFFont& bold_font() const;

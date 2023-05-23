@@ -38,9 +38,7 @@ bool is_enabled_from_env(std::string const& switch_) {
         }
         Util::UString env { essa_debug };
         std::set<std::string> set;
-        env.for_each_split(",", [&](std::span<uint32_t const> span) {
-            set.insert(Util::UString { span }.encode());
-        });
+        env.for_each_split(",", [&](std::span<uint32_t const> span) { set.insert(Util::UString { span }.encode()); });
         return set;
     }();
     return essa_debug_switches.contains(switch_);
@@ -59,12 +57,8 @@ DebugSwitch::DebugSwitch(std::string const& string_id)
     }
 }
 
-bool DebugSwitch::get() const {
-    return s_debug_settings.get(*this);
-}
+bool DebugSwitch::get() const { return s_debug_settings.get(*this); }
 
-void DebugSwitch::set(bool value) const {
-    s_debug_settings.set(*this, value);
-}
+void DebugSwitch::set(bool value) const { s_debug_settings.set(*this, value); }
 
 }

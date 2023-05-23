@@ -30,8 +30,7 @@ public:
     Size(Args... a)
         : Super(std::forward<Args>(a)...) { }
 
-    template<class OtherT>
-    static Size from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
+    template<class OtherT> static Size from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
         Size p;
         for (size_t s = 0; s < Super::Components; s++) {
             p.set_component(s, c.components[s]);
@@ -72,9 +71,7 @@ public:
         return ab;
     }
 
-    constexpr Size& operator+=(ThisVector const& b) {
-        return *this = *this + b;
-    }
+    constexpr Size& operator+=(ThisVector const& b) { return *this = *this + b; }
 
     constexpr Size operator-(ThisVector const& b) const {
         Size ab;
@@ -84,9 +81,7 @@ public:
         return ab;
     }
 
-    constexpr Size& operator-=(ThisVector const& b) {
-        return *this = *this - b;
-    }
+    constexpr Size& operator-=(ThisVector const& b) { return *this = *this - b; }
 
     constexpr Size operator-(Size const& b) const {
         Size ab;
@@ -133,8 +128,7 @@ public:
     constexpr explicit Size(Vector<OtherC, OtherT> other)
         : Size { other.x(), other.y() } { }
 
-    constexpr static Size from_main_cross(
-        Orientation orientation, T main, T cross)
+    constexpr static Size from_main_cross(Orientation orientation, T main, T cross)
         requires(Super::Components == 2)
     {
         if (orientation == Orientation::Vertical)
@@ -172,19 +166,13 @@ public:
 
 } // Detail
 
-template<size_t C, class T>
-Detail::Size<C, T> operator*(double fac, Detail::Size<C, T> const& vec) {
-    return vec * fac;
-}
+template<size_t C, class T> Detail::Size<C, T> operator*(double fac, Detail::Size<C, T> const& vec) { return vec * fac; }
 
 } // Util
 
-template<size_t C, class T>
-class fmt::formatter<Util::Detail::Size<C, T>> : public fmt::formatter<T> {
+template<size_t C, class T> class fmt::formatter<Util::Detail::Size<C, T>> : public fmt::formatter<T> {
 public:
-    template<typename FormatContext>
-    constexpr auto format(
-        Util::Detail::Size<C, T> const& v, FormatContext& ctx) const {
+    template<typename FormatContext> constexpr auto format(Util::Detail::Size<C, T> const& v, FormatContext& ctx) const {
         for (size_t s = 0; s < C; s++) {
             ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));
             if (s != C - 1)

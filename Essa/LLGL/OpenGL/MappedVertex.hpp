@@ -12,23 +12,26 @@ concept Empty = std::is_empty_v<T>;
 
 template<class T>
 concept MappableVertex = requires(T v) {
-    v.template value<0>();
-    { VertexMapping<T>() } -> Empty;
-};
+                             v.template value<0>();
+                             { VertexMapping<T>() } -> Empty;
+                         };
 
 #define DEFINE_NAMED_ATTRIBUTE(snake_case, PascalCase)                                                                             \
     static constexpr bool Has##PascalCase = requires() { Mapping::snake_case; };                                                   \
                                                                                                                                    \
-    auto snake_case() const requires Has##PascalCase {                                                                             \
+    auto snake_case() const                                                                                                        \
+        requires Has                                                                                                               \
+    ##PascalCase {                                                                                                                 \
         return m_vertex.template value<Mapping::snake_case>();                                                                     \
     }                                                                                                                              \
-    void set_##snake_case(auto v) requires Has##PascalCase {                                                                       \
+    void set_##snake_case(auto v)                                                                                                  \
+        requires Has                                                                                                               \
+    ##PascalCase {                                                                                                                 \
         m_vertex.template value<Mapping::snake_case>()                                                                             \
             = static_cast<std::remove_reference_t<decltype(std::declval<VertexType>().template value<Mapping::snake_case>())>>(v); \
     }
 
-template<MappableVertex V>
-class MappedVertex {
+template<MappableVertex V> class MappedVertex {
 public:
     using VertexType = V;
 

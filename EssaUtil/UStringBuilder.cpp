@@ -3,9 +3,7 @@
 
 namespace Util {
 
-UStringBuilder::~UStringBuilder() {
-    delete[] m_storage;
-}
+UStringBuilder::~UStringBuilder() { delete[] m_storage; }
 
 void UStringBuilder::reserve(size_t count) {
     if (count > m_capacity) {
@@ -13,13 +11,9 @@ void UStringBuilder::reserve(size_t count) {
     }
 }
 
-void UStringBuilder::append(UString str) {
-    append(str.span());
-}
+void UStringBuilder::append(UString str) { append(str.span()); }
 
-void UStringBuilder::append(uint32_t cp) {
-    append({ &cp, 1 });
-}
+void UStringBuilder::append(uint32_t cp) { append({ &cp, 1 }); }
 
 void UStringBuilder::append(std::span<uint32_t const> codepoints) {
     if (codepoints.empty()) {
@@ -33,13 +27,9 @@ void UStringBuilder::append(std::span<uint32_t const> codepoints) {
     m_size += codepoints.size();
 }
 
-void UStringBuilder::vappendff(fmt::string_view fmtstr, fmt::format_args args) {
-    append(UString { fmt::vformat(fmtstr, args) });
-}
+void UStringBuilder::vappendff(fmt::string_view fmtstr, fmt::format_args args) { append(UString { fmt::vformat(fmtstr, args) }); }
 
-UString UStringBuilder::build() const {
-    return UString { codepoints() };
-}
+UString UStringBuilder::build() const { return UString { codepoints() }; }
 
 UString UStringBuilder::release_string() {
     auto string = UString::take_ownership(codepoints());

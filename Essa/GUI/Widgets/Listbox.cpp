@@ -17,9 +17,7 @@ void Listbox::sort_vector() {
             vec.push_back(btn->content());
         }
 
-        std::stable_sort(vec.begin(), vec.end(), [](Util::UString const& lhs, Util::UString const& rhs) {
-            return lhs < rhs;
-        });
+        std::stable_sort(vec.begin(), vec.end(), [](Util::UString const& lhs, Util::UString const& rhs) { return lhs < rhs; });
 
         for (size_t i = 0; i < m_list_buttons.size(); i++) {
             m_list_buttons[i]->set_content(vec[i]);

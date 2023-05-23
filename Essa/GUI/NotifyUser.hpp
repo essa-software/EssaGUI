@@ -2,9 +2,6 @@
 
 namespace GUI {
 
-enum class NotifyUser {
-    Yes,
-    No
-};
+enum class NotifyUser { Yes, No };
 
 }

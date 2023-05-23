@@ -13,9 +13,7 @@ TTFFont::~TTFFont() {
         TTF_CloseFont(font.second.sdl_font);
 }
 
-TTFFont TTFFont::open_from_file(std::string const& path) {
-    return TTFFont { path };
-}
+TTFFont TTFFont::open_from_file(std::string const& path) { return TTFFont { path }; }
 
 void ensure_sdl_ttf_initialized() {
     static bool s_initialized = false;
@@ -105,7 +103,8 @@ TTFFont::FontFace* TTFFont::load_font_if_needed(uint32_t font_size) const {
         std::cerr << "TTFFont: Failed TTF_OpenFont from " << m_path << ": " << TTF_GetError() << std::endl;
         return nullptr;
     }
-    return &m_cached_fonts.emplace(std::piecewise_construct, std::make_tuple(font_size), std::make_tuple(sdl_font, font_size)).first->second;
+    return &m_cached_fonts.emplace(std::piecewise_construct, std::make_tuple(font_size), std::make_tuple(sdl_font, font_size))
+                .first->second;
 }
 
 }

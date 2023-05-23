@@ -25,9 +25,7 @@ class ContextMenu {
 public:
     CREATE_VALUE(Util::UString, title, "")
 
-    void add_action(Util::UString label, std::function<void()> callback) {
-        m_actions.push_back({ label, callback });
-    }
+    void add_action(Util::UString label, std::function<void()> callback) { m_actions.push_back({ label, callback }); }
 
     std::vector<std::pair<Util::UString, std::function<void()>>> const& actions() const { return m_actions; }
 

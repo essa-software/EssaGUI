@@ -50,8 +50,7 @@ ClipViewScope::~ClipViewScope() {
     s_current = m_parent;
 }
 
-llgl::Projection
-ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2i offset_position, Util::Size2u framebuffer_size) {
+llgl::Projection ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2i offset_position, Util::Size2u framebuffer_size) {
     return llgl::Projection::ortho(
         { { offset_position.cast<double>().to_point(), rect.size().cast<double>() } },
         Util::Recti {

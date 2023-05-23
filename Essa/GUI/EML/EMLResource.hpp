@@ -19,8 +19,7 @@ private:
 
 }
 
-template<>
-struct Gfx::ResourceTraits<EML::EMLResource> {
+template<> struct Gfx::ResourceTraits<EML::EMLResource> {
     static std::optional<EML::EMLResource> load_from_file(std::string const& path);
     static std::string_view base_path() { return "layouts"; }
 };

@@ -41,9 +41,7 @@ public:
     void resize_uninitialized(size_t);
     void insert(size_t position, uint8_t byte);
     void insert(size_t position, std::span<uint8_t const> bytes);
-    void insert(size_t position, std::initializer_list<uint8_t> bytes) {
-        insert(position, std::span<uint8_t const> { bytes });
-    }
+    void insert(size_t position, std::initializer_list<uint8_t> bytes) { insert(position, std::span<uint8_t const> { bytes }); }
     void reallocate(size_t capacity);
     void ensure_capacity(size_t capacity);
 
@@ -57,7 +55,9 @@ public:
 
 private:
     explicit Buffer(size_t size)
-        : m_size(size) { resize_uninitialized(size); }
+        : m_size(size) {
+        resize_uninitialized(size);
+    }
 
     uint8_t* m_data { nullptr };
     size_t m_size { 0 };
@@ -66,11 +66,9 @@ private:
 
 }
 
-template<>
-class fmt::formatter<Util::Buffer> : public fmt::formatter<std::string_view> {
+template<> class fmt::formatter<Util::Buffer> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext>
-    constexpr auto format(Util::Buffer const& p, FormatContext& ctx) const {
+    template<typename FormatContext> constexpr auto format(Util::Buffer const& p, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "{{");
         constexpr size_t FirstBytesToPrint = 10;
         for (auto ptr = p.begin(); ptr < p.end() && ptr < p.begin() + FirstBytesToPrint; ptr++) {

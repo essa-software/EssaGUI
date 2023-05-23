@@ -9,16 +9,7 @@ namespace Util {
 
 class SimulationClock {
 public:
-    enum class Format{
-        SHORT_TIME,
-        AMERICAN,
-        MID_TIME,
-        LONG_TIME,
-        NO_CLOCK_SHORT,
-        NO_CLOCK_AMERICAN,
-        NO_CLOCK_MID,
-        NO_CLOCK_LONG
-    };
+    enum class Format { SHORT_TIME, AMERICAN, MID_TIME, LONG_TIME, NO_CLOCK_SHORT, NO_CLOCK_AMERICAN, NO_CLOCK_MID, NO_CLOCK_LONG };
 
     static Format time_format;
 
@@ -29,7 +20,6 @@ public:
 };
 
 namespace SimulationTime {
-
 
 // This expects data in human-readable units
 // E.g if you want to create 1970-02-15 you call create(1970, 2, 15, 0, 0, 0).

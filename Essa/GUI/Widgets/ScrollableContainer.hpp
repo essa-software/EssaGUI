@@ -8,8 +8,7 @@ class ScrollableContainer : public ScrollableWidget {
 public:
     ScrollableContainer();
 
-    template<class T>
-    T& set_widget() {
+    template<class T> T& set_widget() {
         m_widget = std::make_shared<T>();
         m_widget->set_widget_tree_root(widget_tree_root());
         m_widget->init();

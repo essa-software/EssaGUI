@@ -32,8 +32,7 @@ void Text::generate_vertices() const {
                       static_cast<float>(std::floor(glyph.texture_rect.height)),
                   };
 
-            auto normalized_texture_rect
-                = glyph.texture_rect.cast<float>().componentwise_divide(cache->atlas().size().cast<float>());
+            auto normalized_texture_rect = glyph.texture_rect.cast<float>().componentwise_divide(cache->atlas().size().cast<float>());
             auto tex_start = normalized_texture_rect.position();
             auto tex_end = normalized_texture_rect.bottom_right();
 

@@ -3,7 +3,7 @@
 namespace Util {
 
 template<class Callback>
-requires requires(Callback c) { c(); }
+    requires requires(Callback c) { c(); }
 class ScopeGuard {
 public:
     ScopeGuard(Callback&& c)

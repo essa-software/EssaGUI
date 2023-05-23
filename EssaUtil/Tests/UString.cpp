@@ -72,12 +72,10 @@ TEST_CASE(utf8) {
         std::vector<uint32_t> expected;
     };
 
-    Testcase testcases[] = {
-        { "abcdef", { 'a', 'b', 'c', 'd', 'e', 'f' } },
-        { "ąęłπę", { L'ą', L'ę', L'ł', L'π', L'ę' } },
-        { "test你能？abceąę", { 't', 'e', 's', 't', L'你', L'能', L'？', L'a', L'b', L'c', L'e', L'ą', L'ę' } },
-        { "😀 😌 😔 😑 😆 😞", { L'😀', ' ', L'😌', ' ', L'😔', ' ', L'😑', ' ', L'😆', ' ', L'😞' } }
-    };
+    Testcase testcases[] = { { "abcdef", { 'a', 'b', 'c', 'd', 'e', 'f' } },
+                             { "ąęłπę", { L'ą', L'ę', L'ł', L'π', L'ę' } },
+                             { "test你能？abceąę", { 't', 'e', 's', 't', L'你', L'能', L'？', L'a', L'b', L'c', L'e', L'ą', L'ę' } },
+                             { "😀 😌 😔 😑 😆 😞", { L'😀', ' ', L'😌', ' ', L'😔', ' ', L'😑', ' ', L'😆', ' ', L'😞' } } };
 
     for (auto const& testcase : testcases) {
         // Decoding
@@ -93,9 +91,7 @@ TEST_CASE(utf8) {
 }
 
 TEST_CASE(utf8_invalid) {
-    std::vector<uint8_t> testcases[] {
-        { 0xc4 }
-    };
+    std::vector<uint8_t> testcases[] { { 0xc4 } };
 
     for (auto const& testcase : testcases) {
         EXPECT(UString::decode(testcase).is_error());

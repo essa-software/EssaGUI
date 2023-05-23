@@ -9,17 +9,9 @@ namespace GUI {
 
 class Slider : public Widget {
 public:
-    enum class Mode {
-        Linear,
-        Exponential
-    };
+    enum class Mode { Linear, Exponential };
 
-    enum class TextPos {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT
-    };
+    enum class TextPos { TOP, RIGHT, BOTTOM, LEFT };
 
     CREATE_VALUE(double, min, 0.0)
     CREATE_VALUE(double, max, 100.0)

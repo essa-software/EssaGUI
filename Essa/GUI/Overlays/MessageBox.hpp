@@ -8,19 +8,11 @@ class Button;
 
 class MessageBox : public ToolWindow {
 public:
-    enum class Buttons {
-        YesNo,
-        Ok
-    };
+    enum class Buttons { YesNo, Ok };
 
     explicit MessageBox(HostWindow& window, Util::UString message, Util::UString title, Buttons buttons);
 
-    enum class ButtonRole {
-        None,
-        Yes,
-        No,
-        Ok
-    };
+    enum class ButtonRole { None, Yes, No, Ok };
 
     ButtonRole exec() {
         show_modal();

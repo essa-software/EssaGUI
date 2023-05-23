@@ -15,14 +15,15 @@ void RadioButton::draw(Gfx::Painter& window) const {
     auto colors = colors_for_state();
 
     window.draw(Gfx::Drawing::Ellipse { { 2 + circle_radius, raw_size().y() / 2 },
-        circle_radius, Gfx::Drawing::Fill::solid(colors.background),
-        Gfx::Drawing::Outline::normal(colors.foreground, 1) });
+                                        circle_radius,
+                                        Gfx::Drawing::Fill::solid(colors.background),
+                                        Gfx::Drawing::Outline::normal(colors.foreground, 1) });
 
     if (is_active()) {
         constexpr float active_circle_radius = 4;
 
-        window.draw(Gfx::Drawing::Ellipse { { 2 + circle_radius, raw_size().y() / 2 },
-            active_circle_radius, Gfx::Drawing::Fill::solid(theme().placeholder) });
+        window.draw(Gfx::Drawing::Ellipse {
+            { 2 + circle_radius, raw_size().y() / 2 }, active_circle_radius, Gfx::Drawing::Fill::solid(theme().placeholder) });
     }
 
     Util::Rectf text_rect(raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);

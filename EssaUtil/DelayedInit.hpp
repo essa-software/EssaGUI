@@ -15,9 +15,7 @@ public:
     DelayedInit(DelayedInit&&) = delete;
     DelayedInit& operator=(DelayedInit&&) = delete;
 
-    template<class... Args> DelayedInit(Args&&... object) {
-        construct(std::forward<Args>(object)...);
-    }
+    template<class... Args> DelayedInit(Args&&... object) { construct(std::forward<Args>(object)...); }
 
     ~DelayedInit() {
         if (m_initialized)

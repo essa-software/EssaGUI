@@ -110,8 +110,7 @@ public:
 
     float hover_highlight_factor;
 
-    template<class T>
-    void set_renderer() { m_renderer = std::make_unique<T>(*this); }
+    template<class T> void set_renderer() { m_renderer = std::make_unique<T>(*this); }
     ThemeRenderer const& renderer() const { return *m_renderer; }
 
 private:

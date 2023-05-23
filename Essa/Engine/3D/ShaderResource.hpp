@@ -25,8 +25,7 @@ Util::OsErrorOr<std::string> read_file(std::string const& filename);
 ///     }
 /// };
 /// \endcode
-template<llgl::ShaderType... ShaderTypes>
-class ShaderResource {
+template<llgl::ShaderType... ShaderTypes> class ShaderResource {
 public:
     std::string_view source(llgl::ShaderType st) const {
         auto it = m_sources.find(st);
@@ -46,8 +45,7 @@ using FullShaderResource = ShaderResource<llgl::ShaderType::Fragment, llgl::Shad
 
 }
 
-template<llgl::ShaderType... ShaderTypes>
-struct Gfx::ResourceTraits<Essa::ShaderResource<ShaderTypes...>> {
+template<llgl::ShaderType... ShaderTypes> struct Gfx::ResourceTraits<Essa::ShaderResource<ShaderTypes...>> {
     static std::optional<Essa::ShaderResource<ShaderTypes...>> load_from_file(std::string const& filename) {
         Essa::ShaderResource<ShaderTypes...> resource;
 

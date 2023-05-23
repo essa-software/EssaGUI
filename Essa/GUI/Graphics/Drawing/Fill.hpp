@@ -8,12 +8,8 @@ namespace Gfx::Drawing {
 
 class Fill {
 public:
-    static Fill none() {
-        return Fill::solid(Util::Colors::Transparent);
-    }
-    static Fill solid(Util::Color const& color) {
-        return Fill {}.set_color(color);
-    }
+    static Fill none() { return Fill::solid(Util::Colors::Transparent); }
+    static Fill solid(Util::Color const& color) { return Fill {}.set_color(color); }
     static Fill textured(llgl::Texture const& tex, Util::Rectf rect = {}) {
         return Fill {}.set_color(Util::Colors::White).set_texture(&tex).set_texture_rect(rect);
     }

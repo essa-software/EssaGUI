@@ -8,18 +8,13 @@
 
 class Distance {
 public:
-    enum Unit {
-        Meter,
-        Kilometer,
-        Au
-    };
+    enum Unit { Meter, Kilometer, Au };
 
     constexpr Distance() = default;
 
     constexpr Distance(float v, Unit unit)
         : m_unit(unit)
-        , m_value(v) {
-    }
+        , m_value(v) { }
 
     constexpr Unit unit() const { return m_unit; }
     constexpr float value() const { return m_value; }
@@ -41,14 +36,8 @@ private:
     float m_value = 0;
 };
 
-constexpr Distance operator""_m(long double v) {
-    return Distance(v, Distance::Meter);
-}
+constexpr Distance operator""_m(long double v) { return Distance(v, Distance::Meter); }
 
-constexpr Distance operator""_km(long double v) {
-    return Distance(v * 1000, Distance::Kilometer);
-}
+constexpr Distance operator""_km(long double v) { return Distance(v * 1000, Distance::Kilometer); }
 
-constexpr Distance operator""_AU(long double v) {
-    return Distance(v * Util::Constants::AU, Distance::Au);
-}
+constexpr Distance operator""_AU(long double v) { return Distance(v * Util::Constants::AU, Distance::Au); }

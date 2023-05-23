@@ -6,9 +6,7 @@
 
 namespace Util {
 
-ConfigFile::ConfigFile(std::ifstream input) {
-    parse(std::move(input));
-}
+ConfigFile::ConfigFile(std::ifstream input) { parse(std::move(input)); }
 
 std::optional<Util::Color> ConfigFile::parse_color(std::string const& value) const {
     if (value == "White")

@@ -20,9 +20,7 @@ float AbstractListView::row_width() const {
     return width;
 }
 
-Util::Size2i AbstractListView::cell_size(size_t, size_t column) const {
-    return { m_model->column(column).width, theme().line_height };
-}
+Util::Size2i AbstractListView::cell_size(size_t, size_t column) const { return { m_model->column(column).width, theme().line_height }; }
 
 EML::EMLErrorOr<void> AbstractListView::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(ScrollableWidget::load_from_eml_object(object, loader));

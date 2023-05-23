@@ -28,12 +28,9 @@ Texture::~Texture() {
     }
 }
 
-Texture Texture::create_from_image(Image const& image) {
-    return create_from_color_array(image.size(), image.pixels());
-}
+Texture Texture::create_from_image(Image const& image) { return create_from_color_array(image.size(), image.pixels()); }
 
-template<class T>
-Texture Texture::create_from_color_array(Util::Size2u size, std::span<T const> array, Format format) {
+template<class T> Texture Texture::create_from_color_array(Util::Size2u size, std::span<T const> array, Format format) {
     Texture texture = create_empty(size);
     texture.update({}, size, array, format);
     return texture;
@@ -92,7 +89,8 @@ void Texture::recreate(Util::Size2u size, Format format) {
 }
 
 template<class PixelType>
-static void update_part_of_bound_texture(Util::Point2u position, Util::Size2u size, std::span<PixelType const> pixels, Texture::Format format) {
+static void
+update_part_of_bound_texture(Util::Point2u position, Util::Size2u size, std::span<PixelType const> pixels, Texture::Format format) {
     auto type = [&]() {
         if constexpr (std::is_same_v<PixelType, Util::Colorf>)
             return GL_FLOAT;
@@ -105,8 +103,7 @@ static void update_part_of_bound_texture(Util::Point2u position, Util::Size2u si
     glTexSubImage2D(GL_TEXTURE_2D, 0, position.x(), position.y(), size.x(), size.y(), gl_format(format), type, pixels.data());
 }
 
-template<class T>
-void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<T const> pixels, Format format) {
+template<class T> void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<T const> pixels, Format format) {
     assert(dst_position.x() + src_size.x() <= m_size.x());
     assert(dst_position.y() + src_size.y() <= m_size.y());
     // TODO: Support RGB format
@@ -126,12 +123,8 @@ void Texture::set_filtering(Filtering filtering) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering == Filtering::Nearest ? GL_NEAREST : GL_LINEAR);
 }
 
-void Texture::bind(Texture const* texture) {
-    glBindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0);
-}
+void Texture::bind(Texture const* texture) { glBindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
 
-void Texture::set_label(std::string const& label) {
-    glObjectLabel(GL_TEXTURE, m_id, label.size(), label.data());
-}
+void Texture::set_label(std::string const& label) { glObjectLabel(GL_TEXTURE, m_id, label.size(), label.data()); }
 
 }

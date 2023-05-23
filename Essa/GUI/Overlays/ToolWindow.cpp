@@ -282,7 +282,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         );
 
         Util::Point2f button_center { std::round(titlebar_button_position_x + theme().tool_window_title_bar_size / 2.f),
-                                       std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
+                                      std::round(position.y() - theme().tool_window_title_bar_size / 2.f) };
 
         std::array<Gfx::Vertex, 4> varr;
         auto close_button_cross_color = theme().text_button.active.unhovered.text;
@@ -298,8 +298,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     std::array<Gfx::Vertex, 4> varr_border;
     varr_border[0] = Gfx::Vertex { { position }, titlebar_color.background, {} };
     varr_border[1] = Gfx::Vertex { { position + Util::Vector2f(-1, size.y()) }, titlebar_color.background, {} };
-    varr_border[2]
-        = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
+    varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
     varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
 

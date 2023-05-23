@@ -17,10 +17,7 @@ public:
 
     virtual Theme::ButtonColors default_button_colors() const override;
 
-    enum class Style {
-        CROSS,
-        MARK
-    };
+    enum class Style { CROSS, MARK };
 
     CREATE_VALUE(Style, style, Style::CROSS)
 

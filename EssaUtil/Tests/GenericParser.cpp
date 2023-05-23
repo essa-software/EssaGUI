@@ -5,14 +5,7 @@
 #include <EssaUtil/Stream/Stream.hpp>
 #include <list>
 
-enum class TestTokenType {
-    Text,
-    Number,
-    ParenOpen,
-    ParenClose,
-    Comma,
-    Garbage
-};
+enum class TestTokenType { Text, Number, ParenOpen, ParenClose, Comma, Garbage };
 
 using TestToken = Token<TestTokenType>;
 
@@ -67,21 +60,13 @@ struct Array {
     std::list<Expression> subexpressions;
 };
 
-template<class OutputIt>
-void print(OutputIt out, int i) {
-    fmt::format_to(out, "{}", i);
-}
+template<class OutputIt> void print(OutputIt out, int i) { fmt::format_to(out, "{}", i); }
 
-template<class OutputIt>
-void print(OutputIt out, Util::UString const& str) {
-    fmt::format_to(out, "'{}'", str.encode());
-}
+template<class OutputIt> void print(OutputIt out, Util::UString const& str) { fmt::format_to(out, "'{}'", str.encode()); }
 
-template<class OutputIt>
-void print(OutputIt out, Expression const& expr);
+template<class OutputIt> void print(OutputIt out, Expression const& expr);
 
-template<class OutputIt>
-void print(OutputIt out, Array const& array) {
+template<class OutputIt> void print(OutputIt out, Array const& array) {
     size_t i = 0;
     fmt::format_to(out, "(");
     for (auto const& expr : array.subexpressions) {
@@ -93,12 +78,8 @@ void print(OutputIt out, Array const& array) {
     fmt::format_to(out, ")");
 }
 
-template<class OutputIt>
-void print(OutputIt out, Expression const& expr) {
-    std::visit([out](auto const& value) {
-        print(out, value);
-    },
-        expr);
+template<class OutputIt> void print(OutputIt out, Expression const& expr) {
+    std::visit([out](auto const& value) { print(out, value); }, expr);
 }
 
 }
@@ -154,15 +135,11 @@ ParseErrorOr<AST::Array> TestParser::parse_array() {
 
 ParseErrorOr<int> TestParser::parse_number() {
     auto value = TRY(expect(TestTokenType::Number)).value();
-    return value.parse<int>().map_error(
-        [](OsError&& err) {
-            return ParseError { .message = std::string { err.function }, .location = {} };
-        });
+    return value.parse<int>().map_error([](OsError&& err) { return ParseError { .message = std::string { err.function }, .location = {} }; }
+    );
 }
 
-ParseErrorOr<UString> TestParser::parse_text() {
-    return TRY(expect(TestTokenType::Text)).value();
-}
+ParseErrorOr<UString> TestParser::parse_text() { return TRY(expect(TestTokenType::Text)).value(); }
 
 ErrorOr<void, __TestSuite::TestError> expect_success(std::string_view input, std::string_view result) {
     ReadableMemoryStream stream = ReadableMemoryStream::from_string(input);
@@ -209,7 +186,10 @@ ErrorOr<void, __TestSuite::TestError> expect_error(std::string_view input, std::
 }
 
 TEST_CASE(generic_parser) {
-    TRY(expect_success("(1,2,4,  a  , b,  (other, array ), (more, (nested, arrays, (yay))  ) )", "(1, 2, 4, 'a', 'b', ('other', 'array'), ('more', ('nested', 'arrays', ('yay'))))"));
+    TRY(expect_success(
+        "(1,2,4,  a  , b,  (other, array ), (more, (nested, arrays, (yay))  ) )",
+        "(1, 2, 4, 'a', 'b', ('other', 'array'), ('more', ('nested', 'arrays', ('yay'))))"
+    ));
     TRY(expect_success("(ąąąą)", "('ąąąą')"));
     TRY(expect_error("#", "Expected array, number or text, got '#'"));
     TRY(expect_error("(", "Unexpected EOF in expression"));

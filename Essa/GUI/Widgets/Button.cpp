@@ -5,17 +5,11 @@
 namespace GUI {
 
 Button::Button()
-    : m_behavior([&](Util::Point2i point) {
-        return local_rect().contains(point);
-    }) {
-    m_behavior.on_click = [&]() {
-        click();
-    };
+    : m_behavior([&](Util::Point2i point) { return local_rect().contains(point); }) {
+    m_behavior.on_click = [&]() { click(); };
 }
 
-Widget::EventHandlerResult Button::on_mouse_move(Event::MouseMove const& event) {
-    return m_behavior.on_mouse_move(event);
-}
+Widget::EventHandlerResult Button::on_mouse_move(Event::MouseMove const& event) { return m_behavior.on_mouse_move(event); }
 
 Widget::EventHandlerResult Button::on_mouse_button_press(Event::MouseButtonPress const& event) {
     return m_behavior.on_mouse_button_press(event);

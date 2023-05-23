@@ -16,6 +16,7 @@ private:
     std::optional<Util::UString> m_result;
 };
 
-std::optional<Util::UString> prompt(HostWindow&, Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
+std::optional<Util::UString>
+prompt(HostWindow&, Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
 
 }

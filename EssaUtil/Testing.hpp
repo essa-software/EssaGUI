@@ -13,8 +13,7 @@
 
 using namespace Util;
 
-template<class T>
-struct FormatIfFormattable {
+template<class T> struct FormatIfFormattable {
     T const& t;
 };
 
@@ -22,16 +21,13 @@ namespace fmt {
 template<class T>
     requires(is_formattable<T>::value)
 struct formatter<FormatIfFormattable<T>> : public formatter<T> {
-    template<typename FormatContext>
-    constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) {
+    template<typename FormatContext> constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) {
         return formatter<T>::format(p.t, ctx);
     }
 };
 
-template<class T>
-struct formatter<FormatIfFormattable<T>> : public formatter<void*> {
-    template<typename FormatContext>
-    constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) const {
+template<class T> struct formatter<FormatIfFormattable<T>> : public formatter<void*> {
+    template<typename FormatContext> constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) const {
         return format_to(ctx.out(), "?{}@{:p}", typeid(p.t).name(), ptr(&p.t));
     }
 };
@@ -54,14 +50,17 @@ ErrorOr<void, TestError> expect(bool condition, std::string_view expression, std
 
 ErrorOr<void, TestError> expect_equal(auto v1, auto v2, std::string_view expr1, std::string_view expr2, std::string_view file, int line) {
     if (v1 != v2) {
-        return TestError { fmt::format("{} == {}", expr1, expr2), file, line, fmt::format("'{}' != '{}'", FormatIfFormattable { v1 }, FormatIfFormattable { v2 }) };
+        return TestError { fmt::format("{} == {}", expr1, expr2), file, line,
+                           fmt::format("'{}' != '{}'", FormatIfFormattable { v1 }, FormatIfFormattable { v2 }) };
     }
     return {};
 }
 
-ErrorOr<void, TestError> expect_approx_equal(auto v1, auto v2, std::string_view expr1, std::string_view expr2, std::string_view file, int line) {
+ErrorOr<void, TestError>
+expect_approx_equal(auto v1, auto v2, std::string_view expr1, std::string_view expr2, std::string_view file, int line) {
     if (std::abs(v1 - v2) > 10e-6) {
-        return TestError { fmt::format("{} ~= {}", expr1, expr2), file, line, fmt::format("'{}' !~= '{}'", FormatIfFormattable { v1 }, FormatIfFormattable { v2 }) };
+        return TestError { fmt::format("{} ~= {}", expr1, expr2), file, line,
+                           fmt::format("'{}' !~= '{}'", FormatIfFormattable { v1 }, FormatIfFormattable { v2 }) };
     }
     return {};
 }
@@ -69,7 +68,8 @@ ErrorOr<void, TestError> expect_approx_equal(auto v1, auto v2, std::string_view 
 template<class T, class E>
 ErrorOr<void, TestError> expect_no_error(ErrorOr<T, E> value, std::string_view expr, std::string_view file, int line) {
     if (value.is_error()) {
-        return TestError { fmt::format("!({}).is_error()", expr), file, line, fmt::format("got error: {}", FormatIfFormattable { value.release_error() }) };
+        return TestError { fmt::format("!({}).is_error()", expr), file, line,
+                           fmt::format("got error: {}", FormatIfFormattable { value.release_error() }) };
     }
     return {};
 }
@@ -108,13 +108,15 @@ constexpr bool Fail = false;
 int main(int, char** argv) {
     bool failed = false;
     for (auto const& test : __TestSuite::tests) {
-        std::string test_name = (std::string_view { argv[0] }.starts_with("./") ? std::string { argv[0] }.substr(2) : argv[0]) + "/" + std::string { test.first };
+        std::string test_name = (std::string_view { argv[0] }.starts_with("./") ? std::string { argv[0] }.substr(2) : argv[0]) + "/"
+            + std::string { test.first };
         std::cout << "\r\e[2K\e[33m . \e[m test: " << test_name << std::flush;
         auto result = test.second();
         if (result.is_error()) {
             auto error = result.release_error();
 
-            std::cout << "\r\e[2K\e[31m ✗ \e[m" << test_name << ": expected \e[1m" << error.expression << "\e[m at \e[36m" << error.file << ":" << error.line << "\e[m\n";
+            std::cout << "\r\e[2K\e[31m ✗ \e[m" << test_name << ": expected \e[1m" << error.expression << "\e[m at \e[36m" << error.file
+                      << ":" << error.line << "\e[m\n";
             if (!error.cause.empty()) {
                 std::cout << " └─\e[m failed because \e[1m" << error.cause << "\e[m" << std::endl;
             }
@@ -123,7 +125,8 @@ int main(int, char** argv) {
     }
     std::cout << "\r\e[2K";
     for (auto const& benchmark : __TestSuite::benchmarks) {
-        std::string test_name = (std::string_view { argv[0] }.starts_with("./") ? std::string { argv[0] }.substr(2) : argv[0]) + "/" + std::string { benchmark.first };
+        std::string test_name = (std::string_view { argv[0] }.starts_with("./") ? std::string { argv[0] }.substr(2) : argv[0]) + "/"
+            + std::string { benchmark.first };
         std::cout << "\r\e[2K\e[33m . \e[m benchmark: " << test_name << std::flush;
         Util::Clock clock;
         using namespace std::chrono_literals;
@@ -138,7 +141,10 @@ int main(int, char** argv) {
             }
         }
         auto time = clock.elapsed();
-        fmt::print("\r\e\2K• \e[1m{}\e[m: {} run(s) finished in: {} ({} per test)\n", test_name, run_count, fmt::streamed(time), fmt::streamed(time / run_count));
+        fmt::print(
+            "\r\e\2K• \e[1m{}\e[m: {} run(s) finished in: {} ({} per test)\n", test_name, run_count, fmt::streamed(time),
+            fmt::streamed(time / run_count)
+        );
     }
     return failed ? 1 : 0;
 }

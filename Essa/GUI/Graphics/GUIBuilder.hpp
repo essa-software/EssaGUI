@@ -52,7 +52,8 @@ private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add;
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add_render_range_for_last_vertices;
 
-    virtual void render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override {
+    virtual void
+    render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override {
         Gfx::DefaultGUIShader::Uniforms uniforms;
         uniforms.set_transform(range.model.matrix(), range.view.matrix(), range.projection.matrix());
         uniforms.set_texture(range.texture);

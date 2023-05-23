@@ -15,8 +15,7 @@ struct OrthoArgs {
         , bottom(rect.top + rect.height)
         , top(rect.top)
         , near(near_)
-        , far(far_) {
-    }
+        , far(far_) { }
     double left, right, bottom, top, near, far;
 };
 
@@ -26,8 +25,7 @@ struct PerspectiveArgs {
         : fov(fov_)
         , aspect(aspect_)
         , near(near_)
-        , far(far_) {
-    }
+        , far(far_) { }
     double fov, aspect, near, far;
 };
 

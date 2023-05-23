@@ -52,13 +52,9 @@ OsErrorOr<void> File::seek(ssize_t count, SeekDirection direction) {
     return {};
 }
 
-ReadableFileStream ReadableFileStream::adopt_fd(int fd) {
-    return ReadableFileStream { fd, true };
-}
+ReadableFileStream ReadableFileStream::adopt_fd(int fd) { return ReadableFileStream { fd, true }; }
 
-ReadableFileStream ReadableFileStream::borrow_fd(int fd) {
-    return ReadableFileStream { fd, false };
-}
+ReadableFileStream ReadableFileStream::borrow_fd(int fd) { return ReadableFileStream { fd, false }; }
 
 OsErrorOr<ReadableFileStream> ReadableFileStream::open(std::string const& file_name) {
     auto fd = ::open(file_name.c_str(), O_RDONLY);
@@ -101,16 +97,14 @@ OsErrorOr<size_t> ReadableFileStream::read(std::span<uint8_t> data) {
     return static_cast<size_t>(result);
 }
 
-WritableFileStream WritableFileStream::adopt_fd(int fd) {
-    return WritableFileStream { fd, true };
-}
+WritableFileStream WritableFileStream::adopt_fd(int fd) { return WritableFileStream { fd, true }; }
 
-WritableFileStream WritableFileStream::borrow_fd(int fd) {
-    return WritableFileStream { fd, false };
-}
+WritableFileStream WritableFileStream::borrow_fd(int fd) { return WritableFileStream { fd, false }; }
 
 OsErrorOr<WritableFileStream> WritableFileStream::open(std::string const& file_name, OpenOptions options) {
-    auto fd = ::open(file_name.c_str(), O_WRONLY | O_CREAT | (options.truncate ? O_TRUNC : O_APPEND) | (options.fail_if_exists ? O_EXCL : 0), 0700);
+    auto fd = ::open(
+        file_name.c_str(), O_WRONLY | O_CREAT | (options.truncate ? O_TRUNC : O_APPEND) | (options.fail_if_exists ? O_EXCL : 0), 0700
+    );
     if (fd < 0) {
         return OsError { errno, "WritableFileStream::open" };
     }
@@ -126,8 +120,6 @@ OsErrorOr<size_t> WritableFileStream::write(std::span<uint8_t const> data) {
     return static_cast<size_t>(result);
 }
 
-bool ReadableFileStream::is_eof() const {
-    return m_eof;
-}
+bool ReadableFileStream::is_eof() const { return m_eof; }
 
 }

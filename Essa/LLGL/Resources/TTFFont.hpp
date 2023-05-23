@@ -43,8 +43,7 @@ private:
     FontFace* load_font_if_needed(uint32_t font_size) const;
 
     explicit TTFFont(std::string const& path)
-        : m_path(path) {
-    }
+        : m_path(path) { }
 
     mutable std::map<uint32_t, FontFace> m_cached_fonts;
     std::string m_path;

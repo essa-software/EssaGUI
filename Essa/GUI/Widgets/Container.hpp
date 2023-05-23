@@ -17,8 +17,7 @@ class Container;
 
 using WidgetList = std::vector<std::shared_ptr<Widget>>;
 
-template<class T>
-struct Box {
+template<class T> struct Box {
     T top {};
     T right {};
     T bottom {};
@@ -26,29 +25,17 @@ struct Box {
 
     static Box all_equal(T value) { return { value, value, value, value }; }
 
-    T main_start(Util::Orientation o) const {
-        return o == Util::Orientation::Horizontal ? left : top;
-    }
+    T main_start(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? left : top; }
 
-    T main_end(Util::Orientation o) const {
-        return o == Util::Orientation::Horizontal ? right : bottom;
-    }
+    T main_end(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? right : bottom; }
 
-    T main_sum(Util::Orientation o) const {
-        return o == Util::Orientation::Horizontal ? left + right : top + bottom;
-    }
+    T main_sum(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? left + right : top + bottom; }
 
-    T cross_start(Util::Orientation o) const {
-        return o == Util::Orientation::Horizontal ? top : left;
-    }
+    T cross_start(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? top : left; }
 
-    T cross_end(Util::Orientation o) const {
-        return o == Util::Orientation::Horizontal ? bottom : right;
-    }
+    T cross_end(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? bottom : right; }
 
-    T cross_sum(Util::Orientation o) const {
-        return o == Util::Orientation::Horizontal ? top + bottom : left + right;
-    }
+    T cross_sum(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? top + bottom : left + right; }
 
     bool operator==(Box<T> const& other) const = default;
 };
@@ -81,10 +68,7 @@ public:
     virtual void run(Container&) override;
     virtual Util::Size2i total_size(Container const&) const override;
 
-    enum class ContentAlignment {
-        BoxStart,
-        BoxEnd
-    };
+    enum class ContentAlignment { BoxStart, BoxEnd };
 
     CREATE_VALUE(ContentAlignment, content_alignment, ContentAlignment::BoxStart)
 

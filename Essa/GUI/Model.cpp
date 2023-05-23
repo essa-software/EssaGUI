@@ -4,9 +4,7 @@
 
 namespace GUI {
 
-size_t Model::row_count() const {
-    return recursive_row_count({});
-}
+size_t Model::row_count() const { return recursive_row_count({}); }
 
 size_t Model::recursive_row_count(std::optional<Node> node) const {
     size_t children_count = this->children_count(node);
@@ -18,9 +16,7 @@ size_t Model::recursive_row_count(std::optional<Node> node) const {
     return total_count;
 }
 
-size_t Model::depth() const {
-    return recursive_depth(0, {});
-}
+size_t Model::depth() const { return recursive_depth(0, {}); }
 
 size_t Model::recursive_depth(size_t depth, std::optional<Node> node) const {
     size_t children_count = this->children_count(node);

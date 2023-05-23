@@ -7,11 +7,7 @@
 
 namespace Util {
 
-enum class SeekDirection {
-    FromCurrent,
-    FromStart,
-    FromEnd
-};
+enum class SeekDirection { FromCurrent, FromStart, FromEnd };
 
 class ReadableStream {
 public:

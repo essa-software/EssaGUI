@@ -16,30 +16,23 @@ public:
     Texture(const Texture& other) = delete;
     Texture& operator=(const Texture& other) = delete;
 
-    Texture(Texture&& other) {
-        *this = std::move(other);
-    }
+    Texture(Texture&& other) { *this = std::move(other); }
 
     Texture& operator=(Texture&& other);
 
     // TODO: createFromImage
     // TODO: Add some Image/Bitmap class
-    enum class Format {
-        RGBA,
-        RGB
-    };
+    enum class Format { RGBA, RGB };
 
     static Texture create_from_image(Image const&);
 
-    template<class T>
-    static Texture create_from_color_array(Util::Size2u, std::span<T const> array, Format = Format::RGBA);
+    template<class T> static Texture create_from_color_array(Util::Size2u, std::span<T const> array, Format = Format::RGBA);
 
     static Texture create_empty(Util::Size2u, Format = Format::RGBA);
 
     Image copy_to_image() const;
 
-    template<class T>
-    void update(Util::Point2u dst_pos, Util::Size2u src_size, std::span<T const> array, Format format);
+    template<class T> void update(Util::Point2u dst_pos, Util::Size2u src_size, std::span<T const> array, Format format);
 
     void recreate(Util::Size2u, Format);
 

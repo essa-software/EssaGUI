@@ -22,9 +22,7 @@ std::optional<Model> ObjLoader::load_object_from_file(std::string const& filenam
     return loader.load(std::filesystem::path { filename }.parent_path());
 }
 
-static inline void error(std::string_view message) {
-    std::cerr << "ObjLoader: Failed to load OBJ file: " << message << std::endl;
-}
+static inline void error(std::string_view message) { std::cerr << "ObjLoader: Failed to load OBJ file: " << message << std::endl; }
 
 std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory) {
     Model output;
@@ -270,11 +268,7 @@ bool ObjLoader::load_mtl(std::string const& path, std::filesystem::path const& b
 
             current_material = std::make_pair(name, Material {});
         }
-        else if (command == "Ns"
-            || command == "Ks"
-            || command == "Ni"
-            || command == "d"
-            || command == "illum") {
+        else if (command == "Ns" || command == "Ks" || command == "Ni" || command == "d" || command == "illum") {
             if (DBG_ENABLED(Engine_ObjLoader_DumpUnimplementedMTLCommands)) {
                 std::cout << "ObjLoader: Ignoring unimplemented mtl command: " << command << std::endl;
             }

@@ -5,12 +5,7 @@
 
 namespace Util {
 
-enum class CharacterType {
-    Unknown,
-    Identifier,
-    Punctuation,
-    Whitespace
-};
+enum class CharacterType { Unknown, Identifier, Punctuation, Whitespace };
 
 constexpr CharacterType character_type(uint32_t codepoint) {
     if (std::isalnum(codepoint) || codepoint == '_')

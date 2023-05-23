@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <Essa/GUI/Sprites/Sprite.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
@@ -11,13 +10,7 @@ class RectangleShape : public Sprite {
 public:
     virtual void draw(Gfx::Painter&) const override;
 
-    enum class RectangleVertex {
-        TOPLEFT,
-        TOPRIGHT,
-        BOTTOMLEFT,
-        BOTTOMRIGHT,
-        ALL
-    };
+    enum class RectangleVertex { TOPLEFT, TOPRIGHT, BOTTOMLEFT, BOTTOMRIGHT, ALL };
 
     void set_border_radius(RectangleVertex vert, float value);
     float get_border_radius(RectangleVertex vert) const;

@@ -2,9 +2,6 @@
 
 namespace Util {
 
-enum class Orientation {
-    Horizontal,
-    Vertical
-};
+enum class Orientation { Horizontal, Vertical };
 
 }

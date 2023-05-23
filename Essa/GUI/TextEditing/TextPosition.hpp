@@ -8,17 +8,11 @@ struct TextPosition {
     size_t line {};
     size_t column {};
 
-    bool operator==(TextPosition const& other) const {
-        return line == other.line && column == other.column;
-    }
+    bool operator==(TextPosition const& other) const { return line == other.line && column == other.column; }
 
-    bool operator<(TextPosition const& other) const {
-        return line < other.line || (line == other.line && column < other.column);
-    }
+    bool operator<(TextPosition const& other) const { return line < other.line || (line == other.line && column < other.column); }
 
-    bool operator>(TextPosition const& other) const {
-        return !(*this < other) && !(*this == other);
-    }
+    bool operator>(TextPosition const& other) const { return !(*this < other) && !(*this == other); }
 };
 
 struct TextSpan {

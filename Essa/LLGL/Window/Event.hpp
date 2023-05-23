@@ -87,9 +87,7 @@ public:
 private:
     friend struct ::llgl::Event;
 
-    void relativize(Util::Vector2i offset) {
-        m_local_position -= offset;
-    }
+    void relativize(Util::Vector2i offset) { m_local_position -= offset; }
 
     Util::Point2i m_local_position;
 };
@@ -155,14 +153,8 @@ private:
 };
 
 using Variant = std::variant<
-    EventTypes::WindowResizeEvent,
-    EventTypes::KeyPressEvent,
-    EventTypes::KeyReleaseEvent,
-    EventTypes::MouseMoveEvent,
-    EventTypes::MouseButtonPressEvent,
-    EventTypes::MouseButtonReleaseEvent,
-    EventTypes::MouseScrollEvent,
-    EventTypes::TextInputEvent>;
+    EventTypes::WindowResizeEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent, EventTypes::MouseMoveEvent,
+    EventTypes::MouseButtonPressEvent, EventTypes::MouseButtonReleaseEvent, EventTypes::MouseScrollEvent, EventTypes::TextInputEvent>;
 
 }
 
@@ -186,27 +178,18 @@ struct Event : public EventTypes::Variant {
     using MouseScroll = EventTypes::MouseScrollEvent;
     using TextInput = EventTypes::TextInputEvent;
 
-    template<class T>
-    bool is() const { return std::holds_alternative<T>(*this); }
+    template<class T> bool is() const { return std::holds_alternative<T>(*this); }
 
-    template<class T>
-    T const* get() const {
-        return is<T>() ? &std::get<T>(*this) : nullptr;
-    }
+    template<class T> T const* get() const { return is<T>() ? &std::get<T>(*this) : nullptr; }
 
-    template<class T>
-    T* get() {
-        return is<T>() ? &std::get<T>(*this) : nullptr;
-    }
+    template<class T> T* get() { return is<T>() ? &std::get<T>(*this) : nullptr; }
 
-    template<class... Callbacks>
-    auto visit(Callbacks&&... callbacks) {
+    template<class... Callbacks> auto visit(Callbacks&&... callbacks) {
         using OverloadedType = Util::Overloaded<Callbacks...>;
         return std::visit(OverloadedType { callbacks... }, *this);
     }
 
-    template<class... Callbacks>
-    auto visit(Callbacks&&... callbacks) const {
+    template<class... Callbacks> auto visit(Callbacks&&... callbacks) const {
         using OverloadedType = Util::Overloaded<Callbacks...>;
         return std::visit(OverloadedType { callbacks... }, *this);
     }
@@ -232,9 +215,7 @@ struct Event : public EventTypes::Variant {
         });
     };
 
-    bool is_mouse_related() const {
-        return target_type() == EventTargetType::MouseFocused;
-    }
+    bool is_mouse_related() const { return target_type() == EventTargetType::MouseFocused; }
 
     Util::Point2i local_mouse_position() const {
         assert(is_mouse_related());

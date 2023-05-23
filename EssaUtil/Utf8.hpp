@@ -21,22 +21,28 @@ template<class Callback> static bool decode_to_callback(std::string_view string,
 
         if (!(byte & 0x80)) {
             codepoint = byte & 0x7f;
-        } else if (!(byte & 0x20)) {
+        }
+        else if (!(byte & 0x20)) {
             additional_bytes_to_expect = 1;
             codepoint = byte & 0b11111;
-        } else if (!(byte & 0x10)) {
+        }
+        else if (!(byte & 0x10)) {
             additional_bytes_to_expect = 2;
             codepoint = byte & 0b1111;
-        } else if (!(byte & 0x08)) {
+        }
+        else if (!(byte & 0x08)) {
             additional_bytes_to_expect = 3;
             codepoint = byte & 0b111;
-        } else if (!(byte & 0x04)) {
+        }
+        else if (!(byte & 0x04)) {
             additional_bytes_to_expect = 4;
             codepoint = byte & 0b11;
-        } else if (!(byte & 0x02)) {
+        }
+        else if (!(byte & 0x02)) {
             additional_bytes_to_expect = 5;
             codepoint = byte & 0b1;
-        } else {
+        }
+        else {
             error = true;
             codepoint = replacement;
         }
