@@ -118,7 +118,7 @@ public:
     }
 
     virtual void do_update() override;
-    virtual Widget::EventHandlerResult do_handle_event(Event const&) override final;
+    virtual Widget::EventHandlerResult do_handle_event(Event const&) override;
     virtual void do_relayout() override;
     virtual void do_draw(Gfx::Painter& window) const override;
 
