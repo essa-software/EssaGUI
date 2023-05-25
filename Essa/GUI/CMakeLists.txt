@@ -29,6 +29,7 @@ add_library(GUI SHARED
     Overlays/FileExplorer.cpp
     Overlays/FilePrompt.cpp
     Overlays/MessageBox.cpp
+    Overlays/NotificationWindow.cpp
     Overlays/Prompt.cpp
     Overlays/Tooltip.cpp
     Overlays/ToolWindow.cpp

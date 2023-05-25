@@ -21,12 +21,19 @@ public:
 
     std::string id() const { return m_id; }
 
+    virtual Util::Point2i position() const override { return m_position; }
+    void set_position(Util::Point2i position) { m_position = position; }
+    virtual Util::Size2i size() const override { return m_size; }
+    void set_size(Util::Size2i size) { m_size = size; }
+
     HostWindow& host_window() { return m_host_window; }
     HostWindow const& host_window() const { return m_host_window; }
 
     std::function<void()> on_close;
 
 private:
+    Util::Point2i m_position;
+    Util::Size2i m_size;
     HostWindow& m_host_window;
     std::string m_id;
     bool m_closed = false;

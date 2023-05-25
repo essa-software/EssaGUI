@@ -104,33 +104,8 @@ void HostWindow::do_draw() {
     for (auto& overlay : m_overlays)
         overlay->draw(m_painter);
 
-    float y = 10;
-    for (auto const& notification : m_notifications) {
-        draw_notification(notification, y);
-        y += 30;
-    }
-
     m_painter.render();
     display();
-}
-
-void HostWindow::draw_notification(Notification const& notification, float y) {
-    Gfx::Text text { notification.message, GUI::Application::the().font() };
-    text.set_font_size(theme().label_font_size);
-    text.align(GUI::Align::Top, rect().move_y(y).cast<float>());
-    switch (notification.level) {
-    case NotificationLevel::Info:
-        text.set_fill_color(Util::Colors::Lime);
-        break;
-    case NotificationLevel::Error:
-        text.set_fill_color(Util::Colors::Red);
-        break;
-    }
-    text.draw(m_painter);
-}
-
-void HostWindow::spawn_notification(Util::UString message, NotificationLevel level) {
-    m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
 Overlay& HostWindow::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
@@ -176,11 +151,6 @@ void HostWindow::update() {
     remove_closed_overlays();
     for (auto& overlay : m_overlays)
         overlay->update();
-
-    for (auto& notification : m_notifications) {
-        notification.remaining_ticks--;
-    }
-    std::erase_if(m_notifications, [](auto const& notification) { return notification.remaining_ticks <= 0; });
 }
 
 void HostWindow::remove_closed_overlays() {

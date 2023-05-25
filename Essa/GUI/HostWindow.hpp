@@ -24,9 +24,6 @@ public:
 
     virtual void handle_event(GUI::Event const&) override;
 
-    enum class NotificationLevel { Info, Error };
-    void spawn_notification(Util::UString message, NotificationLevel);
-
     template<class T = Overlay, class... Args>
         requires(std::is_base_of_v<Overlay, T>)
     T& open_overlay(Args&&... args) {
@@ -65,13 +62,6 @@ public:
     using WidgetTreeRoot::rect;
 
 private:
-    struct Notification {
-        int remaining_ticks = 120;
-        Util::UString message;
-        NotificationLevel level {};
-    };
-
-    void draw_notification(Notification const&, float y);
     Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
 
     using OverlayList = std::list<std::unique_ptr<Overlay>>;
@@ -81,7 +71,6 @@ private:
     OverlayList m_overlays;
     Util::Point2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
     Overlay* m_focused_overlay = nullptr;
-    std::vector<Notification> m_notifications;
     Util::Color m_background_color;
     Gfx::Painter m_painter { renderer() };
 };
