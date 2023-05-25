@@ -76,6 +76,12 @@ void HostWindow::handle_event(GUI::Event const& event) {
             should_pass_event_to_main_window = false;
     }
 
+    if (on_event) {
+        if (on_event(event) == GUI::Widget::EventHandlerResult::Accepted) {
+            return;
+        }
+    }
+
     if (should_pass_event_to_main_window)
         WidgetTreeRoot::handle_event(event);
 }

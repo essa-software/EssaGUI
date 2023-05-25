@@ -61,6 +61,10 @@ public:
 
     using WidgetTreeRoot::rect;
 
+    // Override default event handler. If this returns Accepted,
+    // no events will be passed to widgets.
+    std::function<GUI::Widget::EventHandlerResult(GUI::Event const&)> on_event;
+
 private:
     Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
 
