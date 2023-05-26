@@ -7,7 +7,9 @@ namespace GUI {
 class NotificationWindow : public Overlay {
 public:
     explicit NotificationWindow(HostWindow& window)
-        : Overlay(window, "NotificationWindow") { }
+        : Overlay(window, "NotificationWindow") {
+        set_ignores_events(true);
+    }
 
     enum class Level { Info, Error };
     void spawn_notification(Util::UString message, Level);
