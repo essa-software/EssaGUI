@@ -31,12 +31,17 @@ public:
 
     std::function<void()> on_close;
 
+    // If true, window will not receive any events except Global events, or if explicitly focused.
+    void set_ignores_events(bool pass) { m_ignore_events = pass; }
+    bool ignores_events() const { return m_ignore_events; }
+
 private:
     Util::Point2i m_position;
     Util::Size2i m_size;
     HostWindow& m_host_window;
     std::string m_id;
     bool m_closed = false;
+    bool m_ignore_events = false;
 };
 
 }

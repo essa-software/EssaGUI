@@ -42,7 +42,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
             auto& overlay = **it2;
-            if (overlay.full_rect().contains(mouse_button->local_position())) {
+            if (!overlay.ignores_events() && overlay.full_rect().contains(mouse_button->local_position())) {
                 new_focused_it = it2;
                 break;
             }
@@ -64,6 +64,10 @@ void HostWindow::handle_event(GUI::Event const& event) {
     // Pass mouse moves to all tool windows + capture all scrolls
     for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
         auto& overlay = **it;
+        if (overlay.ignores_events()) {
+            continue;
+        }
+
         if (event.is<llgl::Event::MouseMove>()) {
             overlay.handle_event(event.relativized(overlay.position().to_vector()));
             break;
