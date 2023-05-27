@@ -20,6 +20,7 @@ add_library(Util SHARED
 add_library(Essa::Util ALIAS Util)
 
 set_target_properties(Util PROPERTIES OUTPUT_NAME "essa-util")
+set_target_properties(Util PROPERTIES SOVERSION ${ESSA_GIT_REVISION})
 essautil_setup_target(Util)
 install(TARGETS Util EXPORT Essa DESTINATION lib)
 target_link_libraries(Util PUBLIC fmt::fmt)

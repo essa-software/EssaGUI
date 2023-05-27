@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 3.19)
+
+execute_process(COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${Essa_SOURCE_DIR}
+    OUTPUT_VARIABLE ESSA_GIT_REVISION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 project(Essa)
 
 find_package(GLEW REQUIRED)

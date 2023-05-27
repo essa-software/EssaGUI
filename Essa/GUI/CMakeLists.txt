@@ -78,6 +78,7 @@ add_library(GUI SHARED
 add_library(Essa::GUI ALIAS GUI)
 
 set_target_properties(GUI PROPERTIES OUTPUT_NAME "essa-gui")
+set_target_properties(GUI PROPERTIES SOVERSION ${ESSA_GIT_REVISION})
 essautil_setup_target(GUI)
 target_link_libraries(GUI PUBLIC Util LLGL-OpenGL LLGL-Window LLGL-Resources)
 
