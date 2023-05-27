@@ -30,6 +30,18 @@ TEST_CASE(length) {
     return {};
 }
 
+TEST_CASE(distance) {
+    auto test = [](Point3f a, Point3f b, float length_sq) -> ErrorOr<void, __TestSuite::TestError> {
+        EXPECT_EQ_APPROX(a.distance_squared(b), length_sq);
+        return {};
+    };
+    TRY(test(Point3f {}, Point3f {}, 0));
+    TRY(test(Point3f { 1, 0, 0 }, Point3f { 1, 0, 0 }, 0));
+    TRY(test(Point3f { 1, 0, 0 }, Point3f { 2, 0, 0 }, 1));
+    TRY(test(Point3f { 1, 0, 0 }, Point3f { 1, 2, 2 }, 8));
+    return {};
+}
+
 TEST_CASE(normalized) {
     auto test = [](Vector3f v, Vector3f n) -> ErrorOr<void, __TestSuite::TestError> {
         EXPECT(v.normalized().is_approximately_equal(n));

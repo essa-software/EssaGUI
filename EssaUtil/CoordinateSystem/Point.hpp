@@ -45,6 +45,17 @@ public:
         return p;
     }
 
+    double distance_squared(Point const& b) const {
+        double sum = 0;
+        // Note: Doesn't add W coordinate
+        for (size_t s = 0; s < std::min<size_t>(3, Super::Components); s++) {
+            sum += std::pow(this->component(s) - b.component(s), 2);
+        }
+        return sum;
+    }
+
+    double distance(Point const& b) const { return std::sqrt(distance_squared(b)); }
+
     // Point + Vector
     constexpr Point operator+(ThisVector const& b) const {
         Point ab;
