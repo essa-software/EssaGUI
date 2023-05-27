@@ -24,6 +24,28 @@ ninja install
 
 ## Directory structure
 
+### Global installations
+
+```
+<install prefix>
+├── bin
+│   └── <your binaries>
+├── lib
+│   ├── <Essa libs>
+│   └── <your libs>
+└── share
+    ├── Essa
+    │   └── builtin
+    │       ├── .essaguiresources
+    │       └── <Essa resources copied from /assets>
+    └── <your project>
+        └── <your target>
+            ├── .essaguiresources
+            └── <your resources>
+```
+
+### Portable packages
+
 **Note** that portable packages are not implemented yet.
 
 Essa Framework assumes the following directory structure for portable production packages:
