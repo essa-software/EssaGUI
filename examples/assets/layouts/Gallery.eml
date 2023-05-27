@@ -1,0 +1,162 @@
+@Container {
+    layout: @VerticalBoxLayout
+    
+    define HBox : @HorizontalBoxLayout {
+        spacing: 10
+    }
+    
+    define VBox : @VerticalBoxLayout {
+        spacing: 10
+    }
+    
+    @TabWidget {
+        @Container {
+            caption: "Controls"
+            layout: @VBox {
+                padding: 10
+            }
+
+            @Container {
+                layout: @HBox
+                height: 30px
+                @TextButton {
+                    content: "Normal"
+                }
+                @TextButton {
+                    content: "Disabled"
+                    enabled: false
+                }
+                @TextButton {
+                    content: "Toggleable"
+                    active_content: "Toggleable"
+                    toggleable: true
+                }
+                @TextButton {
+                    image: asset("gui/newFolder.png")
+                    content: "With icon"
+                }
+            }
+    
+            @Textfield {
+                content: "ImageButtons: TODO"
+            }
+            
+            @Container {
+                layout: @HBox
+                height: 120px
+                @Container {
+                    layout: @VBox
+                    @Checkbox {
+                        caption: "Checkbox 1"
+                    }
+                    @Checkbox {
+                        caption: "Checkbox 2"
+                        box_type: "mark"
+                    }
+                    @Checkbox {
+                        caption: "Checkbox 3"
+                    }
+                    @Checkbox {
+                        caption: "Checkbox 4"
+                        box_type: "mark"
+                    }
+                }
+                @Container {
+                    layout: @VBox
+                    @RadioGroup {
+                        layout: @VBox
+                        @RadioButton {
+                            caption: "Radio 1"
+                            height: auto
+                        }
+                        @RadioButton {
+                            caption: "Radio 2"
+                            height: auto
+                        }
+                        @RadioButton {
+                            caption: "Radio 3"
+                            height: auto
+                        }
+                        @RadioButton {
+                            caption: "Radio 4"
+                            height: auto
+                        }
+                    }
+                }
+            }
+            
+            @Container {
+                layout: @HBox
+                height: 32px
+                
+                @Textbox {
+                    type: "TEXT"
+                    placeholder: "Text"
+                }
+                @Textbox {
+                    type: "NUMBER"
+                    placeholder: "Number"
+                }
+                @Textbox {
+                    type: "NUMBER"
+                    placeholder: "Disabled"
+                    enabled: false
+                }
+            }
+            
+            @Container {
+                layout: @HBox
+                height: 32px
+                
+                @Progressbar {
+                    labelling: "None"
+                    content: "ProgressBar 1"
+                    value: 50
+                }
+                
+                @Progressbar {
+                    labelling: "Percentage"
+                    content: "ProgressBar 2"
+                    value: 50
+                }
+                
+                @Progressbar {
+                    labelling: "Value"
+                    content: "ProgressBar 3"
+                    value: 50
+                }
+            }
+            
+            @Container {
+                layout: @HBox
+                height: 32px
+
+                @Slider {
+                    width: 200px
+                }
+                
+                @Slider {
+                    step: 10
+                    width: 200px
+                }
+            
+                @ValueSlider {
+                    name: "Value Slider"
+                    unit: "px"
+                }
+            }
+        }
+        @Container {
+            caption: "Lists"
+            layout: @VerticalBoxLayout
+            
+            @TreeView {
+                
+            }
+            
+            @ListView {
+            
+            }
+        }
+    }
+}
