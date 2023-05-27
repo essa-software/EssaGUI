@@ -1,5 +1,6 @@
 # TODO: Implement portable installs
 
+unset(ESSA_IS_PRODUCTION CACHE)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     set(ESSA_IS_PRODUCTION 1 CACHE INTERNAL "Is production")
     message("Building in production mode")
@@ -8,6 +9,7 @@ else()
     message("Building in development mode")
 endif()
 
+unset(ESSA_IS_SUBPROJECT CACHE)
 if("${Essa_SOURCE_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
     set(ESSA_IS_SUBPROJECT 0 CACHE INTERNAL "Is built as subproject")
 else()
@@ -15,7 +17,6 @@ else()
 endif()
 
 set(BUILTIN_DIR_INSTALLED 0 CACHE INTERNAL "BUILTIN_DIR_INSTALLED")
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 # Setup target with Essa-compatible defaults.
 function(essautil_setup_target targetname)
@@ -40,6 +41,9 @@ function(essautil_setup_target targetname)
         install(TARGETS ${targetname} DESTINATION bin)
         configure_file(${CMAKE_CURRENT_FUNCTION_LIST_DIR}/BuildConfig.cpp BuildConfig.cpp)
         target_sources(${targetname} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/BuildConfig.cpp)
+        if (ESSA_IS_PRODUCTION)
+            set_target_properties(${targetname} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+        endif()
     endif()
 
     target_include_directories(${targetname} PUBLIC ${PROJECT_SOURCE_DIR})
