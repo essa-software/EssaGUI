@@ -4,6 +4,6 @@ if [ ! -e build ]; then
 fi
 cd build
 
-cmake .. -GNinja -DESSAGUI_EXAMPLES=0
+cmake .. -GNinja
 ninja
 sudo ninja install
