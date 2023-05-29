@@ -11,18 +11,28 @@ namespace GUI {
 
 // The WTR that can "host" Overlays (ToolWindows etc.). It corresponds
 // to the operating system's window.
-class HostWindow
-    : public WidgetTreeRoot
-    , public llgl::Window {
+class HostWindow : public llgl::Window {
 public:
     explicit HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
+    template<class T, class... Args>
+        requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
+    auto& set_main_widget(Args&&... args) {
+        return m_fullscreen_overlay->set_main_widget<T>(std::forward<Args>(args)...);
+    }
+
+    template<class T> auto& set_created_main_widget(std::shared_ptr<T> w) {
+        return m_fullscreen_overlay->set_created_main_widget<T>(std::move(w));
+    }
+
+    auto* main_widget() { return m_fullscreen_overlay->main_widget(); }
+
     // TODO: Find a way for this to be private
     void do_draw();
-    virtual void handle_events() override; // Called by Application
-    virtual void update() override;        // Called by Application
+    void handle_events(); // Called by Application
+    void update();        // Called by Application
 
-    virtual void handle_event(GUI::Event const&) override;
+    void handle_event(GUI::Event const&);
 
     template<class T = Overlay, class... Args>
         requires(std::is_base_of_v<Overlay, T>)
@@ -52,18 +62,19 @@ public:
     TooltipOverlay& add_tooltip(Tooltip t);
     void remove_closed_overlays();
 
-    virtual Util::Point2i position() const override { return {}; }
-    virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
+    Util::Size2i size() const { return llgl::Window::size().cast<int>(); }
+    Util::Recti rect() const { return { {}, size() }; }
 
     void focus_overlay(Overlay&);
 
     void set_background_color(Util::Color color) { m_background_color = color; }
 
-    using WidgetTreeRoot::rect;
-
     // Override default event handler. If this returns Accepted,
     // no events will be passed to widgets.
     std::function<GUI::Widget::EventHandlerResult(GUI::Event const&)> on_event;
+
+    Theme const& theme() const;
+    Gfx::ResourceManager const& resource_manager() const;
 
 private:
     Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
@@ -72,8 +83,10 @@ private:
 
     void focus_window(OverlayList::iterator);
 
+    Overlay* m_fullscreen_overlay = nullptr;
+
     OverlayList m_overlays;
-    Util::Point2f m_next_overlay_position { 10, 10 + theme().tool_window_title_bar_size };
+    Util::Point2f m_next_overlay_position;
     Overlay* m_focused_overlay = nullptr;
     Util::Color m_background_color;
     Gfx::Painter m_painter { renderer() };

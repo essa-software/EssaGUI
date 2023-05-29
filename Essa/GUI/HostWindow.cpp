@@ -10,8 +10,27 @@
 
 namespace GUI {
 
+class FullscreenOverlay : public Overlay {
+public:
+    explicit FullscreenOverlay(HostWindow& window)
+        : Overlay(window, "FullscreenOverlay") {
+        set_always_on_bottom(true);
+    }
+
+private:
+    virtual void handle_event(GUI::Event const& event) override {
+        if (auto resize_event = event.get<llgl::Event::WindowResize>()) {
+            set_size(resize_event->new_size().cast<int>());
+        }
+        Overlay::handle_event(event);
+    }
+};
+
 HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings)
-    : llgl::Window(size, title, settings) {
+    : llgl::Window(size, title, settings)
+    , m_next_overlay_position({ 10, 10 + theme().tool_window_title_bar_size }) {
+    m_fullscreen_overlay = &open_overlay<FullscreenOverlay>();
+    m_fullscreen_overlay->set_size(size.cast<int>());
     llgl::opengl::enable_debug_output();
 }
 
@@ -19,6 +38,8 @@ void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
     if (new_focused_it == m_overlays.end())
         return;
     m_focused_overlay = new_focused_it->get();
+    if (m_focused_overlay->always_on_bottom())
+        return;
     auto ptr = std::move(*new_focused_it);
     m_overlays.erase(new_focused_it);
     m_overlays.push_back(std::move(ptr));
@@ -27,15 +48,22 @@ void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
 void HostWindow::handle_event(GUI::Event const& event) {
     // TODO: Allow user to override closed event
 
+    // Send global events to everyone regardless of the focused overlay
     if (event.target_type() == llgl::EventTargetType::Global) {
         for (auto const& overlay : m_overlays) {
             overlay->handle_event(event.relativized(overlay->position().to_vector()));
         }
-        WidgetTreeRoot::handle_event(event);
         return;
     }
 
-    // Focus window if mouse button pressed
+    // Run custom event handler; don't pass event to focused overlay if it's accepted
+    if (on_event) {
+        if (on_event(event) == GUI::Widget::EventHandlerResult::Accepted) {
+            return;
+        }
+    }
+
+    // Focus overlay if mouse button pressed
     if (auto mouse_button = event.get<llgl::Event::MouseButtonPress>()) {
         m_focused_overlay = nullptr;
         decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
@@ -50,44 +78,24 @@ void HostWindow::handle_event(GUI::Event const& event) {
         focus_window(new_focused_it);
     }
 
-    // Pass events to focused tool window
+    // Pass all events to focused overlay
     if (m_focused_overlay) {
         m_focused_overlay->handle_event(event.relativized(m_focused_overlay->position().to_vector()));
-        bool scroll_outside_window = event.is<llgl::Event::MouseScroll>()
-            && !m_focused_overlay->full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
-        if (!(event.is<llgl::Event::MouseMove>() || event.is<llgl::Event::MouseButtonRelease>() || scroll_outside_window))
-            return;
     }
 
-    bool should_pass_event_to_main_window = true;
-
-    // Pass mouse moves to all tool windows + capture all scrolls
-    for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
-        auto& overlay = **it;
-        if (overlay.ignores_events()) {
-            continue;
-        }
-
-        if (event.is<llgl::Event::MouseMove>()) {
-            overlay.handle_event(event.relativized(overlay.position().to_vector()));
-            break;
-        }
-
-        bool scroll_on_window
-            = event.is<llgl::Event::MouseScroll>() && overlay.full_rect().contains(event.get<llgl::Event::MouseScroll>()->local_position());
-
-        if (scroll_on_window)
-            should_pass_event_to_main_window = false;
-    }
-
-    if (on_event) {
-        if (on_event(event) == GUI::Widget::EventHandlerResult::Accepted) {
-            return;
+    // Pass mouse events to hovered overlays
+    if (event.is_mouse_related()) {
+        for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
+            auto& overlay = **it;
+            if (overlay.ignores_events()) {
+                continue;
+            }
+            if (overlay.rect().contains(event.local_mouse_position())) {
+                overlay.handle_event(event.relativized(overlay.position().to_vector()));
+                break;
+            }
         }
     }
-
-    if (should_pass_event_to_main_window)
-        WidgetTreeRoot::handle_event(event);
 }
 
 void HostWindow::handle_events() {
@@ -110,7 +118,6 @@ void HostWindow::do_draw() {
     Util::Recti viewport { {}, size() };
     m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
 
-    WidgetTreeRoot::draw(m_painter);
     for (auto& overlay : m_overlays)
         overlay->draw(m_painter);
 
@@ -157,7 +164,6 @@ void HostWindow::focus_overlay(Overlay& overlay) {
 }
 
 void HostWindow::update() {
-    WidgetTreeRoot::update();
     remove_closed_overlays();
     for (auto& overlay : m_overlays)
         overlay->update();
@@ -182,5 +188,9 @@ TooltipOverlay& HostWindow::add_tooltip(Tooltip t) {
     container.set_layout<HorizontalBoxLayout>();
     return overlay;
 }
+
+Theme const& HostWindow::theme() const { return Application::the().theme(); }
+
+Gfx::ResourceManager const& HostWindow::resource_manager() const { return Application::the().resource_manager(); }
 
 }
