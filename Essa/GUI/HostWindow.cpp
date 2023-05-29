@@ -53,7 +53,6 @@ void HostWindow::handle_event(GUI::Event const& event) {
         for (auto const& overlay : m_overlays) {
             overlay->handle_event(event.relativized(overlay->position().to_vector()));
         }
-        return;
     }
 
     // Run custom event handler; don't pass event to focused overlay if it's accepted
@@ -61,6 +60,11 @@ void HostWindow::handle_event(GUI::Event const& event) {
         if (on_event(event) == GUI::Widget::EventHandlerResult::Accepted) {
             return;
         }
+    }
+
+    // Don't pass global events to all this mouse related code
+    if (event.target_type() == llgl::EventTargetType::Global) {
+        return;
     }
 
     // Focus overlay if mouse button pressed
