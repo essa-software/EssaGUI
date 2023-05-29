@@ -21,7 +21,9 @@ class TooltipOverlay : public Overlay {
 public:
     TooltipOverlay(HostWindow& window, Tooltip tooltip, std::string id = "TooltipOverlay")
         : Overlay(window, std::move(id))
-        , m_tooltip(std::move(tooltip)) { }
+        , m_tooltip(std::move(tooltip)) {
+        set_ignores_events(true);
+    }
 
     virtual Util::Point2i position() const override { return m_tooltip.position; }
 
