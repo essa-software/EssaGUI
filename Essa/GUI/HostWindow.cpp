@@ -80,6 +80,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
 
     // Pass all events to focused overlay
     if (m_focused_overlay) {
+        // FIXME: Don't pass mouse moves. Currently this breaks moving ToolWindows.
         m_focused_overlay->handle_event(event.relativized(m_focused_overlay->position().to_vector()));
     }
 
