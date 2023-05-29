@@ -216,6 +216,8 @@ protected:
     virtual EventHandlerResult on_window_resize(Event::WindowResize const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_key_press(Event::KeyPress const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_key_release(Event::KeyRelease const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_enter(Event::MouseEnter const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_leave(Event::MouseLeave const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_move(Event::MouseMove const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) { return EventHandlerResult::NotAccepted; }

@@ -156,7 +156,13 @@ std::optional<Event> Window::poll_event_impl() {
                 // properly exposed to user.
                 std::cout << "Exit requested" << std::endl;
                 exit(0);
-            }
+            } break;
+            case SDL_WINDOWEVENT_ENTER: {
+                return Event::MouseEnter {};
+            } break;
+            case SDL_WINDOWEVENT_LEAVE: {
+                return Event::MouseLeave {};
+            } break;
             default:
                 std::cout << "SDLWindow: Unhandled window event (type=" << (int)sdl_event->window.event << ")" << std::endl;
                 should_continue = true;

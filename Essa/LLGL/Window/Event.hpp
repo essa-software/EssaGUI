@@ -73,6 +73,16 @@ public:
         : KeyEvent(key_code, modifiers) { }
 };
 
+class MouseEnterEvent : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Specific; }
+};
+
+class MouseLeaveEvent : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Specific; }
+};
+
 class MouseEvent : public Base {
 public:
     explicit MouseEvent(Util::Point2i position)
@@ -153,8 +163,9 @@ private:
 };
 
 using Variant = std::variant<
-    EventTypes::WindowResizeEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent, EventTypes::MouseMoveEvent,
-    EventTypes::MouseButtonPressEvent, EventTypes::MouseButtonReleaseEvent, EventTypes::MouseScrollEvent, EventTypes::TextInputEvent>;
+    EventTypes::WindowResizeEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent, EventTypes::MouseEnterEvent,
+    EventTypes::MouseLeaveEvent, EventTypes::MouseMoveEvent, EventTypes::MouseButtonPressEvent, EventTypes::MouseButtonReleaseEvent,
+    EventTypes::MouseScrollEvent, EventTypes::TextInputEvent>;
 
 }
 
@@ -170,6 +181,8 @@ struct Event : public EventTypes::Variant {
     using Key = EventTypes::KeyEvent;
     using KeyPress = EventTypes::KeyPressEvent;
     using KeyRelease = EventTypes::KeyReleaseEvent;
+    using MouseEnter = EventTypes::MouseEnterEvent;
+    using MouseLeave = EventTypes::MouseLeaveEvent;
     using Mouse = EventTypes::MouseEvent;
     using MouseMove = EventTypes::MouseMoveEvent;
     using MouseButton = EventTypes::MouseButtonEvent;

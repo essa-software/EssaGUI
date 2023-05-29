@@ -136,6 +136,8 @@ Widget::EventHandlerResult Widget::handle_event(Event const& event) {
         [&](Event::WindowResize const& event) -> EventHandlerResult { return on_window_resize(event); },
         [&](Event::KeyPress const& event) -> EventHandlerResult { return on_key_press(event); },
         [&](Event::KeyRelease const& event) -> EventHandlerResult { return on_key_release(event); },
+        [&](Event::MouseEnter const& event) -> EventHandlerResult { return on_mouse_enter(event); },
+        [&](Event::MouseLeave const& event) -> EventHandlerResult { return on_mouse_leave(event); },
         [&](Event::MouseMove const& event) -> EventHandlerResult { return on_mouse_move(event); },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult { return on_mouse_button_press(event); },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult { return on_mouse_button_release(event); },
