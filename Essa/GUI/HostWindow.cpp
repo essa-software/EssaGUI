@@ -91,6 +91,14 @@ void HostWindow::handle_event(GUI::Event const& event) {
                 continue;
             }
             if (overlay.rect().contains(event.local_mouse_position())) {
+                if (m_hovered_overlay != &overlay) {
+                    if (m_hovered_overlay) {
+                        m_hovered_overlay->handle_event(GUI::Event::MouseLeave());
+                    }
+                    m_hovered_overlay = &overlay;
+                    overlay.handle_event(GUI::Event::MouseEnter());
+                }
+                m_hovered_overlay = &overlay;
                 overlay.handle_event(event.relativized(overlay.position().to_vector()));
                 break;
             }

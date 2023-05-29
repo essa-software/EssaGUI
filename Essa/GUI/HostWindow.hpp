@@ -88,6 +88,7 @@ private:
     OverlayList m_overlays;
     Util::Point2f m_next_overlay_position;
     Overlay* m_focused_overlay = nullptr;
+    Overlay* m_hovered_overlay = nullptr;
     Util::Color m_background_color;
     Gfx::Painter m_painter { renderer() };
 };
