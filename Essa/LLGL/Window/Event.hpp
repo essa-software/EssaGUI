@@ -230,3 +230,86 @@ struct Event : public EventTypes::Variant {
 };
 
 }
+
+template<> class fmt::formatter<llgl::Event> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FormatContext> constexpr auto format(llgl::Event const& event, FormatContext& ctx) const {
+        event.visit([&](auto const& evt) { fmt::format_to(ctx.out(), "{}", evt); });
+        return ctx.out();
+    }
+};
+
+template<> class fmt::formatter<llgl::EventTypes::WindowResizeEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowResizeEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "WindowResizeEvent({})", event.new_size());
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::KeyEvent::KeyModifiers> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::KeyEvent::KeyModifiers const& mod, FC& ctx) const {
+        if (mod.ctrl) {
+            fmt::format_to(ctx.out(), "ctrl ");
+        }
+        if (mod.alt) {
+            fmt::format_to(ctx.out(), "alt ");
+        }
+        if (mod.shift) {
+            fmt::format_to(ctx.out(), "shift ");
+        }
+        if (mod.meta) {
+            fmt::format_to(ctx.out(), "meta ");
+        }
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::KeyPressEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::KeyPressEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "KeyPressEvent(key={}, mod={})", llgl::to_string(event.code()), event.modifiers());
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::KeyReleaseEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::KeyReleaseEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "KeyReleaseEvent(key={}, mod={})", llgl::to_string(event.code()), event.modifiers());
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::MouseMoveEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::MouseMoveEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "MouseMoveEvent(pos={}, delta={})", event.local_position(), event.delta());
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::MouseButtonPressEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::MouseButtonPressEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "MouseButtonPressEvent(pos={}, btn={})", event.local_position(), llgl::to_string(event.button()));
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::MouseButtonReleaseEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::MouseButtonReleaseEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "MouseButtonReleaseEvent(pos={}, btn={})", event.local_position(), llgl::to_string(event.button()));
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::MouseScrollEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::MouseScrollEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "MouseScrollEvent(pos={}, delta={})", event.local_position(), event.delta());
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::TextInputEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::TextInputEvent const& event, FC& ctx) const {
+        fmt::format_to(ctx.out(), "TextInputEvent({})", event.text().encode());
+        return ctx.out();
+    }
+};
