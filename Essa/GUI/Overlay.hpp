@@ -35,6 +35,10 @@ public:
     void set_ignores_events(bool pass) { m_ignore_events = pass; }
     bool ignores_events() const { return m_ignore_events; }
 
+    // If true, focusing a window won't bring it to the top.
+    void set_always_on_bottom(bool value) { m_always_on_bottom = value; }
+    bool always_on_bottom() const { return m_always_on_bottom; }
+
 private:
     Util::Point2i m_position;
     Util::Size2i m_size;
@@ -42,6 +46,7 @@ private:
     std::string m_id;
     bool m_closed = false;
     bool m_ignore_events = false;
+    bool m_always_on_bottom = false;
 };
 
 }
