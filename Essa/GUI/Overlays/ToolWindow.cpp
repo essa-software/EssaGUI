@@ -63,8 +63,8 @@ void ToolWindow::handle_event(Event const& event) {
             auto start_dragging = [&]() {
                 m_drag_position = { mouse_position.x(), mouse_position.y() };
                 should_pass_event_to_widgets = false;
-                m_initial_dragging_position = m_position;
-                m_initial_dragging_size = m_size;
+                m_initial_dragging_position = position();
+                m_initial_dragging_size = size();
             };
 
             if (titlebar_rect().contains(mouse_position)) {
@@ -92,18 +92,18 @@ void ToolWindow::handle_event(Event const& event) {
             auto delta = mouse_position - m_drag_position.to_vector();
 
             auto constrain_position = [this, &window]() {
-                if (m_position.y() < static_cast<int>(theme().tool_window_title_bar_size))
-                    m_position.set_y(theme().tool_window_title_bar_size);
-                if (m_position.y() > static_cast<int>(window.size().y()))
-                    m_position.set_y(window.size().y());
-                if (m_position.x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
-                    m_position.set_x(-size().x() + theme().tool_window_title_bar_size);
-                if (m_position.x() > static_cast<int>(window.size().x() - theme().tool_window_title_bar_size))
-                    m_position.set_x(window.size().x() - theme().tool_window_title_bar_size);
+                if (position().y() < static_cast<int>(theme().tool_window_title_bar_size))
+                    position().set_y(theme().tool_window_title_bar_size);
+                if (position().y() > static_cast<int>(window.size().y()))
+                    position().set_y(window.size().y());
+                if (position().x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
+                    position().set_x(-size().x() + theme().tool_window_title_bar_size);
+                if (position().x() > static_cast<int>(window.size().x() - theme().tool_window_title_bar_size))
+                    position().set_x(window.size().x() - theme().tool_window_title_bar_size);
             };
 
             if (m_moving) {
-                m_position = m_initial_dragging_position + delta.to_vector();
+                set_position(m_initial_dragging_position + delta.to_vector());
                 constrain_position();
                 return;
             }
@@ -113,44 +113,59 @@ void ToolWindow::handle_event(Event const& event) {
                         break;
                     }
                     switch (*direction) {
-                    case ResizeDirection::Left:
+                    case ResizeDirection::Left: {
                         if (m_initial_dragging_size.x() - delta.x() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_x(m_initial_dragging_size.x() - theme().tool_window_min_size);
                         }
                         if (m_initial_dragging_position.x() + delta.x() < 0) {
                             delta.set_x(-m_initial_dragging_position.x());
                         }
-                        m_size.set_x(m_initial_dragging_size.x() - delta.x());
-                        m_position.set_x(m_initial_dragging_position.x() + delta.x());
+                        auto size = this->size();
+                        size.set_x(m_initial_dragging_size.x() - delta.x());
+                        set_size(size);
+                        auto position = this->position();
+                        position.set_x(m_initial_dragging_position.x() + delta.x());
+                        set_position(position);
                         break;
-                    case ResizeDirection::Top:
+                    }
+                    case ResizeDirection::Top: {
                         if (m_initial_dragging_size.y() - delta.y() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_y(m_initial_dragging_size.y() - theme().tool_window_min_size);
                         }
                         if (m_initial_dragging_position.y() + delta.y() < static_cast<int>(theme().tool_window_title_bar_size)) {
                             delta.set_y(-m_initial_dragging_position.y() + theme().tool_window_title_bar_size);
                         }
-                        m_size.set_y(m_initial_dragging_size.y() - delta.y());
-                        m_position.set_y(m_initial_dragging_position.y() + delta.y());
+                        auto size = this->size();
+                        size.set_y(m_initial_dragging_size.y() - delta.y());
+                        set_size(size);
+                        auto position = this->position();
+                        position.set_y(m_initial_dragging_position.y() + delta.y());
+                        set_position(position);
                         break;
-                    case ResizeDirection::Right:
+                    }
+                    case ResizeDirection::Right: {
                         if (m_initial_dragging_size.x() + delta.x() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_x(theme().tool_window_min_size - m_initial_dragging_size.x());
                         }
-                        m_size.set_x(m_initial_dragging_size.x() + delta.x());
+                        auto size = this->size();
+                        size.set_x(m_initial_dragging_size.x() + delta.x());
+                        set_size(size);
                         break;
-                    case ResizeDirection::Bottom:
+                    }
+                    case ResizeDirection::Bottom: {
                         if (m_initial_dragging_size.y() + delta.y() < static_cast<int>(theme().tool_window_min_size)) {
                             delta.set_y(theme().tool_window_min_size - m_initial_dragging_size.y());
                         }
-                        m_size.set_y(m_initial_dragging_size.y() + delta.y());
+                        auto size = this->size();
+                        size.set_y(m_initial_dragging_size.y() + delta.y());
+                        set_size(size);
                         break;
+                    }
                     }
                 }
 
                 // Send resize event to ToolWindow's widgets
-                WidgetTreeRoot::handle_event(llgl::Event::WindowResize {
-                    { static_cast<unsigned>(m_size.x()), static_cast<unsigned>(m_size.y()) } });
+                WidgetTreeRoot::handle_event(llgl::Event::WindowResize { size().cast<unsigned>() });
                 return;
             }
         }
@@ -167,7 +182,7 @@ void ToolWindow::handle_event(Event const& event) {
 
 void ToolWindow::center_on_screen() {
     auto& window = host_window();
-    m_position = (window.size() / 2 - m_size / 2.f).to_vector().to_point();
+    set_position((window.size() / 2 - size() / 2.f).to_vector().to_point());
 }
 
 void ToolWindow::draw(Gfx::Painter& painter) {
@@ -358,8 +373,10 @@ EML::EMLErrorOr<void> ToolWindow::load_from_eml_object(EML::Object const& object
     TRY(Overlay::load_from_eml_object(object, loader));
 
     m_title = TRY(object.get_property("title", EML::Value(Util::UString {})).to_string());
-    m_size.set_x(TRY(object.get_property("width", EML::Value(0.0)).to_double()));
-    m_size.set_y(TRY(object.get_property("height", EML::Value(0.0)).to_double()));
+    set_size({
+        TRY(object.get_property("width", EML::Value(0.0)).to_double()),
+        TRY(object.get_property("height", EML::Value(0.0)).to_double()),
+    });
     if (TRY(object.get_property("center_on_screen", EML::Value(false)).to_bool())) {
         center_on_screen();
     }

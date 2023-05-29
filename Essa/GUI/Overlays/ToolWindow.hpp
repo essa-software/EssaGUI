@@ -10,12 +10,7 @@ class ToolWindow : public Overlay {
 public:
     explicit ToolWindow(HostWindow&, std::string id = "ToolWindow");
 
-    virtual Util::Point2i position() const override { return m_position; }
-    void set_position(Util::Point2i position) { m_position = position; }
     void center_on_screen();
-
-    virtual Util::Size2i size() const override { return m_size; }
-    void set_size(Util::Size2i size) { m_size = size; }
 
     CREATE_VALUE(Util::UString, title, "")
 
@@ -49,8 +44,6 @@ protected:
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
-    Util::Point2i m_position;
-    Util::Size2i m_size;
     bool m_moving = false;
     std::array<std::optional<ResizeDirection>, 2> m_resize_directions;
     Util::Point2i m_initial_dragging_position;
