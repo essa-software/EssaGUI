@@ -3,9 +3,15 @@
 #include <Essa/GUI/Timer.hpp>
 #include <EssaUtil/Clock.hpp>
 #include <EssaUtil/ScopeGuard.hpp>
+
 #include <cassert>
 #include <chrono>
+#include <fmt/chrono.h>
 #include <thread>
+
+#ifdef __linux__
+#    include <sys/prctl.h>
+#endif
 
 using namespace std::chrono_literals;
 
@@ -20,26 +26,51 @@ EventLoop& EventLoop::current() {
 
 bool EventLoop::has_current() { return s_current_event_loop != nullptr; }
 
+void increase_system_timer_resolution() {
+    static bool increased = false;
+    if (!increased) {
+        increased = true;
+#ifdef __linux__
+        prctl(PR_SET_TIMERSLACK, 10000, 0, 0, 0);
+#endif
+    }
+}
+
 void EventLoop::run() {
     auto old_event_loop = s_current_event_loop;
     s_current_event_loop = this;
     Util::ScopeGuard guard = [&]() { s_current_event_loop = old_event_loop; };
 
     Util::Clock clock;
-    while (m_running) {
-        auto tick_start = std::chrono::system_clock::now();
 
+    increase_system_timer_resolution();
+
+    while (m_running) {
         for (auto& timer : m_timers) {
             timer->update();
         }
         std::erase_if(m_timers, [](auto const& timer) { return timer->finished(); });
 
         tick();
+        auto processing_time = clock.elapsed();
 
-        m_tps = 1.f / (clock.restart() / 1.0s);
         if (m_tps_limit > 0) {
             auto const expected_tick_time = 1.0s / m_tps_limit;
-            std::this_thread::sleep_until(tick_start + expected_tick_time);
+
+            // System timer is not accurate enough to sleep for the exact amount of time.
+            // Let's just spin while giving out individual system ticks to the OS.
+            while (processing_time < expected_tick_time) {
+                std::this_thread::sleep_for(0.1ms);
+                processing_time = clock.elapsed();
+            }
+        }
+        auto time = clock.restart();
+        m_tps = 1.f / (time / 1.0s);
+        if (m_tps_limit != 0) {
+            auto lfac = 1 - (m_tps / m_tps_limit - 0.99) * 100;
+            if (lfac > 1) {
+                fmt::print(stderr, "[Lag] Tick took {:.2f}ms ({:.1f} TPS) LFAC_100={}\n", time / 1.0ms, m_tps, lfac);
+            }
         }
     }
 }
