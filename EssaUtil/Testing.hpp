@@ -142,10 +142,7 @@ int main(int, char** argv) {
             }
         }
         auto time = clock.elapsed();
-        fmt::print(
-            "\r\e\2K• \e[1m{}\e[m: {} run(s) finished in: {} ({} per test)\n", test_name, run_count, fmt::streamed(time),
-            fmt::streamed(time / run_count)
-        );
+        fmt::print("\r\e\2K• \e[1m{}\e[m: {} run(s) finished in: {} ({} per test)\n", test_name, run_count, time, time / run_count);
     }
     return failed ? 1 : 0;
 }
