@@ -132,7 +132,9 @@ Overlay& HostWindow::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
         || m_next_overlay_position.y() > size().y() - theme().tool_window_title_bar_size)
         m_next_overlay_position = { 10, 10 };
     m_overlays.push_back(std::move(overlay));
-    focus_overlay(*overlay_ptr);
+    if (!overlay_ptr->ignores_events()) {
+        focus_overlay(*overlay_ptr);
+    }
     return *overlay_ptr;
 }
 
