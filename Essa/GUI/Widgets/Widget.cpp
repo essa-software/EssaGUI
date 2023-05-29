@@ -59,6 +59,13 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
 
     // Handle events common to all widgets
     auto result2 = transformed_event.visit(
+        [&](Event::MouseLeave const&) -> EventHandlerResult {
+            if (m_tooltip) {
+                m_tooltip->close();
+                m_tooltip = nullptr;
+            }
+            return EventHandlerResult::NotAccepted;
+        },
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
             m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
