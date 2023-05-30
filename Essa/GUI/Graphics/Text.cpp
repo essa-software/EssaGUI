@@ -36,13 +36,13 @@ void Text::generate_vertices() const {
             auto tex_start = normalized_texture_rect.position();
             auto tex_end = normalized_texture_rect.bottom_right();
 
-            vertices.push_back(Gfx::Vertex({ start.x(), start.y() }, Util::Colors::White, { tex_start.x(), tex_start.y() }));
-            vertices.push_back(Gfx::Vertex({ end.x(), start.y() }, Util::Colors::White, { tex_end.x(), tex_start.y() }));
-            vertices.push_back(Gfx::Vertex({ end.x(), end.y() }, Util::Colors::White, { tex_end.x(), tex_end.y() }));
+            vertices.push_back(Gfx::Vertex({ start.x(), start.y() }, m_fill_color, { tex_start.x(), tex_start.y() }));
+            vertices.push_back(Gfx::Vertex({ end.x(), start.y() }, m_fill_color, { tex_end.x(), tex_start.y() }));
+            vertices.push_back(Gfx::Vertex({ end.x(), end.y() }, m_fill_color, { tex_end.x(), tex_end.y() }));
 
-            vertices.push_back(Gfx::Vertex({ end.x(), end.y() }, Util::Colors::White, { tex_end.x(), tex_end.y() }));
-            vertices.push_back(Gfx::Vertex({ start.x(), end.y() }, Util::Colors::White, { tex_start.x(), tex_end.y() }));
-            vertices.push_back(Gfx::Vertex({ start.x(), start.y() }, Util::Colors::White, { tex_start.x(), tex_start.y() }));
+            vertices.push_back(Gfx::Vertex({ end.x(), end.y() }, m_fill_color, { tex_end.x(), tex_end.y() }));
+            vertices.push_back(Gfx::Vertex({ start.x(), end.y() }, m_fill_color, { tex_start.x(), tex_end.y() }));
+            vertices.push_back(Gfx::Vertex({ start.x(), start.y() }, m_fill_color, { tex_start.x(), tex_start.y() }));
 
             x_position += glyph.texture_rect.width + m_font.kerning(m_font_size, previous_codepoint, codepoint);
             previous_codepoint = codepoint;
