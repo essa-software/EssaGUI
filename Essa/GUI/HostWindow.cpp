@@ -187,10 +187,15 @@ void HostWindow::update() {
 void HostWindow::remove_closed_overlays() {
     std::erase_if(m_overlays, [&](auto& wnd) {
         if (wnd->is_closed()) {
-            if (wnd->on_close)
+            if (wnd->on_close) {
                 wnd->on_close();
-            if (wnd.get() == m_focused_overlay)
+            }
+            if (wnd.get() == m_focused_overlay) {
                 m_focused_overlay = nullptr;
+            }
+            if (wnd.get() == m_hovered_overlay) {
+                m_hovered_overlay = nullptr;
+            }
             return true;
         }
         return false;
