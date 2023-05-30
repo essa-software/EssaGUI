@@ -103,8 +103,9 @@ void HostWindow::handle_event(GUI::Event const& event) {
                     m_hovered_overlay = &overlay;
                     overlay.handle_event(GUI::Event::MouseEnter());
                 }
-                m_hovered_overlay = &overlay;
-                overlay.handle_event(event.relativized(overlay.position().to_vector()));
+                if (m_hovered_overlay != m_focused_overlay) {
+                    overlay.handle_event(event.relativized(overlay.position().to_vector()));
+                }
                 break;
             }
         }
