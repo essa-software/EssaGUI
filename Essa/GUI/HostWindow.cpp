@@ -1,6 +1,8 @@
 #include "HostWindow.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Debug.hpp>
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/LLGL/OpenGL/Error.hpp>
@@ -122,6 +124,8 @@ void HostWindow::handle_events() {
     }
 }
 
+DBG_DECLARE(GUI_DrawOverlayBounds);
+
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
     set_active();
@@ -132,8 +136,18 @@ void HostWindow::do_draw() {
     Util::Recti viewport { {}, size() };
     m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
 
-    for (auto& overlay : m_overlays)
+    for (auto& overlay : m_overlays) {
         overlay->draw(m_painter);
+        if (DBG_ENABLED(GUI_DrawOverlayBounds)) {
+            using namespace Gfx::Drawing;
+            m_painter.draw(Rectangle(overlay->rect().cast<float>(), Fill::none(), Outline::normal(Util::Colors::Cyan, -1)));
+            m_painter.draw(Rectangle(overlay->full_rect().cast<float>(), Fill::none(), Outline::normal(Util::Colors::Cyan * 0.5, 1)));
+            Gfx::Text debug_text(Util::UString(overlay->id()), resource_manager().fixed_width_font());
+            debug_text.set_font_size(10);
+            debug_text.align(GUI::Align::BottomLeft, overlay->full_rect().cast<float>());
+            debug_text.draw(m_painter);
+        }
+    }
 
     m_painter.render();
     display();
