@@ -17,7 +17,8 @@ public:
     using Self = MultidimensionalArray<T, Dimensions...>;
     static constexpr size_t Rank = sizeof...(Dimensions);
     using Type = T;
-    using Vector = Detail::DeprecatedVector<Rank, size_t>;
+    using Point = Detail::Point<Rank, size_t>;
+    using Size = Detail::Size<Rank, size_t>;
 
     template<size_t Dim> static size_t dimension() { return std::get<Dim>(std::tuple { Dimensions... }); }
 
@@ -41,7 +42,7 @@ public:
 
     ~MultidimensionalArray() { delete[] m_storage; }
 
-    Vector dimensions() const { return { Dimensions... }; }
+    Size dimensions() const { return { Dimensions... }; }
     size_t size() const { return (Dimensions * ...); }
 
     void fill(Type const& fill) { std::fill(m_storage, m_storage + size(), fill); }
@@ -81,7 +82,7 @@ public:
     }
 
     template<class Callback>
-        requires(std::is_invocable_v<Callback, Vector, T&>)
+        requires(std::is_invocable_v<Callback, Point, T&>)
     void for_each_cell(Callback&& callback) {
         for (size_t s = 0; s < size(); s++) {
             callback(index_to_coords(s), m_storage[s]);
@@ -89,7 +90,7 @@ public:
     }
 
     template<class Callback>
-        requires(std::is_invocable_v<Callback, Vector, T const&>)
+        requires(std::is_invocable_v<Callback, Point, T const&>)
     void for_each_cell(Callback&& callback) const {
         for (size_t s = 0; s < size(); s++) {
             callback(index_to_coords(s), m_storage[s]);
@@ -97,10 +98,10 @@ public:
     }
 
 private:
-    template<size_t... Idx> Type const& ref(Detail::Point<Rank, size_t> const& coords, std::index_sequence<Idx...>) const {
+    template<size_t... Idx> Type const& ref(Point const& coords, std::index_sequence<Idx...>) const {
         return ref(coords.component(Idx)...);
     }
-    template<size_t... Idx> Type get(Detail::Point<Rank, size_t> const& coords, std::index_sequence<Idx...>) const {
+    template<size_t... Idx> Type get(Point const& coords, std::index_sequence<Idx...>) const {
         return get(coords.component(Idx)...);
     }
 
@@ -114,10 +115,10 @@ private:
         return idx;
     }
 
-    constexpr Vector index_to_coords(size_t index) const { return index_to_coords_impl(index, std::make_index_sequence<Rank>()); }
+    constexpr Point index_to_coords(size_t index) const { return index_to_coords_impl(index, std::make_index_sequence<Rank>()); }
 
-    template<size_t... Seq> constexpr Vector index_to_coords_impl(size_t index, std::index_sequence<Seq...>) const {
-        Vector out;
+    template<size_t... Seq> constexpr Point index_to_coords_impl(size_t index, std::index_sequence<Seq...>) const {
+        Point out;
         ((out.components[Seq] = index % Dimensions, index /= Dimensions), ...);
         return out;
     }
