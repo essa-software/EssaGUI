@@ -47,12 +47,15 @@ void HostWindow::focus_window(OverlayList::iterator new_focused_it) {
     m_overlays.push_back(std::move(ptr));
 }
 
+DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
+
 void HostWindow::handle_event(GUI::Event const& event) {
     // TODO: Allow user to override closed event
 
     // Send global events to everyone regardless of the focused overlay
     if (event.target_type() == llgl::EventTargetType::Global) {
         for (auto const& overlay : m_overlays) {
+            DBG_PRINTLN(GUI_DumpOverlayHandleEventCalls, "Overlay::handle_event({}) for {} (global)", llgl::Event(event), overlay->id());
             overlay->handle_event(event.relativized(overlay->position().to_vector()));
         }
     }
@@ -84,10 +87,14 @@ void HostWindow::handle_event(GUI::Event const& event) {
         focus_window(new_focused_it);
     }
 
+    // Store focused overlay because it may change in event handler
+    auto focused_overlay = m_focused_overlay;
+
     // Pass all events to focused overlay
-    if (m_focused_overlay) {
+    if (focused_overlay) {
         // FIXME: Don't pass mouse moves. Currently this breaks moving ToolWindows.
-        m_focused_overlay->handle_event(event.relativized(m_focused_overlay->position().to_vector()));
+        DBG_PRINTLN(GUI_DumpOverlayHandleEventCalls, "Overlay::handle_event({}) for {} (focused)", llgl::Event(event), focused_overlay->id());
+        focused_overlay->handle_event(event.relativized(focused_overlay->position().to_vector()));
     }
 
     // Pass mouse events to hovered overlays
@@ -105,7 +112,9 @@ void HostWindow::handle_event(GUI::Event const& event) {
                     m_hovered_overlay = &overlay;
                     overlay.handle_event(GUI::Event::MouseEnter());
                 }
-                if (m_hovered_overlay != m_focused_overlay) {
+                assert(m_hovered_overlay == &overlay);
+                if (&overlay != focused_overlay) {
+                    DBG_PRINTLN(GUI_DumpOverlayHandleEventCalls, "Overlay::handle_event({}) for {} (hovered)", llgl::Event(event), overlay.id());
                     overlay.handle_event(event.relativized(overlay.position().to_vector()));
                 }
                 break;
