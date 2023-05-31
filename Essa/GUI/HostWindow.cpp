@@ -97,7 +97,7 @@ void HostWindow::handle_event(GUI::Event const& event) {
             if (overlay.ignores_events()) {
                 continue;
             }
-            if (overlay.rect().contains(event.local_mouse_position())) {
+            if (overlay.full_rect().contains(event.local_mouse_position())) {
                 if (m_hovered_overlay != &overlay) {
                     if (m_hovered_overlay) {
                         m_hovered_overlay->handle_event(GUI::Event::MouseLeave());
