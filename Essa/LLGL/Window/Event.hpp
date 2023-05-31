@@ -291,6 +291,20 @@ public:
         return ctx.out();
     }
 };
+template<> class fmt::formatter<llgl::EventTypes::MouseEnterEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::MouseEnterEvent const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "MouseEnterEvent");
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::MouseLeaveEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::MouseLeaveEvent const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "MouseLeaveEvent");
+        return ctx.out();
+    }
+};
 template<> class fmt::formatter<llgl::EventTypes::MouseMoveEvent> : public fmt::formatter<std::string_view> {
 public:
     template<typename FC> constexpr auto format(llgl::EventTypes::MouseMoveEvent const& event, FC& ctx) const {
