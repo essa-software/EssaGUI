@@ -105,7 +105,8 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, UString const& str) { return out << str.encode(); }
 
-    template<Arithmetic I> OsErrorOr<I> parse() const;
+    template<std::integral I> OsErrorOr<I> parse(int base = 10) const;
+    template<std::floating_point I> OsErrorOr<I> parse() const;
 
 private:
     friend UString operator+(UString const& lhs, UString const& rhs);
@@ -120,6 +121,6 @@ private:
 template<typename T> UString to_ustring(const T& to_convert) { return UString { std::to_string(to_convert) }; }
 
 // For some reason, there is no std::stou for that. :(
-template<> OsErrorOr<unsigned int> UString::parse<unsigned int>() const = delete;
+template<> OsErrorOr<unsigned int> UString::parse<unsigned int>(int base) const = delete;
 
 }
