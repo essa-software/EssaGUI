@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoordinateSystem.hpp"
+#include "Error.hpp"
 #include "NonCopyable.hpp"
 #include "Vector.hpp"
 
@@ -97,13 +98,29 @@ public:
         }
     }
 
+    template<class Callback>
+        requires(std::is_invocable_v<Callback, Point, T&>)
+    std::invoke_result_t<Callback, Point, T&> try_for_each_cell(Callback&& callback) {
+        for (size_t s = 0; s < size(); s++) {
+            TRY(callback(index_to_coords(s), m_storage[s]));
+        }
+        return {};
+    }
+
+    template<class Callback>
+        requires(std::is_invocable_v<Callback, Point, T const&>)
+    std::invoke_result_t<Callback, Point, T&> try_for_each_cell(Callback&& callback) const {
+        for (size_t s = 0; s < size(); s++) {
+            TRY(callback(index_to_coords(s), m_storage[s]));
+        }
+        return {};
+    }
+
 private:
     template<size_t... Idx> Type const& ref(Point const& coords, std::index_sequence<Idx...>) const {
         return ref(coords.component(Idx)...);
     }
-    template<size_t... Idx> Type get(Point const& coords, std::index_sequence<Idx...>) const {
-        return get(coords.component(Idx)...);
-    }
+    template<size_t... Idx> Type get(Point const& coords, std::index_sequence<Idx...>) const { return get(coords.component(Idx)...); }
 
     template<std::convertible_to<size_t>... Dim> Type* cell(Dim... index) { return &m_storage[coords_to_index(index...)]; }
 
