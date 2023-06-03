@@ -119,7 +119,7 @@ private:
 
     template<size_t... Seq> constexpr Point index_to_coords_impl(size_t index, std::index_sequence<Seq...>) const {
         Point out;
-        ((out.components[Seq] = index % Dimensions, index /= Dimensions), ...);
+        ((out.template set_component<Seq>(index % Dimensions), index /= Dimensions), ...);
         return out;
     }
 
