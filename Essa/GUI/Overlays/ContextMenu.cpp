@@ -1,6 +1,7 @@
 #include "ContextMenu.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
@@ -122,6 +123,7 @@ void ContextMenuOverlay::draw(Gfx::Painter& painter) {
     background.outline_thickness = -1;
     painter.deprecated_draw_rectangle(rect().cast<float>(), background);
 
+    Gfx::ClipViewScope scope(painter, rect(), Gfx::ClipViewScope::Mode::NewStack);
     WidgetTreeRoot::draw(painter);
 }
 
