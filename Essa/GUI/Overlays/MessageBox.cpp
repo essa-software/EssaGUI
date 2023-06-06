@@ -25,10 +25,8 @@ MessageBox::MessageBox(HostWindow& window, Util::UString message, Util::UString 
     prompt_text->set_size({ Util::Length::Auto, Util::Length::Auto });
 
     {
-        Gfx::Text text { prompt_text->content(), GUI::Application::the().font() };
-        text.set_font_size(prompt_text->font_size());
-        auto text_size = text.calculate_text_size();
-        Util::Size2i total_size { 40 + text_size.x(), 110 + text_size.y() };
+        auto text_rect = prompt_text->text_rect();
+        Util::Size2i total_size { 40 + text_rect.width, 110 + text_rect.height };
         set_size(total_size);
         center_on_screen();
     }

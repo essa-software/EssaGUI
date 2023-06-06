@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Essa/GUI/Graphics/RichText.hpp>
 #include <Essa/GUI/TextAlign.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <EssaUtil/Units.hpp>
@@ -10,12 +11,16 @@ class Textfield : public Widget {
 public:
     Textfield();
 
-    virtual void draw(Gfx::Painter& window) const override;
+    virtual void draw(Gfx::Painter&) const override;
 
     // FIXME: EML
     void set_font(llgl::TTFFont const& font) { m_font = &font; }
-
-    CREATE_VALUE(Util::UString, content, "")
+    void set_content(Gfx::RichText content) {
+        m_content = std::move(content);
+    }
+    void set_content(Util::UString string) {
+        m_content = std::move(string);
+    }
     CREATE_VALUE(size_t, font_size, theme().label_font_size)
     CREATE_VALUE(Align, alignment, Align::CenterLeft)
     CREATE_VALUE(int, padding, 5)
@@ -27,6 +32,7 @@ private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 
     llgl::TTFFont const* m_font = nullptr;
+    std::variant<Util::UString, Gfx::RichText> m_content;
 };
 
 }

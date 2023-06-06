@@ -1,9 +1,10 @@
 #include "Textfield.hpp"
-#include "Essa/GUI/Widgets/Widget.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/Graphics/RichText.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <Essa/GUI/TextAlign.hpp>
 
@@ -12,20 +13,40 @@ namespace GUI {
 Textfield::Textfield()
     : m_font(&GUI::Application::the().font()) { }
 
-void Textfield::draw(Gfx::Painter& window) const {
+void Textfield::draw(Gfx::Painter& painter) const {
     assert(m_font);
 
     auto theme_colors = theme().label;
 
     Gfx::RectangleDrawOptions rect;
     rect.fill_color = theme_colors.background;
-    window.deprecated_draw_rectangle(local_rect().cast<float>(), rect);
+    painter.deprecated_draw_rectangle(local_rect().cast<float>(), rect);
 
-    Gfx::Text text { m_content, *m_font };
-    text.set_fill_color(theme_colors.text);
-    text.set_font_size(m_font_size);
-    text.align(m_alignment, text_rect().cast<float>());
-    text.draw(window);
+    std::visit(
+        Util::Overloaded {
+            [&](Util::UString const& string) {
+                // FIXME: Maybe use RichTextDrawable also here??
+                Gfx::Text text { string, *m_font };
+                text.set_fill_color(theme_colors.text);
+                text.set_font_size(m_font_size);
+                text.align(m_alignment, text_rect().cast<float>());
+                text.draw(painter);
+            },
+            [&](Gfx::RichText const& richtext) {
+                Gfx::RichTextDrawable drawable(
+                    richtext,
+                    {
+                        .default_font = *m_font,
+                        .font_size = static_cast<int>(m_font_size),
+                        .text_alignment = m_alignment,
+                    }
+                );
+                drawable.set_rect(text_rect().cast<float>());
+                drawable.draw(painter);
+            },
+        },
+        m_content
+    );
 }
 
 Util::Recti Textfield::text_rect() const {
@@ -38,11 +59,24 @@ Util::Recti Textfield::text_rect() const {
 }
 
 LengthVector Textfield::initial_size() const {
-    Gfx::Text text { m_content, Application::the().font() };
-    text.set_font_size(m_font_size);
-    auto size = text.calculate_text_size();
-    return { { (static_cast<int>(size.x()) + m_padding * 2), Util::Length::Px },
-             { (static_cast<int>(size.y()) + m_padding * 2), Util::Length::Px } };
+    return std::visit(
+        Util::Overloaded {
+            [&](Util::UString const& string) -> LengthVector {
+                Gfx::Text text { string, Application::the().font() };
+                text.set_font_size(m_font_size);
+                auto size = text.calculate_text_size();
+                return LengthVector {
+                    { (static_cast<int>(size.x()) + m_padding * 2), Util::Length::Px },
+                    { (static_cast<int>(size.y()) + m_padding * 2), Util::Length::Px },
+                };
+            },
+            [&](Gfx::RichText const&) -> LengthVector {
+                // FIXME: Implement measuring rich text size.
+                return LengthVector { Util::Length::Auto, Util::Length::Auto };
+            },
+        },
+        m_content
+    );
 }
 
 EML::EMLErrorOr<void> Textfield::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
