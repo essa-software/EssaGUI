@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Essa/GUI/Widgets/Widget.hpp>
-
 #include <Essa/GUI/EML/EMLObject.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
+#include <EssaUtil/Is.hpp>
 #include <EssaUtil/Orientation.hpp>
 #include <algorithm>
 #include <initializer_list>
@@ -159,6 +159,14 @@ public:
     requires(std::is_base_of_v<Widget, T>)
     T* find_widget_of_type_by_id_recursively(std::string_view name) const {
         return dynamic_cast<T*>(find_widget_by_id_recursively(name));
+    }
+
+    template<class T>
+    requires(std::is_base_of_v<Widget, T>)
+    T& find(std::string_view id) const {
+        auto widget = find_widget_of_type_by_id_recursively<T>(id);
+        assert(widget && Util::is<T>(widget));
+        return *widget;
     }
 
     template<class T>
