@@ -211,6 +211,11 @@ Util::Size2i BasicLayout::total_size(Container const& container) const { return 
 
 EML_REGISTER_CLASS(BasicLayout);
 
+void Container::remove_widget(size_t index) {
+    assert(index < m_widgets.size());
+    m_widgets.erase(m_widgets.begin() + index);
+}
+
 void Container::do_relayout() {
     Widget::do_relayout();
     for (auto const& w : m_widgets) {

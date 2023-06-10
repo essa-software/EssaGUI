@@ -117,6 +117,8 @@ public:
         set_needs_relayout();
     }
 
+    void remove_widget(size_t index);
+
     virtual void do_update() override;
     virtual Widget::EventHandlerResult do_handle_event(Event const&) override;
     virtual void do_relayout() override;
