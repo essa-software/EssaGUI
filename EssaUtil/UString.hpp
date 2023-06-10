@@ -55,6 +55,10 @@ public:
     UString(char const (&string)[S], Encoding encoding = Encoding::Utf8, uint32_t replacement = 0xfffd)
         : UString({ string, S - 1 }, encoding, replacement) { }
 
+    template<class... Args> static UString format(fmt::format_string<Args...> fmtstr, Args&&... args) {
+        return Util::UString(fmt::format(fmtstr, std::forward<Args>(args)...));
+    }
+
     [[nodiscard]] std::string encode(Encoding = Encoding::Utf8) const;
     [[nodiscard]] Buffer encode_buffer(Encoding = Encoding::Utf8) const;
 
