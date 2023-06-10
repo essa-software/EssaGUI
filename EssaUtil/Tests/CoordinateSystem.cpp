@@ -332,6 +332,13 @@ TEST_CASE(rect_inflated) {
     return {};
 }
 
+TEST_CASE(rect_with_negative_size_fixed) {
+    EXPECT_EQ(Recti(20, 20, 50, -50).with_negative_size_fixed(), Recti(20, -30, 50, 50));
+    EXPECT_EQ(Recti(20, 20, -50, 50).with_negative_size_fixed(), Recti(-30, 20, 50, 50));
+    EXPECT_EQ(Recti(50, 50, -50, -50).with_negative_size_fixed(), Recti(0, 0, 50, 50));
+    return {};
+}
+
 // TODO: Add tests for:
 // - Point
 // - Size

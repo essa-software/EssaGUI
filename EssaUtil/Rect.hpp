@@ -82,6 +82,26 @@ public:
     // Return rect with left and right sides moved by `t` outside
     Rect<T> inflated_horizontal(T t) const { return Rect { left - t, top, width + 2 * t, height }; }
 
+    // Fix rect with negative size by moving it's position and making size positive
+    Rect with_negative_size_fixed() const {
+        T new_left = left;
+        T new_top = top;
+        T new_width = width;
+        T new_height = height;
+
+        if (width < 0) {
+            new_left += width;
+            new_width = -width;
+        }
+
+        if (height < 0) {
+            new_top += height;
+            new_height = -height;
+        }
+
+        return Rect { new_left, new_top, new_width, new_height };
+    }
+
     bool operator==(Rect<T> const&) const = default;
 };
 
