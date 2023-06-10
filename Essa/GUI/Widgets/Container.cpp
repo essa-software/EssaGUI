@@ -55,9 +55,21 @@ void BoxLayout::run(Container& container) {
         case Util::Length::Initial:
             ESSA_UNREACHABLE;
         }
-        w->set_raw_size(Util::Size2i::from_main_cross(
-            m_orientation, raw_size, container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation)
-        ));
+        int raw_cross_size = [&]() {
+            auto size = w->size().cross(m_orientation);
+            switch (size.unit()) {
+            case Util::Length::Auto:
+                return container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation);
+            case Util::Length::Px:
+                return size.value();
+            case Util::Length::Percent:
+                return size.value() * container.raw_size().main(m_orientation) / 100;
+            case Util::Length::Initial:
+                break;
+            }
+            ESSA_UNREACHABLE;
+        }();
+        w->set_raw_size(Util::Size2i::from_main_cross(m_orientation, raw_size, raw_cross_size));
     }
 
     // 2. Compute raw_size available for auto-sized widgets
@@ -85,9 +97,8 @@ void BoxLayout::run(Container& container) {
             if (!w->is_visible())
                 continue;
             if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
-                w->set_raw_size(Util::Size2i::from_main_cross(
-                    m_orientation, autosized_widget_size, container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation)
-                ));
+                auto cross = w->raw_size().cross(m_orientation);
+                w->set_raw_size(Util::Size2i::from_main_cross(m_orientation, autosized_widget_size, cross));
             }
             w->set_raw_position(Util::Point2i::from_main_cross(
                 m_orientation, container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
@@ -104,9 +115,8 @@ void BoxLayout::run(Container& container) {
             if (!w->is_visible())
                 continue;
             if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
-                w->set_raw_size(Util::Size2i::from_main_cross(
-                    m_orientation, autosized_widget_size, container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation)
-                ));
+                auto cross = w->raw_size().cross(m_orientation);
+                w->set_raw_size(Util::Size2i::from_main_cross(m_orientation, autosized_widget_size, cross));
             }
             current_position -= w->raw_size().main(m_orientation) + m_spacing;
             w->set_raw_position(Util::Point2i::from_main_cross(
