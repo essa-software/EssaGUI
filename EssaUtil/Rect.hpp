@@ -51,11 +51,14 @@ public:
     }
 
     template<class U = T> Rect<U> intersection(Rect<U> const& other) const {
-        T max_x = std::max<U>(left, other.left);
-        T max_y = std::max<U>(top, other.top);
+        auto fixed_this = with_negative_size_fixed();
+        auto fixed_other = other.with_negative_size_fixed();
 
-        T min_x = std::min<U>(left + width, other.left + other.width);
-        T min_y = std::min<U>(top + height, other.top + other.height);
+        T max_x = std::max<U>(fixed_this.left, fixed_other.left);
+        T max_y = std::max<U>(fixed_this.top, fixed_other.top);
+
+        T min_x = std::min<U>(fixed_this.left + fixed_this.width, fixed_other.left + fixed_other.width);
+        T min_y = std::min<U>(fixed_this.top + fixed_this.height, fixed_other.top + fixed_other.height);
 
         return max_x < min_x && max_y < min_y ? Rect<U>({ max_x, max_y }, { min_x - max_x, min_y - max_y }) : Rect<U>();
     }
