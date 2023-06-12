@@ -118,6 +118,7 @@ public:
     }
 
     void remove_widget(size_t index);
+    void remove_widget(Widget& widget);
 
     virtual void do_update() override;
     virtual Widget::EventHandlerResult do_handle_event(Event const&) override;

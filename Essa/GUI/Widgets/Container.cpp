@@ -214,6 +214,14 @@ EML_REGISTER_CLASS(BasicLayout);
 void Container::remove_widget(size_t index) {
     assert(index < m_widgets.size());
     m_widgets.erase(m_widgets.begin() + index);
+    set_needs_relayout();
+}
+
+void Container::remove_widget(Widget& widget) {
+    auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](auto const& w) { return w.get() == &widget; });
+    assert(it != m_widgets.end());
+    m_widgets.erase(it);
+    set_needs_relayout();
 }
 
 void Container::do_relayout() {
