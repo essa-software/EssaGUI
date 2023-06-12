@@ -39,6 +39,12 @@ public:
     void remove_timer(TimerHandle);
     static void reset_timer(TimerHandle);
 
+    template<class Callback>
+    void deferred_invoke(Callback&& c) {
+        using namespace std::chrono_literals;
+        set_timeout(0s, [c = std::forward<Callback>(c)]() { c(); });
+    }
+
 private:
     virtual void tick() = 0;
 
