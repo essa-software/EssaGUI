@@ -11,8 +11,7 @@ ScrollableContainer::ScrollableContainer() {
 Util::Size2i ScrollableContainer::content_size() const { return m_widget->total_size(); }
 
 Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& event) {
-    Widget::do_handle_event(event);
-    if (ScrollableWidget::handle_event(event) == EventHandlerResult::Accepted) {
+    if (Widget::do_handle_event(event) == EventHandlerResult::Accepted) {
         return EventHandlerResult::Accepted;
     }
     return m_widget->do_handle_event(event);
