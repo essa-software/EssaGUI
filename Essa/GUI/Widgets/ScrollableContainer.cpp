@@ -1,5 +1,7 @@
 #include "ScrollableContainer.hpp"
 
+#include <Essa/GUI/EML/Loader.hpp>
+
 namespace GUI {
 
 ScrollableContainer::ScrollableContainer() {
@@ -66,6 +68,14 @@ void ScrollableContainer::dump(unsigned depth) {
     m_widget->dump(depth);
 }
 
-// FIXME: Implement EML loader.
+EML::EMLErrorOr<void> ScrollableContainer::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(Widget::load_from_eml_object(object, loader));
+    m_widget = TRY(object.require_and_construct_object<Widget>("widget", loader));
+    m_widget->set_widget_tree_root(widget_tree_root());
+    m_widget->init();
+    return {};
+}
+
+EML_REGISTER_CLASS(ScrollableContainer)
 
 }
