@@ -19,6 +19,7 @@ Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& eve
 
 void ScrollableContainer::draw(Gfx::Painter& painter) const {
     m_widget->do_draw(painter);
+    theme().renderer().draw_text_editor_border(*this, false, painter);
     ScrollableWidget::draw_scrollbar(painter);
 }
 
