@@ -165,7 +165,7 @@ public:
     requires(std::is_base_of_v<Widget, T>)
     T& find(std::string_view id) const {
         auto widget = find_widget_of_type_by_id_recursively<T>(id);
-        assert(widget && Util::is<T>(widget));
+        assert(widget && Util::is<T>(*widget));
         return *widget;
     }
 
