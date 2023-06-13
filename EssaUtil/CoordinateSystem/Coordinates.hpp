@@ -16,6 +16,7 @@ namespace Detail {
 template<size_t C, class T, template<size_t, class> class Derived> class Coordinates {
 public:
     static constexpr size_t Components = C;
+    using Type = T;
 
     constexpr Coordinates() {
         if constexpr (Components == 4) {
