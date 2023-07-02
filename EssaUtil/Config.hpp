@@ -11,10 +11,11 @@
 
 #define ESSA_ALWAYS_INLINE [[gnu::always_inline]]
 #define ESSA_UNREACHABLE __builtin_unreachable()
-constexpr bool TODO = false;
-#define ESSA_TODO assert(TODO)
 
 namespace Util {
+
+constexpr bool TODO = false;
+#define ESSA_TODO assert(TODO)
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
 template<class... Ts> struct Overloaded : Ts... {
