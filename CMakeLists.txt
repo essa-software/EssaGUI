@@ -18,12 +18,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 option(ESSAGUI_EXAMPLES "Compile examples" ON)
+option(ESSAGUI_UTIL_ONLY "Compile only EssaUtil (no GUI or Engine)" OFF)
 
 include_directories(${Essa_SOURCE_DIR})
 
-add_subdirectory(EssaTools)
 add_subdirectory(EssaUtil)
-add_subdirectory(Essa)
+
+if (NOT ESSA_UTIL_ONLY)
+    add_subdirectory(EssaTools)
+    add_subdirectory(Essa)
+else()
+    message("Skipping compilation of GUI components")
+endif()
 
 if(ESSAGUI_EXAMPLES)
     add_subdirectory(examples)
