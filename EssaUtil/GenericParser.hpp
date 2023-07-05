@@ -58,6 +58,8 @@ public:
     GenericParser(std::vector<Token<T>> tokens)
         : m_tokens(std::move(tokens)) { }
 
+    virtual ~GenericParser() = default;
+
 protected:
     bool is_eof() const { return m_offset >= m_tokens.size(); }
 
@@ -81,13 +83,15 @@ protected:
 
     bool next_token_is(T type) const { return peek() && peek()->type() == type; }
 
+    virtual std::string token_type_to_string(T type) const { return fmt::format("token of type {}", (int)type); }
+
     ParseErrorOr<Token<T>> expect(T type) {
         auto token = get();
         if (!token) {
             return error("Unexpected EOF");
         }
         if (token->type() != type) {
-            return expected_in_already_read(fmt::format("token of type {}", (int)type), *token);
+            return expected_in_already_read(token_type_to_string(type), *token);
         }
         return *token;
     }
