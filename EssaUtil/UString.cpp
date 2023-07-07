@@ -301,7 +301,9 @@ std::strong_ordering UString::operator<=>(UString const& other) const {
     return std::lexicographical_compare_three_way(m_storage, m_storage + m_size, other.m_storage, other.m_storage + other.m_size);
 }
 
+bool UString::operator<(UString const& other) const { return (*this <=> other) == std::strong_ordering::less; }
 bool UString::operator==(UString const& other) const { return (*this <=> other) == std::strong_ordering::equal; }
+bool UString::operator>(UString const& other) const { return (*this <=> other) == std::strong_ordering::greater; }
 
 UString operator+(UString const& lhs, UString const& rhs) {
     UString result;

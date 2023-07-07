@@ -105,7 +105,9 @@ public:
     template<class Callback> void for_each_line(Callback&& callback) const { for_each_split("\n", std::forward<Callback>(callback)); }
 
     std::strong_ordering operator<=>(UString const& other) const;
+    bool operator<(UString const& other) const;
     bool operator==(UString const& other) const;
+    bool operator>(UString const& other) const;
 
     friend std::ostream& operator<<(std::ostream& out, UString const& str) { return out << str.encode(); }
 
