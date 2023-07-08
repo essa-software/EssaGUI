@@ -29,7 +29,7 @@ struct formatter<FormatIfFormattable<T>> : public formatter<T> {
 
 template<class T> struct formatter<FormatIfFormattable<T>> : public formatter<void*> {
     template<typename FormatContext> constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) const {
-        return format_to(ctx.out(), "?{}@{:p}", typeid(p.t).name(), ptr(&p.t));
+        return fmt::format_to(ctx.out(), "?{}@{:p}", typeid(p.t).name(), ptr(&p.t));
     }
 };
 }

@@ -223,7 +223,7 @@ namespace fmt {
 
 template<> struct formatter<Util::OsError> : public formatter<std::string_view> {
     template<typename FormatContext> constexpr auto format(Util::OsError const& p, FormatContext& ctx) const {
-        return format_to(ctx.out(), "{}: {}", p.function, strerror(p.error));
+        return fmt::format_to(ctx.out(), "{}: {}", p.function, strerror(p.error));
     }
 };
 
