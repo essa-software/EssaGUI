@@ -7,6 +7,7 @@
 namespace Util {
 
 struct DisplayedError {
+    std::string file_name;
     UString message;
     size_t start_offset;
     size_t end_offset;
