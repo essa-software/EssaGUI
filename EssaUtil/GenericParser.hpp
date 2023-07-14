@@ -65,10 +65,16 @@ protected:
 
     size_t offset() const { return m_offset; }
 
-    SourceRange range(size_t start, size_t size) {
+    SourceRange range(size_t start, size_t size) const {
         assert(start + size < m_tokens.size());
         return SourceRange { .start = m_tokens[start].start(), .end = m_tokens[start + size - 1].end() };
     }
+    // Returns range for last n tokens
+    SourceRange range_for_last(size_t n) const { return range(offset() - n, n); }
+    // Returns range from start to current offset (exclusive)
+    SourceRange range_starting_from(size_t start) const { return range(start, offset() - start); }
+    // Returns range from start to end (exclusive)
+    SourceRange range_from_to(size_t start, size_t end) const { return range(start, end - start); }
 
     Token<T> const* get() {
         if (is_eof())
