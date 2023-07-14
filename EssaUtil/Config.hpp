@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CppSourceLocation.hpp"
 #include <tuple>
 #include <type_traits>
 
@@ -10,12 +11,16 @@
 #endif
 
 #define ESSA_ALWAYS_INLINE [[gnu::always_inline]]
-#define ESSA_UNREACHABLE __builtin_unreachable()
 
 namespace Util {
 
+[[noreturn]] void _crash(char const* message, CppSourceLocation const& = CppSourceLocation::current());
+
 constexpr bool TODO = false;
-#define ESSA_TODO assert(TODO)
+#define ESSA_TODO Util::_crash("TODO")
+
+constexpr bool UNREACHABLE = false;
+#define ESSA_UNREACHABLE Util::_crash("Unreachable")
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
 template<class... Ts> struct Overloaded : Ts... {
