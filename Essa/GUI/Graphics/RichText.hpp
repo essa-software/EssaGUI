@@ -8,7 +8,7 @@
 
 namespace Gfx {
 
-class RichText : public Util::NonCopyable {
+class RichText {
 public:
     RichText() = default;
     RichText(RichText const&);
