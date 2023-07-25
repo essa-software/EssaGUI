@@ -100,7 +100,7 @@ private:
 class Container : public Widget {
 public:
     template<class T, class... Args>
-        requires(std::is_base_of_v<Widget, T> && requires(Args && ... args) { T(std::forward<Args>(args)...); })
+        requires(std::is_base_of_v<Widget, T> && requires(Args&&... args) { T(std::forward<Args>(args)...); })
     T* add_widget(Args&&... args) {
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(widget);
@@ -130,7 +130,7 @@ public:
     void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 
     template<class T, class... Args>
-        requires(std::is_base_of_v<Layout, T> && requires(Args && ... args) { T(args...); })
+        requires(std::is_base_of_v<Layout, T> && requires(Args&&... args) { T(args...); })
     T& set_layout(Args&&... args) {
         auto layout = std::make_unique<T>(std::forward<Args>(args)...);
         auto layout_ptr = layout.get();
@@ -202,6 +202,15 @@ public:
     // Footgun alert, use it only in *Layout::run()!
     WidgetList& widgets() { return m_widgets; }
     WidgetList const& widgets() const { return m_widgets; }
+
+    template<class C> void visit_children(C const& callback) {
+        for (auto& widget : m_widgets) {
+            callback(*widget);
+            if (Util::is<Container>(*widget)) {
+                static_cast<Container&>(*widget).visit_children(callback);
+            }
+        }
+    }
 
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
