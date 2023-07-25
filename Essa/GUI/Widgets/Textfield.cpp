@@ -45,7 +45,7 @@ void Textfield::draw(Gfx::Painter& painter) const {
                 drawable.draw(painter);
             },
         },
-        m_content
+        m_content.get()
     );
 }
 
@@ -75,7 +75,7 @@ LengthVector Textfield::initial_size() const {
                 return LengthVector { Util::Length::Auto, Util::Length::Auto };
             },
         },
-        m_content
+        m_content.get()
     );
 }
 
