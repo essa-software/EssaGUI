@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Essa/GUI/Graphics/GUIBuilder.hpp"
 #include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
@@ -13,6 +14,8 @@ namespace GUI {
 // to the operating system's window.
 class HostWindow : public llgl::Window {
 public:
+    friend Gfx::Painter;
+    friend Gfx::GUIBuilder;
     explicit HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
     template<class T, class... Args>

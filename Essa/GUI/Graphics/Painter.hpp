@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DefaultGUIShader.hpp"
+#include "Essa/LLGL/OpenGL/Builder.hpp"
 #include "GUIBuilder.hpp"
 #include "Vertex.hpp"
 #include <Essa/GUI/TextAlign.hpp>
@@ -97,6 +98,10 @@ public:
     // on actual rendering, not on individual draw() calls.
     void set_blending(Blending blending) { m_blending = blending; }
     Blending blending() const { return m_blending; }
+
+protected:
+    friend GUIBuilder;
+    const GUIBuilder& Builder() const{return m_builder;}
 
 private:
     void apply_states();
