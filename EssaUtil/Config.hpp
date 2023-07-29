@@ -24,6 +24,8 @@ constexpr bool UNREACHABLE = false;
 
 // https://en.cppreference.com/w/cpp/utility/variant/visit
 template<class... Ts> struct Overloaded : Ts... {
+    Overloaded(Ts... ts)
+        : Ts(std::forward<Ts>(ts))... { }
     using Ts::operator()...;
 };
 

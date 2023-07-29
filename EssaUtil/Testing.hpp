@@ -16,6 +16,8 @@ using namespace Util;
 
 template<class T> struct FormatIfFormattable {
     T const& t;
+    FormatIfFormattable(T const& t_)
+        : t(t_) { }
 };
 
 namespace fmt {
