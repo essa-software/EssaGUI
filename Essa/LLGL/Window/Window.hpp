@@ -14,7 +14,7 @@
 namespace llgl {
 
 namespace Detail {
-class SDLWindowData;
+struct SDLWindowData;
 }
 
 class Window {
