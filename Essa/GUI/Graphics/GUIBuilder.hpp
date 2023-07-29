@@ -54,6 +54,7 @@ private:
 
     virtual void
     render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override {
+        static Gfx::DefaultGUIShader m_shader;
         Gfx::DefaultGUIShader::Uniforms uniforms;
         uniforms.set_transform(range.model.matrix(), range.view.matrix(), range.projection.matrix());
         uniforms.set_texture(range.texture);
@@ -62,7 +63,6 @@ private:
         renderer.draw_vertices(vao, llgl::DrawState { m_shader, uniforms, range.type }, range.first, range.size);
     }
 
-    mutable Gfx::DefaultGUIShader m_shader;
     llgl::Projection m_projection;
     llgl::Transform m_view;
     llgl::Transform m_model;
