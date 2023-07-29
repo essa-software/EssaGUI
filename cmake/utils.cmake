@@ -48,14 +48,21 @@ function(essautil_setup_target targetname)
 
     target_include_directories(${targetname} PUBLIC ${PROJECT_SOURCE_DIR})
 
+    if (GCC)
+        set(GCC_OPTIONS 
+            -Wno-error=stringop-overflow    # FIXME: fmt on CI doesn't like it for some reason, find a way to workaround it!
+            -Wno-error=restrict             # FIXME: This breaks compilation of EML::value() and some more places
+        )
+    endif()
+
     target_compile_options(${targetname} PRIVATE
         -fdiagnostics-color=always
         -Wall -Wextra -Werror
         -Wnon-virtual-dtor
         -Wno-error=missing-field-initializers       # FIXME: This is buggy (?) for *DrawOptions
         -Wno-error=format                           # FIXME: We don't use formatting anyway except SimulationClock but this breaks mingw build
-        -Wno-error=stringop-overflow                # FIXME: fmt on CI doesn't like it for some reason, find a way to workaround it!
         -Wno-error=deprecated-declarations
+        ${GCC_OPTIONS}
     )
 
     set_property(TARGET ${targetname} PROPERTY CXX_STANDARD 20)
