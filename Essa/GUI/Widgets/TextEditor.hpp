@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Essa/GUI/Reactivity.hpp"
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/TextEditing/SyntaxHighlighter.hpp>
 #include <Essa/GUI/TextEditing/TextPosition.hpp>
@@ -21,6 +22,7 @@ public:
     Util::UString const& last_line() const { return m_lines.back(); }
 
     Util::UString content() const;
+    ReadOnlyObservable<Util::UString> content_observable() const { return m_content_observable; }
     void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);
     bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].is_empty()); }
 
@@ -116,6 +118,8 @@ private:
     std::vector<ErrorSpan> m_error_spans;
     bool m_content_changed = false;
     bool m_multiline = true;
+
+    CalculatedObservable<Util::UString> m_content_observable;
 };
 
 }

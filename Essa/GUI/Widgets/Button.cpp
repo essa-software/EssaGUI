@@ -34,9 +34,9 @@ Theme::BgFgTextColors Button::colors_for_state() const {
 
 void Button::click() {
     if (m_toggleable) {
-        m_active = !m_active;
+        m_active = !m_active.get();
         if (on_change)
-            on_change(m_active);
+            on_change(m_active.get());
     }
     if (on_click)
         on_click();
@@ -45,7 +45,7 @@ void Button::click() {
 EML::EMLErrorOr<void> Button::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
     m_toggleable = TRY(object.get_property("toggleable", EML::Value(m_toggleable)).to_bool());
-    m_active = TRY(object.get_property("active", EML::Value(m_active)).to_bool());
+    m_active = TRY(object.get_property("active", EML::Value(m_active.get())).to_bool());
     return {};
 }
 

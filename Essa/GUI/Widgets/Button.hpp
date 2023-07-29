@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Essa/GUI/Widgets/ButtonBehavior.hpp"
 #include <Essa/GUI/NotifyUser.hpp>
+#include <Essa/GUI/Reactivity.hpp>
+#include <Essa/GUI/Widgets/ButtonBehavior.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <functional>
 #include <optional>
@@ -16,10 +17,11 @@ public:
 
     virtual void draw(Gfx::Painter& window) const override = 0;
 
-    bool is_active() const { return m_active; }
+    ReadOnlyObservable<bool> active() const { return m_active; }
+    bool is_active() const { return m_active.get(); }
 
     void set_active(bool active, NotifyUser notify_user = NotifyUser::Yes) {
-        if (m_active != active) {
+        if (m_active.get() != active) {
             m_active = active;
             if (notify_user == NotifyUser::Yes && on_change)
                 on_change(active);
@@ -55,7 +57,7 @@ private:
 
     std::optional<Theme::ButtonColors> m_button_colors_override;
 
-    bool m_active { false };
+    Observable<bool> m_active { false };
     ButtonBehavior m_behavior;
 };
 

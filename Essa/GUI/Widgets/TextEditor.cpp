@@ -20,7 +20,10 @@ namespace GUI {
 
 // FIXME: There is a bunch of narrowing conversions in this file.
 
-TextEditor::TextEditor() { m_lines.push_back(""); }
+TextEditor::TextEditor()
+    : m_content_observable([&]() { return content(); }) {
+    m_lines.push_back("");
+}
 
 int TextEditor::line_height() const { return Application::the().fixed_width_font().line_height(theme().label_font_size); }
 
@@ -590,6 +593,7 @@ void TextEditor::update() {
     if (m_content_changed) {
         regenerate_styles();
         on_content_change();
+        m_content_observable.notify(content());
         if (on_change) {
             on_change(content());
         }
