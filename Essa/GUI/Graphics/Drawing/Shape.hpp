@@ -80,7 +80,6 @@ public:
 
     private:
         Shape const& m_shape;
-        size_t m_index = 0;
     };
 
     Points points() const { return Points { *this }; }
