@@ -58,7 +58,7 @@ template<class... Ts> struct overloaded : Ts... {
 
 std::string Value::string() const {
     return std::visit(
-        overloaded {
+        Util::Overloaded {
             [](double d) -> std::string { return fmt::format("{}", d); },
             [](bool b) -> std::string { return b ? "true" : "false"; },
             [](Util::UString const& str) -> std::string { return "\"" + str.encode() + "\""; },
