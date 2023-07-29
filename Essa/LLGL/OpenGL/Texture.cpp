@@ -73,7 +73,7 @@ void Texture::ensure_initialized(Format format) {
 
         TextureBinder binder(*this);
         // std::cout << "glTexImage2D(" << m_size << ")\n";
-        OpenGL::TexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_FLOAT, nullptr);
+        OpenGL::TexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_UNSIGNED_BYTE, nullptr);
     }
 }
 
@@ -83,7 +83,7 @@ void Texture::recreate(Util::Size2u size, Format format) {
     if (m_id) {
         TextureBinder binder(*this);
         // std::cout << "glTexImage2D(" << m_size << ")\n";
-        glTexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_UNSIGNED_BYTE, nullptr);
     }
 
     ensure_initialized(format);
