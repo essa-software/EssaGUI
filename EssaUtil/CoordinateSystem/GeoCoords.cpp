@@ -1,5 +1,10 @@
 #include "GeoCoords.hpp"
 
+// M_PIf is a GCC extension, define it for other compilers
+#ifndef M_PIf
+#    define M_PIf ((float)M_PI)
+#endif
+
 namespace Util {
 
 GeoCoords GeoCoords::normalized() const {
