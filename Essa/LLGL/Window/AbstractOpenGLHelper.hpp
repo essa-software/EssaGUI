@@ -21,6 +21,7 @@ public:
     ADD_OPENGL_FUNCTION(GenTextures)
     ADD_OPENGL_FUNCTION(TexImage2D)
     ADD_OPENGL_FUNCTION(FramebufferTexture)
+    ADD_OPENGL_FUNCTION(FramebufferTexture2D)
     ADD_OPENGL_FUNCTION(GetTexImage)
 
     ADD_OPENGL_FUNCTION(BufferData)
