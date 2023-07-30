@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Essa/GUI/Widgets/MDI/Overlay.hpp"
 #include <string>
 
 #include <Essa/GUI/Overlay.hpp>
@@ -19,7 +20,7 @@ struct Tooltip {
 
 class TooltipOverlay : public Overlay {
 public:
-    TooltipOverlay(HostWindow& window, Tooltip tooltip, std::string id = "TooltipOverlay")
+    TooltipOverlay(MDI::Host& window, Tooltip tooltip, std::string id = "TooltipOverlay")
         : Overlay(window, std::move(id))
         , m_tooltip(std::move(tooltip)) {
         set_ignores_events(true);

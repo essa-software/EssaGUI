@@ -21,7 +21,8 @@ void WidgetTreeRoot::draw(Gfx::Painter& painter) {
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
         if (DBG_ENABLED(GUI_DumpLayout)) {
-            m_main_widget->dump(0);
+            fmt::print("WTR: {} (pos={}, size={})\n", typeid(*this).name(), position(), size());
+            m_main_widget->dump(1);
         }
         m_needs_relayout = false;
     }
@@ -32,13 +33,17 @@ void WidgetTreeRoot::handle_event(GUI::Event const& event) {
     if (!m_main_widget)
         return;
 
+    if (event.is<GUI::Event::WindowResize>()) {
+        m_needs_relayout = true;
+    }
+
     // FIXME: Find a way to make first focusable widget focused "from start".
     if (!m_focused_widget && event.is<GUI::Event::KeyPress>()) {
         auto key_event = *event.get<GUI::Event::KeyPress>();
         if (key_event.code() == llgl::KeyCode::Tab) {
             m_main_widget->focus_first_child_or_self();
+            return;
         }
-        return;
     }
     m_main_widget->do_handle_event(event);
 }
@@ -74,15 +79,15 @@ void WidgetTreeRoot::tick() {
     handle_events();
     update();
 
-    // HACK: Check for Closed events on App and break
-    //       this loop so that we can quit safely.
+    // Check for Closed events on App and break
+    // this loop so that we can quit safely.
     if (!Application::the().is_running())
         quit();
 
     // ...but redraw the entire Application!
     Application::the().redraw_all_host_windows();
 
-    // Remove closed overlays on Application so
+    // HACK: Remove closed overlays on Application so
     // that closed windows actually are closed
     if (!is_running())
         return;

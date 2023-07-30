@@ -1,3 +1,4 @@
+#include "Essa/GUI/Widgets/ImageWidget.hpp"
 #include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <Essa/GUI/Application.hpp>
@@ -233,8 +234,12 @@ Theme const& Widget::theme() const { return Application::the().theme(); }
 Gfx::ResourceManager const& Widget::resource_manager() const { return Application::the().resource_manager(); }
 
 HostWindow& Widget::host_window() const {
-    // WTR can currently be only an Overlay.
-    return static_cast<Overlay&>(*m_widget_tree_root).host_window();
+    if (Util::is<HostWindow>(*m_widget_tree_root)) {
+        return static_cast<HostWindow&>(*m_widget_tree_root);
+    }
+    if (Util::is<Overlay>(*m_widget_tree_root)) {
+        return static_cast<Overlay&>(*m_widget_tree_root).host_window();
+    }
     ESSA_UNREACHABLE;
 }
 

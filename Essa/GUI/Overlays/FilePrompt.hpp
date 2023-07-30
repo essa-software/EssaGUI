@@ -9,7 +9,7 @@ namespace GUI {
 
 class FilePrompt : public ToolWindow {
 public:
-    explicit FilePrompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
+    explicit FilePrompt(MDI::Host& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
     std::optional<Util::UString> result() const { return m_result; }
 
@@ -21,6 +21,6 @@ private:
     std::vector<std::string> m_extensions;
 };
 
-FilePrompt* file_prompt(HostWindow&, Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
+FilePrompt* file_prompt(MDI::Host&, Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
 
 }

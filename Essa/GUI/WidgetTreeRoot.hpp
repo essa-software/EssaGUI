@@ -1,11 +1,11 @@
 #pragma once
 
-#include "EssaUtil/Rect.hpp"
 #include "EventLoop.hpp"
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <EssaUtil/Rect.hpp>
 #include <list>
 #include <memory>
 
@@ -52,7 +52,7 @@ public:
 
     virtual void draw(Gfx::Painter&);
     virtual void handle_event(GUI::Event const&);
-    virtual void handle_events();
+    void handle_events();
     virtual void update() {
         if (m_main_widget)
             m_main_widget->do_update();

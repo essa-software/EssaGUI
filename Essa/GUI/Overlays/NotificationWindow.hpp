@@ -6,7 +6,7 @@ namespace GUI {
 
 class NotificationWindow : public Overlay {
 public:
-    explicit NotificationWindow(HostWindow& window)
+    explicit NotificationWindow(MDI::Host& window)
         : Overlay(window, "NotificationWindow") {
         set_ignores_events(true);
     }

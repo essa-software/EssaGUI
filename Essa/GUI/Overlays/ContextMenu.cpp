@@ -67,7 +67,7 @@ private:
     }
 };
 
-ContextMenuOverlay::ContextMenuOverlay(HostWindow& window, ContextMenu context_menu, Util::Point2i position)
+ContextMenuOverlay::ContextMenuOverlay(MDI::Host& window, ContextMenu context_menu, Util::Point2i position)
     : Overlay(window, "ContextMenu")
     , m_context_menu(context_menu)
     , m_position(position) {

@@ -50,7 +50,7 @@ private:
 
 class FileExplorer : public ToolWindow {
 public:
-    explicit FileExplorer(HostWindow& window);
+    explicit FileExplorer(MDI::Host& window);
 
     enum class FileExplorerType { FILE, FOLDER };
 

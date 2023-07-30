@@ -35,7 +35,7 @@ private:
 
 class ContextMenuOverlay : public Overlay {
 public:
-    ContextMenuOverlay(HostWindow&, ContextMenu, Util::Point2i position);
+    ContextMenuOverlay(MDI::Host&, ContextMenu, Util::Point2i position);
 
     virtual Util::Point2i position() const override { return m_position; }
     virtual Util::Size2i size() const override;

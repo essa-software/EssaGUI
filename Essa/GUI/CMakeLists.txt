@@ -32,7 +32,6 @@ add_library(GUI SHARED
     Overlays/NotificationWindow.cpp
     Overlays/Prompt.cpp
     Overlays/Tooltip.cpp
-    Overlays/ToolWindow.cpp
 
     Sprites/RectangleShape.cpp
     Sprites/Sprite.cpp
@@ -74,6 +73,10 @@ add_library(GUI SHARED
     Widgets/ValueSlider.cpp
     Widgets/Widget.cpp
     Widgets/WorldView.cpp
+
+    Widgets/MDI/Host.cpp
+    Widgets/MDI/Overlay.cpp
+    Widgets/MDI/Window.cpp
 )
 add_library(Essa::GUI ALIAS GUI)
 

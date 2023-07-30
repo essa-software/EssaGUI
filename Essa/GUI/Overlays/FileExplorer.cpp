@@ -178,7 +178,7 @@ llgl::Texture const* FileModel::file_icon(File const& file) const {
     }
 }
 
-FileExplorer::FileExplorer(HostWindow& window)
+FileExplorer::FileExplorer(MDI::Host& window)
     : ToolWindow(window) {
     (void)load_from_eml_resource(Application::the().resource_manager().require<EML::EMLResource>("FileExplorer.eml"));
 

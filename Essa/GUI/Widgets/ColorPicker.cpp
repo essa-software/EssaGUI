@@ -32,7 +32,7 @@ void ColorField::draw(Gfx::Painter& window) const {
 
 class ColorPickerDialog : public ToolWindow {
 public:
-    explicit ColorPickerDialog(HostWindow&);
+    explicit ColorPickerDialog(MDI::Host&);
 
     Util::Color color() const;
     void set_color(Util::Color color);
@@ -62,7 +62,7 @@ std::optional<Util::Color> ColorPickerDialog::exec(HostWindow& window, Util::Col
     return dialog.m_ok_clicked ? dialog.color() : std::optional<Util::Color> {};
 }
 
-ColorPickerDialog::ColorPickerDialog(HostWindow& window)
+ColorPickerDialog::ColorPickerDialog(MDI::Host& window)
     : ToolWindow(window, "GUI::ColorPickerDialog") {
     set_title("Pick a color");
     set_size({ 500, 305 });

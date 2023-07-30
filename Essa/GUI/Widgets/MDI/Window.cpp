@@ -1,4 +1,4 @@
-#include "ToolWindow.hpp"
+#include "Window.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
@@ -15,19 +15,19 @@
 #include <cmath>
 #include <iostream>
 
-namespace GUI {
+namespace GUI::MDI {
 
-ToolWindow::ToolWindow(HostWindow& window, std::string id)
-    : Overlay(window, std::move(id))
+Window::Window(Host& mdi_host, std::string id)
+    : Overlay(mdi_host, std::move(id))
     , m_window_shadow(GUI::Application::the().resource_manager().require_texture("misc/window_shadow.png")) {
     m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
 
-void ToolWindow::handle_event(Event const& event) {
+void Window::handle_event(Event const& event) {
     if (m_first_tick)
         return;
 
-    auto& window = host_window();
+    auto& mdi_host = host();
 
     bool should_pass_event_to_widgets = true;
     if (event.is_mouse_related()) {
@@ -91,15 +91,15 @@ void ToolWindow::handle_event(Event const& event) {
 
             auto delta = mouse_position - m_drag_position.to_vector();
 
-            auto constrain_position = [this, &window]() {
+            auto constrain_position = [this, &mdi_host]() {
                 if (position().y() < static_cast<int>(theme().tool_window_title_bar_size))
                     position().set_y(theme().tool_window_title_bar_size);
-                if (position().y() > static_cast<int>(window.size().y()))
-                    position().set_y(window.size().y());
+                if (position().y() > static_cast<int>(mdi_host.raw_size().y()))
+                    position().set_y(mdi_host.raw_size().y());
                 if (position().x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
                     position().set_x(-size().x() + theme().tool_window_title_bar_size);
-                if (position().x() > static_cast<int>(window.size().x() - theme().tool_window_title_bar_size))
-                    position().set_x(window.size().x() - theme().tool_window_title_bar_size);
+                if (position().x() > static_cast<int>(mdi_host.raw_size().x() - theme().tool_window_title_bar_size))
+                    position().set_x(mdi_host.raw_size().x() - theme().tool_window_title_bar_size);
             };
 
             if (m_moving) {
@@ -180,18 +180,18 @@ void ToolWindow::handle_event(Event const& event) {
     }
 }
 
-void ToolWindow::center_on_screen() {
-    auto& window = host_window();
-    set_position((window.size() / 2 - size() / 2.f).to_vector().to_point());
+void Window::center_on_screen() {
+    auto& window = host();
+    set_position((window.raw_size() / 2 - size() / 2.f).to_vector().to_point());
 }
 
-void ToolWindow::draw(Gfx::Painter& painter) {
+void Window::draw(Gfx::Painter& painter) {
     using namespace Gfx::Drawing;
 
     if (is_modal()) {
         Gfx::RectangleDrawOptions modal_backdrop;
         modal_backdrop.fill_color = theme().modal_backdrop;
-        painter.deprecated_draw_rectangle(host_window().rect().cast<float>(), modal_backdrop);
+        painter.deprecated_draw_rectangle(host().local_rect().cast<float>(), modal_backdrop);
     }
 
     Util::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
@@ -261,8 +261,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
         ));
     }
 
-    auto titlebar_color
-        = host_window().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
+    auto titlebar_color = host().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
 
     Gfx::RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = theme().tool_window_title_bar_border_radius;
@@ -355,7 +354,7 @@ void ToolWindow::draw(Gfx::Painter& painter) {
     painter.set_blending(blending);
 }
 
-Util::Recti ToolWindow::resize_rect(ResizeDirection direction) const {
+Util::Recti Window::resize_rect(ResizeDirection direction) const {
     switch (direction) {
     case ResizeDirection::Top:
         return full_rect().take_top(theme().tool_window_resize_border_width);
@@ -369,7 +368,7 @@ Util::Recti ToolWindow::resize_rect(ResizeDirection direction) const {
     ESSA_UNREACHABLE;
 }
 
-EML::EMLErrorOr<void> ToolWindow::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+EML::EMLErrorOr<void> Window::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Overlay::load_from_eml_object(object, loader));
 
     m_title = TRY(object.get_property("title", EML::Value(Util::UString {})).to_string());

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Essa/GUI/Graphics/Painter.hpp"
+#include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/HostWindow.hpp>
 #include <Essa/LLGL/Resources/TTFFont.hpp>
@@ -26,8 +26,9 @@ public:
 
     // This is called every tick, just before updating host windows.
     std::function<void()> on_tick;
+
 protected:
-    const std::list<HostWindow>& Windows() const {return m_host_windows;}
+    const std::list<HostWindow>& Windows() const { return m_host_windows; }
 
 private:
     virtual void tick() override;

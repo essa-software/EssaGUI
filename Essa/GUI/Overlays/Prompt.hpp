@@ -8,7 +8,7 @@ namespace GUI {
 
 class Prompt : public ToolWindow {
 public:
-    explicit Prompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
+    explicit Prompt(MDI::Host& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
     std::optional<Util::UString> result() const { return m_result; }
 
