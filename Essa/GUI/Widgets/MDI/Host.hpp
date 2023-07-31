@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Essa/GUI/WidgetTreeRoot.hpp>
-#include <Essa/GUI/Widgets/MDI/Overlay.hpp>
+#include <Essa/GUI/Widgets/MDI/Window.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/GUI/WindowRoot.hpp>
 
 namespace GUI::MDI {
 
@@ -25,11 +26,34 @@ public:
 
     auto* background_widget() { return m_background_overlay->main_widget(); }
 
-    template<class T = Overlay, class... Args>
+    template<class T, class... Args>
         requires(std::is_base_of_v<Overlay, T>)
-    T& open_overlay(Args&&... args) {
-        return static_cast<T&>(open_overlay_impl(std::make_unique<T>(*this, std::forward<Args>(args)...)));
+    /*deprecated*/ T& open_overlay(Args&&... args) {
+        auto& overlay = static_cast<T&>(open_overlay_impl(std::make_unique<T>(*this, std::forward<Args>(args)...)));
+        // Root is already created by the dirty hack in Overlay constructor
+        return overlay;
     }
+
+    template<class T>
+        requires(std::is_base_of_v<WindowRoot, T>)
+    struct OpenedOverlay {
+        Overlay& overlay;
+        T& window_root;
+    };
+
+    template<class T = WindowRoot, class... Args>
+        requires(std::is_base_of_v<WindowRoot, T>)
+    OpenedOverlay<T> open_overlay(Args&&... args) {
+        auto& overlay = open_overlay_impl(std::make_unique<Window>(*this, "TODO: OverlayID"));
+        auto wnd_root = std::make_unique<T>(overlay, std::forward<Args>(args)...);
+        auto wnd_root_ptr = wnd_root.get();
+        overlay.set_root(std::move(wnd_root));
+        return {
+            .overlay = overlay,
+            .window_root = *wnd_root_ptr,
+        };
+    }
+
     // FIXME: Generalize it like normal open_overlay
     struct OpenOrFocusResult {
         Window* window {};

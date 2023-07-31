@@ -24,8 +24,8 @@ namespace GUI {
 DBG_DEFINE_GLOBAL(GUI_DrawWidgetLayoutBounds);
 
 Widget::~Widget() {
-    if (m_widget_tree_root && m_widget_tree_root->focused_widget() == this)
-        m_widget_tree_root->set_focused_widget(nullptr);
+    if (m_window_root && m_window_root->focused_widget() == this)
+        m_window_root->set_focused_widget(nullptr);
     if (EventLoop::has_current()) {
         EventLoop::current().remove_timer(m_tooltip_timer);
     }
@@ -36,7 +36,7 @@ bool Widget::is_mouse_over(Util::Point2i mouse_pos) const { return Util::Recti(r
 void Widget::update() {
     Util::Point2i tooltip_position { m_tooltip_position };
     auto widget_relative_mouse_position = llgl::mouse_position();
-    widget_relative_mouse_position -= widget_tree_root().position().to_vector() + raw_position().to_vector();
+    widget_relative_mouse_position -= m_window_root->window().position().to_vector() + raw_position().to_vector();
 
     if (m_tooltip) {
         // You will soon see why the API here is so twisted...
@@ -44,7 +44,7 @@ void Widget::update() {
         update_tooltip(widget_relative_mouse_position, text);
         m_tooltip->set_text(text);
         m_tooltip->set_position(
-            (m_widget_tree_root->position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Vector2i(32, 32))
+            (m_window_root->window().position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Vector2i(32, 32))
         );
     }
 }
@@ -161,10 +161,10 @@ void Widget::do_update() {
 
 void Widget::set_focused() {
     assert(accepts_focus());
-    m_widget_tree_root->set_focused_widget(this);
+    m_window_root->set_focused_widget(this);
 }
 
-bool Widget::is_focused() const { return m_widget_tree_root->focused_widget() == this; }
+bool Widget::is_focused() const { return m_window_root->focused_widget() == this; }
 
 void Widget::focus_first_child_or_self() { set_focused(); }
 
@@ -210,7 +210,7 @@ void Widget::set_raw_position(Util::Point2i position) {
 
 Util::Recti Widget::host_rect() const {
     return {
-        raw_position() + m_widget_tree_root->position().to_vector(),
+        raw_position() + m_window_root->window().position().to_vector(),
         raw_size(),
     };
 }
@@ -227,24 +227,25 @@ void Widget::do_relayout() {
     // std::endl;
 }
 
-void Widget::set_needs_relayout() { m_widget_tree_root->set_needs_relayout(); }
+void Widget::set_needs_relayout() { m_window_root->set_needs_relayout(); }
 
 Theme const& Widget::theme() const { return Application::the().theme(); }
 
 Gfx::ResourceManager const& Widget::resource_manager() const { return Application::the().resource_manager(); }
 
 HostWindow& Widget::host_window() const {
-    if (Util::is<HostWindow>(*m_widget_tree_root)) {
-        return static_cast<HostWindow&>(*m_widget_tree_root);
+    auto& window = m_window_root->window();
+    if (Util::is<HostWindow>(window)) {
+        return static_cast<HostWindow&>(window);
     }
-    if (Util::is<Overlay>(*m_widget_tree_root)) {
-        return static_cast<Overlay&>(*m_widget_tree_root).host_window();
+    if (Util::is<Overlay>(window)) {
+        return static_cast<Overlay&>(window).host_window();
     }
     ESSA_UNREACHABLE;
 }
 
 void Widget::set_parent(Container& parent) {
-    set_widget_tree_root(parent.widget_tree_root());
+    set_window_root(parent.window_root());
     m_parent = &parent;
 }
 

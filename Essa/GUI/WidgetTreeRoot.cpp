@@ -1,7 +1,6 @@
 #include "WidgetTreeRoot.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
@@ -10,43 +9,8 @@
 
 namespace GUI {
 
-DBG_DECLARE(GUI_DumpLayout);
-
-void WidgetTreeRoot::draw(Gfx::Painter& painter) {
-    if (!m_main_widget)
-        return;
-    if (m_needs_relayout) {
-        // std::cout << m_id << "\n"
-        m_main_widget->set_size({ { static_cast<int>(size().x()), Util::Length::Px }, { static_cast<int>(size().y()), Util::Length::Px } });
-        m_main_widget->set_raw_size(size());
-        m_main_widget->do_relayout();
-        if (DBG_ENABLED(GUI_DumpLayout)) {
-            fmt::print("WTR: {} (pos={}, size={})\n", typeid(*this).name(), position(), size());
-            m_main_widget->dump(1);
-        }
-        m_needs_relayout = false;
-    }
-    m_main_widget->do_draw(painter);
-}
-
-void WidgetTreeRoot::handle_event(GUI::Event const& event) {
-    if (!m_main_widget)
-        return;
-
-    if (event.is<GUI::Event::WindowResize>()) {
-        m_needs_relayout = true;
-    }
-
-    // FIXME: Find a way to make first focusable widget focused "from start".
-    if (!m_focused_widget && event.is<GUI::Event::KeyPress>()) {
-        auto key_event = *event.get<GUI::Event::KeyPress>();
-        if (key_event.code() == llgl::KeyCode::Tab) {
-            m_main_widget->focus_first_child_or_self();
-            return;
-        }
-    }
-    m_main_widget->do_handle_event(event);
-}
+void WidgetTreeRoot::draw(Gfx::Painter& painter) { m_root->relayout_and_draw(painter); }
+void WidgetTreeRoot::handle_event(GUI::Event const& event) { m_root->handle_event(event); }
 
 void WidgetTreeRoot::handle_events() {
     // This event handler just takes all the events
@@ -100,7 +64,7 @@ Theme const& WidgetTreeRoot::theme() const { return Application::the().theme(); 
 Gfx::ResourceManager const& WidgetTreeRoot::resource_manager() const { return Application::the().resource_manager(); }
 
 EML::EMLErrorOr<void> WidgetTreeRoot::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
-    m_main_widget = TRY(object.require_and_construct_object<Widget>("main_widget", loader, *this));
+    m_root->set_created_main_widget(TRY(object.require_and_construct_object<Widget>("main_widget", loader, *m_root)));
     return {};
 }
 

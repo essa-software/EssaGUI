@@ -40,16 +40,15 @@ FilePrompt::FilePrompt(MDI::Host& window, Util::UString help_text, Util::UString
     file_btn->set_content("Browse file");
 
     file_btn->on_click = [this, input, &window]() {
-        auto& file_explorer_wnd = window.open_overlay<FileExplorer>();
-        file_explorer_wnd.set_size({ 1000, 600 });
-        file_explorer_wnd.center_on_screen();
+        auto file_explorer_wnd = window.open_overlay<FileExplorer>();
 
         for (const auto& ext : m_extensions)
-            file_explorer_wnd.model()->add_desired_extension(ext);
+            file_explorer_wnd.window_root.model()->add_desired_extension(ext);
 
-        file_explorer_wnd.on_submit = [input](std::filesystem::path path) { input->set_content(Util::UString { path.string() }); };
+        file_explorer_wnd.window_root.on_submit
+            = [input](std::filesystem::path path) { input->set_content(Util::UString { path.string() }); };
 
-        file_explorer_wnd.show_modal();
+        file_explorer_wnd.overlay.show_modal();
     };
 
     // FIXME: Also, why buttons are red by default?

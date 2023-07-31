@@ -38,7 +38,7 @@ public:                                                     \
 class Container;
 class HostWindow;
 class TooltipOverlay;
-class WidgetTreeRoot;
+class WindowRoot;
 
 struct LengthVector {
     Util::Length x;
@@ -184,8 +184,8 @@ public:
     virtual void dump(unsigned depth);
     virtual void default_values() {};
 
-    virtual void eml_construct(WidgetTreeRoot& root) {
-        set_widget_tree_root(root);
+    virtual void eml_construct(WindowRoot& root) {
+        set_window_root(root);
         if (!m_initialized) {
             on_init();
             m_initialized = true;
@@ -203,12 +203,13 @@ public:
         }
     }
 
-    WidgetTreeRoot& widget_tree_root() const { return *m_widget_tree_root; }
+    WindowRoot& window_root() const { return *m_window_root; }
+    /*restricted(MDI::Overlay) part-of-hack*/ WindowRoot* maybe_window_root() const { return m_window_root; }
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
-    // FIXME: This should probably be private.
-    void set_widget_tree_root(WidgetTreeRoot& wtr) { m_widget_tree_root = &wtr; }
+    // FIXME: This should be private.
+    void set_window_root(WindowRoot& wtr) { m_window_root = &wtr; }
 
 protected:
     EventHandlerResult handle_event(Event const&);
@@ -254,14 +255,14 @@ protected:
 
 private:
     friend Container;
-    friend WidgetTreeRoot;
+    friend class WindowRoot;
 
     void set_parent(Container& parent);
 
     virtual LengthVector initial_size() const { return LengthVector {}; }
 
     Container* m_parent = nullptr;
-    WidgetTreeRoot* m_widget_tree_root = nullptr;
+    WindowRoot* m_window_root = nullptr;
     // Position, relative to parent container.
     Util::Point2i m_position;
     LengthVector m_expected_pos;

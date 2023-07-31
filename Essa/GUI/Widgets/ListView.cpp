@@ -152,7 +152,7 @@ Widget::EventHandlerResult ListView::on_mouse_button_press(Event::MouseButtonPre
             }
             else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
                 if (auto context_menu = on_context_menu_request(row)) {
-                    host_window().open_context_menu(*context_menu, mouse_pos + widget_tree_root().position().to_vector());
+                    host_window().open_context_menu(*context_menu, mouse_pos + window_root().window().position().to_vector());
                 }
             }
             return EventHandlerResult::NotAccepted;

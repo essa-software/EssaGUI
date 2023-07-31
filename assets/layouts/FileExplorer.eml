@@ -1,6 +1,8 @@
 @ToolWindow {
-    width: 500
-    height: 500
+    width: 900
+    height: 550
+    title: "File Explorer"
+    center_on_screen: true
     
     main_widget: @Container {
         layout: @VerticalBoxLayout

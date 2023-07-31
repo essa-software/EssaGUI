@@ -292,7 +292,7 @@ bool Container::is_focused() const {
 
 std::optional<size_t> Container::focused_widget_index(bool recursive) const {
     for (size_t c = 0; auto& w : m_widgets) {
-        if (widget_tree_root().focused_widget() == w.get())
+        if (window_root().focused_widget() == w.get())
             return c;
         if (recursive) {
             auto container = dynamic_cast<Container*>(w.get());
@@ -470,7 +470,7 @@ EML::EMLErrorOr<void> Container::load_from_eml_object(EML::Object const& object,
     m_layout = TRY(object.require_and_construct_object<Layout>("layout", loader));
 
     for (auto const& child : object.objects) {
-        std::shared_ptr<Widget> widget = TRY(child.construct<Widget>(loader, widget_tree_root()));
+        std::shared_ptr<Widget> widget = TRY(child.construct<Widget>(loader, window_root()));
         assert(widget);
         add_created_widget(std::move(widget));
     }

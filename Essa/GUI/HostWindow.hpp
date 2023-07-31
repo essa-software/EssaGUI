@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Essa/GUI/Graphics/GUIBuilder.hpp"
+#include <Essa/GUI/Graphics/GUIBuilder.hpp>
 #include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
+#include <Essa/GUI/Widgets/MDI/Host.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
 
 namespace GUI {
@@ -19,6 +20,9 @@ public:
     friend Gfx::Painter;
     friend Gfx::GUIBuilder;
     explicit HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
+
+    virtual void setup(Util::UString title, Util::Size2u size) override;
+    virtual void close() override { llgl::Window::close(); }
 
     // TODO: Find a way for this to be private
     void do_draw();
@@ -34,6 +38,8 @@ public:
     virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
     Util::Recti rect() const { return { {}, size() }; }
 
+    virtual void center_on_screen() override;
+
     void set_background_color(Util::Color color) { m_background_color = color; }
 
     // Override default event handler. If this returns Accepted,
@@ -43,13 +49,15 @@ public:
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
+    // FIXME: Rename this to set_main_widget after removing the old set_main_widget
     template<class T, class... Args>
         requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
-    auto& set_root(Args&&... args) {
+    auto& set_root_widget(Args&&... args) {
         m_legacy_mdi_host = nullptr;
         return WidgetTreeRoot::set_main_widget<T>(std::forward<Args>(args)...);
     }
-    Widget* root() { return WidgetTreeRoot::main_widget(); }
+    // FIXME: Rename this to main_widget after removing the old main_widget
+    Widget* root_widget() { return WidgetTreeRoot::main_widget(); }
 
     // --- Deprecated compatibility things start here ---
     // Get rid of them when everyone is updated to explicit MDI
@@ -66,7 +74,7 @@ public:
         assert(m_legacy_mdi_host);
         return m_legacy_mdi_host->background_widget();
     }
-    template<class T, class... Args> auto& open_overlay(Args&&... a) {
+    template<class T, class... Args> decltype(auto) open_overlay(Args&&... a) {
         assert(m_legacy_mdi_host);
         return m_legacy_mdi_host->open_overlay<T>(std::forward<Args>(a)...);
     }

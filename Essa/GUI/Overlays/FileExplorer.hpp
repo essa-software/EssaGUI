@@ -6,6 +6,7 @@
 #include <Essa/GUI/Widgets/ListView.hpp>
 #include <Essa/GUI/Widgets/Textbox.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/GUI/WindowRoot.hpp>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -48,9 +49,9 @@ private:
     std::vector<std::string> m_desired_extensions;
 };
 
-class FileExplorer : public ToolWindow {
+class FileExplorer : public WindowRoot {
 public:
-    explicit FileExplorer(MDI::Host& window);
+    explicit FileExplorer(WidgetTreeRoot& window);
 
     enum class FileExplorerType { FILE, FOLDER };
 

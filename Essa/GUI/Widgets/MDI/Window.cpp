@@ -17,8 +17,8 @@
 
 namespace GUI::MDI {
 
-Window::Window(Host& mdi_host, std::string id)
-    : Overlay(mdi_host, std::move(id))
+Window::Window(Host& host, std::string id)
+    : Overlay(host, std::move(id))
     , m_window_shadow(GUI::Application::the().resource_manager().require_texture("misc/window_shadow.png")) {
     m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
@@ -178,11 +178,6 @@ void Window::handle_event(Event const& event) {
     if (should_pass_event_to_widgets) {
         WidgetTreeRoot::handle_event(event);
     }
-}
-
-void Window::center_on_screen() {
-    auto& window = host();
-    set_position((window.raw_size() / 2 - size() / 2.f).to_vector().to_point());
 }
 
 void Window::draw(Gfx::Painter& painter) {

@@ -15,12 +15,21 @@ namespace GUI {
 
 HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings)
     : llgl::Window(size, title, settings) {
-    set_active();
-    set_root<MDI::Host>();
-    m_legacy_mdi_host = static_cast<MDI::Host*>(root());
+    // FIXME: Support custom window roots (that's the point of them after all!)
+    set_root(std::make_unique<WindowRoot>(*this));
+    set_root_widget<MDI::Host>();
+    m_legacy_mdi_host = static_cast<MDI::Host*>(root_widget());
     m_legacy_mdi_host->set_raw_size(size.cast<int>());
+    set_active();
     llgl::opengl::enable_debug_output();
 }
+
+void HostWindow::setup(Util::UString title, Util::Size2u size) {
+    set_title(title);
+    set_size(size);
+}
+
+void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 
 DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
 

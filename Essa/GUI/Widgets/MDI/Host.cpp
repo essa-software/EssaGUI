@@ -9,19 +9,10 @@
 
 namespace GUI::MDI {
 
-class BackgroundOverlay : public Overlay {
-public:
-    explicit BackgroundOverlay(MDI::Host& window)
-        : Overlay(window, "BackgroundOverlay") {
-        set_always_on_bottom(true);
-    }
-
-private:
-};
-
 Host::Host()
     : m_next_overlay_position({ 10, 10 + theme().tool_window_title_bar_size }) {
-    m_background_overlay = &open_overlay<BackgroundOverlay>();
+    m_background_overlay = &open_overlay().overlay;
+    m_background_overlay->set_always_on_bottom(true);
 }
 
 void Host::focus_window(OverlayList::iterator new_focused_it) {

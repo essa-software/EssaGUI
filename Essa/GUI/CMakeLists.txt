@@ -8,6 +8,7 @@ add_library(GUI SHARED
     ThemeRenderer.cpp
     Timer.cpp
     WidgetTreeRoot.cpp
+    WindowRoot.cpp
 
     EML/AST.cpp
     EML/EMLObject.cpp

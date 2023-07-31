@@ -31,7 +31,7 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.left += 10;
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
-        if (background_rect.contains(llgl::mouse_position() - widget_tree_root().position().to_vector() - raw_position().to_vector())) {
+        if (background_rect.contains(llgl::mouse_position() - window_root().window().position().to_vector() - raw_position().to_vector())) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             painter.deprecated_draw_rectangle(background_rect, hovered_background);

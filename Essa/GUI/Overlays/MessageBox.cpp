@@ -11,7 +11,7 @@ namespace GUI {
 
 MessageBox::MessageBox(MDI::Host& window, Util::UString message, Util::UString title, Buttons buttons)
     : ToolWindow(window, "MessageBox") {
-    set_title(std::move(title));
+    set_title(title);
 
     auto& prompt_container = set_main_widget<GUI::Container>();
 

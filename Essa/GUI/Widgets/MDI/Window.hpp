@@ -1,17 +1,16 @@
 #pragma once
 
-#include <Essa/GUI/Widgets/MDI/Host.hpp>
 #include <Essa/GUI/Widgets/MDI/Overlay.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/LLGL/OpenGL/Framebuffer.hpp>
 
 namespace GUI::MDI {
 
+class Host;
+
 class Window : public Overlay {
 public:
-    explicit Window(Host&, std::string id = "MDI::Window");
-
-    void center_on_screen();
+    explicit Window(Host& host, std::string id = "MDI::Window");
 
     CREATE_VALUE(Util::UString, title, "")
 
@@ -43,6 +42,7 @@ protected:
     }
 
 private:
+    // Deprecated. Override WindowRoot::load_from_eml_object for window-agnostic EML loaders.
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     bool m_moving = false;

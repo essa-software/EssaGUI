@@ -58,7 +58,7 @@ struct Object : public Scope {
             return EMLError { "Cannot convert " + class_name + " object to " + typeid(T).name() };
         }
         // and ENDS HERE
-        if constexpr (sizeof...(Args) > 0) {
+        if constexpr (requires() { specific_object->eml_construct(std::forward<Args>(args)...); }) {
             specific_object->eml_construct(std::forward<Args>(args)...);
         }
         TRY(populate_impl(loader, *specific_object));

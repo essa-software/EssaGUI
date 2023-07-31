@@ -178,8 +178,8 @@ llgl::Texture const* FileModel::file_icon(File const& file) const {
     }
 }
 
-FileExplorer::FileExplorer(MDI::Host& window)
-    : ToolWindow(window) {
+FileExplorer::FileExplorer(WidgetTreeRoot& window)
+    : WindowRoot(window) {
     (void)load_from_eml_resource(Application::the().resource_manager().require<EML::EMLResource>("FileExplorer.eml"));
 
     auto container = static_cast<Container*>(main_widget());
@@ -246,7 +246,9 @@ FileExplorer::FileExplorer(MDI::Host& window)
 
     auto create_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("create_directory");
     create_directory_button->on_click = [&]() {
-        auto path = GUI::prompt(host_window(), "Folder name: ", "Create folder");
+        // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
+        //        Dialog refactoring is finished.
+        auto path = GUI::prompt(create_directory_button->host_window(), "Folder name: ", "Create folder");
         if (path.has_value()) {
             try {
                 // C++ Why mutable paths?!!!
@@ -255,13 +257,17 @@ FileExplorer::FileExplorer(MDI::Host& window)
                 std::filesystem::create_directory(new_path);
                 m_model->update_content(m_current_path);
             } catch (std::filesystem::filesystem_error& error) {
-                GUI::message_box(host_window(), Util::UString { error.what() }, "Error", GUI::MessageBox::Buttons::Ok);
+                // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
+                //        Dialog refactoring is finished.
+                GUI::message_box(
+                    create_directory_button->host_window(), Util::UString { error.what() }, "Error", GUI::MessageBox::Buttons::Ok
+                );
             }
         };
     };
 
     auto sidebar = container->find_widget_of_type_by_id_recursively<GUI::Container>("sidebar");
-    sidebar->set_background_color(theme().sidebar);
+    sidebar->set_background_color(sidebar->theme().sidebar);
 
     auto add_common_location = [&](Util::UString const& name, std::filesystem::path path) {
         auto button = sidebar->add_widget<GUI::TextButton>();
@@ -298,8 +304,11 @@ void FileExplorer::open_path(std::filesystem::path path) {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
         m_model->update_content(m_current_path);
+        // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
+        //        Dialog refactoring is finished.
         GUI::message_box(
-            host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!", GUI::MessageBox::Buttons::Ok
+            m_list->host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!",
+            GUI::MessageBox::Buttons::Ok
         );
         return;
     }
@@ -309,11 +318,11 @@ void FileExplorer::open_path(std::filesystem::path path) {
 }
 
 std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow& host_window) {
-    auto& explorer = host_window.open_overlay<FileExplorer>();
+    auto explorer = host_window.open_overlay<FileExplorer>();
     std::optional<std::filesystem::path> result;
-    explorer.center_on_screen();
-    explorer.on_submit = [&](const std::filesystem::path& path) { result = path; };
-    explorer.show_modal();
+    explorer.overlay.center_on_screen();
+    explorer.window_root.on_submit = [&](const std::filesystem::path& path) { result = path; };
+    explorer.overlay.show_modal();
     return result;
 }
 

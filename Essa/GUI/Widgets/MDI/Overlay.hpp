@@ -10,17 +10,18 @@ class Host;
 // FIXME: Get rid of this when all "special" overlays become native
 class Overlay : public WidgetTreeRoot {
 public:
-    Overlay(Host& host, std::string id)
-        : m_host(host)
-        , m_id(std::move(id)) { }
+    Overlay(Host& host, std::string id);
 
-    void close() {
+    virtual void close() override {
         m_closed = true;
         quit();
     }
     bool is_closed() const { return m_closed; }
 
     std::string id() const { return m_id; }
+
+    virtual void setup(Util::UString title, Util::Size2u size) override;
+    virtual void center_on_screen() override;
 
     virtual Util::Point2i position() const override { return m_position; }
     void set_position(Util::Point2i position) { m_position = position; }
