@@ -35,12 +35,12 @@ public:
         vbo.draw(draw_state.primitive_type(), first, size);
     }
 
-private:
     explicit Renderer(unsigned fbo)
         : m_fbo(fbo) {
         { }
     }
 
+private:
     friend class Window;
     friend class Framebuffer;
 
