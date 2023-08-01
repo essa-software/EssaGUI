@@ -47,7 +47,7 @@ void HostWindow::do_draw() {
     // hacky hacky hacky hacky
     set_active();
     renderer().clear(m_background_color);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
     m_painter.reset();
 
     Util::Recti viewport { {}, size() };

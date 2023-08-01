@@ -275,8 +275,8 @@ void Painter::draw_vertices(llgl::PrimitiveType type, std::span<Gfx::Vertex cons
 }
 
 void Painter::apply_states() {
-    glEnable(GL_BLEND);
-    glBlendFuncSeparate(
+    OpenGL::Enable(GL_BLEND);
+    OpenGL::BlendFuncSeparate(
         static_cast<GLenum>(m_blending.src_rgb),   //
         static_cast<GLenum>(m_blending.dst_rgb),   //
         static_cast<GLenum>(m_blending.src_alpha), //

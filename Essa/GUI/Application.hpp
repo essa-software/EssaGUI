@@ -27,9 +27,6 @@ public:
     // This is called every tick, just before updating host windows.
     std::function<void()> on_tick;
 
-protected:
-    const std::list<HostWindow>& Windows() const { return m_host_windows; }
-
 private:
     virtual void tick() override;
 

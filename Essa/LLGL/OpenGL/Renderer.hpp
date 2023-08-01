@@ -15,8 +15,8 @@ public:
 
     void clear(Util::Colorf const& color = Util::Colors::Black) {
         bind_if_not_bound(m_fbo);
-        glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GL_COLOR_BUFFER_BIT);
+        OpenGL::ClearColor(color.r, color.g, color.b, color.a);
+        OpenGL::Clear(GL_COLOR_BUFFER_BIT);
     }
 
     template<class VertT, class DSS>

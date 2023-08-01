@@ -9,6 +9,7 @@
 #include <string_view>
 #include <tuple>
 #include <type_traits>
+#include "../../AbstractOpenGLHelper.hpp"
 
 namespace llgl {
 
@@ -23,26 +24,26 @@ namespace Detail {
 
 // C++ -> OpenGL set uniform wrappers
 inline void set_uniform(int location, TextureUnit const& tu) {
-    glActiveTexture(GL_TEXTURE0 + tu.id);
+    OpenGL::ActiveTexture(GL_TEXTURE0 + tu.id);
     llgl::Texture::bind(tu.texture);
-    glUniform1i(location, tu.id);
+    OpenGL::Uniform1i(location, tu.id);
 }
 
 inline void set_uniform(int location, Util::Color const& color) {
     Util::Colorf colorf { color };
-    glUniform4f(location, colorf.r, colorf.g, colorf.b, colorf.a);
+    OpenGL::Uniform4f(location, colorf.r, colorf.g, colorf.b, colorf.a);
 }
 
-inline void set_uniform(int location, Util::Matrix4x4f const& matrix) { glUniformMatrix4fv(location, 1, true, matrix.raw_data()); }
-inline void set_uniform(int location, Util::Point2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Point3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, Util::Vector2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Vector3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, Util::Size2f const& vec) { glUniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Size3f const& vec) { glUniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, int value) { glUniform1i(location, value); }
-inline void set_uniform(int location, bool value) { glUniform1i(location, value); }
-inline void set_uniform(int location, float value) { glUniform1f(location, value); }
+inline void set_uniform(int location, Util::Matrix4x4f const& matrix) { OpenGL::UniformMatrix4fv(location, 1, true, matrix.raw_data()); }
+inline void set_uniform(int location, Util::Point2f const& vec) { OpenGL::Uniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Point3f const& vec) { OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Vector2f const& vec) { OpenGL::Uniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Vector3f const& vec) { OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, Util::Size2f const& vec) { OpenGL::Uniform2f(location, vec.x(), vec.y()); }
+inline void set_uniform(int location, Util::Size3f const& vec) { OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z()); }
+inline void set_uniform(int location, int value) { OpenGL::Uniform1i(location, value); }
+inline void set_uniform(int location, bool value) { OpenGL::Uniform1i(location, value); }
+inline void set_uniform(int location, float value) { OpenGL::Uniform1f(location, value); }
 
 // Concat tuples
 template<class T1, size_t... Id1, class T2, size_t... Id2>
@@ -114,7 +115,7 @@ class Shader {
 public:
     ~Shader() {
         if (m_program)
-            glDeleteProgram(m_program);
+            OpenGL::DeleteProgram(m_program);
     }
 
     unsigned program() const { return m_program; }
@@ -134,7 +135,7 @@ template<class... Members>
 template<class MT>
 int UniformMapping<Members...>::resolve_uniform_location(Shader& program, Uniform<MT>& member) {
     if (!member.location) {
-        member.location = glGetUniformLocation(program.program(), member.name);
+        member.location = OpenGL::GetUniformLocation(program.program(), member.name);
     }
     return member.location;
 }
@@ -148,21 +149,21 @@ template<class... Args>
 unsigned link_shader(Args... ids) {
     assert((ids && ...));
     std::cout << "Program: Linking " << sizeof...(Args) << " shader objects" << std::endl;
-    auto id = glCreateProgram();
+    auto id = OpenGL::CreateProgram();
     (glAttachShader(id, ids), ...);
 
     // TODO: Attrib locations if supported
-    glLinkProgram(id);
+    OpenGL::LinkProgram(id);
     GLint success = 0;
-    glGetProgramiv(id, GL_LINK_STATUS, &success);
+    OpenGL::GetProgramiv(id, GL_LINK_STATUS, &success);
     if (!success) {
         GLint max_length = 0;
-        glGetProgramiv(id, GL_INFO_LOG_LENGTH, &max_length);
+        OpenGL::GetProgramiv(id, GL_INFO_LOG_LENGTH, &max_length);
         std::string error_message;
         error_message.resize(max_length);
-        glGetProgramInfoLog(id, max_length, &max_length, error_message.data());
+        OpenGL::GetProgramInfoLog(id, max_length, &max_length, error_message.data());
         std::cout << "Program: Failed to link shader program: " << error_message << std::endl;
-        glDeleteProgram(id);
+        OpenGL::DeleteProgram(id);
         return 0;
     }
 
@@ -177,7 +178,7 @@ template<ShaderImpl Shader> inline void bind_shader(Shader& shader, typename Sha
         shader.set_program(link_shader(fragment_shader, vertex_shader));
     }
 
-    glUseProgram(shader.program());
+    OpenGL::UseProgram(shader.program());
     using Uniforms = typename Shader::Uniforms;
     Uniforms::mapping.bind(shader, uniforms);
 }

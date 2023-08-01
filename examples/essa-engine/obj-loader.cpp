@@ -22,8 +22,8 @@ int main() {
     llgl::Window window { { 500, 500 }, "OBJ loader", { .context_settings = { 3, 2 } } };
 
     // TODO: Port to llgl, especially clear color.
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(1, 0.5, 0.5, 1);
+    OpenGL::Enable(GL_DEPTH_TEST);
+    OpenGL::ClearColor(1, 0.5, 0.5, 1);
 
     auto object = Essa::ObjLoader::load_object_from_file("../examples/essa-engine/ladyball.obj");
     if (!object.has_value()) {
@@ -85,7 +85,7 @@ int main() {
         }
 
         // TODO: Port to llgl.
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        OpenGL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         llgl::set_viewport(window.rect());
 

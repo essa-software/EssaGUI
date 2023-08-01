@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <Essa/AbstractOpenGLHelper.hpp>
 
 namespace llgl {
 
@@ -14,7 +15,7 @@ Texture& Texture::operator=(Texture&& other) {
         return *this;
     if (m_id != 0) {
         // std::cout << "glDeleteTextures(" << m_id << ") in move=" << std::endl;
-        glDeleteTextures(1, &m_id);
+        OpenGL::DeleteTextures(1, &m_id);
     }
     m_id = std::exchange(other.m_id, 0);
     m_size = std::exchange(other.m_size, {});
@@ -24,7 +25,7 @@ Texture& Texture::operator=(Texture&& other) {
 Texture::~Texture() {
     if (m_id != 0) {
         // std::cout << "glDeleteTextures(" << m_id << ")" << std::endl;
-        glDeleteTextures(1, &m_id);
+        OpenGL::DeleteTextures(1, &m_id);
     }
 }
 
@@ -60,19 +61,19 @@ static auto gl_format(Texture::Format format) {
 Image Texture::copy_to_image() const {
     TextureBinder binder(*this);
     Image image = Image::create_uninitialized(m_size);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels().data());
+    OpenGL::GetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels().data());
     return image;
 }
 
 void Texture::ensure_initialized(Format format) {
     if (m_id == 0) {
         // FIXME: Check if there is an OpenGL context active currently.
-        glGenTextures(1, &m_id);
+        OpenGL::GenTextures(1, &m_id);
         set_filtering(Filtering::Nearest);
 
         TextureBinder binder(*this);
         // std::cout << "glTexImage2D(" << m_size << ")\n";
-        glTexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_FLOAT, nullptr);
+        OpenGL::TexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_FLOAT, nullptr);
     }
 }
 
@@ -123,8 +124,8 @@ void Texture::set_filtering(Filtering filtering) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering == Filtering::Nearest ? GL_NEAREST : GL_LINEAR);
 }
 
-void Texture::bind(Texture const* texture) { glBindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
+void Texture::bind(Texture const* texture) { OpenGL::BindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
 
-void Texture::set_label(std::string const& label) { glObjectLabel(GL_TEXTURE, m_id, label.size(), label.data()); }
+void Texture::set_label(std::string const& label) { OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data()); }
 
 }

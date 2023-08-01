@@ -55,9 +55,6 @@ public:
         set_modified();
     }
 
-
-    const llgl::VertexArray<Vertex>& Vao() const{return m_vao;}
-    const std::vector<Vertex>& Vertices() const{return m_vertices;}
 protected:
     static Vertex create_vertex(auto position, auto color, auto tex_coord, auto normal) {
         Vertex vertex;

@@ -17,10 +17,10 @@ WorldDrawScope::WorldDrawScope(Gfx::Painter const& painter, ClearDepth clear_dep
     if (current())
         return;
 
-    glEnable(GL_DEPTH_TEST);
+    OpenGL::Enable(GL_DEPTH_TEST);
 
     if (clear_depth == ClearDepth::Yes)
-        glClear(GL_DEPTH_BUFFER_BIT);
+        OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
 
     llgl::set_viewport(m_previous_projection.viewport());
 
@@ -33,7 +33,7 @@ WorldDrawScope::~WorldDrawScope() {
     if (s_current)
         return;
 
-    glDisable(GL_DEPTH_TEST);
+    OpenGL::Disable(GL_DEPTH_TEST);
 }
 
 }

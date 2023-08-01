@@ -1,6 +1,7 @@
 #include "SDLHelpers.hpp"
 
 #include <EssaUtil/ScopeGuard.hpp>
+#include "Essa/AbstractOpenGLHelper.hpp"
 #include <GL/glx.h>
 #include <GL/glxext.h>
 #include <SDL2/SDL_error.h>
@@ -68,11 +69,11 @@ std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
                                 None };
 
     int numfbconfigs = 0;
-    auto fbconfigs = glXChooseFBConfig(x_display, x_screen, attributes, &numfbconfigs);
+    auto fbconfigs = OpenGL::XChooseFBConfig(x_display, x_screen, attributes, &numfbconfigs);
     XUniquePtr<XVisualInfo> visual = nullptr;
 
     for (int i = 0; i < numfbconfigs; i++) {
-        visual = XUniquePtr<XVisualInfo> { glXGetVisualFromFBConfig(x_display, fbconfigs[i]) };
+        visual = XUniquePtr<XVisualInfo> { OpenGL::XGetVisualFromFBConfig(x_display, fbconfigs[i]) };
         if (!visual) {
             continue;
         }

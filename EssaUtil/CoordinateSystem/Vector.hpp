@@ -121,6 +121,27 @@ public:
 
     constexpr Vector& operator-=(Vector const& b) { return *this = *this - b; }
 
+    constexpr Vector operator+(T x) const {
+        Vector ab;
+        for (size_t s = 0; s < Super::Components; s++) {
+            ab.set_component(s, this->component(s) + x);
+        }
+        return ab;
+    }
+
+    constexpr Vector& operator+=(T x) { return *this = *this + x; }
+
+    constexpr Vector operator-(T x) const {
+        assert(x != 0);
+        Vector ab;
+        for (size_t s = 0; s < Super::Components; s++) {
+            ab.set_component(s, this->component(s) - x);
+        }
+        return ab;
+    }
+
+    constexpr Vector& operator-=(T x) { return *this = *this - x; }
+
     constexpr Vector operator*(T x) const {
         Vector ab;
         for (size_t s = 0; s < Super::Components; s++) {

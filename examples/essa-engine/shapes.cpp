@@ -14,7 +14,7 @@ int main() {
 
     llgl::Window window { { 500, 500 }, "Primitive Shapes" };
 
-    glEnable(GL_DEPTH_TEST);
+    OpenGL::Enable(GL_DEPTH_TEST);
 
     Essa::Shaders::Lighting shader;
     Essa::Sphere sphere;
@@ -32,7 +32,7 @@ int main() {
 
         window.renderer().clear(Util::Color { 255, 128, 128 });
         llgl::set_viewport(camera.projection().viewport());
-        glClear(GL_DEPTH_BUFFER_BIT);
+        OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
 
         light_angle += 0.01;
         shape_angle += 0.05;

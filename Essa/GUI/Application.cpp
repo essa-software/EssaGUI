@@ -1,5 +1,6 @@
 #include <Essa/GUI/Application.hpp>
 
+#include "Essa/AbstractOpenGLHelper.hpp"
 #include "WidgetTreeRoot.hpp"
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
@@ -43,6 +44,7 @@ void Application::redraw_all_host_windows() {
 }
 
 void Application::tick() {
+    OpenGL::clear();
     for (auto& host_window : m_host_windows) {
         host_window.handle_events();
     }

@@ -11,6 +11,7 @@
 #include <fmt/ostream.h>
 #include <type_traits>
 #include <utility>
+#include <Essa/AbstractOpenGLHelper.hpp>
 
 namespace llgl {
 
@@ -60,8 +61,8 @@ template<class Vertex> class VertexArray {
 public:
     VertexArray() {
         opengl::ensure_glew();
-        glGenVertexArrays(1, &m_vertex_array);
-        glGenBuffers(1, &m_vertex_buffer);
+        OpenGL::GenVertexArrays(1, &m_vertex_array);
+        OpenGL::GenBuffers(1, &m_vertex_buffer);
     }
 
     explicit VertexArray(std::initializer_list<Vertex> vertices)
@@ -71,11 +72,11 @@ public:
 
     ~VertexArray() {
         if (m_vertex_array) {
-            glDeleteVertexArrays(1, &m_vertex_array);
-            glDeleteBuffers(1, &m_vertex_buffer);
+            OpenGL::DeleteVertexArrays(1, &m_vertex_array);
+            OpenGL::DeleteBuffers(1, &m_vertex_buffer);
         }
         if (m_index_buffer) {
-            glDeleteBuffers(1, &m_index_buffer);
+            OpenGL::DeleteBuffers(1, &m_index_buffer);
         }
     }
     VertexArray(VertexArray const&) = delete;
@@ -98,8 +99,8 @@ public:
 
     void upload_vertices(std::span<Vertex const> vertices) {
         bind();
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size_bytes(), vertices.data(), GL_STATIC_DRAW);
+        OpenGL::BindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
+        OpenGL::BufferData(GL_ARRAY_BUFFER, vertices.size_bytes(), vertices.data(), GL_STATIC_DRAW);
         bind_attributes();
         m_vertex_count = vertices.size();
     }
@@ -108,29 +109,29 @@ public:
         bind();
         upload_vertices(vertices);
         if (!m_index_buffer) {
-            glGenBuffers(1, &m_index_buffer);
+            OpenGL::GenBuffers(1, &m_index_buffer);
         }
         m_vertex_count = indices.size();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size_bytes(), indices.data(), GL_STATIC_DRAW);
+        OpenGL::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
+        OpenGL::BufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size_bytes(), (void*)indices.data(), GL_STATIC_DRAW);
     }
 
-    void bind() const { glBindVertexArray(m_vertex_array); }
+    void bind() const { OpenGL::BindVertexArray(m_vertex_array); }
 
     void draw(llgl::PrimitiveType type) const {
         // fmt::print("VAO: Drawing {} vertices with pt={}\n", m_vertex_count, static_cast<int>(type));
         bind();
         if (m_index_buffer)
-            glDrawElements(static_cast<GLenum>(type), m_vertex_count, GL_UNSIGNED_INT, nullptr);
+            OpenGL::DrawElements(static_cast<GLenum>(type), m_vertex_count, GL_UNSIGNED_INT, nullptr);
         else
-            glDrawArrays(static_cast<GLenum>(type), 0, m_vertex_count);
+            OpenGL::DrawArrays(static_cast<GLenum>(type), 0, m_vertex_count);
     }
 
     void draw(llgl::PrimitiveType type, size_t first, size_t size) const {
         // fmt::print("VAO: Drawing {} vertices with pt={}\n", m_vertex_count, static_cast<int>(type));
         bind();
         assert(!m_index_buffer);
-        glDrawArrays(static_cast<GLenum>(type), first, size);
+        OpenGL::DrawArrays(static_cast<GLenum>(type), first, size);
     }
 
 private:
@@ -140,10 +141,10 @@ private:
     }
 
     template<class T> inline void bind_attribute(size_t attrid, size_t offset) {
-        glEnableVertexAttribArray(attrid);
+        OpenGL::EnableVertexAttribArray(attrid);
         Detail::GLAttrType attrtype = Detail::CppTypeToGL<T>::get();
         // fmt::print("glVertexAttribPointer #{} {}/{}\n", attrid, offset, Vertex::stride());
-        glVertexAttribPointer(attrid, attrtype.size, attrtype.type, GL_FALSE, Vertex::stride(), reinterpret_cast<void*>(offset));
+        OpenGL::VertexAttribPointer(attrid, attrtype.size, attrtype.type, GL_FALSE, Vertex::stride(), reinterpret_cast<void*>(offset));
     }
 
     template<size_t Idx> inline void bind_attributes(Detail::Index<Idx>) {
