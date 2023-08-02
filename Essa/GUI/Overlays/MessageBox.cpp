@@ -24,8 +24,8 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
     prompt_text->set_size({ Util::Length::Auto, Util::Length::Auto });
 
     {
-        auto text_rect = prompt_text->text_rect();
-        Util::Size2u total_size { 40 + text_rect.width, 110 + text_rect.height };
+        auto text_rect = prompt_text->needed_size_for_text();
+        Util::Size2u total_size { 40 + text_rect.x(), 80 + text_rect.y() };
         window().setup(std::move(title), total_size);
         window().center_on_screen();
     }
