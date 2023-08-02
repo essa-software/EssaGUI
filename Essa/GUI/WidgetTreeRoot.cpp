@@ -10,7 +10,7 @@
 namespace GUI {
 
 void WidgetTreeRoot::draw(Gfx::Painter& painter) { m_root->relayout_and_draw(painter); }
-void WidgetTreeRoot::handle_event(GUI::Event const& event) { m_root->handle_event(event); }
+void WidgetTreeRoot::handle_event(GUI::Event const& event) { m_root->do_handle_event(event); }
 
 void WidgetTreeRoot::handle_events() {
     // This event handler just takes all the events

@@ -51,12 +51,13 @@ public:
     auto* main_widget() { return m_main_widget.get(); }
 
     /*restricted(WidgetTreeRoot)*/ void relayout_and_draw(Gfx::Painter&);
-    /*restricted(WidgetTreeRoot)*/ void handle_event(GUI::Event const& event);
+    /*restricted(WidgetTreeRoot)*/ void do_handle_event(GUI::Event const& event);
 
 protected:
     void close();
 
 private:
+    virtual Widget::EventHandlerResult handle_event(GUI::Event const&) { return Widget::EventHandlerResult::NotAccepted; }
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;
 
     bool m_needs_relayout = true;

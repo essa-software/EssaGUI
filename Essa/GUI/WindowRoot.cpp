@@ -1,4 +1,5 @@
 #include "WindowRoot.hpp"
+#include "Essa/GUI/Widgets/Widget.hpp"
 
 #include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
@@ -42,12 +43,16 @@ void WindowRoot::relayout_and_draw(Gfx::Painter& painter) {
     m_main_widget->do_draw(painter);
 }
 
-void WindowRoot::handle_event(GUI::Event const& event) {
+void WindowRoot::do_handle_event(GUI::Event const& event) {
     if (!m_main_widget)
         return;
 
     if (event.is<GUI::Event::WindowResize>()) {
         m_needs_relayout = true;
+    }
+
+    if (handle_event(event) == Widget::EventHandlerResult::Accepted) {
+        return;
     }
 
     // FIXME: Find a way to make first focusable widget focused "from start".
