@@ -1,26 +1,23 @@
 #pragma once
 
-#include "ToolWindow.hpp"
+#include <Essa/GUI/WindowRoot.hpp>
 
 namespace GUI {
 
 class Button;
 
-class MessageBox : public ToolWindow {
+class MessageBox : public WindowRoot {
 public:
     enum class Buttons { YesNo, Ok };
 
-    explicit MessageBox(MDI::Host& window, Util::UString message, Util::UString title, Buttons buttons);
+    explicit MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString title, Buttons buttons);
 
     enum class ButtonRole { None, Yes, No, Ok };
 
-    ButtonRole exec() {
-        show_modal();
-        return m_clicked_button;
-    }
+    ButtonRole exec();
 
 private:
-    virtual void handle_event(GUI::Event const&) override;
+    virtual Widget::EventHandlerResult handle_event(GUI::Event const&) override;
 
     ButtonRole m_clicked_button = ButtonRole::None;
     Button* m_default_button = nullptr;

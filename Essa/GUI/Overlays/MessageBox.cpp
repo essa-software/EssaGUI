@@ -9,9 +9,8 @@
 
 namespace GUI {
 
-MessageBox::MessageBox(MDI::Host& window, Util::UString message, Util::UString title, Buttons buttons)
-    : ToolWindow(window, "MessageBox") {
-    set_title(title);
+MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString title, Buttons buttons)
+    : WindowRoot(wnd) {
 
     auto& prompt_container = set_main_widget<GUI::Container>();
 
@@ -26,9 +25,9 @@ MessageBox::MessageBox(MDI::Host& window, Util::UString message, Util::UString t
 
     {
         auto text_rect = prompt_text->text_rect();
-        Util::Size2i total_size { 40 + text_rect.width, 110 + text_rect.height };
-        set_size(total_size);
-        center_on_screen();
+        Util::Size2u total_size { 40 + text_rect.width, 110 + text_rect.height };
+        window().setup(std::move(title), total_size);
+        window().center_on_screen();
     }
 
     auto button_container = prompt_container.add_widget<GUI::Container>();
@@ -51,25 +50,33 @@ MessageBox::MessageBox(MDI::Host& window, Util::UString message, Util::UString t
         return button;
     };
 
+    const auto& theme = GUI::Application::the().theme();
+
     if (buttons == Buttons::YesNo) {
-        m_default_button = add_button(ButtonRole::Yes, "Yes", theme().positive);
-        add_button(ButtonRole::No, "No", theme().negative);
+        m_default_button = add_button(ButtonRole::Yes, "Yes", theme.positive);
+        add_button(ButtonRole::No, "No", theme.negative);
     }
     else if (buttons == Buttons::Ok) {
-        m_default_button = add_button(ButtonRole::Ok, "Ok", theme().neutral);
+        m_default_button = add_button(ButtonRole::Ok, "Ok", theme.neutral);
     }
 }
 
-void MessageBox::handle_event(Event const& event) {
-    ToolWindow::handle_event(event);
+MessageBox::ButtonRole MessageBox::exec() {
+    window().show_modal();
+    return m_clicked_button;
+}
+
+Widget::EventHandlerResult MessageBox::handle_event(Event const& event) {
     if (auto keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Enter && m_default_button) {
         m_default_button->on_click();
+        return Widget::EventHandlerResult::Accepted;
     }
+    return Widget::EventHandlerResult::NotAccepted;
 }
 
 MessageBox::ButtonRole message_box(HostWindow& window, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
-    auto& msgbox = window.open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
-    return msgbox.exec();
+    auto msgbox = window.open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
+    return msgbox.window_root.exec();
 }
 
 }
