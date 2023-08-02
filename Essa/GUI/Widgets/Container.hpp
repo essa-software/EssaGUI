@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <EssaUtil/Enum.hpp>
 #include <EssaUtil/Is.hpp>
 #include <EssaUtil/Orientation.hpp>
 #include <algorithm>
@@ -68,7 +69,10 @@ public:
     virtual void run(Container&) override;
     virtual Util::Size2i total_size(Container const&) const override;
 
-    enum class ContentAlignment { BoxStart, BoxEnd };
+#define ENUMERATE_CONTENT_ALIGNMENTS(A) \
+    A(BoxStart)                         \
+    A(BoxEnd)
+    ESSA_ENUM(ContentAlignment, ENUMERATE_CONTENT_ALIGNMENTS);
 
     CREATE_VALUE(ContentAlignment, content_alignment, ContentAlignment::BoxStart)
 
@@ -77,6 +81,10 @@ private:
 
     Util::Orientation m_orientation;
 };
+
+ESSA_ENUM_FROM_STRING(BoxLayout::ContentAlignment, content_alignment, ENUMERATE_CONTENT_ALIGNMENTS)
+
+#undef ENUMERATE_CONTENT_ALIGNMENTS
 
 class VerticalBoxLayout : public BoxLayout {
 public:
@@ -100,7 +108,7 @@ private:
 class Container : public Widget {
 public:
     template<class T, class... Args>
-        requires(std::is_base_of_v<Widget, T> && requires(Args&&... args) { T(std::forward<Args>(args)...); })
+        requires(std::is_base_of_v<Widget, T> && requires(Args && ... args) { T(std::forward<Args>(args)...); })
     T* add_widget(Args&&... args) {
         auto widget = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(widget);
@@ -130,7 +138,7 @@ public:
     void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
 
     template<class T, class... Args>
-        requires(std::is_base_of_v<Layout, T> && requires(Args&&... args) { T(args...); })
+        requires(std::is_base_of_v<Layout, T> && requires(Args && ... args) { T(args...); })
     T& set_layout(Args&&... args) {
         auto layout = std::make_unique<T>(std::forward<Args>(args)...);
         auto layout_ptr = layout.get();

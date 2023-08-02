@@ -151,6 +151,7 @@ EML::EMLErrorOr<void> BoxLayout::load_from_eml_object(EML::Object const& object,
     TRY(Layout::load_from_eml_object(object, loader));
 
     m_spacing = TRY(object.get_property("spacing", EML::Value(0.0)).to_double());
+    m_content_alignment = TRY(object.get_enum("content_alignment", content_alignment_from_string, ContentAlignment::BoxStart));
     return {};
 }
 
