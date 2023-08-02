@@ -101,7 +101,7 @@ endfunction()
 
 function(essa_resources targetname dir)
     set(DEST_PATH share/${CMAKE_PROJECT_NAME}/${targetname})
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${dir} DESTINATION ${DEST_PATH})
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/ DESTINATION ${DEST_PATH})
     
     set(outfile ${CMAKE_CURRENT_BINARY_DIR}/EssaResources.cpp)
     file(WRITE ${outfile} "extern \"C\" { const char* ESSA_RESOURCE_DIR = \"")
