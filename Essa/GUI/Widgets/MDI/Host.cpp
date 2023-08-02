@@ -154,7 +154,6 @@ void Host::relayout() {
 }
 
 void Host::remove_closed_overlays() {
-    fmt::print("Remove closed overlays\n");
     std::erase_if(m_overlays, [&](auto& wnd) {
         if (wnd->is_closed()) {
             if (wnd->on_close) {
