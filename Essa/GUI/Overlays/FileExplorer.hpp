@@ -17,6 +17,13 @@ namespace GUI {
 
 class FileModel : public Model {
 public:
+    struct File {
+        std::filesystem::path path;
+        uint64_t size;
+        std::filesystem::file_type type;
+        bool is_executable;
+    };
+
     virtual size_t children_count(std::optional<Model::Node> node) const override { return node ? 0 : m_files.size(); }
 
     virtual size_t column_count() const override { return 5; }
@@ -35,13 +42,6 @@ public:
     );
 
 private:
-    struct File {
-        std::filesystem::path path;
-        uint64_t size;
-        std::filesystem::file_type type;
-        bool is_executable;
-    };
-
     static std::string file_type(File const& file);
     llgl::Texture const* file_icon(File const& file) const;
 

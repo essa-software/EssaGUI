@@ -1,4 +1,5 @@
 #include "FileExplorer.hpp"
+#include "EssaUtil/Config.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
@@ -21,6 +22,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <sys/types.h>
 #include <utility>
 #include <vector>
 
@@ -121,10 +123,9 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
     });
 }
 
-std::string FileModel::file_type(File const& file) {
-    if (file.is_executable)
-        return "Executable file";
+namespace {
 
+std::string get_regular_file_type_string(FileModel::File const& file) {
     // Some special-cases
     if (file.path.filename() == "CMakeLists.txt")
         return "CMake project";
@@ -135,23 +136,45 @@ std::string FileModel::file_type(File const& file) {
         { ".hpp", "C++ header file" }, { ".o", "Object file" },    { ".bf", "Brainfuck file" }, { ".exe", "Executable file" },
     };
 
-    if (file.type == std::filesystem::file_type::directory)
-        return "Directory";
-
     auto extension = file.path.extension().string();
-    if (extension.empty()) {
-        if (file.path.filename().string()[0] == '.') {
-            // This may be a case for files like .gitignore
-            extension = file.path.filename().string();
-        }
-        else {
-            return "File";
-        }
+    if (extension.empty() && file.path.filename().string()[0] == '.') {
+        // This may be a case for files like .gitignore
+        extension = file.path.filename().string();
     }
     auto it = extension_to_name.find(extension);
-    if (it == extension_to_name.end())
-        return extension + " file";
+    if (it == extension_to_name.end()) {
+        if (file.is_executable)
+            return "Executable file";
+        return extension.empty() ? "File" : extension + " file";
+    }
     return it->second;
+}
+
+}
+
+std::string FileModel::file_type(File const& file) {
+    switch (file.type) {
+    case std::filesystem::file_type::regular:
+        return get_regular_file_type_string(file);
+    case std::filesystem::file_type::directory:
+        return "Directory";
+    case std::filesystem::file_type::symlink:
+        // TODO: Resolve this
+        return "Symlink";
+    case std::filesystem::file_type::block:
+        return "Block device";
+    case std::filesystem::file_type::character:
+        return "Character device";
+    case std::filesystem::file_type::fifo:
+        return "FIFO";
+    case std::filesystem::file_type::socket:
+        return "Socket";
+    case std::filesystem::file_type::none:
+    case std::filesystem::file_type::not_found:
+    case std::filesystem::file_type::unknown:
+        return "???";
+    }
+    ESSA_UNREACHABLE;
 }
 
 llgl::Texture const* FileModel::file_icon(File const& file) const {
