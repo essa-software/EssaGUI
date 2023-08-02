@@ -12,6 +12,8 @@ class Window : public Overlay {
 public:
     explicit Window(Host& host, std::string id = "MDI::Window");
 
+    virtual void setup(Util::UString title, Util::Size2u size) override;
+
     CREATE_VALUE(Util::UString, title, "")
 
     virtual Util::Recti full_rect() const override {

@@ -23,6 +23,11 @@ Window::Window(Host& host, std::string id)
     m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
 
+void Window::setup(Util::UString title, Util::Size2u size) {
+    set_title(title);
+    Overlay::setup(std::move(title), size);
+}
+
 void Window::handle_event(Event const& event) {
     if (m_first_tick)
         return;
