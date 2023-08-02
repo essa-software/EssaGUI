@@ -30,9 +30,9 @@ void ColorField::draw(Gfx::Painter& window) const {
     window.deprecated_draw_rectangle(local_rect().cast<float>(), options);
 }
 
-class ColorPickerDialog : public ToolWindow {
+class ColorPickerDialog : public WindowRoot {
 public:
-    explicit ColorPickerDialog(MDI::Host&);
+    explicit ColorPickerDialog(WidgetTreeRoot&);
 
     Util::Color color() const;
     void set_color(Util::Color color);
@@ -56,75 +56,55 @@ private:
 };
 
 std::optional<Util::Color> ColorPickerDialog::exec(HostWindow& window, Util::Color initial_color) {
-    auto& dialog = window.open_overlay<ColorPickerDialog>();
-    dialog.set_color(initial_color);
-    dialog.run();
-    return dialog.m_ok_clicked ? dialog.color() : std::optional<Util::Color> {};
+    auto dialog = window.open_overlay<ColorPickerDialog>();
+    dialog.window_root.set_color(initial_color);
+    dialog.overlay.show_modal();
+    return dialog.window_root.m_ok_clicked ? dialog.window_root.color() : std::optional<Util::Color> {};
 }
 
-ColorPickerDialog::ColorPickerDialog(MDI::Host& window)
-    : ToolWindow(window, "GUI::ColorPickerDialog") {
-    set_title("Pick a color");
-    set_size({ 500, 305 });
-    center_on_screen();
+ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window)
+    : WindowRoot(window) {
+    (void)load_from_eml_resource(GUI::Application::the().resource_manager().require<EML::EMLResource>("ColorPicker.eml"));
 
-    auto& container = set_main_widget<Container>();
-    auto& container_layout = container.set_layout<VerticalBoxLayout>();
-    container_layout.set_spacing(10);
-    container_layout.set_padding(Boxi::all_equal(10));
+    auto& main_widget = static_cast<Container&>(*this->main_widget());
+    auto& main_container = main_widget.find<Container>("main_container");
+    auto& ok_button = main_widget.find<TextButton>("ok_button");
+    auto& cancel_button = main_widget.find<TextButton>("cancel_button");
 
     {
-        auto main_container = container.add_widget<Container>();
-        auto& main_container_layout = main_container->set_layout<HorizontalBoxLayout>();
-        main_container_layout.set_spacing(10);
+        // TODO: Port to EML
+        m_field = main_container.add_widget<ColorField>();
+
+        auto* sliders_container = main_container.add_widget<Container>();
+        sliders_container->set_layout<VerticalBoxLayout>().set_spacing(10);
+
         {
-            m_field = main_container->add_widget<ColorField>();
+            auto create_color_slider = [&](Util::UString component, int max, Mode mode) {
+                auto slider = sliders_container->add_widget<ValueSlider>();
+                slider->set_min(0);
+                slider->set_max(max);
+                slider->set_name_textfield_size(20.0_px);
+                slider->set_unit_textfield_size(0.0_px);
+                slider->set_step(1);
+                slider->set_name(component);
+                slider->on_change = [this, mode](double) { update_controls(mode); };
+                return slider;
+            };
 
-            auto* sliders_container = main_container->add_widget<Container>();
-            sliders_container->set_layout<VerticalBoxLayout>().set_spacing(10);
-
-            {
-                auto create_color_slider = [&](Util::UString component, int max, Mode mode) {
-                    auto slider = sliders_container->add_widget<ValueSlider>();
-                    slider->set_min(0);
-                    slider->set_max(max);
-                    slider->set_name_textfield_size(20.0_px);
-                    slider->set_unit_textfield_size(0.0_px);
-                    slider->set_step(1);
-                    slider->set_name(component);
-                    slider->on_change = [this, mode](double) { update_controls(mode); };
-                    return slider;
-                };
-
-                m_r_slider = create_color_slider("R", 255, Mode::RGB);
-                m_g_slider = create_color_slider("G", 255, Mode::RGB);
-                m_b_slider = create_color_slider("B", 255, Mode::RGB);
-                m_h_slider = create_color_slider("H", 360, Mode::HSV);
-                m_s_slider = create_color_slider("S", 100, Mode::HSV);
-                m_v_slider = create_color_slider("V", 100, Mode::HSV);
-            }
+            m_r_slider = create_color_slider("R", 255, Mode::RGB);
+            m_g_slider = create_color_slider("G", 255, Mode::RGB);
+            m_b_slider = create_color_slider("B", 255, Mode::RGB);
+            m_h_slider = create_color_slider("H", 360, Mode::HSV);
+            m_s_slider = create_color_slider("S", 100, Mode::HSV);
+            m_v_slider = create_color_slider("V", 100, Mode::HSV);
         }
-
-        auto submit_container = container.add_widget<Container>();
-        auto& submit_container_layout = submit_container->set_layout<HorizontalBoxLayout>();
-        submit_container_layout.set_spacing(10);
-        submit_container_layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
-
-        submit_container->set_size({ Util::Length::Auto, 30.0_px });
-
-        auto ok_button = submit_container->add_widget<TextButton>();
-        ok_button->set_size({ 80.0_px, Util::Length::Auto });
-        ok_button->set_content("OK");
-        ok_button->on_click = [this]() {
-            m_ok_clicked = true;
-            close();
-        };
-
-        auto cancel_button = submit_container->add_widget<TextButton>();
-        cancel_button->set_size({ 80.0_px, Util::Length::Auto });
-        cancel_button->set_content("Cancel");
-        cancel_button->on_click = [this]() { close(); };
     }
+
+    ok_button.on_click = [this]() {
+        m_ok_clicked = true;
+        close();
+    };
+    cancel_button.on_click = [this]() { close(); };
 }
 
 void ColorPickerDialog::update_controls(Mode mode) {
@@ -201,5 +181,4 @@ EML::EMLErrorOr<void> ColorPicker::load_from_eml_object(EML::Object const& objec
 }
 
 EML_REGISTER_CLASS(ColorPicker);
-
 }

@@ -1,0 +1,39 @@
+@WindowRoot {
+    title: "Color Picker"
+    width: 500
+    height: 305
+    center_on_screen: true
+
+    main_widget: @Container {
+        layout: @VerticalBoxLayout {
+            spacing: 10
+            padding: 10
+        }
+        
+        @Container main_container {
+            layout: @HorizontalBoxLayout {
+                spacing: 10
+            }
+            
+            // Filled by code.
+        }
+        
+        @Container {
+            layout: @HorizontalBoxLayout {
+                spacing: 10
+                content_alignment: "BoxEnd"
+            }
+            height: 30px
+            
+            @TextButton ok_button {
+                width: 80px
+                content: "OK"
+            }
+            
+            @TextButton cancel_button {
+                width: 80px
+                content: "Cancel"
+            }
+        }
+    }
+}
