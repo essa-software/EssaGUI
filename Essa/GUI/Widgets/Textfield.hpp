@@ -25,9 +25,10 @@ public:
     CREATE_VALUE(Align, alignment, Align::CenterLeft)
     CREATE_VALUE(int, padding, 5)
 
-    Util::Recti text_rect() const;
+    Util::Size2u needed_size_for_text() const;
 
 private:
+    Util::Recti text_rect() const;
     virtual LengthVector initial_size() const override;
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 

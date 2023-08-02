@@ -58,16 +58,32 @@ Util::Recti Textfield::text_rect() const {
     return rect;
 }
 
-LengthVector Textfield::initial_size() const {
+Util::Size2u Textfield::needed_size_for_text() const {
     return std::visit(
         Util::Overloaded {
-            [&](Util::UString const& string) -> LengthVector {
+            [&](Util::UString const& string) -> Util::Size2u {
                 Gfx::Text text { string, Application::the().font() };
                 text.set_font_size(m_font_size);
                 auto size = text.calculate_text_size();
+                return { size.x() + m_padding * 2, size.y() + m_padding * 2 };
+            },
+            [&](Gfx::RichText const&) -> Util::Size2u {
+                // FIXME: Implement measuring rich text size.
+                return {};
+            },
+        },
+        m_content
+    );
+}
+
+LengthVector Textfield::initial_size() const {
+    return std::visit(
+        Util::Overloaded {
+            [&](Util::UString const&) -> LengthVector {
+                auto size = needed_size_for_text();
                 return LengthVector {
-                    { (static_cast<int>(size.x()) + m_padding * 2), Util::Length::Px },
-                    { (static_cast<int>(size.y()) + m_padding * 2), Util::Length::Px },
+                    { static_cast<int>(size.x()), Util::Length::Px },
+                    { static_cast<int>(size.y()), Util::Length::Px },
                 };
             },
             [&](Gfx::RichText const&) -> LengthVector {
