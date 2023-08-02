@@ -126,6 +126,10 @@ void Texture::set_filtering(Filtering filtering) {
 
 void Texture::bind(Texture const* texture) { OpenGL::BindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
 
-void Texture::set_label(std::string const& label) { OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data()); }
+void Texture::set_label([[maybe_unused]] std::string const& label) {
+#ifndef __EMSCRIPTEN__
+    OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data());
+#endif
+}
 
 }

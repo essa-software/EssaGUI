@@ -77,6 +77,8 @@ llgl::TTFFont& ResourceManager::fixed_width_font() const {
 static std::filesystem::path exec_path() {
 #ifdef __linux__
     return std::filesystem::read_symlink("/proc/" + std::to_string(getpid()) + "/exe").parent_path();
+#elif __EMSCRIPTEN__
+    return "/";
 #else
 #    error OS not supported (install linux)
 #endif

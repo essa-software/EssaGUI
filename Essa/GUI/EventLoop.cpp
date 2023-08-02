@@ -11,6 +11,8 @@
 
 #ifdef __linux__
 #    include <sys/prctl.h>
+#elif defined(__EMSCRIPTEN__)
+#    include <emscripten.h>
 #endif
 
 using namespace std::chrono_literals;
@@ -39,8 +41,24 @@ void increase_system_timer_resolution() {
 void EventLoop::run() {
     auto old_event_loop = s_current_event_loop;
     s_current_event_loop = this;
-    Util::ScopeGuard guard = [&]() { s_current_event_loop = old_event_loop; };
+#ifdef __EMSCRIPTEN__
+    if (!old_event_loop) {
+        emscripten_set_main_loop(
+            []() {
+                s_current_event_loop->tick();
+                if (!s_current_event_loop->m_running) {
+                    // FIXME: Make this work properly with dialogs. It may require
+                    //        refactoring them to be asynchronous ?
+                    emscripten_cancel_main_loop();
+                }
+            },
+            0, true
+        );
+        return;
+    }
+#else
 
+    Util::ScopeGuard guard = [&]() { s_current_event_loop = old_event_loop; };
     Util::Clock clock;
 
     increase_system_timer_resolution();
@@ -73,6 +91,7 @@ void EventLoop::run() {
             }
         }
     }
+#endif
 }
 
 EventLoop::TimerHandle EventLoop::set_timeout(Timer::Clock::duration const& timeout, Timer::Callback&& callback) {

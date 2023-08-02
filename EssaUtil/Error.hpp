@@ -159,7 +159,7 @@ public:
 
     auto location() const { return m_location; }
 
-    void dump(std::string_view header, CppSourceLocation loc = CppSourceLocation::current()) const {
+    void dump(std::string_view header, [[maybe_unused]] CppSourceLocation loc = CppSourceLocation::current()) const {
         if (is_error()) {
             fmt::print("\e[31;1m{}\e[m", header);
             std::visit(
@@ -171,10 +171,12 @@ public:
                 },
                 *this
             );
+#ifndef __EMSCRIPTEN__
             fmt::print("\e[m\n");
             fmt::print("  at {}\n", CppSourceLocation { location() });
             fmt::print("  ...\n");
             fmt::print("  at {}\n", loc);
+#endif
         }
     }
 
@@ -211,7 +213,7 @@ public:
 };
 
 struct OsError {
-    error_t error;
+    int error;
     std::string_view function;
 };
 

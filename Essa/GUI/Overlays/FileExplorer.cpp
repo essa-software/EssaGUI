@@ -15,7 +15,9 @@
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
+#include <chrono>
 #include <filesystem>
+#include <fmt/chrono.h>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -63,12 +65,13 @@ Variant FileModel::data(Node row, size_t column) const {
     case 4: {
         return Util::UString { file_type(file) };
     }
-    case 3:
-        std::time_t cftime
-            = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(std::filesystem::last_write_time(file.path)));
-        std::string string = std::asctime(std::localtime(&cftime));
-        string.pop_back(); // trailing \n
-        return Util::UString { string };
+    case 3: {
+        using namespace std::chrono_literals;
+        namespace ch = std::chrono;
+        // FIXME: Use clock cast when clang supports this.
+        auto time = ch::file_clock::to_sys(ch::time_point_cast<ch::sys_seconds::duration>(std::filesystem::last_write_time(file.path)));
+        return Util::UString { fmt::format("{:%x %X}", time) };
+    }
     }
     return "";
 }

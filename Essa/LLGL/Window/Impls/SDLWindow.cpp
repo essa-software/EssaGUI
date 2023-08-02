@@ -39,6 +39,10 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
 
     initialized = true;
 
+#ifdef __EMSCRIPTEN__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#else
     // Note: Remember to add these attributes to GLX in transparent window implementation
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -49,6 +53,7 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
 
     uint32_t sdl_flags = SDLHelpers::llgl_window_flags_to_sdl(settings.flags);
     if (has_flag(settings.flags, WindowFlags::TransparentBackground)) {
@@ -80,10 +85,14 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
     }
     if (!s_context)
         s_context = SDL_GL_CreateContext(m_data->window);
+    if (!s_context) {
+        fmt::print("Failed to create OpenGL context: {}\n", SDL_GetError());
+    }
     int major, minor;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
     std::cout << "SDLWindow: Created OpenGL context version " << major << "." << minor << std::endl;
+    std::cout << "GL_VERSION=" << glGetString(GL_VERSION) << std::endl;
     set_active();
 }
 

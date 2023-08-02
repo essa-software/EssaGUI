@@ -65,7 +65,9 @@ void FBO::resize(Util::Size2u size) {
 }
 
 void FBO::set_label(std::string const& str) {
+#ifndef __EMSCRIPTEN__
     OpenGL::ObjectLabel(GL_FRAMEBUFFER, m_fbo, str.size(), str.data());
+#endif
     m_color_texture.set_label("FBO Texture: " + str);
 }
 
