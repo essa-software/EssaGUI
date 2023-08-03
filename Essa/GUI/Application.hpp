@@ -36,6 +36,8 @@ private:
 };
 
 // An application with a single maximized by default window.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 template<class W>
     requires(std::is_base_of_v<Widget, W>)
 class SimpleApplication : public Application {
@@ -63,5 +65,6 @@ private:
 
     GUI::HostWindow& m_window;
 };
+#pragma GCC diagnostic pop
 
 }
