@@ -4,6 +4,7 @@
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/HostWindow.hpp>
 #include <Essa/LLGL/Resources/TTFFont.hpp>
+#include <type_traits>
 
 namespace GUI {
 
@@ -21,6 +22,28 @@ public:
     Theme const& theme() const;
 
     HostWindow& create_host_window(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
+
+    template<class T>
+        requires(std::is_base_of_v<WindowRoot, T>)
+    struct OpenedHostWindow {
+        HostWindow& window;
+        T& root;
+    };
+
+    // TODO: Support passing window settings here (somehow)
+    template<class T, class... Args>
+        requires(std::is_base_of_v<WindowRoot, T>)
+    OpenedHostWindow<T> open_host_window(Args&&... args) {
+        auto& window = create_host_window({}, "...", {});
+        auto root = std::make_unique<T>(window, std::forward<Args>(args)...);
+        auto root_ptr = root.get();
+        window.set_root(std::move(root));
+        return {
+            .window = window,
+            .root = *root_ptr,
+        };
+    }
+
     std::list<HostWindow>& host_windows() { return m_host_windows; }
     void redraw_all_host_windows();
 
