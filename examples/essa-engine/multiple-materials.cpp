@@ -58,7 +58,7 @@ int main() {
     GUI::Application app;
     auto& host_window = app.create_host_window(
         { 500, 500 }, "Multiple Materials support in Model");
-    host_window.set_main_widget<WorldView>();
+    host_window.set_root_widget<WorldView>();
     app.run();
     return 0;
 }

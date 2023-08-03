@@ -49,7 +49,7 @@ iure unde optio error laboriosam exercitationem nam temporibus? Minus corporis \
 consectetur cumque non error. Harum totam, accusamus doloremque corporis rem obcaecati?",
         Util::Colors::Green);
 
-    auto& widget = window.set_main_widget<RichTextWidget>();
+    auto& widget = window.set_root_widget<RichTextWidget>();
     widget.set_content(std::move(text));
 
     app.run();

@@ -20,7 +20,7 @@ int main() {
     GUI::Application app;
     auto& host_window = app.create_host_window({ 500, 500 }, "Progress bars");
 
-    auto& container1 = host_window.set_main_widget<GUI::Container>();
+    auto& container1 = host_window.set_root_widget<GUI::Container>();
     container1.set_background_color(Util::Colors::White);
     container1.set_layout<GUI::VerticalBoxLayout>();
 

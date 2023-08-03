@@ -194,7 +194,7 @@ int main() {
     GUI::Application app;
     auto& window = app.create_host_window({ 500, 500 }, "TreeView");
     print_model(*db_model);
-    auto& tv = window.set_main_widget<GUI::TreeView>();
+    auto& tv = window.set_root_widget<GUI::TreeView>();
 
     tv.set_model(std::move(db_model));
     tv.expand({ 0 });

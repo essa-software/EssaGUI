@@ -8,7 +8,7 @@ int main() {
     GUI::Application app;
     auto& host_window = app.create_host_window({ 800, 600 }, "Grids");
 
-    auto& container = host_window.set_main_widget<GUI::Container>();
+    auto& container = host_window.set_root_widget<GUI::Container>();
     container.set_layout<GUI::HorizontalBoxLayout>();
 
     auto grid = container.add_widget<GUI::Grid>();

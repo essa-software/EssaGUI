@@ -35,7 +35,7 @@ int main() {
 
     auto& window = app.create_host_window({ 500, 500 }, "Tooltips");
 
-    auto& container = window.set_main_widget<GUI::Container>();
+    auto& container = window.set_root_widget<GUI::Container>();
     auto& layout = container.set_layout<GUI::VerticalBoxLayout>();
     layout.set_spacing(40);
     layout.set_padding(GUI::Boxi::all_equal(40));

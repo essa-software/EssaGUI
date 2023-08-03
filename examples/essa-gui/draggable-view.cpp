@@ -36,7 +36,7 @@ int main() {
     GUI::Application app;
     auto& window = app.create_host_window({ 500, 500 }, "DraggableView2D");
 
-    auto& container = window.set_main_widget<GUI::Container>();
+    auto& container = window.set_root_widget<GUI::Container>();
     container.set_layout<GUI::BasicLayout>();
 
     auto view = container.add_widget<MyView>();

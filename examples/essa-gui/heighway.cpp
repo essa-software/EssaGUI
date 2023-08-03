@@ -65,7 +65,7 @@ int main() {
     GUI::Application app;
     auto& wnd = app.create_host_window({ 750, 750 }, "Heighway's Dragon (Gfx::Painter benchmark)");
 
-    wnd.set_main_widget<MainWidget>();
+    wnd.set_root_widget<MainWidget>();
 
     app.run();
     return 0;

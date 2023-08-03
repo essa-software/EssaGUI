@@ -49,7 +49,7 @@ int main() {
 #endif
 
     window.set_background_color(Util::Colors::Transparent);
-    window.set_main_widget<MainWidget>();
+    window.set_root_widget<MainWidget>();
 
     app.run();
     return 0;
