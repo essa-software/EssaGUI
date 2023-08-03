@@ -1,4 +1,3 @@
-#include "Essa/GUI/Widgets/Container.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Widgets/ScrollableContainer.hpp>
 #include <Essa/GUI/Widgets/ScrollableWidget.hpp>
@@ -13,7 +12,7 @@ int main() {
     layout.set_padding(GUI::Boxi::all_equal(10));
 
     auto add_button = [&](int idx) {
-        auto button = container.add_widget<GUI::TextButton>();
+        auto* button = container.add_widget<GUI::TextButton>();
         button->set_content(Util::to_ustring(idx));
         button->set_size({ Util::Length::Auto, 50.0_px });
     };

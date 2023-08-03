@@ -36,8 +36,6 @@ private:
 };
 
 // An application with a single maximized by default window.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 template<class W>
     requires(std::is_base_of_v<Widget, W>)
 class SimpleApplication : public Application {
@@ -51,13 +49,13 @@ public:
             m_window.maximize();
         }
         m_window.center_on_screen();
-        m_window.set_main_widget<W>(std::forward<Args>(args)...);
+        m_window.set_root_widget<W>(std::forward<Args>(args)...);
     }
 
     auto& window() { return m_window; }
-    [[deprecated]] W& main_widget() {
-        assert(m_window.main_widget());
-        return static_cast<W&>(*m_window.main_widget());
+    W& main_widget() {
+        assert(m_window.root_widget());
+        return static_cast<W&>(*m_window.root_widget());
     }
 
 private:
@@ -65,6 +63,5 @@ private:
 
     GUI::HostWindow& m_window;
 };
-#pragma GCC diagnostic pop
 
 }
