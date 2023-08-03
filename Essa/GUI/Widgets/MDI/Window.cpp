@@ -185,7 +185,7 @@ void Window::handle_event(Event const& event) {
     }
 }
 
-void Window::draw(Gfx::Painter& painter) {
+void Window::draw_decorations(Gfx::Painter& painter) const {
     using namespace Gfx::Drawing;
 
     if (is_modal()) {
@@ -315,30 +315,45 @@ void Window::draw(Gfx::Painter& painter) {
     varr_border[2] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, size.y()) }, titlebar_color.background, {} };
     varr_border[3] = Gfx::Vertex { { position + Util::Vector2f(size.x() + 1, 0) }, titlebar_color.background, {} };
     painter.draw_vertices(llgl::PrimitiveType::LineStrip, varr_border);
+}
+
+void Window::draw(Gfx::Painter& painter) {
+    using namespace Gfx::Drawing;
+
+    // Quick hack to not render decorations for background overlay.
+    // FIXME: This should use some window types like nativesh window managers do
+    bool should_draw_decorations = !always_on_bottom();
+
+    if (should_draw_decorations) {
+        draw_decorations(painter);
+    }
 
     // Flush because of text being draw with incorrect blending mode otherwise
     painter.render();
     painter.reset();
 
-    m_backing_buffer.resize(size.cast<unsigned>());
+    m_backing_buffer.resize(size().cast<unsigned>());
     m_offscreen_painter.reset();
     m_offscreen_painter.renderer().clear(Util::Colors::Transparent);
     {
-        Gfx::ClipViewScope scope(m_offscreen_painter, Util::Recti { {}, size.cast<int>() }, Gfx::ClipViewScope::Mode::NewStack);
+        Gfx::ClipViewScope scope(m_offscreen_painter, Util::Recti { {}, size().cast<int>() }, Gfx::ClipViewScope::Mode::NewStack);
 
-        m_offscreen_painter.draw(
-            Rectangle(Util::Rectf({}, size), Fill::solid(theme().window_background.with_alpha(255 * theme().tool_window_opacity)))
-        );
+        if (should_draw_decorations) {
+            m_offscreen_painter.draw(Rectangle(
+                Util::Rectf({}, size().cast<float>()), Fill::solid(theme().window_background.with_alpha(255 * theme().tool_window_opacity))
+            ));
+        }
 
         WidgetTreeRoot::draw(m_offscreen_painter);
     }
     m_offscreen_painter.render();
 
     auto const& texture = m_backing_buffer.color_texture();
+    float opacity = should_draw_decorations ? theme().tool_window_opacity : 1;
     painter.draw(Rectangle(
-        Util::Rectf(position.cast<float>(), size.cast<float>()),
+        Util::Rectf(position().cast<float>(), size().cast<float>()),
         Fill::textured(texture, { 0, 0, static_cast<float>(texture.size().x()), -static_cast<float>(texture.size().y()) })
-            .set_color(Util::Colors::White.with_alpha(255 * theme().tool_window_opacity))
+            .set_color(Util::Colors::White.with_alpha(255 * opacity))
     ));
     auto blending = painter.blending();
     // Disable alpha premultiplying because it was already done

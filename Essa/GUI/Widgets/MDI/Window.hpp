@@ -47,6 +47,8 @@ private:
     // Deprecated. Override WindowRoot::load_from_eml_object for window-agnostic EML loaders.
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
+    void draw_decorations(Gfx::Painter&) const;
+
     bool m_moving = false;
     std::array<std::optional<ResizeDirection>, 2> m_resize_directions;
     Util::Point2i m_initial_dragging_position;
