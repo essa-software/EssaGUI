@@ -27,20 +27,24 @@ void Host::focus_window(OverlayList::iterator new_focused_it) {
 }
 
 Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
+    Widget::do_handle_event(event);
+
+    auto transformed_event = event.relativized(raw_position().to_vector());
+
     // Send global events to everyone regardless of the focused overlay
-    if (event.target_type() == llgl::EventTargetType::Global) {
+    if (transformed_event.target_type() == llgl::EventTargetType::Global) {
         for (auto const& overlay : m_overlays) {
-            overlay->handle_event(event.relativized(overlay->position().to_vector()));
+            overlay->handle_event(transformed_event.relativized(overlay->position().to_vector()));
         }
     }
 
     // Don't pass global events to all this mouse related code
-    if (event.target_type() == llgl::EventTargetType::Global) {
+    if (transformed_event.target_type() == llgl::EventTargetType::Global) {
         return Widget::EventHandlerResult::NotAccepted;
     }
 
     // Focus overlay if mouse button pressed
-    if (const auto* mouse_button = event.get<llgl::Event::MouseButtonPress>()) {
+    if (const auto* mouse_button = transformed_event.get<llgl::Event::MouseButtonPress>()) {
         m_focused_overlay = nullptr;
         decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
@@ -60,17 +64,17 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
     // Pass all events to focused overlay
     if (focused_overlay) {
         // FIXME: Don't pass mouse moves. Currently this breaks moving ToolWindows.
-        focused_overlay->handle_event(event.relativized(focused_overlay->position().to_vector()));
+        focused_overlay->handle_event(transformed_event.relativized(focused_overlay->position().to_vector()));
     }
 
     // Pass mouse events to hovered overlays
-    if (event.is_mouse_related()) {
+    if (transformed_event.is_mouse_related()) {
         for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
             auto& overlay = **it;
             if (overlay.ignores_events()) {
                 continue;
             }
-            if (overlay.full_rect().contains(event.local_mouse_position())) {
+            if (overlay.full_rect().contains(transformed_event.local_mouse_position())) {
                 if (m_hovered_overlay != &overlay) {
                     if (m_hovered_overlay) {
                         m_hovered_overlay->handle_event(GUI::Event::MouseLeave());
@@ -80,18 +84,21 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
                 }
                 assert(m_hovered_overlay == &overlay);
                 if (&overlay != focused_overlay) {
-                    overlay.handle_event(event.relativized(overlay.position().to_vector()));
+                    overlay.handle_event(transformed_event.relativized(overlay.position().to_vector()));
                 }
                 break;
             }
         }
+        return Widget::EventHandlerResult::NotAccepted;
     }
-    return Widget::EventHandlerResult::Accepted;
+    return is_focused() ? Widget::EventHandlerResult::Accepted : Widget::EventHandlerResult::NotAccepted;
 }
 
 DBG_DECLARE(GUI_DrawOverlayBounds);
 
 void Host::draw(Gfx::Painter& painter) const {
+    theme().renderer().draw_text_editor_border(*this, false, painter);
+
     for (const auto& overlay : m_overlays) {
         overlay->draw(painter);
 
