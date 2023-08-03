@@ -97,8 +97,6 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
 DBG_DECLARE(GUI_DrawOverlayBounds);
 
 void Host::draw(Gfx::Painter& painter) const {
-    theme().renderer().draw_text_editor_border(*this, false, painter);
-
     for (const auto& overlay : m_overlays) {
         overlay->draw(painter);
 
@@ -112,6 +110,8 @@ void Host::draw(Gfx::Painter& painter) const {
             debug_text.draw(painter);
         }
     }
+
+    theme().renderer().draw_text_editor_border(*this, false, painter);
 }
 
 Overlay& Host::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
