@@ -46,6 +46,11 @@ void Window::center_on_screen() {
     set_position({ screen_size.x() / 2 - size().x() / 2, screen_size.y() / 2 - size().y() / 2 });
 }
 
+bool Window::is_closed() const {
+    // TODO: Impl for foreign windows
+    return !m_data;
+}
+
 void Window::close() {
     if (!m_foreign) {
         destroy();

@@ -87,34 +87,40 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
 }
 
 void Window::destroy() {
-    if (!m_data->window)
+    if (is_closed()) {
         return;
+    }
     SDL_DestroyWindow(m_data->window);
     m_data.reset();
     // SDL_GL_DeleteContext(s_context);
 }
 
 void Window::set_title(Util::UString const& title) {
-    if (!m_data->window)
-        return;
+    assert(!is_closed());
     SDL_SetWindowTitle(m_data->window, (char*)title.encode().c_str());
 }
 
 Util::UString Window::title() const { return Util::UString { SDL_GetWindowTitle(m_data->window) }; }
 
 void Window::set_size_impl(Util::Size2u size) {
-    if (!m_data->window)
-        return;
+    assert(!is_closed());
     SDL_SetWindowSize(m_data->window, size.x(), size.y());
 }
 
-void Window::set_position(Util::Point2i position) { SDL_SetWindowPosition(m_data->window, position.x(), position.y()); }
+void Window::set_position(Util::Point2i position) {
+    assert(!is_closed());
+    SDL_SetWindowPosition(m_data->window, position.x(), position.y());
+}
 
-void Window::display() { SDL_GL_SwapWindow(m_data->window); }
+void Window::display() {
+    assert(!is_closed());
+    SDL_GL_SwapWindow(m_data->window);
+}
 
 static std::map<uint32_t, std::queue<SDL_Event>> s_event_queues;
 
 std::optional<Event> Window::poll_event_impl() {
+    assert(!is_closed());
     while (true) {
         std::optional<SDL_Event> sdl_event = [this]() -> std::optional<SDL_Event> {
             auto& queue = s_event_queues[SDL_GetWindowID(m_data->window)];
@@ -152,10 +158,7 @@ std::optional<Event> Window::poll_event_impl() {
                 m_data->focused = false;
                 break;
             case SDL_WINDOWEVENT_CLOSE: {
-                // TODO: This is a hack to make Ctrl+C working. This should be
-                // properly exposed to user.
-                std::cout << "Exit requested" << std::endl;
-                exit(0);
+                return Event::WindowClose {};
             } break;
             case SDL_WINDOWEVENT_ENTER: {
                 return Event::MouseEnter {};
@@ -212,25 +215,38 @@ std::optional<Event> Window::poll_event_impl() {
         }
         // TODO
         std::cout << "SDLWindow: Unhandled event (type=" << sdl_event->type << ")" << std::endl;
-        continue;
     }
 }
 
-void Window::set_mouse_position(Util::Point2i pos) { SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y()); }
+void Window::set_mouse_position(Util::Point2i pos) {
+    assert(!is_closed());
+    SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y());
+}
 
-bool Window::is_focused() const { return m_data->focused; }
+bool Window::is_focused() const {
+    assert(!is_closed());
+    return m_data->focused;
+}
 
-void Window::set_active() const { SDL_GL_MakeCurrent(m_data->window, s_context); }
+void Window::set_active() const {
+    assert(!is_closed());
+    SDL_GL_MakeCurrent(m_data->window, s_context);
+}
 
-void Window::maximize() const { SDL_MaximizeWindow(m_data->window); }
+void Window::maximize() const {
+    assert(!is_closed());
+    SDL_MaximizeWindow(m_data->window);
+}
 
 Util::Size2u Window::screen_size() const {
+    assert(!is_closed());
     SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_data->window), &mode);
     return { mode.w, mode.h };
 }
 
 Util::Recti Window::system_rect() const {
+    assert(!is_closed());
     Util::Recti rect;
     SDL_GetWindowPosition(m_data->window, &rect.left, &rect.top);
     SDL_GetWindowSize(m_data->window, &rect.width, &rect.height);

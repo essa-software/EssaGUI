@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 
 namespace GUI {
 
@@ -44,13 +45,13 @@ void Application::redraw_all_host_windows() {
 }
 
 void Application::tick() {
-    OpenGL::clear();
     for (auto& host_window : m_host_windows) {
         host_window.handle_events();
     }
     if (on_tick) {
         on_tick();
     }
+    std::erase_if(m_host_windows, [](auto const& window) { return window.is_closed(); });
     for (auto& host_window : m_host_windows) {
         host_window.update();
     }

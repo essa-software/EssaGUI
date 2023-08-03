@@ -22,7 +22,7 @@ public:
     explicit HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
     virtual void setup(Util::UString title, Util::Size2u size) override;
-    virtual void close() override { llgl::Window::close(); }
+    virtual void close() override;
 
     // TODO: Find a way for this to be private
     void do_draw();
@@ -87,6 +87,7 @@ public:
 
 private:
     friend WidgetTreeRoot;
+    friend class Application;
 
     Util::Color m_background_color;
     Gfx::Painter m_painter { renderer() };

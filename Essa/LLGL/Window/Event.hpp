@@ -27,6 +27,11 @@ public:
     static EventTargetType target_type() { return EventTargetType::Specific; }
 };
 
+class WindowCloseEvent : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Global; }
+};
+
 class WindowResizeEvent : public Base {
 public:
     explicit WindowResizeEvent(Util::Size2u new_size)
@@ -163,9 +168,9 @@ private:
 };
 
 using Variant = std::variant<
-    EventTypes::WindowResizeEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent, EventTypes::MouseEnterEvent,
-    EventTypes::MouseLeaveEvent, EventTypes::MouseMoveEvent, EventTypes::MouseButtonPressEvent, EventTypes::MouseButtonReleaseEvent,
-    EventTypes::MouseScrollEvent, EventTypes::TextInputEvent>;
+    EventTypes::WindowCloseEvent, EventTypes::WindowResizeEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent,
+    EventTypes::MouseEnterEvent, EventTypes::MouseLeaveEvent, EventTypes::MouseMoveEvent, EventTypes::MouseButtonPressEvent,
+    EventTypes::MouseButtonReleaseEvent, EventTypes::MouseScrollEvent, EventTypes::TextInputEvent>;
 
 }
 
@@ -177,6 +182,7 @@ struct Event : public EventTypes::Variant {
         requires(std::is_constructible_v<Variant, T>)
         : Variant(std::forward<T>(t)) { }
 
+    using WindowClose = EventTypes::WindowCloseEvent;
     using WindowResize = EventTypes::WindowResizeEvent;
     using Key = EventTypes::KeyEvent;
     using KeyPress = EventTypes::KeyPressEvent;
@@ -248,6 +254,14 @@ template<> class fmt::formatter<llgl::Event> : public fmt::formatter<std::string
 public:
     template<typename FormatContext> constexpr auto format(llgl::Event const& event, FormatContext& ctx) const {
         event.visit([&](auto const& evt) { fmt::format_to(ctx.out(), "{}", evt); });
+        return ctx.out();
+    }
+};
+
+template<> class fmt::formatter<llgl::EventTypes::WindowCloseEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowCloseEvent const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "WindowCloseEvent");
         return ctx.out();
     }
 };

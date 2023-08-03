@@ -1,13 +1,14 @@
 #include "HostWindow.hpp"
-#include "Essa/GUI/WidgetTreeRoot.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/LLGL/OpenGL/Error.hpp>
 #include <Essa/LLGL/Window/Event.hpp>
+#include <Essa/LLGL/Window/Window.hpp>
 
 #include <cassert>
 
@@ -29,12 +30,17 @@ void HostWindow::setup(Util::UString title, Util::Size2u size) {
     set_size(size);
 }
 
+void HostWindow::close() { llgl::Window::close(); }
+
 void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 
 DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
 
 void HostWindow::handle_events() {
     while (true) {
+        if (is_closed()) {
+            return;
+        }
         auto event = poll_event();
         if (!event) {
             break;

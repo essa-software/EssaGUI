@@ -29,6 +29,7 @@ public:
 
     void create(Util::Size2u size, Util::UString const& title, WindowSettings const& = {});
 
+    bool is_closed() const;
     void close();
     void set_title(Util::UString const&);
     Util::UString title() const;

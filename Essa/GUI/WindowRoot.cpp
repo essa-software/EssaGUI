@@ -50,6 +50,9 @@ void WindowRoot::do_handle_event(GUI::Event const& event) {
     if (event.is<GUI::Event::WindowResize>()) {
         m_needs_relayout = true;
     }
+    if (event.is<GUI::Event::WindowClose>()) {
+        close();
+    }
 
     if (handle_event(event) == Widget::EventHandlerResult::Accepted) {
         return;
