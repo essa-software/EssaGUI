@@ -55,6 +55,7 @@ function(essautil_setup_target targetname)
         -Wno-error=missing-field-initializers       # FIXME: This is buggy (?) for *DrawOptions
         -Wno-error=format                           # FIXME: We don't use formatting anyway except SimulationClock but this breaks mingw build
         -Wno-error=stringop-overflow                # FIXME: fmt on CI doesn't like it for some reason, find a way to workaround it!
+        -Wno-error=deprecated-declarations
     )
 
     set_property(TARGET ${targetname} PROPERTY CXX_STANDARD 20)
