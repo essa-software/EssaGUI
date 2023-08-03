@@ -32,20 +32,19 @@ void ColorField::draw(Gfx::Painter& window) const {
 
 class ColorPickerDialog : public WindowRoot {
 public:
-    explicit ColorPickerDialog(WidgetTreeRoot&);
+    explicit ColorPickerDialog(WidgetTreeRoot&, Util::Color initial_color);
 
     Util::Color color() const;
     void set_color(Util::Color color);
 
-    static std::optional<Util::Color> exec(HostWindow&, Util::Color initial_color);
+    std::function<void(Util::Color const&)> on_change;
 
 private:
     enum class Mode { RGB, HSV };
 
     void update_controls(Mode);
 
-    bool m_ok_clicked = false;
-
+    Util::Color m_initial_color;
     ColorField* m_field {};
     ValueSlider* m_r_slider = nullptr;
     ValueSlider* m_g_slider = nullptr;
@@ -55,14 +54,7 @@ private:
     ValueSlider* m_v_slider = nullptr;
 };
 
-std::optional<Util::Color> ColorPickerDialog::exec(HostWindow& window, Util::Color initial_color) {
-    auto dialog = window.open_overlay<ColorPickerDialog>();
-    dialog.window_root.set_color(initial_color);
-    dialog.overlay.show_modal();
-    return dialog.window_root.m_ok_clicked ? dialog.window_root.color() : std::optional<Util::Color> {};
-}
-
-ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window)
+ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window, Util::Color initial_color)
     : WindowRoot(window) {
     (void)load_from_eml_resource(GUI::Application::the().resource_manager().require<EML::EMLResource>("ColorPicker.eml"));
 
@@ -100,11 +92,14 @@ ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window)
         }
     }
 
-    ok_button.on_click = [this]() {
-        m_ok_clicked = true;
+    ok_button.on_click = [this]() { close(); };
+    cancel_button.on_click = [this]() {
+        set_color(m_initial_color);
         close();
     };
-    cancel_button.on_click = [this]() { close(); };
+
+    set_color(initial_color);
+    m_initial_color = initial_color;
 }
 
 void ColorPickerDialog::update_controls(Mode mode) {
@@ -125,6 +120,9 @@ void ColorPickerDialog::update_controls(Mode mode) {
     }
 
     m_field->set_color(color());
+    if (on_change) {
+        on_change(color());
+    }
 }
 
 Util::Color ColorPickerDialog::color() const {
@@ -142,12 +140,12 @@ void ColorPickerDialog::set_color(Util::Color color) {
 
 void ColorPicker::on_init() {
     on_click = [this]() {
-        auto color = ColorPickerDialog::exec(host_window(), m_color);
-        if (color) {
-            m_color = *color;
+        auto window = GUI::Application::the().open_host_window<ColorPickerDialog>(m_color);
+        window.root.on_change = [this](Util::Color const& color) {
+            m_color = color;
             if (on_change)
-                on_change(m_color);
-        }
+                on_change(color);
+        };
     };
 }
 
