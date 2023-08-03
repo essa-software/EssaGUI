@@ -62,19 +62,19 @@ public:
     // --- Deprecated compatibility things start here ---
     // Get rid of them when everyone is updated to explicit MDI
     auto legacy_mdi_host() { return m_legacy_mdi_host; }
-    template<class T, class... Args> T& set_main_widget(Args&&... args) {
+    template<class T, class... Args> [[deprecated]] T& set_main_widget(Args&&... args) {
         assert(m_legacy_mdi_host);
         return m_legacy_mdi_host->set_background_widget<T>(std::forward<Args>(args)...);
     }
-    Widget const* main_widget() const {
+    [[deprecated]] Widget const* main_widget() const {
         assert(m_legacy_mdi_host);
         return m_legacy_mdi_host->background_widget();
     }
-    Widget* main_widget() {
+    [[deprecated]] Widget* main_widget() {
         assert(m_legacy_mdi_host);
         return m_legacy_mdi_host->background_widget();
     }
-    template<class T, class... Args> decltype(auto) open_overlay(Args&&... a) {
+    template<class T, class... Args> [[deprecated]] decltype(auto) open_overlay(Args&&... a) {
         assert(m_legacy_mdi_host);
         return m_legacy_mdi_host->open_overlay<T>(std::forward<Args>(a)...);
     }
