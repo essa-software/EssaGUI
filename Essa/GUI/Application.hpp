@@ -55,7 +55,7 @@ public:
     }
 
     auto& window() { return m_window; }
-    W& main_widget() {
+    [[deprecated]] W& main_widget() {
         assert(m_window.main_widget());
         return static_cast<W&>(*m_window.main_widget());
     }
