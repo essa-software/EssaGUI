@@ -1,12 +1,13 @@
 #include "FBO.hpp"
 
-#include <Essa/LLGL/OpenGL/Texture.hpp>
 #include <Essa/AbstractOpenGLHelper.hpp>
+#include <Essa/LLGL/OpenGL/Extensions.hpp>
 #include <iostream>
 
 namespace llgl::opengl {
 
 FBO::FBO(Util::Size2u size) {
+    opengl::ensure_glew();
     OpenGL::GenFramebuffers(1, &m_fbo);
 
     resize(size);
