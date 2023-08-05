@@ -18,7 +18,7 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
     prompt_container_layout.set_spacing(20);
     prompt_container_layout.set_padding(Boxi::all_equal(20));
 
-    auto prompt_text = prompt_container.add_widget<GUI::Textfield>();
+    auto* prompt_text = prompt_container.add_widget<GUI::Textfield>();
     prompt_text->set_content(message);
     prompt_text->set_alignment(GUI::Align::Center);
     prompt_text->set_size({ Util::Length::Auto, Util::Length::Auto });
@@ -30,12 +30,12 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
         window().center_on_screen();
     }
 
-    auto button_container = prompt_container.add_widget<GUI::Container>();
+    auto* button_container = prompt_container.add_widget<GUI::Container>();
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
     button_container->set_size({ Util::Length::Auto, 30.0_px });
 
     auto add_button = [this, &button_container](ButtonRole button_role, Util::UString label, Util::Color bg_color) {
-        auto button = button_container->add_widget<GUI::TextButton>();
+        auto* button = button_container->add_widget<GUI::TextButton>();
         button->set_alignment(GUI::Align::Center);
         button->set_content(std::move(label));
 
@@ -67,16 +67,16 @@ MessageBox::ButtonRole MessageBox::exec() {
 }
 
 Widget::EventHandlerResult MessageBox::handle_event(Event const& event) {
-    if (auto keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Enter && m_default_button) {
+    if (auto const* keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Enter && m_default_button) {
         m_default_button->on_click();
         return Widget::EventHandlerResult::Accepted;
     }
     return Widget::EventHandlerResult::NotAccepted;
 }
 
-MessageBox::ButtonRole message_box(HostWindow& window, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
-    auto msgbox = window.open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
-    return msgbox.window_root.exec();
+MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
+    auto msgbox = GUI::Application::the().open_host_window<GUI::MessageBox>(std::move(message), std::move(title), buttons);
+    return msgbox.root.exec();
 }
 
 }

@@ -347,12 +347,12 @@ void FileExplorer::open_path(std::filesystem::path path) {
     m_list->set_scroll({});
 }
 
-std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow& host_window) {
-    auto explorer = host_window.open_overlay<FileExplorer>();
+std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow&) {
+    auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;
-    explorer.overlay.center_on_screen();
-    explorer.window_root.on_submit = [&](const std::filesystem::path& path) { result = path; };
-    explorer.overlay.show_modal();
+    explorer.window.center_on_screen();
+    explorer.root.on_submit = [&](const std::filesystem::path& path) { result = path; };
+    explorer.window.show_modal();
     return result;
 }
 

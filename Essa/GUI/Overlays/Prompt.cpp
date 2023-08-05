@@ -52,11 +52,10 @@ Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString wi
     }
 };
 
-std::optional<Util::UString>
-prompt(HostWindow& host_window, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
-    auto prompt = host_window.open_overlay<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
-    prompt.overlay.show_modal();
-    return prompt.window_root.result();
+std::optional<Util::UString> prompt(HostWindow&, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
+    auto prompt = GUI::Application::the().open_host_window<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
+    prompt.window.show_modal();
+    return prompt.root.result();
 }
 
 }
