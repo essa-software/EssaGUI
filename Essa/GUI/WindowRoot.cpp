@@ -1,5 +1,4 @@
 #include "WindowRoot.hpp"
-#include "Essa/GUI/Widgets/Widget.hpp"
 
 #include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
@@ -13,8 +12,8 @@ EML::EMLErrorOr<void> WindowRoot::load_from_eml_object(EML::Object const& object
     auto width = TRY(object.get_property("width", EML::Value(0.0)).to_double());
     auto height = TRY(object.get_property("height", EML::Value(0.0)).to_double());
     auto center_on_screen = TRY(object.get_property("center_on_screen", EML::Value(false)).to_bool());
-
-    m_window.setup(title, { width, height });
+    // TODO: Window flags
+    m_window.setup(title, { width, height }, {});
     if (center_on_screen) {
         m_window.center_on_screen();
     }
@@ -51,6 +50,7 @@ void WindowRoot::do_handle_event(GUI::Event const& event) {
         m_needs_relayout = true;
     }
     if (event.is<GUI::Event::WindowClose>()) {
+        fmt::print("close()\n");
         close();
     }
 

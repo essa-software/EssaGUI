@@ -19,9 +19,10 @@ class HostWindow
 public:
     friend Gfx::Painter;
     friend Gfx::GUIBuilder;
-    explicit HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
+    HostWindow() = default;
+    [[deprecated]] HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
-    virtual void setup(Util::UString title, Util::Size2u size) override;
+    virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
     virtual void close() override;
 
     // TODO: Find a way for this to be private

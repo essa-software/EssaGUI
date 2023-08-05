@@ -3,6 +3,7 @@
 #include <Essa/GUI/Widgets/MDI/Overlay.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/LLGL/OpenGL/Framebuffer.hpp>
+#include <Essa/LLGL/Window/WindowSettings.hpp>
 
 namespace GUI::MDI {
 
@@ -12,7 +13,7 @@ class Window : public Overlay {
 public:
     explicit Window(Host& host, std::string id = "MDI::Window");
 
-    virtual void setup(Util::UString title, Util::Size2u size) override;
+    virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
 
     CREATE_VALUE(Util::UString, title, "")
 

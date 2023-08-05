@@ -20,7 +20,7 @@ public:
 
     std::string id() const { return m_id; }
 
-    virtual void setup(Util::UString title, Util::Size2u size) override;
+    virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
     virtual void center_on_screen() override;
 
     virtual Util::Point2i position() const override { return m_position; }

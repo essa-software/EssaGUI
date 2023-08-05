@@ -16,7 +16,7 @@ Overlay::Overlay(Host& host, std::string id)
     }
 }
 
-void Overlay::setup(Util::UString /*title*/, Util::Size2u size) { m_size = size.cast<int>(); }
+void Overlay::setup(Util::UString /*title*/, Util::Size2u size, llgl::WindowSettings const&) { m_size = size.cast<int>(); }
 
 void Overlay::center_on_screen() {
     auto& window = host();

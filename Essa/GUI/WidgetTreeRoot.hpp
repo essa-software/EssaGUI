@@ -6,6 +6,7 @@
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/WindowRoot.hpp>
+#include <Essa/LLGL/Window/WindowSettings.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <list>
 #include <memory>
@@ -25,7 +26,7 @@ public:
 
     CREATE_VALUE(std::string, id, "")
 
-    virtual void setup(Util::UString title, Util::Size2u size) = 0;
+    virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) = 0;
     virtual void center_on_screen() = 0;
     virtual void close() = 0;
 

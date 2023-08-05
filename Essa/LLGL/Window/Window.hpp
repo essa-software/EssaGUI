@@ -19,6 +19,7 @@ class SDLWindowData;
 
 class Window {
 public:
+    Window();
     Window(Util::Size2u size, Util::UString const& title, WindowSettings const& = {});
     ~Window();
 
@@ -57,8 +58,6 @@ public:
     Detail::SDLWindowData* window_data() { return m_data.get(); }
 
 private:
-    Window() = default;
-
     void create_impl(Util::Size2u size, Util::UString const& title, WindowSettings const& = {});
     void set_size_impl(Util::Size2u);
     std::optional<Event> poll_event_impl();

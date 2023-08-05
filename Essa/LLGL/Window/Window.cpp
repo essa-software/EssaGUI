@@ -7,6 +7,10 @@
 
 namespace llgl {
 
+// This must be here because otherwise we fail to compile because
+// of incomplete SDLWindowData
+Window::Window() = default;
+
 Window::Window(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) { create(size, title, settings); }
 
 Window Window::create_foreign(std::unique_ptr<Detail::SDLWindowData> data) {

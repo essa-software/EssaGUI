@@ -21,6 +21,7 @@ public:
     llgl::TTFFont& fixed_width_font() const { return m_resource_manager.fixed_width_font(); }
     Theme const& theme() const;
 
+    HostWindow& create_uninitialized_host_window();
     HostWindow& create_host_window(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 
     template<class T>
@@ -34,8 +35,10 @@ public:
     template<class T, class... Args>
         requires(std::is_base_of_v<WindowRoot, T>)
     OpenedHostWindow<T> open_host_window(Args&&... args) {
-        auto& window = create_host_window({}, "...", {});
+        auto& window = create_uninitialized_host_window();
+        // We expect that root will initialize/open the window.
         auto root = std::make_unique<T>(window, std::forward<Args>(args)...);
+        assert(!window.is_closed());
         auto root_ptr = root.get();
         window.set_root(std::move(root));
         return {

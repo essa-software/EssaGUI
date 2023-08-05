@@ -23,9 +23,10 @@ Window::Window(Host& host, std::string id)
     m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
 
-void Window::setup(Util::UString title, Util::Size2u size) {
+void Window::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) {
+    // TODO: Handle flags from settings
     set_title(title);
-    Overlay::setup(std::move(title), size);
+    Overlay::setup(std::move(title), size, settings);
 }
 
 void Window::handle_event(Event const& event) {

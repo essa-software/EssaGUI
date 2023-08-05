@@ -25,10 +25,7 @@ HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::Wind
     llgl::opengl::enable_debug_output();
 }
 
-void HostWindow::setup(Util::UString title, Util::Size2u size) {
-    set_title(title);
-    set_size(size);
-}
+void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) { create(size, title, settings); }
 
 void HostWindow::close() { llgl::Window::close(); }
 
