@@ -115,6 +115,9 @@ uint32_t SDLHelpers::llgl_window_flags_to_sdl(WindowFlags flags) {
     if (has_flag(flags, WindowFlags::Maximized)) {
         sdl_flags |= SDL_WINDOW_MAXIMIZED;
     }
+    if (has_flag(flags, WindowFlags::Tooltip)) {
+        sdl_flags |= SDL_WINDOW_TOOLTIP;
+    }
     return sdl_flags;
 }
 

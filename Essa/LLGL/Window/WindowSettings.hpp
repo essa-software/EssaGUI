@@ -12,6 +12,7 @@ enum class WindowFlags {
     Maximized = 0x10,
     TransparentBackground = 0x20,
     Shaped = 0x40,
+    Tooltip = 0x80,
 };
 
 ESSA_ENUM_BITWISE_OPERATORS(WindowFlags)
