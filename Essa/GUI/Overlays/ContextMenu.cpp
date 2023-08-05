@@ -45,7 +45,7 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
 
 Widget::EventHandlerResult MenuWidget::on_mouse_button_press(Event::MouseButtonPress const& event) {
     if (event.button() == llgl::MouseButton::Left) {
-        int action = std::floor((event.local_position().y() - raw_position().y()) / MenuItemHeight);
+        int action = std::floor(event.local_position().y() / MenuItemHeight);
         std::cout << action << std::endl;
         if (action < 0 || static_cast<size_t>(action) >= m_actions.size())
             return EventHandlerResult::NotAccepted;
