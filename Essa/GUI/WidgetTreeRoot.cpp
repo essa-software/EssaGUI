@@ -19,9 +19,14 @@ void WidgetTreeRoot::handle_events() {
     // windows.
     // FIXME: Support moving other ToolWindows even
     //        if other modal window is open.
+    // FIXME: This is totally wrong if there are multiple
+    //        HostWindows open.
     auto& app = GUI::Application::the();
     for (auto& host_window : app.host_windows()) {
         while (true) {
+            if (host_window.is_closed()) {
+                break;
+            }
             auto event = host_window.poll_event();
             if (!event) {
                 break;

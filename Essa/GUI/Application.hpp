@@ -48,6 +48,7 @@ public:
     }
 
     std::list<HostWindow>& host_windows() { return m_host_windows; }
+    void remove_closed_host_windows();
     void redraw_all_host_windows();
 
     // This is called every tick, just before updating host windows.

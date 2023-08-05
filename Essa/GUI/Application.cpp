@@ -40,8 +40,15 @@ HostWindow& Application::create_host_window(Util::Size2u size, Util::UString con
     return m_host_windows.emplace_back(size, title, settings);
 }
 
+void Application::remove_closed_host_windows() {
+    std::erase_if(m_host_windows, [](auto const& window) { return window.is_closed(); });
+}
+
 void Application::redraw_all_host_windows() {
     for (auto& host_window : m_host_windows) {
+        if (host_window.is_closed()) {
+            continue;
+        }
         host_window.do_draw();
     }
 }
@@ -53,7 +60,13 @@ void Application::tick() {
     if (on_tick) {
         on_tick();
     }
-    std::erase_if(m_host_windows, [](auto const& window) { return window.is_closed(); });
+    remove_closed_host_windows();
+    if (m_host_windows.empty()) {
+        // I hadn't better place for this.
+        // FIXME: Allow this to be disabled, and maybe more flexible (tool windows
+        //        shouldn't inhibit close etc)
+        quit();
+    }
     for (auto& host_window : m_host_windows) {
         host_window.update();
     }

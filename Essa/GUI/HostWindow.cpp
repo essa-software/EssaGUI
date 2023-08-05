@@ -27,7 +27,15 @@ HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::Wind
 
 void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) { create(size, title, settings); }
 
-void HostWindow::close() { llgl::Window::close(); }
+void HostWindow::close() {
+    llgl::Window::close();
+    if (on_close) {
+        on_close();
+    }
+    if (is_modal()) {
+        quit();
+    }
+}
 
 void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 
@@ -36,7 +44,7 @@ DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
 void HostWindow::handle_events() {
     while (true) {
         if (is_closed()) {
-            return;
+            break;
         }
         auto event = poll_event();
         if (!event) {
