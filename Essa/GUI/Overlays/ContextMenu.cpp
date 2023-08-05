@@ -31,7 +31,15 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.left += 10;
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
-        if (background_rect.contains(llgl::mouse_position() - window_root().window().position().to_vector() - raw_position().to_vector())) {
+
+        // FIXME: llgl::mouse_position() here breaks abstraction:
+        // - Widgets shouldn't need to know about which window they are in
+        // - llgl::mouse_position() forwards to SDL_GetMouseState which returns
+        //   position relative to current focused host window
+        // - So this wouldn't work in MDI windows, because we would need to
+        //   subtract MDI window's position on host window
+        // Basically we would need some GUI aware equivalent of llgl::mouse_position().
+        if (background_rect.contains(llgl::mouse_position() - raw_position().to_vector())) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             painter.deprecated_draw_rectangle(background_rect, hovered_background);
