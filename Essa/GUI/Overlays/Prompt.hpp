@@ -6,9 +6,9 @@
 
 namespace GUI {
 
-class Prompt : public ToolWindow {
+class Prompt : public WindowRoot {
 public:
-    explicit Prompt(MDI::Host& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
+    explicit Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
     std::optional<Util::UString> result() const { return m_result; }
 

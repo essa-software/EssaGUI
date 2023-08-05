@@ -1,15 +1,15 @@
 #pragma once
 
+#include "Essa/GUI/WidgetTreeRoot.hpp"
 #include "FileExplorer.hpp"
-#include "ToolWindow.hpp"
 
 #include <optional>
 
 namespace GUI {
 
-class FilePrompt : public ToolWindow {
+class FilePrompt : public WindowRoot {
 public:
-    explicit FilePrompt(MDI::Host& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
+    explicit FilePrompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
     std::optional<Util::UString> result() const { return m_result; }
 
@@ -21,6 +21,6 @@ private:
     std::vector<std::string> m_extensions;
 };
 
-FilePrompt* file_prompt(MDI::Host&, Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
+FilePrompt* file_prompt(Util::UString help_text, Util::UString window_title = "Prompt", Util::UString placeholder = "");
 
 }
