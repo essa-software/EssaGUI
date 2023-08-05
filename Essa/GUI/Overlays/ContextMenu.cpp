@@ -74,17 +74,17 @@ ContextMenuOverlay::ContextMenuOverlay(WidgetTreeRoot& window, ContextMenu conte
     auto& container = set_main_widget<Container>();
     container.set_layout<VerticalBoxLayout>();
 
-    if (!context_menu.title().is_empty()) {
+    if (!m_context_menu.title().is_empty()) {
         auto* title_textfield = container.add_widget<Textfield>();
         title_textfield->set_size({ Util::Length::Auto, 30.0_px });
-        title_textfield->set_content(context_menu.title());
+        title_textfield->set_content(m_context_menu.title());
         title_textfield->set_padding(10);
         title_textfield->set_font_size(18);
         container.add_widget<Separator>();
     }
 
     m_menu_widget = container.add_widget<MenuWidget>();
-    for (auto const& action : context_menu.actions()) {
+    for (auto const& action : m_context_menu.actions()) {
         m_menu_widget->add_action(action.first);
     }
     m_menu_widget->on_action = [this](size_t action_index) {
