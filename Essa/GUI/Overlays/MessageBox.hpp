@@ -14,7 +14,7 @@ public:
 
     enum class ButtonRole { None, Yes, No, Ok };
 
-    ButtonRole exec();
+    ButtonRole clicked_button() const { return m_clicked_button; }
 
 private:
     virtual Widget::EventHandlerResult handle_event(GUI::Event const&) override;

@@ -12,10 +12,7 @@ class Overlay : public WidgetTreeRoot {
 public:
     Overlay(Host& host, std::string id);
 
-    virtual void close() override {
-        m_closed = true;
-        quit();
-    }
+    virtual void close() override { m_closed = true; }
     bool is_closed() const { return m_closed; }
 
     std::string id() const { return m_id; }

@@ -8,6 +8,7 @@
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/MDI/Host.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/DelayedInit.hpp>
 
 namespace GUI {
 
@@ -35,7 +36,7 @@ public:
     void open_context_menu(ContextMenu, Util::Point2i position);
     TooltipOverlay& add_tooltip(Tooltip t);
 
-    virtual Util::Point2i position() const override { return {}; }
+    virtual Util::Point2i position() const override { return llgl::Window::position(); }
     virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
     Util::Recti rect() const { return { {}, size() }; }
 
@@ -59,6 +60,9 @@ public:
     }
     // FIXME: Rename this to main_widget after removing the old main_widget
     Widget* root_widget() { return WidgetTreeRoot::main_widget(); }
+
+    void show_modal();
+    bool is_modal() const { return m_modal; }
 
     // --- Deprecated compatibility things start here ---
     // Get rid of them when everyone is updated to explicit MDI
@@ -91,9 +95,10 @@ private:
     friend class Application;
 
     Util::Color m_background_color;
-    Gfx::Painter m_painter { renderer() };
+    Util::DelayedInit<Gfx::Painter> m_painter;
 
     MDI::Host* m_legacy_mdi_host = nullptr;
+    bool m_modal = false;
 };
 
 }

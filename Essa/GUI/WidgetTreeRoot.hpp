@@ -14,9 +14,7 @@
 namespace GUI {
 
 // TODO: Rename this to AbstractWindow or something like this
-class WidgetTreeRoot
-    : public EventLoop
-    , public EML::EMLObject {
+class WidgetTreeRoot : public EML::EMLObject {
 public:
     WidgetTreeRoot() = default;
     WidgetTreeRoot(WidgetTreeRoot const&) = delete;
@@ -44,13 +42,6 @@ public:
     // ToolWindows, it is content + titlebar + resize rect.
     virtual Util::Recti full_rect() const { return rect(); }
 
-    void show_modal() {
-        m_modal = true;
-        run();
-    }
-
-    bool is_modal() const { return m_modal; }
-
     template<class T, class... Args>
         requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
     auto& set_main_widget(Args&&... args) {
@@ -66,9 +57,6 @@ public:
 protected:
     void set_root(std::unique_ptr<WindowRoot> root) { m_root = std::move(root); }
 
-    using EventLoop::run;
-
-    virtual void tick() override;
     // Deprecated. Override WindowRoot::load_from_eml_object for window-agnostic EML loaders.
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
@@ -77,7 +65,6 @@ protected:
 
 private:
     std::unique_ptr<WindowRoot> m_root;
-    bool m_modal = false;
 };
 
 }

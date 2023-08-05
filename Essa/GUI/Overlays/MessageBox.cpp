@@ -61,11 +61,6 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
     }
 }
 
-MessageBox::ButtonRole MessageBox::exec() {
-    window().show_modal();
-    return m_clicked_button;
-}
-
 Widget::EventHandlerResult MessageBox::handle_event(Event const& event) {
     if (auto const* keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Enter && m_default_button) {
         m_default_button->on_click();
@@ -76,7 +71,8 @@ Widget::EventHandlerResult MessageBox::handle_event(Event const& event) {
 
 MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
     auto msgbox = GUI::Application::the().open_host_window<GUI::MessageBox>(std::move(message), std::move(title), buttons);
-    return msgbox.root.exec();
+    msgbox.window.show_modal();
+    return msgbox.root.clicked_button();
 }
 
 }

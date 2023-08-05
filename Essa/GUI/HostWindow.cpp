@@ -23,19 +23,15 @@ HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::Wind
     m_legacy_mdi_host->set_raw_size(size.cast<int>());
     set_active();
     llgl::opengl::enable_debug_output();
+    m_painter.construct(renderer());
 }
 
-void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) { create(size, title, settings); }
-
-void HostWindow::close() {
-    llgl::Window::close();
-    if (on_close) {
-        on_close();
-    }
-    if (is_modal()) {
-        quit();
-    }
+void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) {
+    create(size, title, settings);
+    m_painter.construct(renderer());
 }
+
+void HostWindow::close() { llgl::Window::close(); }
 
 void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 
@@ -59,20 +55,21 @@ void HostWindow::do_draw() {
     set_active();
     renderer().clear(m_background_color);
     OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
-    m_painter.reset();
+    m_painter->reset();
 
     Util::Recti viewport { {}, size() };
-    m_painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
+    m_painter->builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
 
-    WidgetTreeRoot::draw(m_painter);
+    WidgetTreeRoot::draw(*m_painter);
 
-    m_painter.render();
+    m_painter->render();
     display();
 }
 
 void HostWindow::open_context_menu(ContextMenu menu, Util::Point2i position) {
     auto menu_overlay = GUI::Application::the().open_host_window<ContextMenuOverlay>(std::move(menu));
-    menu_overlay.window.set_position(this->position() + position.to_vector());
+    menu_overlay.window.set_position(position);
+    menu_overlay.window.show_modal();
 }
 
 TooltipOverlay& HostWindow::add_tooltip(Tooltip t) {
@@ -86,5 +83,62 @@ TooltipOverlay& HostWindow::add_tooltip(Tooltip t) {
 Theme const& HostWindow::theme() const { return Application::the().theme(); }
 
 Gfx::ResourceManager const& HostWindow::resource_manager() const { return Application::the().resource_manager(); }
+
+void HostWindow::show_modal() {
+    class ModalDialogEventLoop : public EventLoop {
+    public:
+        explicit ModalDialogEventLoop(HostWindow& window)
+            : m_window(window) { }
+
+    private:
+        void handle_events() {
+            // Handle all events for modal window
+            m_window.handle_events();
+
+            // Handle only Resize for other windows (for relayout)
+            for (auto& window : GUI::Application::the().host_windows()) {
+                if (&window == &m_window) {
+                    continue;
+                }
+                while (true) {
+                    if (window.is_closed()) {
+                        break;
+                    }
+                    auto event = window.poll_event();
+                    if (!event) {
+                        break;
+                    }
+                    if (!event->is<llgl::EventTypes::WindowResizeEvent>()) {
+                        continue;
+                    }
+                    window.handle_event(*event);
+                }
+            }
+        }
+
+        virtual void tick() override {
+            handle_events();
+
+            // Prevent use-after-free if modal window was closed in event handler.
+            // This assumes that mutations can only happen there.
+            if (m_window.is_closed()) {
+                quit();
+                return;
+            }
+            if (!is_running()) {
+                return;
+            }
+
+            // Draw all windows
+            GUI::Application::the().remove_closed_host_windows();
+            GUI::Application::the().redraw_all_host_windows();
+        }
+
+        HostWindow& m_window;
+    };
+
+    ModalDialogEventLoop loop(*this);
+    loop.run();
+}
 
 }

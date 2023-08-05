@@ -189,12 +189,6 @@ void Window::handle_event(Event const& event) {
 void Window::draw_decorations(Gfx::Painter& painter) const {
     using namespace Gfx::Drawing;
 
-    if (is_modal()) {
-        Gfx::RectangleDrawOptions modal_backdrop;
-        modal_backdrop.fill_color = theme().modal_backdrop;
-        painter.deprecated_draw_rectangle(host().local_rect().cast<float>(), modal_backdrop);
-    }
-
     Util::Point2f position { std::round(this->position().x()), std::round(this->position().y()) };
     Util::Size2f size { std::round(this->size().x()), std::round(this->size().y()) };
 
