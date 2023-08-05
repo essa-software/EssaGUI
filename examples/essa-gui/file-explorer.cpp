@@ -3,11 +3,9 @@
 
 int main() {
     GUI::Application app;
-    auto& host_window = app.create_host_window({ 1000, 1000 }, "File Explorer");
 
-    auto file_explorer = host_window.open_overlay<GUI::FileExplorer>();
-    file_explorer.window_root.open_path("/");
-    file_explorer.overlay.show_modal();
+    auto path = GUI::FileExplorer::get_path_to_open();
+    fmt::print("path: {}\n", path ? path->string() : "None");
 
     app.run();
     return 0;
