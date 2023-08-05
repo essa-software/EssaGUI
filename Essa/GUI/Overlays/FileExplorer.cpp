@@ -1,5 +1,4 @@
 #include "FileExplorer.hpp"
-#include "EssaUtil/Config.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
@@ -13,6 +12,7 @@
 #include <Essa/GUI/Widgets/TextButton.hpp>
 #include <Essa/GUI/Widgets/Textbox.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
+#include <EssaUtil/Config.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
 #include <filesystem>
@@ -347,7 +347,9 @@ void FileExplorer::open_path(std::filesystem::path path) {
     m_list->set_scroll({});
 }
 
-std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow&) {
+std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow&) { return get_path_to_open(); }
+
+std::optional<std::filesystem::path> FileExplorer::get_path_to_open() {
     auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;
     explorer.window.center_on_screen();
