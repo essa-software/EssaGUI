@@ -285,6 +285,22 @@ public:
         return ctx.out();
     }
 };
+
+template<> class fmt::formatter<llgl::EventTypes::WindowFocusGained> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusGained const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "WindowFocusGained");
+        return ctx.out();
+    }
+};
+
+template<> class fmt::formatter<llgl::EventTypes::WindowFocusLost> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusLost const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "WindowFocusLost");
+        return ctx.out();
+    }
+};
 template<> class fmt::formatter<llgl::EventTypes::KeyEvent::KeyModifiers> : public fmt::formatter<std::string_view> {
 public:
     template<typename FC> constexpr auto format(llgl::EventTypes::KeyEvent::KeyModifiers const& mod, FC& ctx) const {
