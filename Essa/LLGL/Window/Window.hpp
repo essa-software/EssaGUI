@@ -45,6 +45,7 @@ public:
     Util::Recti system_rect() const;
 
     Renderer& renderer() { return m_renderer; }
+    Util::Point2i position() const;
     Util::Size2u size() const { return m_size; }
     Util::Point2u center() const { return (m_size / 2).to_vector().to_point(); }
     float aspect() const { return (float)m_size.x() / m_size.y(); }

@@ -253,4 +253,11 @@ Util::Recti Window::system_rect() const {
     return rect;
 }
 
+Util::Point2i Window::position() const {
+    int x;
+    int y;
+    SDL_GetWindowPosition(m_data->window, &x, &y);
+    return { x, y };
+}
+
 }
