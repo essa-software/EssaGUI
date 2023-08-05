@@ -153,10 +153,10 @@ std::optional<Event> Window::poll_event_impl() {
                 return Event::WindowResize({ sdl_event->window.data1, sdl_event->window.data2 });
             case SDL_WINDOWEVENT_FOCUS_GAINED:
                 m_data->focused = true;
-                break;
+                return Event::WindowFocusGained {};
             case SDL_WINDOWEVENT_FOCUS_LOST:
                 m_data->focused = false;
-                break;
+                return Event::WindowFocusLost {};
             case SDL_WINDOWEVENT_CLOSE: {
                 return Event::WindowClose {};
             } break;

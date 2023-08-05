@@ -44,6 +44,15 @@ private:
     Util::Size2u m_new_size;
 };
 
+class WindowFocusGained : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Global; }
+};
+class WindowFocusLost : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Global; }
+};
+
 class KeyEvent : public Base {
 public:
     struct KeyModifiers {
@@ -168,9 +177,10 @@ private:
 };
 
 using Variant = std::variant<
-    EventTypes::WindowCloseEvent, EventTypes::WindowResizeEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent,
-    EventTypes::MouseEnterEvent, EventTypes::MouseLeaveEvent, EventTypes::MouseMoveEvent, EventTypes::MouseButtonPressEvent,
-    EventTypes::MouseButtonReleaseEvent, EventTypes::MouseScrollEvent, EventTypes::TextInputEvent>;
+    EventTypes::WindowCloseEvent, EventTypes::WindowResizeEvent, EventTypes::WindowFocusGained, EventTypes::WindowFocusLost,
+    EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent, EventTypes::MouseEnterEvent, EventTypes::MouseLeaveEvent,
+    EventTypes::MouseMoveEvent, EventTypes::MouseButtonPressEvent, EventTypes::MouseButtonReleaseEvent, EventTypes::MouseScrollEvent,
+    EventTypes::TextInputEvent>;
 
 }
 
@@ -184,6 +194,8 @@ struct Event : public EventTypes::Variant {
 
     using WindowClose = EventTypes::WindowCloseEvent;
     using WindowResize = EventTypes::WindowResizeEvent;
+    using WindowFocusGained = EventTypes::WindowFocusGained;
+    using WindowFocusLost = EventTypes::WindowFocusLost;
     using Key = EventTypes::KeyEvent;
     using KeyPress = EventTypes::KeyPressEvent;
     using KeyRelease = EventTypes::KeyReleaseEvent;

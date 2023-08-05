@@ -141,8 +141,11 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
 
 Widget::EventHandlerResult Widget::handle_event(Event const& event) {
     return event.visit(
+        // TODO: Separate widget and window events to get rid of these "NotAccepted" dummy handlers
         [&](Event::WindowClose const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; },
         [&](Event::WindowResize const& event) -> EventHandlerResult { return on_window_resize(event); },
+        [&](Event::WindowFocusGained const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; },
+        [&](Event::WindowFocusLost const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; },
         [&](Event::KeyPress const& event) -> EventHandlerResult { return on_key_press(event); },
         [&](Event::KeyRelease const& event) -> EventHandlerResult { return on_key_release(event); },
         [&](Event::MouseEnter const& event) -> EventHandlerResult { return on_mouse_enter(event); },
