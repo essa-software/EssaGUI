@@ -67,16 +67,15 @@ private:
     }
 };
 
-ContextMenuOverlay::ContextMenuOverlay(MDI::Host& window, ContextMenu context_menu, Util::Point2i position)
-    : Overlay(window, "ContextMenu")
-    , m_context_menu(context_menu)
-    , m_position(position) {
+ContextMenuOverlay::ContextMenuOverlay(WidgetTreeRoot& window, ContextMenu context_menu)
+    : WindowRoot(window)
+    , m_context_menu(std::move(context_menu)) {
 
     auto& container = set_main_widget<Container>();
     container.set_layout<VerticalBoxLayout>();
 
     if (!context_menu.title().is_empty()) {
-        auto title_textfield = container.add_widget<Textfield>();
+        auto* title_textfield = container.add_widget<Textfield>();
         title_textfield->set_size({ Util::Length::Auto, 30.0_px });
         title_textfield->set_content(context_menu.title());
         title_textfield->set_padding(10);
@@ -86,7 +85,7 @@ ContextMenuOverlay::ContextMenuOverlay(MDI::Host& window, ContextMenu context_me
 
     m_menu_widget = container.add_widget<MenuWidget>();
     for (auto const& action : context_menu.actions()) {
-        m_menu_widget->add_action(std::move(action.first));
+        m_menu_widget->add_action(action.first);
     }
     m_menu_widget->on_action = [this](size_t action_index) {
         std::cout << action_index << std::endl;
@@ -95,7 +94,7 @@ ContextMenuOverlay::ContextMenuOverlay(MDI::Host& window, ContextMenu context_me
     };
 }
 
-Util::Size2i ContextMenuOverlay::size() const {
+Util::Size2i ContextMenuOverlay::required_size() const {
     auto options_size = m_menu_widget->wanted_size();
     if (!m_context_menu.title().is_empty()) {
         options_size.set_y(options_size.y() + 40);
@@ -103,28 +102,17 @@ Util::Size2i ContextMenuOverlay::size() const {
     return options_size;
 }
 
-void ContextMenuOverlay::handle_event(Event const& event) {
-    WidgetTreeRoot::handle_event(event);
-
+Widget::EventHandlerResult ContextMenuOverlay::handle_event(Event const& event) {
     // FIXME: Add something like close_when_clicked_outside()
-    if (auto mousepress = event.get<Event::MouseButtonPress>();
-        mousepress && !full_rect().contains(mousepress->local_position() + position().to_vector())) {
+    if (event.get<Event::WindowFocusLost>()) {
         close();
+        return Widget::EventHandlerResult::Accepted;
     }
-    if (auto keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Escape) {
+    if (const auto* keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Escape) {
         close();
+        return Widget::EventHandlerResult::Accepted;
     }
-}
-
-void ContextMenuOverlay::draw(Gfx::Painter& painter) {
-    Gfx::RectangleDrawOptions background;
-    background.fill_color = theme().menu.background;
-    background.outline_color = theme().menu.foreground;
-    background.outline_thickness = -1;
-    painter.deprecated_draw_rectangle(rect().cast<float>(), background);
-
-    Gfx::ClipViewScope scope(painter, rect(), Gfx::ClipViewScope::Mode::NewStack);
-    WidgetTreeRoot::draw(painter);
+    return Widget::EventHandlerResult::NotAccepted;
 }
 
 }

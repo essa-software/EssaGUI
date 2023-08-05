@@ -70,10 +70,9 @@ void HostWindow::do_draw() {
     display();
 }
 
-void HostWindow::open_context_menu(ContextMenu context_menu, Util::Point2i position) {
-    // TODO: Use native (Host) windows
-    auto& menu = m_legacy_mdi_host->open_overlay<ContextMenuOverlay>(context_menu, position);
-    menu.show_modal();
+void HostWindow::open_context_menu(ContextMenu menu, Util::Point2i position) {
+    auto menu_overlay = GUI::Application::the().open_host_window<ContextMenuOverlay>(std::move(menu));
+    menu_overlay.window.set_position(this->position() + position.to_vector());
 }
 
 TooltipOverlay& HostWindow::add_tooltip(Tooltip t) {

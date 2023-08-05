@@ -33,16 +33,13 @@ private:
     std::vector<std::pair<Util::UString, std::function<void()>>> m_actions;
 };
 
-class ContextMenuOverlay : public Overlay {
+class ContextMenuOverlay : public WindowRoot {
 public:
-    ContextMenuOverlay(MDI::Host&, ContextMenu, Util::Point2i position);
-
-    virtual Util::Point2i position() const override { return m_position; }
-    virtual Util::Size2i size() const override;
+    ContextMenuOverlay(WidgetTreeRoot&, ContextMenu);
 
 private:
-    virtual void handle_event(GUI::Event const&) override;
-    virtual void draw(Gfx::Painter&) override;
+    Util::Size2i required_size() const;
+    virtual Widget::EventHandlerResult handle_event(GUI::Event const&) override;
 
     MenuWidget* m_menu_widget = nullptr;
     ContextMenu m_context_menu;
