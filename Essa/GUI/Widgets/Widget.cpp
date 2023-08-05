@@ -1,4 +1,3 @@
-#include "Essa/GUI/Widgets/ImageWidget.hpp"
 #include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <Essa/GUI/Application.hpp>
@@ -24,6 +23,9 @@ namespace GUI {
 DBG_DEFINE_GLOBAL(GUI_DrawWidgetLayoutBounds);
 
 Widget::~Widget() {
+    if (m_tooltip) {
+        m_tooltip->window().close();
+    }
     if (m_window_root && m_window_root->focused_widget() == this)
         m_window_root->set_focused_widget(nullptr);
     if (EventLoop::has_current()) {
@@ -43,9 +45,10 @@ void Widget::update() {
         auto text = m_tooltip->text();
         update_tooltip(widget_relative_mouse_position, text);
         m_tooltip->set_text(text);
-        m_tooltip->set_position(
-            (m_window_root->window().position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Vector2i(32, 32))
-        );
+        static_cast<HostWindow&>(m_tooltip->window())
+            .set_position(
+                (m_window_root->window().position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Vector2i(32, 32))
+            );
     }
 }
 
@@ -62,7 +65,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto result2 = transformed_event.visit(
         [&](Event::MouseLeave const&) -> EventHandlerResult {
             if (m_tooltip) {
-                m_tooltip->close();
+                m_tooltip->window().close();
                 m_tooltip = nullptr;
             }
             return EventHandlerResult::NotAccepted;
@@ -72,15 +75,16 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
             m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
-                auto widget_relative_mouse_position = llgl::mouse_position();
-                widget_relative_mouse_position -= host_position().to_vector();
-                if (m_hover && should_display_tooltip(widget_relative_mouse_position)) {
+                if (m_hover && should_display_tooltip(mouse_position)) {
                     if (!m_tooltip) {
-                        m_tooltip_position = widget_relative_mouse_position;
+                        m_tooltip_position = mouse_position;
                         if (m_tooltip_timer.expired()) {
+                            fmt::print("aaaa\n");
                             m_tooltip_timer = EventLoop::current().set_timeout(667ms, [this]() {
                                 fmt::print("TIMER\n");
-                                m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(m_tooltip_position), {} });
+                                m_tooltip = &host_window().add_tooltip(
+                                    m_tooltip_position.cast<unsigned>(), Tooltip { create_tooltip(m_tooltip_position) }
+                                );
                             });
                         }
                     }
@@ -88,7 +92,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 else {
                     EventLoop::current().remove_timer(m_tooltip_timer);
                     if (m_tooltip) {
-                        m_tooltip->close();
+                        m_tooltip->window().close();
                         m_tooltip = nullptr;
                     }
                 }
@@ -98,11 +102,13 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 m_tooltip_position = mouse_position;
                 if (m_hover && should_display_tooltip(mouse_position)) {
                     if (!m_tooltip) {
-                        m_tooltip = &host_window().add_tooltip(Tooltip { create_tooltip(m_tooltip_position), {} });
+                        m_tooltip = &host_window().add_tooltip(
+                            m_tooltip_position.cast<unsigned>(), Tooltip { create_tooltip(m_tooltip_position) }
+                        );
                     }
                 }
                 else if (m_tooltip) {
-                    m_tooltip->close();
+                    m_tooltip->window().close();
                     m_tooltip = nullptr;
                 }
                 break;

@@ -72,12 +72,11 @@ void HostWindow::open_context_menu(ContextMenu menu, Util::Point2i position) {
     menu_overlay.window.show_modal();
 }
 
-TooltipOverlay& HostWindow::add_tooltip(Tooltip t) {
-    // TODO: Use native (Host) windows
-    auto& overlay = m_legacy_mdi_host->open_overlay<TooltipOverlay>(std::move(t));
-    auto& container = overlay.set_main_widget<Container>();
-    container.set_layout<HorizontalBoxLayout>();
-    return overlay;
+TooltipOverlay& HostWindow::add_tooltip(Util::Point2u position, Tooltip t) const {
+    Gfx::Text text(t.text, GUI::Application::the().font());
+    auto tooltip_window = GUI::Application::the().open_host_window<TooltipOverlay>(std::move(t));
+    tooltip_window.window.set_position(this->position() + position.cast<int>().to_vector());
+    return tooltip_window.root;
 }
 
 Theme const& HostWindow::theme() const { return Application::the().theme(); }

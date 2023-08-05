@@ -1,32 +1,24 @@
-#include <Essa/GUI/Overlays/Tooltip.hpp>
+#include "Tooltip.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 
 namespace GUI {
 
-void TooltipOverlay::draw(Gfx::Painter& painter) {
-    Gfx::Text text { m_tooltip.text, Application::the().font() };
-    text.set_font_size(theme().label_font_size);
-    text.set_fill_color(theme().tooltip.text);
-    auto bounds = text.calculate_text_size();
-
-    Gfx::RectangleDrawOptions background;
-    background.fill_color = theme().tooltip.background;
-    background.outline_color = theme().tooltip.foreground;
-    background.outline_thickness = -1;
-
-    auto x_pos = std::min<float>(host_window().size().x() - (bounds.x() + 20), position().x() - 10);
-    Util::Rectf bounds_rect {
-        { x_pos, position().y() - 15 },
-        { bounds.x() + 20, bounds.y() + 12 },
-    };
-
-    painter.deprecated_draw_rectangle(bounds_rect, background);
-
-    // FIXME: Text size is calculated 2x
-    text.align(Align::Center, bounds_rect);
-    text.draw(painter);
+TooltipOverlay::TooltipOverlay(WidgetTreeRoot& window, Tooltip t)
+    : WindowRoot(window) {
+    m_textfield = &set_main_widget<GUI::Textfield>();
+    window.setup("TooltipOverlay", m_textfield->needed_size_for_text(), llgl::WindowSettings { .flags = llgl::WindowFlags::Tooltip });
+    set_text(std::move(t.text));
+    m_textfield->set_background_color(GUI::Application::the().theme().tooltip.background);
+    // TODO: Tooltip color
 }
+
+void TooltipOverlay::set_text(Util::UString text) {
+    m_text = text;
+    m_textfield->set_content(std::move(text));
+    window().set_size(m_textfield->needed_size_for_text().cast<int>());
+}
+Util::UString TooltipOverlay::text() const { return m_text; }
 
 }

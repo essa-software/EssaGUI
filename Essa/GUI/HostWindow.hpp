@@ -35,7 +35,8 @@ public:
     //       function won't return until user chooses an action
     //       or dismisses the menu.
     void open_context_menu(ContextMenu, Util::Point2i position);
-    TooltipOverlay& add_tooltip(Tooltip t);
+    // Position is relative to this HostWindow.
+    TooltipOverlay& add_tooltip(Util::Point2u position, Tooltip t) const;
 
     virtual Util::Point2i position() const override { return llgl::Window::position(); }
     virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
