@@ -6,8 +6,6 @@
 namespace GUI {
 
 EML::EMLErrorOr<void> WindowRoot::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
-    set_created_main_widget(TRY(object.require_and_construct_object<Widget>("main_widget", loader, *this)));
-
     auto title = TRY(object.get_property("title", EML::Value(Util::UString {})).to_string());
     auto width = TRY(object.get_property("width", EML::Value(0.0)).to_double());
     auto height = TRY(object.get_property("height", EML::Value(0.0)).to_double());
@@ -18,6 +16,7 @@ EML::EMLErrorOr<void> WindowRoot::load_from_eml_object(EML::Object const& object
         m_window.center_on_screen();
     }
 
+    set_created_main_widget(TRY(object.require_and_construct_object<Widget>("main_widget", loader, *this)));
     return {};
 }
 
