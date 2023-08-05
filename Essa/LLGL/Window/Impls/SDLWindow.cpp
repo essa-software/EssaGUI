@@ -84,6 +84,7 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
     std::cout << "SDLWindow: Created OpenGL context version " << major << "." << minor << std::endl;
+    set_active();
 }
 
 void Window::destroy() {
