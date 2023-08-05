@@ -220,6 +220,13 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
             open_path(path);
         }
     };
+    m_list->on_context_menu_request = [&](unsigned row) -> std::optional<ContextMenu> {
+        auto path = m_model->get_path(row);
+        ContextMenu menu;
+        menu.set_title(Util::UString(path.filename().string()));
+        menu.add_action("Open", [this, path]() { open_path(path); });
+        return menu;
+    };
 
     m_model = &m_list->create_and_set_model<FileModel>();
 
