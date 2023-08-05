@@ -65,6 +65,8 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto result2 = transformed_event.visit(
         [&](Event::MouseLeave const&) -> EventHandlerResult {
             if (m_tooltip) {
+                // FIXME: This makes tooltips not work at all because widget gets MouseLeave
+                //        event immediately after tooltip is opened (For some reason)
                 m_tooltip->window().close();
                 m_tooltip = nullptr;
             }
