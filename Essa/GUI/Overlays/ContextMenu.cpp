@@ -92,6 +92,8 @@ ContextMenuOverlay::ContextMenuOverlay(WidgetTreeRoot& window, ContextMenu conte
         m_context_menu.actions()[action_index].second();
         close();
     };
+
+    window.setup("ContextMenu", required_size().cast<unsigned>(), llgl::WindowSettings { .flags = llgl::WindowFlags::Borderless });
 }
 
 Util::Size2i ContextMenuOverlay::required_size() const {
