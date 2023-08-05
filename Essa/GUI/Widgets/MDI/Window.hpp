@@ -9,7 +9,7 @@ namespace GUI::MDI {
 
 class Host;
 
-class Window : public Overlay {
+class Window final : public Overlay {
 public:
     explicit Window(Host& host, std::string id = "MDI::Window");
 
