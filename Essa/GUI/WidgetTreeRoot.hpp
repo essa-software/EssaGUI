@@ -25,6 +25,7 @@ public:
     CREATE_VALUE(std::string, id, "")
 
     virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) = 0;
+    virtual void set_size(Util::Size2i) = 0;
     virtual void center_on_screen() = 0;
     virtual void close() = 0;
 

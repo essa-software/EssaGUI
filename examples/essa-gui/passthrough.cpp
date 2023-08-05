@@ -31,7 +31,7 @@ int main() {
         { 700, 400 }, "TEST",
         { .flags = llgl::WindowFlags::Resizable | llgl::WindowFlags::TransparentBackground | llgl::WindowFlags::Borderless }
     );
-    window.set_size(window.screen_size());
+    window.set_size(window.screen_size().cast<int>());
     window.center_on_screen();
 
 #ifdef SDL_VIDEO_DRIVER_X11

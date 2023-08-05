@@ -25,6 +25,7 @@ public:
 
     virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
     virtual void close() override;
+    virtual void set_size(Util::Size2i size) override { llgl::Window::set_size(size.cast<unsigned>()); }
 
     // TODO: Find a way for this to be private
     void do_draw();

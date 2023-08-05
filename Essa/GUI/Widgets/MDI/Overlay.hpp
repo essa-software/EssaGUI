@@ -23,7 +23,7 @@ public:
     virtual Util::Point2i position() const override { return m_position; }
     void set_position(Util::Point2i position) { m_position = position; }
     virtual Util::Size2i size() const override { return m_size; }
-    void set_size(Util::Size2i size) { m_size = size; }
+    virtual void set_size(Util::Size2i size) override { m_size = size; }
 
     Host& host() { return m_host; }
     Host const& host() const { return m_host; }
