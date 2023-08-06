@@ -57,7 +57,6 @@ public:
     template<class T, class... Args>
         requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
     auto& set_root_widget(Args&&... args) {
-        m_legacy_mdi_host = nullptr;
         return WidgetTreeRoot::set_main_widget<T>(std::forward<Args>(args)...);
     }
     // FIXME: Rename this to main_widget after removing the old main_widget
@@ -66,32 +65,6 @@ public:
     void show_modal();
     bool is_modal() const { return m_modal; }
 
-    // --- Deprecated compatibility things start here ---
-    // Get rid of them when everyone is updated to explicit MDI
-    auto legacy_mdi_host() { return m_legacy_mdi_host; }
-    template<class T, class... Args> [[deprecated]] T& set_main_widget(Args&&... args) {
-        assert(m_legacy_mdi_host);
-        return m_legacy_mdi_host->set_background_widget<T>(std::forward<Args>(args)...);
-    }
-    [[deprecated]] Widget const* main_widget() const {
-        assert(m_legacy_mdi_host);
-        return m_legacy_mdi_host->background_widget();
-    }
-    [[deprecated]] Widget* main_widget() {
-        assert(m_legacy_mdi_host);
-        return m_legacy_mdi_host->background_widget();
-    }
-    template<class T, class... Args> [[deprecated]] decltype(auto) open_overlay(Args&&... a) {
-        assert(m_legacy_mdi_host);
-        return m_legacy_mdi_host->open_overlay<T>(std::forward<Args>(a)...);
-    }
-    void remove_closed_overlays() {
-        if (m_legacy_mdi_host) {
-            m_legacy_mdi_host->remove_closed_overlays();
-        }
-    }
-    // --- END ---
-
 private:
     friend WidgetTreeRoot;
     friend class Application;
@@ -99,7 +72,6 @@ private:
     Util::Color m_background_color;
     Util::DelayedInit<Gfx::Painter> m_painter;
 
-    MDI::Host* m_legacy_mdi_host = nullptr;
     bool m_modal = false;
 };
 

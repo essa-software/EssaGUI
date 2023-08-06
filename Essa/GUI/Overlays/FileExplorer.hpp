@@ -63,7 +63,6 @@ public:
     CREATE_VALUE(FileExplorerType, type, FileExplorerType::FILE)
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
-    [[deprecated]] static std::optional<std::filesystem::path> get_path_to_open(HostWindow& host_window);
     static std::optional<std::filesystem::path> get_path_to_open();
 
 private:

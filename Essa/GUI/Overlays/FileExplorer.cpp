@@ -347,8 +347,6 @@ void FileExplorer::open_path(std::filesystem::path path) {
     m_list->set_scroll({});
 }
 
-std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow&) { return get_path_to_open(); }
-
 std::optional<std::filesystem::path> FileExplorer::get_path_to_open() {
     auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;

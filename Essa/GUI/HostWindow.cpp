@@ -14,20 +14,15 @@
 
 namespace GUI {
 
-HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings)
-    : llgl::Window(size, title, settings) {
-    // FIXME: Support custom window roots (that's the point of them after all!)
+HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings) {
     set_root(std::make_unique<WindowRoot>(*this));
-    set_root_widget<MDI::Host>();
-    m_legacy_mdi_host = static_cast<MDI::Host*>(root_widget());
-    m_legacy_mdi_host->set_raw_size(size.cast<int>());
-    set_active();
-    llgl::opengl::enable_debug_output();
-    m_painter.construct(renderer());
+    setup(title, size, settings);
 }
 
 void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) {
     create(size, title, settings);
+    set_active();
+    llgl::opengl::enable_debug_output();
     m_painter.construct(renderer());
 }
 
