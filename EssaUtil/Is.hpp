@@ -4,6 +4,8 @@
 
 namespace Util {
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
 template<class ExpectedT, class T>
     requires(std::is_base_of_v<T, ExpectedT>) bool
 is(T const& t) {
@@ -12,5 +14,6 @@ is(T const& t) {
 
     return dynamic_cast<ExpectedT const*>(&t);
 }
+#pragma GCC diagnostic pop
 
 }
