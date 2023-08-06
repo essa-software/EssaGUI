@@ -238,6 +238,7 @@ class MainWidget : public GUI::Container {
             if (!path) {
                 return;
             }
+            host_window().set_active();
             m_camera_view->set_object(&resource_manager().require_external<Essa::Model>(path->string()));
         };
 
