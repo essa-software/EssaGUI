@@ -11,7 +11,7 @@
 #include <type_traits>
 
 // Keep last!
-#include <Essa/LLGL/AbstractOpenGLHelper.hpp>
+#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 
 namespace llgl {
 
