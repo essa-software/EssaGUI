@@ -16,9 +16,21 @@ Host::Host()
 }
 
 void Host::focus_window(OverlayList::iterator new_focused_it) {
-    if (new_focused_it == m_overlays.end())
+    if (m_focused_overlay == &**new_focused_it) {
         return;
+    }
+    if (m_focused_overlay) {
+        m_focused_overlay->handle_event(GUI::Event::WindowFocusLost());
+    }
+    if (new_focused_it == m_overlays.end()) {
+        m_focused_overlay = nullptr;
+        return;
+    }
+
     m_focused_overlay = new_focused_it->get();
+    m_focused_overlay->handle_event(GUI::Event::WindowFocusGained());
+
+    // Move focused window to top
     if (m_focused_overlay->always_on_bottom())
         return;
     auto ptr = std::move(*new_focused_it);
@@ -45,7 +57,6 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
 
     // Focus overlay if mouse button pressed
     if (const auto* mouse_button = transformed_event.get<llgl::Event::MouseButtonPress>()) {
-        m_focused_overlay = nullptr;
         decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
         for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
