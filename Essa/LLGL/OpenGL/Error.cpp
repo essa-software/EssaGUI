@@ -6,7 +6,7 @@
 
 #include <GL/glu.h>
 #include <iostream>
-#include "Essa/AbstractOpenGLHelper.hpp"
+#include <Essa/LLGL/AbstractOpenGLHelper.hpp>
 
 namespace llgl::opengl {
 

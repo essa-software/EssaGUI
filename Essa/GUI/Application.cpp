@@ -1,6 +1,6 @@
 #include <Essa/GUI/Application.hpp>
 
-#include "Essa/AbstractOpenGLHelper.hpp"
+#include <Essa/LLGL/AbstractOpenGLHelper.hpp>
 #include "WidgetTreeRoot.hpp"
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>

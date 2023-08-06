@@ -1,6 +1,4 @@
 add_library(GUI SHARED
-    ../AbstractOpenGLHelper.cpp
-
     Application.cpp
     EventLoop.cpp
     Debug.cpp

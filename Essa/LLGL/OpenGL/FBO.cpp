@@ -1,6 +1,6 @@
 #include "FBO.hpp"
 
-#include <Essa/AbstractOpenGLHelper.hpp>
+#include <Essa/LLGL/AbstractOpenGLHelper.hpp>
 #include <Essa/LLGL/OpenGL/Extensions.hpp>
 #include <iostream>
 

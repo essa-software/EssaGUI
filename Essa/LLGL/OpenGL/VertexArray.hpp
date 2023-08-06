@@ -4,7 +4,7 @@
 #include "OpenGL.hpp"
 #include "PrimitiveType.hpp"
 #include "Vertex.hpp"
-#include <Essa/AbstractOpenGLHelper.hpp>
+#include <Essa/LLGL/AbstractOpenGLHelper.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/Vector.hpp>
