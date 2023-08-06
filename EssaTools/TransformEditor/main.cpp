@@ -234,7 +234,7 @@ class MainWidget : public GUI::Container {
 
         auto* load_model = find_widget_of_type_by_id_recursively<GUI::TextButton>("load_model");
         load_model->on_click = [this]() {
-            auto path = GUI::FileExplorer::get_path_to_open(host_window());
+            auto path = GUI::FileExplorer::get_path_to_open();
             if (!path) {
                 return;
             }
