@@ -1,17 +1,17 @@
-#include "NotificationWindow.hpp"
+#include "NotificationContainer.hpp"
 
 #include <Essa/GUI/Graphics/Text.hpp>
 
 namespace GUI {
 
-void NotificationWindow::spawn_notification(Util::UString message, Level level) {
+void NotificationContainer::spawn_notification(Util::UString message, Level level) {
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
-void NotificationWindow::draw_notification(Gfx::Painter& painter, Notification const& notification, float y) const {
+void NotificationContainer::draw_notification(Gfx::Painter& painter, Notification const& notification, float y) const {
     Gfx::Text text { notification.message, resource_manager().font() };
     text.set_font_size(theme().label_font_size);
-    text.align(GUI::Align::Top, rect().move_y(y).cast<float>());
+    text.align(GUI::Align::Top, local_rect().move_y(y).cast<float>());
     switch (notification.level) {
     case Level::Info:
         text.set_fill_color(Util::Colors::Lime);
@@ -23,7 +23,7 @@ void NotificationWindow::draw_notification(Gfx::Painter& painter, Notification c
     text.draw(painter);
 }
 
-void NotificationWindow::draw(Gfx::Painter& painter) {
+void NotificationContainer::draw(Gfx::Painter& painter) const {
     float y = 0;
     for (auto const& notification : m_notifications) {
         draw_notification(painter, notification, y);
@@ -31,7 +31,7 @@ void NotificationWindow::draw(Gfx::Painter& painter) {
     }
 }
 
-void NotificationWindow::update() {
+void NotificationContainer::update() {
     for (auto& notification : m_notifications) {
         notification.remaining_ticks--;
     }

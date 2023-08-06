@@ -32,7 +32,6 @@ add_library(GUI SHARED
     Overlays/FileExplorer.cpp
     Overlays/FilePrompt.cpp
     Overlays/MessageBox.cpp
-    Overlays/NotificationWindow.cpp
     Overlays/Prompt.cpp
     Overlays/Tooltip.cpp
 
@@ -59,6 +58,7 @@ add_library(GUI SHARED
     Widgets/ImageWidget.cpp
     Widgets/Listbox.cpp
     Widgets/ListView.cpp
+    Widgets/NotificationContainer.cpp
     Widgets/Progressbar.cpp
     Widgets/RadioButton.cpp
     Widgets/RadioGroup.cpp
