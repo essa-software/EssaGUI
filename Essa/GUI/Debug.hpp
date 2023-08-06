@@ -33,9 +33,11 @@ private:
     /*global*/ ::GUI::DebugSwitch __debug_##name { \
 #        name                                      \
     }
-#define DBG_PRINTLN(name, fmtstr, ...)                                    \
-    {                                                                     \
-        if (DBG_ENABLED(name)) {                                          \
-            fmt::vprint(fmtstr "\n", fmt::make_format_args(__VA_ARGS__)); \
-        }                                                                 \
-    }
+
+#define DBG_PRINTLN(name, fmtstr, ...)                              \
+    do {                                                            \
+        if (DBG_ENABLED(name)) {                                    \
+            const auto& vargs = fmt::make_format_args(__VA_ARGS__); \
+            fmt::vprint(fmtstr "\n", vargs);                        \
+        }                                                           \
+    } while (false)

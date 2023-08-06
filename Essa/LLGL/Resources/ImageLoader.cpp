@@ -33,9 +33,11 @@ static Uint32 get_pixel(SDL_Surface& surface, Util::Point2u position) {
 }
 
 std::optional<Image> ImageLoader::load_from_file(std::string const& path) {
-    auto surface = IMG_Load(path.c_str());
-    if (!surface)
+    auto* surface = IMG_Load(path.c_str());
+    if (!surface) {
+        fmt::print("IMG_Load({}) failed: {}\n", path, SDL_GetError());
         return {};
+    }
 
     auto image = load_from_sdl_surface(surface);
     SDL_FreeSurface(surface);

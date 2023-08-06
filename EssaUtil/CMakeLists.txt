@@ -27,7 +27,4 @@ essautil_setup_target(Util)
 install(TARGETS Util EXPORT Essa DESTINATION lib)
 target_link_libraries(Util PUBLIC fmt::fmt)
 
-# FIXME: This breaks build of eml/AST.cpp somewhere in Value::string()
-target_compile_options(Util PRIVATE -Wno-restrict)
-
 add_subdirectory(Tests)

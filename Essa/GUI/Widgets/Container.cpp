@@ -398,7 +398,9 @@ void Container::dump(unsigned depth) {
     for (unsigned i = 0; i < depth; i++)
         std::cout << "-   ";
     if (m_layout) {
-        std::cout << "layout: " << typeid(*m_layout).name() << std::endl;
+        // Note: Temporary variable is a workaround for -Wpotentially-evaluated-expression on Clang
+        auto& layout = *m_layout;
+        std::cout << "layout: " << typeid(layout).name() << std::endl;
     }
     else {
         std::cout << "layout: NONE!" << std::endl;

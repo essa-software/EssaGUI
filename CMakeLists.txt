@@ -8,7 +8,9 @@ execute_process(COMMAND git rev-parse --short HEAD
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-find_package(GLEW REQUIRED)
+if (NOT EMSCRIPTEN)
+    find_package(GLEW REQUIRED)
+endif()
 find_package(fmt REQUIRED)
 
 include(cmake/utils.cmake)
@@ -21,6 +23,9 @@ option(ESSAGUI_EXAMPLES "Compile examples" ON)
 option(ESSAGUI_UTIL_ONLY "Compile only EssaUtil (no GUI or Engine)" OFF)
 
 include_directories(${Essa_SOURCE_DIR})
+if (EMSCRIPTEN)
+    include_directories(${fmt_DIR}/../../../include)
+endif()
 
 add_subdirectory(EssaUtil)
 

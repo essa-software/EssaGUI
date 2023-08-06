@@ -12,6 +12,10 @@
 #include <type_traits>
 #include <vector>
 
+#ifdef __clang__
+#    error todo: implement this
+#endif
+
 namespace Util {
 
 template<class T> class MutexProtected {

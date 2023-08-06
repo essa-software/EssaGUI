@@ -44,9 +44,19 @@ function(essautil_setup_target targetname)
         if (ESSA_IS_PRODUCTION)
             set_target_properties(${targetname} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
         endif()
+        if (EMSCRIPTEN)
+            target_link_options(${targetname} PRIVATE "SHELL:--embed-file ${Essa_SOURCE_DIR}/assets")
+        endif()
     endif()
 
     target_include_directories(${targetname} PUBLIC ${PROJECT_SOURCE_DIR})
+
+    if (NOT EMSCRIPTEN)
+        set(GCC_OPTIONS 
+            -Wno-error=stringop-overflow    # FIXME: fmt on CI doesn't like it for some reason, find a way to workaround it!
+            -Wno-error=restrict             # FIXME: This breaks compilation of EML::value() and some more places
+        )
+    endif()
 
     target_compile_options(${targetname} PRIVATE
         -fdiagnostics-color=always
@@ -54,8 +64,8 @@ function(essautil_setup_target targetname)
         -Wnon-virtual-dtor
         -Wno-error=missing-field-initializers       # FIXME: This is buggy (?) for *DrawOptions
         -Wno-error=format                           # FIXME: We don't use formatting anyway except SimulationClock but this breaks mingw build
-        -Wno-error=stringop-overflow                # FIXME: fmt on CI doesn't like it for some reason, find a way to workaround it!
         -Wno-error=deprecated-declarations
+        ${GCC_OPTIONS}
     )
 
     set_property(TARGET ${targetname} PROPERTY CXX_STANDARD 20)
@@ -107,11 +117,15 @@ function(essa_resources targetname dir)
     set(outfile ${CMAKE_CURRENT_BINARY_DIR}/EssaResources.cpp)
     file(WRITE ${outfile} "extern \"C\" { const char* ESSA_RESOURCE_DIR = \"")
     if (ESSA_IS_PRODUCTION)
-        file(APPEND ${outfile} ${CMAKE_INSTALL_PREFIX}/${DEST_PATH})
+        set(resource_dir ${CMAKE_INSTALL_PREFIX}/${DEST_PATH})
     else()
-        file(APPEND ${outfile} ${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+        set(resource_dir ${CMAKE_CURRENT_SOURCE_DIR}/${dir})
     endif()
+    file(APPEND ${outfile} ${resource_dir})
     file(APPEND ${outfile} "\"; }")
 
     target_sources(${targetname} PRIVATE ${outfile})
+    if (EMSCRIPTEN)
+        target_link_options(${targetname} PRIVATE "SHELL:--embed-file ${resource_dir}")
+    endif()
 endfunction()

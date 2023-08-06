@@ -85,8 +85,3 @@ set_target_properties(GUI PROPERTIES OUTPUT_NAME "essa-gui")
 set_target_properties(GUI PROPERTIES SOVERSION ${ESSA_GIT_REVISION})
 essautil_setup_target(GUI)
 target_link_libraries(GUI PUBLIC Util LLGL-OpenGL LLGL-Window LLGL-Resources)
-
-# FIXME: This breaks build of eml/AST.cpp somewhere in Value::string()
-target_compile_options(GUI PRIVATE -Wno-restrict)
-# FIXME: This breaks build of RadioGroup::add_widget().
-target_compile_options(GUI PUBLIC -Wno-address)

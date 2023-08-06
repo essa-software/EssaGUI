@@ -6,6 +6,45 @@
 
 namespace Gfx {
 
+#ifdef __EMSCRIPTEN__
+static std::string_view VertexShader = R"~~~(// Default GUI VS
+precision highp float;
+precision highp int;
+
+attribute vec2 position;
+attribute vec4 color;
+attribute vec2 texCoords;
+
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 submodelMatrix;
+
+varying vec4 fColor;
+varying vec2 fTexCoords;
+
+void main() {
+    fColor = color;
+    fTexCoords = texCoords;
+    gl_Position = projectionMatrix * (viewMatrix * (modelMatrix * (submodelMatrix * vec4(position, 0, 1))));
+}
+)~~~";
+
+static std::string_view FragmentShader = R"~~~(// Default GUI FS
+precision highp float;
+precision highp int;
+
+varying vec4 fColor;
+varying vec2 fTexCoords;
+
+uniform sampler2D texture;
+uniform bool textureSet;
+
+void main() {
+    gl_FragColor = textureSet ? fColor * texture2D(texture, fTexCoords.xy) : fColor;
+}
+)~~~";
+#else
 static std::string_view VertexShader = R"~~~(// Default GUI VS
 #version 330 core
 
@@ -41,6 +80,7 @@ void main() {
     gl_FragColor = textureSet ? fColor * texture2D(texture, fTexCoords.xy) : fColor;
 }
 )~~~";
+#endif
 
 std::string_view DefaultGUIShader::source(llgl::ShaderType type) const {
     switch (type) {

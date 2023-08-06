@@ -298,11 +298,17 @@ template<> OsErrorOr<double> UString::parse<double>() const { return parse_impl(
 template<> OsErrorOr<long double> UString::parse<long double>() const { return parse_impl(std::stold, *this); }
 
 std::strong_ordering UString::operator<=>(UString const& other) const {
+#ifdef __clang__
+    return std::lexicographical_compare(m_storage, m_storage + m_size, other.m_storage, other.m_storage + other.m_size)
+        ? std::strong_ordering::less
+        : (*this == other ? std::strong_ordering::equal : std::strong_ordering::greater);
+#else
     return std::lexicographical_compare_three_way(m_storage, m_storage + m_size, other.m_storage, other.m_storage + other.m_size);
+#endif
 }
 
 bool UString::operator<(UString const& other) const { return (*this <=> other) == std::strong_ordering::less; }
-bool UString::operator==(UString const& other) const { return (*this <=> other) == std::strong_ordering::equal; }
+bool UString::operator==(UString const& other) const { return size() == other.size() && std::ranges::equal(span(), other.span()); }
 bool UString::operator>(UString const& other) const { return (*this <=> other) == std::strong_ordering::greater; }
 
 UString operator+(UString const& lhs, UString const& rhs) {

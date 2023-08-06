@@ -89,7 +89,7 @@ OsErrorOr<size_t> ReadableFileStream::read(std::span<uint8_t> data) {
     // TODO: Buffering
     auto result = ::read(fd(), data.data(), data.size_bytes());
     if (result < 0) {
-        return OsError { .error = static_cast<error_t>(-result), .function = "FileStream::read_all" };
+        return OsError { .error = static_cast<int>(-result), .function = "FileStream::read_all" };
     }
     if (result == 0) {
         m_eof = true;
@@ -115,7 +115,7 @@ OsErrorOr<size_t> WritableFileStream::write(std::span<uint8_t const> data) {
     // TODO: Buffering
     auto result = ::write(fd(), data.data(), data.size_bytes());
     if (result < 0) {
-        return OsError { .error = static_cast<error_t>(-result), .function = "FileStream::write_all" };
+        return OsError { .error = static_cast<int>(-result), .function = "FileStream::write_all" };
     }
     return static_cast<size_t>(result);
 }

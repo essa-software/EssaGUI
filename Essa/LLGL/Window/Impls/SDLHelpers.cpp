@@ -1,15 +1,19 @@
 #include "SDLHelpers.hpp"
 
 #include <EssaUtil/ScopeGuard.hpp>
+#ifndef __EMSCRIPTEN__
 #include <GL/glx.h>
 #include <GL/glxext.h>
+#endif
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_hints.h>
 #include <SDL2/SDL_syswm.h>
 #include <SDL2/SDL_video.h>
+#ifndef __EMSCRIPTEN__
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
+#endif
 #include <cassert>
 #include <fmt/core.h>
 #include <fmt/format.h>

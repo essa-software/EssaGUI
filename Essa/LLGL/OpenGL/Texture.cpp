@@ -73,7 +73,7 @@ void Texture::ensure_initialized(Format format) {
 
         TextureBinder binder(*this);
         // std::cout << "glTexImage2D(" << m_size << ")\n";
-        OpenGL::TexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_FLOAT, nullptr);
+        OpenGL::TexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_UNSIGNED_BYTE, nullptr);
     }
 }
 
@@ -83,7 +83,7 @@ void Texture::recreate(Util::Size2u size, Format format) {
     if (m_id) {
         TextureBinder binder(*this);
         // std::cout << "glTexImage2D(" << m_size << ")\n";
-        glTexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, gl_format(format), m_size.x(), m_size.y(), 0, gl_format(format), GL_UNSIGNED_BYTE, nullptr);
     }
 
     ensure_initialized(format);
@@ -126,6 +126,10 @@ void Texture::set_filtering(Filtering filtering) {
 
 void Texture::bind(Texture const* texture) { OpenGL::BindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
 
-void Texture::set_label(std::string const& label) { OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data()); }
+void Texture::set_label([[maybe_unused]] std::string const& label) {
+#ifndef __EMSCRIPTEN__
+    OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data());
+#endif
+}
 
 }
