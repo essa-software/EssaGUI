@@ -9,6 +9,8 @@
 #include <string_view>
 #include <tuple>
 #include <type_traits>
+
+// Keep last!
 #include "../../AbstractOpenGLHelper.hpp"
 
 namespace llgl {
@@ -69,11 +71,11 @@ concept ShaderImplPartial = requires(T t, ShaderType st) {
 class Shader;
 
 template<class MT> struct Uniform {
-    const char* name;
+    char const* name;
     MT member;
     int location = 0;
 
-    Uniform(const char* name_, MT member_)
+    Uniform(char const* name_, MT member_)
         : name(name_)
         , member(member_) { }
 };

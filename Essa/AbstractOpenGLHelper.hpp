@@ -1,6 +1,6 @@
 #pragma once
-#include <GL/glew.h>
 #include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <array>
 #include <functional>
@@ -9,27 +9,24 @@
 #include <tuple>
 #include <vector>
 
-struct OpenGLCommand{
+struct OpenGLCommand {
     std::string name;
     void* params = nullptr;
     std::function<void(void*)> destroy;
 };
 
-#define ADD_OPENGL_FUNCTION(FuncName, ShouldWrite) \
-    template<typename... Args> \
-    static auto FuncName(Args... args) { \
-        if(ShouldWrite && write_commands_to_buffer){\
-            OpenGLCommand cmd{ \
-                .name = "gl" + std::string(#FuncName), \
-                .params = new std::tuple<Args...>(args...), \
-                .destroy = [](void* ptr) { delete static_cast<std::tuple<Args...>*>(ptr); } \
-            }; \
-            command_buffer.push_back(cmd); \
-        }\
-        return gl##FuncName(args...); \
+#define ADD_OPENGL_FUNCTION(FuncName, ShouldWrite)                                                             \
+    template<typename... Args> static auto FuncName(Args... args) {                                            \
+        if (ShouldWrite && write_commands_to_buffer) {                                                         \
+            OpenGLCommand cmd { .name = "gl" + std::string(#FuncName),                                         \
+                                .params = new std::tuple<Args...>(args...),                                    \
+                                .destroy = [](void* ptr) { delete static_cast<std::tuple<Args...>*>(ptr); } }; \
+            command_buffer.push_back(cmd);                                                                     \
+        }                                                                                                      \
+        return gl##FuncName(args...);                                                                          \
     }
 
-class OpenGL{
+class OpenGL {
 public:
     static std::list<OpenGLCommand> command_buffer;
     static bool write_commands_to_buffer;
@@ -88,7 +85,7 @@ public:
     ADD_OPENGL_FUNCTION(LinkProgram, false)
     ADD_OPENGL_FUNCTION(ObjectLabel, false)
     ADD_OPENGL_FUNCTION(UseProgram, false)
-    
+
     ADD_OPENGL_FUNCTION(GetUniformLocation, false)
     ADD_OPENGL_FUNCTION(Uniform1i, true)
     ADD_OPENGL_FUNCTION(Uniform4f, true)
@@ -96,12 +93,12 @@ public:
     ADD_OPENGL_FUNCTION(Uniform2f, true)
     ADD_OPENGL_FUNCTION(Uniform3f, true)
     ADD_OPENGL_FUNCTION(Uniform1f, true)
-    
+
     ADD_OPENGL_FUNCTION(XChooseFBConfig, false)
     ADD_OPENGL_FUNCTION(XGetVisualFromFBConfig, false)
 
-    static auto clear(){
-        for(auto& cmd : command_buffer){
+    static auto clear() {
+        for (auto& cmd : command_buffer) {
             cmd.destroy(cmd.params);
         }
 

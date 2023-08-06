@@ -4,6 +4,7 @@
 #include "OpenGL.hpp"
 #include "PrimitiveType.hpp"
 #include "Vertex.hpp"
+#include <Essa/AbstractOpenGLHelper.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/Vector.hpp>
@@ -11,7 +12,6 @@
 #include <fmt/ostream.h>
 #include <type_traits>
 #include <utility>
-#include <Essa/AbstractOpenGLHelper.hpp>
 
 namespace llgl {
 

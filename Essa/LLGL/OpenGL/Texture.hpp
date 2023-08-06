@@ -13,8 +13,8 @@ class Texture {
 public:
     Texture() = default;
     ~Texture();
-    Texture(const Texture& other) = delete;
-    Texture& operator=(const Texture& other) = delete;
+    Texture(Texture const& other) = delete;
+    Texture& operator=(Texture const& other) = delete;
 
     Texture(Texture&& other) { *this = std::move(other); }
 

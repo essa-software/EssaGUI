@@ -15,14 +15,15 @@ namespace JSON {
 class Node;
 class Value;
 
-template <class T>
-class PrimitiveWrapper {
+template<class T> class PrimitiveWrapper {
 private:
-  T val;
+    T val;
+
 public:
-  PrimitiveWrapper(T val = 0) : val(val) {}
-  operator T &() { return val; }
-  T* operator &() { return &val; }
+    PrimitiveWrapper(T val = 0)
+        : val(val) { }
+    operator T&() { return val; }
+    T* operator&() { return &val; }
 };
 
 using Number = PrimitiveWrapper<double>;
@@ -30,14 +31,14 @@ using Number = PrimitiveWrapper<double>;
 class Array : public std::vector<Node> {
 public:
     Array() = default;
-    Array(const std::initializer_list<Value>& _list);
+    Array(std::initializer_list<Value> const& _list);
 };
 
 class Node {
     std::map<std::string, Value> m_data;
     std::shared_ptr<Value> m_value;
 
-    std::string stringify_value(const Value& val) const;
+    std::string stringify_value(Value const& val) const;
 
 public:
     Node() = default;
@@ -45,9 +46,9 @@ public:
 
     Node(Value val);
 
-    template<typename T> Node& add_value(const std::string& key, const T& val);
+    template<typename T> Node& add_value(std::string const& key, T const& val);
 
-    Node& add_value(const std::string& key, const Value& val);
+    Node& add_value(std::string const& key, Value const& val);
 
     std::string stringify() const;
 };
@@ -59,7 +60,7 @@ class Value {
     static Array parse_array(std::string str);
 
 public:
-    template<typename T> Value(const T& val) { m_data = val; }
+    template<typename T> Value(T const& val) { m_data = val; }
 
     template<typename T> bool is_type_of() const { return std::holds_alternative<T>(m_data); }
 
@@ -68,13 +69,13 @@ public:
     static Node parse_node(std::string str);
 };
 
-inline Array::Array(const std::initializer_list<Value>& _list) {
-    for (const auto& n : _list) {
+inline Array::Array(std::initializer_list<Value> const& _list) {
+    for (auto const& n : _list) {
         push_back(n);
     }
 }
 
-inline std::string Node::stringify_value(const Value& val) const {
+inline std::string Node::stringify_value(Value const& val) const {
     std::stringstream ss;
     if (val.is_type_of<Number>()) {
         Number v = val.get<Number>();
@@ -96,7 +97,7 @@ inline std::string Node::stringify_value(const Value& val) const {
         Array v = val.get<Array>();
         ss << "[";
         int i = 0;
-        for (const auto& n : v) {
+        for (auto const& n : v) {
             ss << n.stringify();
             if (i < (int)v.size() - 1) {
                 ss << ",";
@@ -109,7 +110,7 @@ inline std::string Node::stringify_value(const Value& val) const {
 }
 
 inline Node::Node(std::initializer_list<std::pair<std::string, Value>> _list) {
-    for (const auto& p : _list) {
+    for (auto const& p : _list) {
         m_data.insert(p);
     }
 }
@@ -125,7 +126,7 @@ inline std::string Node::stringify() const {
         ss << "{";
         int it = 0;
 
-        for (const auto& p : m_data) {
+        for (auto const& p : m_data) {
             ss << "\"" << p.first << "\":" << stringify_value(p.second);
             if (it < (int)m_data.size() - 1) {
                 ss << ",";
@@ -139,20 +140,19 @@ inline std::string Node::stringify() const {
     return ss.str();
 }
 
-template<typename T> Node& Node::add_value(const std::string& key, const T& val) {
+template<typename T> Node& Node::add_value(std::string const& key, T const& val) {
     m_data.insert({ key, val });
 
     return *this;
 }
 
-inline Node& Node::add_value(const std::string& key, const Value& val) {
+inline Node& Node::add_value(std::string const& key, Value const& val) {
     m_data.insert({ key, val });
 
     return *this;
 }
 
-
-inline Array Value::parse_array(std::string str){
+inline Array Value::parse_array(std::string str) {
     if (!str.starts_with('[') || !str.ends_with(']')) {
         throw std::runtime_error("JSON array not limited!");
     }
@@ -163,7 +163,7 @@ inline Array Value::parse_array(std::string str){
     bool escape = false, read_str = false, read_arr = false;
     std::string val_str;
 
-    for (const auto& c : str) {
+    for (auto const& c : str) {
         if (read_arr) {
             val_str += c;
         }
@@ -177,7 +177,8 @@ inline Array Value::parse_array(std::string str){
             continue;
         }
 
-        if(read_arr) continue;
+        if (read_arr)
+            continue;
 
         if (c == ' ' && !read_str)
             continue;
@@ -194,7 +195,7 @@ inline Array Value::parse_array(std::string str){
         else if (c == ',') {
             Value obj = Value::parse_value(val_str);
             result.push_back(obj);
-            
+
             val_str.clear();
             continue;
         }
@@ -202,34 +203,38 @@ inline Array Value::parse_array(std::string str){
 
         escape = false;
     }
-    
+
     Value obj = Value::parse_value(val_str);
     result.push_back(obj);
 
     return result;
 }
 
-inline Value Value::parse_value(std::string str){
-    if(str.starts_with('{')){
+inline Value Value::parse_value(std::string str) {
+    if (str.starts_with('{')) {
         Value result(Value::parse_node(str));
         return result;
-    }else if(str.starts_with('[')){
+    }
+    else if (str.starts_with('[')) {
         Value result(Value::parse_array(str));
         return result;
-    }else if(str.starts_with('\"')){
-        if(!str.ends_with('\"')){
+    }
+    else if (str.starts_with('\"')) {
+        if (!str.ends_with('\"')) {
             throw std::runtime_error("Missing \'\"\' to close JSON string!");
         }
         Value result(str.substr(1, str.size() - 2));
         return result;
-    }else if(str == "true" || str == "false"){
+    }
+    else if (str == "true" || str == "false") {
         Value result(str == "true" ? true : false);
         return result;
-    }else{
-        try{
+    }
+    else {
+        try {
             Value result(std::stod(str));
             return result;
-        }catch(...){
+        } catch (...) {
             throw std::runtime_error("Unrecognized JSON value!");
         }
     }
@@ -246,7 +251,7 @@ inline Node Value::parse_node(std::string str) {
 
     Node result;
 
-    for (const auto& c : str) {
+    for (auto const& c : str) {
         if (read_arr) {
             val_str += c;
         }
@@ -262,7 +267,8 @@ inline Node Value::parse_node(std::string str) {
             continue;
         }
 
-        if(read_arr) continue;
+        if (read_arr)
+            continue;
 
         if (c == ' ' && !read_str)
             continue;
@@ -295,15 +301,16 @@ inline Node Value::parse_node(std::string str) {
             val = false;
             Value obj = Value::parse_value(val_str);
             result.add_value(key_str, obj);
-            
+
             key_str.clear();
             val_str.clear();
             continue;
         }
 
-        if(key){
+        if (key) {
             key_str += c;
-        }else if(val){
+        }
+        else if (val) {
             val_str += c;
         }
 
@@ -315,8 +322,6 @@ inline Node Value::parse_node(std::string str) {
     return result;
 }
 
-inline Node Marshall(const std::string& str) {
-    return Value::parse_node(str);
-}
+inline Node Marshall(std::string const& str) { return Value::parse_node(str); }
 
 }

@@ -118,7 +118,7 @@ public:
     VALUE_TYPE(Util::Color, color)
 
     // Normally C++ would convert this to bool, because... pointer ??
-    Value(const char* str)
+    Value(char const* str)
         : Value(Util::UString { str }) { }
 
     template<class T> EMLErrorOr<T> to() const {

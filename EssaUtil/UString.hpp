@@ -124,7 +124,7 @@ private:
     size_t m_size {};
 };
 
-template<typename T> UString to_ustring(const T& to_convert) { return UString { std::to_string(to_convert) }; }
+template<typename T> UString to_ustring(T const& to_convert) { return UString { std::to_string(to_convert) }; }
 
 // For some reason, there is no std::stou for that. :(
 template<> OsErrorOr<unsigned int> UString::parse<unsigned int>(int base) const = delete;

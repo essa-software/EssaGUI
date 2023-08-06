@@ -98,6 +98,7 @@ public:
     // on actual rendering, not on individual draw() calls.
     void set_blending(Blending blending) { m_blending = blending; }
     Blending blending() const { return m_blending; }
+
 private:
     void apply_states();
 

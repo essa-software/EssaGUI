@@ -13,3 +13,4 @@ BraceWrapping:
     BeforeElse: true
 NamespaceIndentation: None
 ColumnLimit: 140
+QualifierAlignment: Right

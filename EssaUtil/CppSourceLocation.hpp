@@ -17,8 +17,8 @@ struct CppSourceLocation {
     static CppSourceLocation current() { return {}; }
     constexpr uint_least32_t line() const noexcept { return 0; }
     constexpr uint_least32_t column() const noexcept { return 0; }
-    constexpr const char* file_name() const noexcept { return ""; }
-    constexpr const char* function_name() const noexcept { return ""; }
+    constexpr char const* file_name() const noexcept { return ""; }
+    constexpr char const* function_name() const noexcept { return ""; }
 };
 #endif
 
