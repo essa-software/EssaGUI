@@ -24,7 +24,7 @@ Window::Window(Host& host, std::string id)
 }
 
 void Window::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) {
-    // TODO: Handle flags from settings
+    m_settings = settings;
     set_title(title);
     Overlay::setup(std::move(title), size, settings);
 }
@@ -315,9 +315,7 @@ void Window::draw_decorations(Gfx::Painter& painter) const {
 void Window::draw(Gfx::Painter& painter) {
     using namespace Gfx::Drawing;
 
-    // Quick hack to not render decorations for background overlay.
-    // FIXME: This should use some window types like nativesh window managers do
-    bool should_draw_decorations = !always_on_bottom();
+    bool should_draw_decorations = !((llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless)) || always_on_bottom());
 
     if (should_draw_decorations) {
         draw_decorations(painter);
