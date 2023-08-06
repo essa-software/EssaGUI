@@ -41,7 +41,7 @@ public:
     void set_mouse_position(Util::Point2i);
     bool is_focused() const;
     void set_active() const;
-    void maximize() const;
+    void maximize();
     Util::Recti system_rect() const;
 
     Renderer& renderer() { return m_renderer; }

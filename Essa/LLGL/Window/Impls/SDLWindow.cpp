@@ -234,9 +234,10 @@ void Window::set_active() const {
     SDL_GL_MakeCurrent(m_data->window, s_context);
 }
 
-void Window::maximize() const {
+void Window::maximize() {
     assert(!is_closed());
     SDL_MaximizeWindow(m_data->window);
+    m_size = system_rect().size().cast<unsigned>();
 }
 
 Util::Size2u Window::screen_size() const {
