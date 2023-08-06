@@ -10,7 +10,12 @@
 namespace GUI {
 
 void WidgetTreeRoot::draw(Gfx::Painter& painter) { m_root->relayout_and_draw(painter); }
-void WidgetTreeRoot::handle_event(GUI::Event const& event) { m_root->do_handle_event(event); }
+void WidgetTreeRoot::handle_event(GUI::Event const& event) {
+    if (on_event && on_event(event) == Widget::EventHandlerResult::Accepted) {
+        return;
+    }
+    m_root->do_handle_event(event);
+}
 
 Theme const& WidgetTreeRoot::theme() const { return Application::the().theme(); }
 

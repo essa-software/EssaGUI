@@ -55,6 +55,10 @@ public:
     WindowRoot const& root() const { return *m_root; }
     WindowRoot& root() { return *m_root; }
 
+    // Override default event handler. If this returns Accepted,
+    // no events will be passed to widgets.
+    std::function<GUI::Widget::EventHandlerResult(GUI::Event const&)> on_event;
+
 protected:
     void set_root(std::unique_ptr<WindowRoot> root) { m_root = std::move(root); }
 

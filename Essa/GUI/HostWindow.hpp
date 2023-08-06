@@ -46,10 +46,6 @@ public:
 
     void set_background_color(Util::Color color) { m_background_color = color; }
 
-    // Override default event handler. If this returns Accepted,
-    // no events will be passed to widgets.
-    std::function<GUI::Widget::EventHandlerResult(GUI::Event const&)> on_event;
-
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
