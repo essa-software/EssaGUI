@@ -59,6 +59,7 @@ int main() {
     auto& host_window = app.create_host_window(
         { 500, 500 }, "Multiple Materials support in Model");
     host_window.set_root_widget<WorldView>();
+    host_window.set_background_color(Util::Colors::Black);
     app.run();
     return 0;
 }

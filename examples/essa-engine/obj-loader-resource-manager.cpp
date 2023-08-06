@@ -80,6 +80,7 @@ private:
 int main() {
     GUI::Application app;
     auto& host_window = app.create_host_window({ 500, 500 }, "Text Editor");
+    host_window.set_background_color(Util::Colors::Black);
     host_window.set_root_widget<MainWidget>();
     app.run();
     return 0;

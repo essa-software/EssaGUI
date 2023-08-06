@@ -44,6 +44,7 @@ private:
 
 int main() {
     GUI::SimpleApplication<GUI::Container> app { "Essa::Model rendering benchmark" };
+    app.window().set_background_color(Util::Colors::Black);
 
     auto& main_widget = app.main_widget();
     main_widget.set_layout<GUI::BasicLayout>();
