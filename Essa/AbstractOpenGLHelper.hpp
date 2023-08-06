@@ -1,6 +1,7 @@
 #pragma once
-#include <GL/gl.h>
+
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <array>
 #include <functional>
@@ -93,9 +94,6 @@ public:
     ADD_OPENGL_FUNCTION(Uniform2f, true)
     ADD_OPENGL_FUNCTION(Uniform3f, true)
     ADD_OPENGL_FUNCTION(Uniform1f, true)
-
-    ADD_OPENGL_FUNCTION(XChooseFBConfig, false)
-    ADD_OPENGL_FUNCTION(XGetVisualFromFBConfig, false)
 
     static auto clear() {
         for (auto& cmd : command_buffer) {
