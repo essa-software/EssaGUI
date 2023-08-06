@@ -24,6 +24,7 @@ void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSetti
     set_active();
     llgl::opengl::enable_debug_output();
     m_painter.construct(renderer());
+    set_background_color(GUI::Application::the().theme().window_background);
 }
 
 void HostWindow::close() { llgl::Window::close(); }
