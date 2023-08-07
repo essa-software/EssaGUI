@@ -76,12 +76,12 @@ Variant FileModel::data(Node row, size_t column) const {
 void FileModel::update_content(std::filesystem::path path, std::function<bool(std::filesystem::path)> condition) {
     m_files.clear();
 
-    for (const auto& o : std::filesystem::directory_iterator(path)) {
+    for (auto const& o : std::filesystem::directory_iterator(path)) {
         if (!std::filesystem::exists(o) || !condition(o.path().filename()))
             continue;
 
         bool has_desired_extension = m_desired_extensions.empty();
-        for (const auto& e : m_desired_extensions) {
+        for (auto const& e : m_desired_extensions) {
             if (o.path().extension() == e)
                 has_desired_extension = true;
         }
@@ -287,10 +287,12 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
                 std::filesystem::create_directory(new_path);
                 m_model->update_content(m_current_path);
             } catch (std::filesystem::filesystem_error& error) {
-                // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
-                //        Dialog refactoring is finished.
                 GUI::message_box(
-                    create_directory_button->host_window(), Util::UString { error.what() }, "Error", GUI::MessageBox::Buttons::Ok
+                    Util::UString { error.what() }, "Error",
+                    {
+                        .buttons = GUI::MessageBox::Buttons::Ok,
+                        .icon = GUI::MessageBox::Icon::Error,
+                    }
                 );
             }
         };
@@ -334,11 +336,12 @@ void FileExplorer::open_path(std::filesystem::path path) {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
         m_model->update_content(m_current_path);
-        // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
-        //        Dialog refactoring is finished.
         GUI::message_box(
-            m_list->host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error!",
-            GUI::MessageBox::Buttons::Ok
+            Util::UString { error.path1().string() + ": " + error.code().message() }, "Error",
+            {
+                .buttons = GUI::MessageBox::Buttons::Ok,
+                .icon = GUI::MessageBox::Icon::Error,
+            }
         );
         return;
     }
@@ -351,7 +354,7 @@ std::optional<std::filesystem::path> FileExplorer::get_path_to_open() {
     auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;
     explorer.window.center_on_screen();
-    explorer.root.on_submit = [&](const std::filesystem::path& path) { result = path; };
+    explorer.root.on_submit = [&](std::filesystem::path const& path) { result = path; };
     explorer.window.show_modal();
     return result;
 }
