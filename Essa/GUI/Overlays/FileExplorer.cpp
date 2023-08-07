@@ -275,7 +275,7 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
     parent_directory_button->on_click = [&]() { open_path(m_current_path.parent_path()); };
 
     auto create_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("create_directory");
-    create_directory_button->on_click = [&]() {
+    create_directory_button->on_click = [create_directory_button, this]() {
         // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
         //        Dialog refactoring is finished.
         auto path = GUI::prompt(create_directory_button->host_window(), "Folder name: ", "Create folder");
