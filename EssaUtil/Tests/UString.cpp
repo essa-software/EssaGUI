@@ -25,6 +25,10 @@ TEST_CASE(construction) {
     UString str4 { arr };
     EXPECT(str4 == "xdlol");
 
+    // Constructor from empty string
+    UString str5 { std::string_view("") };
+    EXPECT(str5.is_empty());
+
     return {};
 }
 

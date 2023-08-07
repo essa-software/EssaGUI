@@ -88,7 +88,9 @@ UString::UString(std::string_view string, Encoding encoding, uint32_t replacemen
             size = 0;
         }
         reallocate(*size);
-        Utf8::decode({ m_storage, m_size }, string, replacement);
+        if (m_size > 0) {
+            Utf8::decode({ m_storage, m_size }, string, replacement);
+        }
         break;
     }
     }
@@ -268,9 +270,9 @@ std::string UString::dump() const {
     return oss.str();
 }
 
-template<class T> using StoiFunction = T(const std::string& __str, size_t* __idx, int __base);
+template<class T> using StoiFunction = T(std::string const& __str, size_t* __idx, int __base);
 
-template<class T> using StofFunction = T(const std::string& __str, size_t* __idx);
+template<class T> using StofFunction = T(std::string const& __str, size_t* __idx);
 
 template<class T> OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString const& str, int base) {
     try {
