@@ -5,6 +5,7 @@
 #include <Essa/GUI/Graphics/RichText.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <EssaUtil/Is.hpp>
 
 #include <Essa/GUI/TextAlign.hpp>
 
@@ -69,9 +70,9 @@ Util::Size2u Textfield::needed_size_for_text() const {
                 auto size = text.calculate_text_size();
                 return { size.x() + m_padding * 2, size.y() + m_padding * 2 };
             },
-            [&](Gfx::RichText const&) -> Util::Size2u {
-                // FIXME: Implement measuring rich text size.
-                return {};
+            [&](Gfx::RichText const& text) -> Util::Size2u {
+                auto size = text.required_size(rich_text_context());
+                return { size.x() + m_padding * 2, size.y() + m_padding * 2 };
             },
         },
         m_content

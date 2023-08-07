@@ -1,4 +1,5 @@
 #include "RichText.hpp"
+#include "Essa/GUI/Graphics/RichText/Context.hpp"
 
 #include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/Graphics/Drawing/Fill.hpp>
@@ -36,6 +37,29 @@ RichText RichText::parse(Util::UString const& input) {
     // TODO: Write a parser.
     text.append(input);
     return text;
+}
+
+Util::Size2u RichText::required_size(RichTextContext const& context) const {
+    Util::Size2u size;
+    auto const line_height = context.default_font.line_height(context.font_size);
+    size.set_y(line_height);
+    unsigned current_width = 0;
+    for (auto const& frag : fragments()) {
+        if (Util::is<Gfx::RichTextFragments::LineBreak>(*frag)) {
+            size += Util::Vector2u(0, line_height);
+            if (current_width > size.x()) {
+                size.set_x(current_width);
+            }
+            current_width = 0;
+        }
+        else {
+            current_width += static_cast<unsigned>(frag->wanted_size(context));
+        }
+    }
+    if (current_width > size.x()) {
+        size.set_x(current_width);
+    }
+    return size;
 }
 
 RichText& RichText::append(Util::UString const& string) {

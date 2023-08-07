@@ -18,6 +18,9 @@ public:
 
     static RichText parse(Util::UString const&);
 
+    // How much size is required so that there is no wrapping
+    Util::Size2u required_size(RichTextContext const&) const;
+
     template<class T, class... Args>
         requires(std::is_base_of_v<RichTextFragments::Base, T>)
     RichText& append_fragment(Args&&... args) {
