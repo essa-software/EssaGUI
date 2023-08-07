@@ -77,7 +77,7 @@ private:
         case T_Index: {
             auto data = static_cast<Index const*>(node.data.data);
             Gfx::RichText text;
-            text.append(Util::UString { data->type }, Util::Colors::White);
+            text.append(Util::UString { data->type });
             text.append_image(GUI::Application::the().resource_manager().require_texture("gui/symlink.png"));
             return VariantList { Util::UString { data->name }, text }[column];
         }

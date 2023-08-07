@@ -23,7 +23,7 @@ public:
         return *this;
     }
 
-    RichText& append(Util::UString const&, Util::Color const&);
+    RichText& append(Util::UString const&);
     RichText& append_image(llgl::Texture const&);
 
     std::vector<std::unique_ptr<RichTextFragments::Base>> const& fragments() const { return m_fragments; }
@@ -36,7 +36,7 @@ class RichTextDrawable {
 public:
     RichTextDrawable(RichText const& text, RichTextContext context)
         : m_text(text)
-        , m_context(std::move(context)) { }
+        , m_context(context) { }
 
     void set_rect(Util::Rectf rect) { m_rect = rect; }
     void draw(Gfx::Painter& painter) const;

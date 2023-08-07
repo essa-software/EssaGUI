@@ -13,6 +13,15 @@ namespace GUI {
 Textfield::Textfield()
     : m_font(&GUI::Application::the().font()) { }
 
+Gfx::RichTextContext Textfield::rich_text_context() const {
+    return {
+        .default_font = *m_font,
+        .font_color = theme().label.text,
+        .font_size = static_cast<int>(m_font_size),
+        .text_alignment = m_alignment,
+    };
+}
+
 void Textfield::draw(Gfx::Painter& painter) const {
     assert(m_font);
 
@@ -33,14 +42,7 @@ void Textfield::draw(Gfx::Painter& painter) const {
                 text.draw(painter);
             },
             [&](Gfx::RichText const& richtext) {
-                Gfx::RichTextDrawable drawable(
-                    richtext,
-                    {
-                        .default_font = *m_font,
-                        .font_size = static_cast<int>(m_font_size),
-                        .text_alignment = m_alignment,
-                    }
-                );
+                Gfx::RichTextDrawable drawable(richtext, rich_text_context());
                 drawable.set_rect(text_rect().cast<float>());
                 drawable.draw(painter);
             },

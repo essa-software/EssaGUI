@@ -31,7 +31,7 @@ RichText& RichText::operator=(RichText const& other) {
     return *this;
 }
 
-RichText& RichText::append(Util::UString const& string, Util::Color const& color) {
+RichText& RichText::append(Util::UString const& string) {
     size_t index = 0;
     while (true) {
         if (index >= string.size()) {
@@ -43,7 +43,7 @@ RichText& RichText::append(Util::UString const& string, Util::Color const& color
         }
         if (index > string.size() - 1)
             break;
-        append_fragment<RichTextFragments::Text>(string.substring(index, *next - index + 1), color);
+        append_fragment<RichTextFragments::Text>(string.substring(index, *next - index + 1));
         if (string.at(*next) == '\n') {
             append_fragment<RichTextFragments::LineBreak>();
         }

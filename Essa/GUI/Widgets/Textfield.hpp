@@ -25,6 +25,7 @@ public:
 
 private:
     Util::Recti text_rect() const;
+    Gfx::RichTextContext rich_text_context() const;
     virtual LengthVector initial_size() const override;
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
 

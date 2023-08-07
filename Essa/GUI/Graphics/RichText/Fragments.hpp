@@ -18,9 +18,8 @@ public:
 
 class Text : public Base {
 public:
-    explicit Text(Util::UString str, Util::Color const& color)
-        : m_string(std::move(str))
-        , m_color(color) { }
+    explicit Text(Util::UString str)
+        : m_string(std::move(str)) { }
 
     virtual float wanted_size(RichTextContext const&) const override;
     virtual void draw(RichTextContext const&, Util::Point2f position, Gfx::Painter&) const override;
@@ -30,7 +29,6 @@ private:
     Gfx::Text text(RichTextContext const&) const;
 
     Util::UString m_string;
-    Util::Color m_color;
 };
 
 class LineBreak : public Base {
