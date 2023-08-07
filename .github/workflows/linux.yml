@@ -30,4 +30,6 @@ jobs:
     - name: Build & install EssaGUI
       run: |
         ./install.sh
-    # TODO: Add some tests.
+    - name: Run tests
+      run: |
+        ./run-all-tests.sh
