@@ -628,9 +628,9 @@ void TextEditor::did_content_change() { m_content_changed = true; }
 TextPosition TextEditor::index_to_position(size_t offset) const {
     TextPosition position;
 
-    while (offset >= m_lines[position.line].size() + 1) {
-        position.line++;
+    while (position.line < m_lines.size() && offset >= m_lines[position.line].size() + 1) {
         offset -= m_lines[position.line].size() + 1;
+        position.line++;
     }
 
     position.column = offset;
