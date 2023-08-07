@@ -9,8 +9,19 @@ class Button;
 class MessageBox : public WindowRoot {
 public:
     enum class Buttons { YesNo, Ok };
+    enum class Icon {
+        None,
+        Info,
+        Warning,
+        Error,
+    };
 
-    explicit MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString title, Buttons buttons);
+    struct Settings {
+        Buttons buttons = Buttons::Ok;
+        Icon icon = Icon::None;
+    };
+
+    explicit MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString title, Settings);
 
     enum class ButtonRole { None, Yes, No, Ok };
 
@@ -23,7 +34,7 @@ private:
     Button* m_default_button = nullptr;
 };
 
-MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons);
+MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Settings settings);
 [[deprecated]] MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons);
 
 }
