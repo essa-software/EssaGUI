@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Essa/GUI/Graphics/GUIBuilder.hpp>
-#include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
@@ -26,6 +25,7 @@ public:
     virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
     virtual void close() override;
     virtual void set_size(Util::Size2i size) override { llgl::Window::set_size(size.cast<unsigned>()); }
+    virtual HostWindow& host_window() override { return *this; }
 
     // TODO: Find a way for this to be private
     void do_draw();

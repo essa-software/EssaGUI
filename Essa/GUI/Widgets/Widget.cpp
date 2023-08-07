@@ -247,13 +247,7 @@ Gfx::ResourceManager const& Widget::resource_manager() const { return Applicatio
 
 HostWindow& Widget::host_window() const {
     auto& window = m_window_root->window();
-    if (Util::is<HostWindow>(window)) {
-        return static_cast<HostWindow&>(window);
-    }
-    if (Util::is<Overlay>(window)) {
-        return static_cast<Overlay&>(window).host_window();
-    }
-    ESSA_UNREACHABLE;
+    return window.host_window();
 }
 
 void Widget::set_parent(Container& parent) {

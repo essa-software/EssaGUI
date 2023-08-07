@@ -45,10 +45,10 @@ int main() {
         if (tool_window) {
             tool_window->window().close();
         }
-        auto opened_overlay = eml_container->open_overlay();
-        (void)opened_overlay.window_root.load_from_eml_string(eml_editor->content().encode());
-        tool_window = &opened_overlay.window_root;
-        opened_overlay.overlay.on_close = [&tool_window, new_window_root = &opened_overlay.window_root]() {
+        auto opened_overlay = eml_container->open_window();
+        (void)opened_overlay.root.load_from_eml_string(eml_editor->content().encode());
+        tool_window = &opened_overlay.root;
+        opened_overlay.window.on_close = [&tool_window, new_window_root = &opened_overlay.root]() {
             if (tool_window == new_window_root) {
                 tool_window = nullptr;
             }

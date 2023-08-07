@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/GUI/WindowRoot.hpp>
 #include <EssaUtil/UString.hpp>
 
 namespace GUI {

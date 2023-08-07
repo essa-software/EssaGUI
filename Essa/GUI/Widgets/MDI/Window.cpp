@@ -17,17 +17,24 @@
 
 namespace GUI::MDI {
 
-Window::Window(Host& host, std::string id)
-    : Overlay(host, std::move(id))
+Window::Window(Host& host)
+    : m_host(host)
     , m_window_shadow(GUI::Application::the().resource_manager().require_texture("misc/window_shadow.png")) {
     m_titlebar_buttons.push_back(TitlebarButton { .on_click = [this]() { close(); } });
 }
 
 void Window::setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const& settings) {
-    m_settings = settings;
     set_title(title);
-    Overlay::setup(std::move(title), size, settings);
+    m_size = size.cast<int>();
+    m_settings = settings;
 }
+
+void Window::center_on_screen() {
+    auto& window = host();
+    set_position((window.raw_size() / 2 - size() / 2.f).to_vector().to_point());
+}
+
+HostWindow& Window::host_window() { return host().host_window(); }
 
 void Window::handle_event(Event const& event) {
     if (m_first_tick)
@@ -256,7 +263,7 @@ void Window::draw_decorations(Gfx::Painter& painter) const {
         ));
     }
 
-    auto titlebar_color = host().focused_overlay() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
+    auto titlebar_color = host().focused_window() == this ? theme().tab_button.active.unhovered : theme().tab_button.inactive.unhovered;
 
     Gfx::RectangleDrawOptions rs_titlebar;
     rs_titlebar.border_radius_top_left = theme().tool_window_title_bar_border_radius;
@@ -377,7 +384,7 @@ Util::Recti Window::resize_rect(ResizeDirection direction) const {
 }
 
 EML::EMLErrorOr<void> Window::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
-    TRY(Overlay::load_from_eml_object(object, loader));
+    TRY(WidgetTreeRoot::load_from_eml_object(object, loader));
 
     m_title = TRY(object.get_property("title", EML::Value(Util::UString {})).to_string());
     set_size({

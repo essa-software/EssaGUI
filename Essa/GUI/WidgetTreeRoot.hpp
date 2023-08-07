@@ -28,6 +28,7 @@ public:
     virtual void set_size(Util::Size2i) = 0;
     virtual void center_on_screen() = 0;
     virtual void close() = 0;
+    virtual HostWindow& host_window() = 0;
 
     virtual void draw(Gfx::Painter&);
     virtual void handle_event(GUI::Event const&);

@@ -76,7 +76,6 @@ add_library(GUI SHARED
     Widgets/WorldView.cpp
 
     Widgets/MDI/Host.cpp
-    Widgets/MDI/Overlay.cpp
     Widgets/MDI/Window.cpp
 )
 add_library(Essa::GUI ALIAS GUI)
