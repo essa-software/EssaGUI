@@ -11,6 +11,7 @@ namespace GUI {
 Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
     : WindowRoot(window) {
     window.setup(std::move(window_title), { 500, 100 }, {});
+    window.center_on_screen();
 
     auto& container = set_main_widget<GUI::Container>();
     auto& container_layout = container.set_layout<GUI::VerticalBoxLayout>();
