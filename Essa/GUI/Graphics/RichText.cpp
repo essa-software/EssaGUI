@@ -31,6 +31,13 @@ RichText& RichText::operator=(RichText const& other) {
     return *this;
 }
 
+RichText RichText::parse(Util::UString const& input) {
+    RichText text;
+    // TODO: Write a parser.
+    text.append(input);
+    return text;
+}
+
 RichText& RichText::append(Util::UString const& string) {
     size_t index = 0;
     while (true) {

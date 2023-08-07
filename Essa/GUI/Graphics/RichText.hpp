@@ -16,6 +16,8 @@ public:
     RichText(RichText&&) = default;
     RichText& operator=(RichText&&) = default;
 
+    static RichText parse(Util::UString const&);
+
     template<class T, class... Args>
         requires(std::is_base_of_v<RichTextFragments::Base, T>)
     RichText& append_fragment(Args&&... args) {
