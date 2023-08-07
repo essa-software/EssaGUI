@@ -50,7 +50,7 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
         return button;
     };
 
-    const auto& theme = GUI::Application::the().theme();
+    auto const& theme = GUI::Application::the().theme();
 
     if (buttons == Buttons::YesNo) {
         m_default_button = add_button(ButtonRole::Yes, "Yes", theme.positive);
@@ -69,10 +69,14 @@ Widget::EventHandlerResult MessageBox::handle_event(Event const& event) {
     return Widget::EventHandlerResult::NotAccepted;
 }
 
-MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
+MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
     auto msgbox = GUI::Application::the().open_host_window<GUI::MessageBox>(std::move(message), std::move(title), buttons);
     msgbox.window.show_modal();
     return msgbox.root.clicked_button();
+}
+
+MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
+    return message_box(std::move(message), std::move(title), buttons);
 }
 
 }
