@@ -19,8 +19,7 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
     prompt_container_layout.set_padding(Boxi::all_equal(20));
 
     auto* prompt_text = prompt_container.add_widget<GUI::Textfield>();
-    prompt_text->set_content(message);
-    prompt_text->set_alignment(GUI::Align::Center);
+    prompt_text->set_content(Gfx::RichText::parse(message));
     prompt_text->set_size({ Util::Length::Auto, Util::Length::Auto });
 
     {
