@@ -56,7 +56,7 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
     }
 
     // Focus overlay if mouse button pressed
-    if (const auto* mouse_button = transformed_event.get<llgl::Event::MouseButtonPress>()) {
+    if (auto const* mouse_button = transformed_event.get<llgl::Event::MouseButtonPress>()) {
         decltype(m_windows)::iterator new_focused_it = m_windows.end();
         for (auto it = m_windows.end(); it != m_windows.begin();) {
             auto it2 = --it;
@@ -108,7 +108,7 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
 DBG_DECLARE(GUI_DrawOverlayBounds);
 
 void Host::draw(Gfx::Painter& painter) const {
-    for (const auto& overlay : m_windows) {
+    for (auto const& overlay : m_windows) {
         overlay->draw(painter);
 
         if (DBG_ENABLED(GUI_DrawOverlayBounds)) {
@@ -141,13 +141,14 @@ Window& Host::open_window_impl(std::unique_ptr<Window> overlay) {
 Host::OpenOrFocusResult Host::open_or_focus_window(Util::UString const& title, std::string id) {
     for (auto it = m_windows.begin(); it != m_windows.end(); it++) {
         auto* window = it->get();
-        if (window->id() == id && Util::is<Window>(*window)) {
+        if (window->id() == id) {
             focus_window_it(it);
-            return { .window = static_cast<Window*>(window), .opened = false };
+            return { .window = window, .opened = false };
         }
     }
     OpenOrFocusResult result = { .window = &open_window().window, .opened = true };
     result.window->set_title(title);
+    result.window->set_id(id);
     return result;
 }
 
