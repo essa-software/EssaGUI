@@ -29,9 +29,19 @@ int TextEditor::left_margin() const {
 }
 
 Util::Size2i TextEditor::content_size() const {
+    if (m_lines.empty()) {
+        return {};
+    }
+
     auto line_height = this->line_height();
     int first_visible_line = std::min<int>(-scroll_offset().y() / line_height, static_cast<int>(m_lines.size()) - 1);
+    if (first_visible_line < 0) {
+        first_visible_line = 0;
+    }
     int last_visible_line = std::min<int>((raw_size().y() - scroll_offset().y() / line_height), static_cast<int>(m_lines.size()) - 1);
+    if (last_visible_line < 0) {
+        last_visible_line = 0;
+    }
 
     int width = 0;
     for (int s = first_visible_line; s <= last_visible_line; s++) {
