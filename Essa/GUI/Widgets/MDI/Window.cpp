@@ -36,11 +36,26 @@ void Window::center_on_screen() {
 
 HostWindow& Window::host_window() { return host().host_window(); }
 
+void Window::constrain_position() {
+    auto& mdi_host = host();
+    auto position = this->position();
+
+    int margin = llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless) ? 0 : static_cast<int>(theme().tool_window_title_bar_size);
+
+    if (position.y() < margin)
+        position.set_y(margin);
+    if (position.y() > static_cast<int>(mdi_host.raw_size().y()))
+        position.set_y(mdi_host.raw_size().y());
+    if (position.x() < static_cast<int>(-size().x() + margin))
+        position.set_x(-size().x() + margin);
+    if (position.x() > static_cast<int>(mdi_host.raw_size().x() - margin))
+        position.set_x(mdi_host.raw_size().x() - margin);
+    set_position(position);
+}
+
 void Window::handle_event(Event const& event) {
     if (m_first_tick)
         return;
-
-    auto& mdi_host = host();
 
     bool should_pass_event_to_widgets = true;
     if (event.is_mouse_related()) {
@@ -103,19 +118,6 @@ void Window::handle_event(Event const& event) {
             });
 
             auto delta = mouse_position - m_drag_position.to_vector();
-
-            auto constrain_position = [this, &mdi_host]() {
-                auto position = this->position();
-                if (position.y() < static_cast<int>(theme().tool_window_title_bar_size))
-                    position.set_y(theme().tool_window_title_bar_size);
-                if (position.y() > static_cast<int>(mdi_host.raw_size().y()))
-                    position.set_y(mdi_host.raw_size().y());
-                if (position.x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
-                    position.set_x(-size().x() + theme().tool_window_title_bar_size);
-                if (position.x() > static_cast<int>(mdi_host.raw_size().x() - theme().tool_window_title_bar_size))
-                    position.set_x(mdi_host.raw_size().x() - theme().tool_window_title_bar_size);
-                set_position(position);
-            };
 
             if (m_moving) {
                 set_position(m_initial_dragging_position + delta.to_vector());

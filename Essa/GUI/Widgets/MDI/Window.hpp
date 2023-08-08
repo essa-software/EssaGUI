@@ -75,6 +75,7 @@ private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     void draw_decorations(Gfx::Painter&) const;
+    void constrain_position();
 
     Util::Point2i m_position;
     Util::Size2i m_size;

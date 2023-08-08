@@ -170,6 +170,10 @@ void Host::update() {
 void Host::relayout() {
     m_background_window->set_size(raw_size());
     m_background_window->handle_event(GUI::Event::WindowResize(raw_size().cast<unsigned>()));
+
+    for (auto const& wnd : m_windows) {
+        wnd->constrain_position();
+    }
 }
 
 void Host::remove_closed_windows() {
