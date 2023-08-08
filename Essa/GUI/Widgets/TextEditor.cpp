@@ -145,7 +145,7 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
         m_selection_start = real_cursor_position();
 
     int x_offset = static_cast<int>(real_cursor_position().column) * character_width() + scroll_offset().x();
-    auto max_x = scrollable_rect().width - character_width();
+    auto max_x = std::max(0, scrollable_rect().width - character_width());
     if (x_offset < 0) {
         set_scroll_x(scroll().x() + x_offset);
     }
@@ -154,7 +154,7 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
     }
 
     int y_offset = static_cast<int>(real_cursor_position().line) * line_height() + scroll_offset().y();
-    auto max_y = raw_size().y() - line_height() - 8;
+    auto max_y = std::max(0, raw_size().y() - line_height() - 8);
     if (y_offset < 0) {
         set_scroll_y(scroll().y() + y_offset);
     }
