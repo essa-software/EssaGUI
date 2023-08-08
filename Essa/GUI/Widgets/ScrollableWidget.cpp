@@ -105,4 +105,18 @@ Util::Size2i ScrollableWidget::scroll_area_size() const {
     return size;
 }
 
+void ScrollableWidget::relayout() {
+    // Clamp scroll to content size
+    auto content_size = this->content_size();
+    auto scroll_area_size = this->scroll_area_size();
+    auto scroll_end = content_size - scroll_area_size;
+    scroll_end = { std::max(0, scroll_end.x()), std::max(0, scroll_end.y()) };
+    if (m_scroll.x() > scroll_end.x()) {
+        m_scroll.set_x(scroll_end.x());
+    }
+    if (m_scroll.y() > scroll_end.y()) {
+        m_scroll.set_y(scroll_end.y());
+    }
+}
+
 }

@@ -38,6 +38,8 @@ private:
     // content size overflows scrollable rect, scrollbars will appear.
     virtual Util::Size2i content_size() const = 0;
 
+    virtual void relayout() override;
+
     Util::Vector2i m_scroll {};
     bool m_x_scrollbar_visible = true;
     bool m_y_scrollbar_visible = true;
