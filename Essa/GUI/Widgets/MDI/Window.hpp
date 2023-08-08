@@ -18,8 +18,6 @@ public:
     virtual void close() override { m_closed = true; }
     bool is_closed() const { return m_closed; }
 
-    std::string id() const { return m_id; }
-
     virtual void center_on_screen() override;
 
     virtual Util::Point2i position() const override { return m_position; }
@@ -81,7 +79,6 @@ private:
     Util::Point2i m_position;
     Util::Size2i m_size;
     Host& m_host;
-    std::string m_id;
     bool m_closed = false;
     bool m_ignore_events = false;
     bool m_always_on_bottom = false;
