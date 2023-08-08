@@ -326,7 +326,7 @@ void Window::draw_decorations(Gfx::Painter& painter) const {
 void Window::draw(Gfx::Painter& painter) {
     using namespace Gfx::Drawing;
 
-    bool should_draw_decorations = !((llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless)) || always_on_bottom());
+    bool should_draw_decorations = !llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless);
 
     if (should_draw_decorations) {
         draw_decorations(painter);

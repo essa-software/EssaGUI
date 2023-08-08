@@ -11,7 +11,13 @@ namespace GUI::MDI {
 
 Host::Host()
     : m_next_window_position({ 10, 10 + theme().tool_window_title_bar_size }) {
-    m_background_window = &open_window().window;
+    struct BackgroundWindow : public WindowRoot {
+        BackgroundWindow(WidgetTreeRoot& window)
+            : WindowRoot(window) {
+            window.setup("BackgroundWindow", { 1, 1 }, llgl::WindowSettings { .flags = llgl::WindowFlags::Borderless });
+        }
+    };
+    m_background_window = &open_window<BackgroundWindow>().window;
     m_background_window->set_always_on_bottom(true);
 }
 
