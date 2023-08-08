@@ -31,7 +31,6 @@ void Textbox::m_fit_in_range() {
         return;
     }
     double value = maybe_value.release_value();
-    fmt::print("m_fit_in_range {}->{} min={} max={}\n", content().encode(), value, m_min, m_max);
     if (value < m_min)
         value = m_min;
     else if (value > m_max)
