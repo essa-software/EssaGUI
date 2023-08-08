@@ -12,7 +12,6 @@ FBO::FBO(Util::Size2u size) {
 
     resize(size);
     FBOScope scope { *this };
-    OpenGL::FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depth_renderbuffer);
 
     GLenum buffers[] = { GL_COLOR_ATTACHMENT0 };
     OpenGL::DrawBuffers(1, buffers);
@@ -42,6 +41,8 @@ void FBO::bind(Target target) const {
 
 void FBO::resize(Util::Size2u size) {
     FBOScope scope { *this };
+
+    // Color
     if (m_color_texture.size() == size)
         return;
     if (!m_color_texture.id())
@@ -49,11 +50,14 @@ void FBO::resize(Util::Size2u size) {
     else
         m_color_texture.recreate(size, Texture::Format::RGBA);
     OpenGL::FramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_color_texture.id(), 0);
+
+    // Depth
     if (m_depth_renderbuffer)
         OpenGL::DeleteRenderbuffers(1, &m_depth_renderbuffer);
     OpenGL::GenRenderbuffers(1, &m_depth_renderbuffer);
     OpenGL::BindRenderbuffer(GL_RENDERBUFFER, m_depth_renderbuffer);
     OpenGL::RenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, size.x(), size.y());
+    OpenGL::FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depth_renderbuffer);
 
     // std::cout << "FBO: recreated with size " << size.x << "," << size.y << std::endl;
 }
