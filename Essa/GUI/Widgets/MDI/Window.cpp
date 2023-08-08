@@ -105,14 +105,16 @@ void Window::handle_event(Event const& event) {
             auto delta = mouse_position - m_drag_position.to_vector();
 
             auto constrain_position = [this, &mdi_host]() {
-                if (position().y() < static_cast<int>(theme().tool_window_title_bar_size))
-                    position().set_y(theme().tool_window_title_bar_size);
-                if (position().y() > static_cast<int>(mdi_host.raw_size().y()))
-                    position().set_y(mdi_host.raw_size().y());
-                if (position().x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
-                    position().set_x(-size().x() + theme().tool_window_title_bar_size);
-                if (position().x() > static_cast<int>(mdi_host.raw_size().x() - theme().tool_window_title_bar_size))
-                    position().set_x(mdi_host.raw_size().x() - theme().tool_window_title_bar_size);
+                auto position = this->position();
+                if (position.y() < static_cast<int>(theme().tool_window_title_bar_size))
+                    position.set_y(theme().tool_window_title_bar_size);
+                if (position.y() > static_cast<int>(mdi_host.raw_size().y()))
+                    position.set_y(mdi_host.raw_size().y());
+                if (position.x() < static_cast<int>(-size().x() + theme().tool_window_title_bar_size))
+                    position.set_x(-size().x() + theme().tool_window_title_bar_size);
+                if (position.x() > static_cast<int>(mdi_host.raw_size().x() - theme().tool_window_title_bar_size))
+                    position.set_x(mdi_host.raw_size().x() - theme().tool_window_title_bar_size);
+                set_position(position);
             };
 
             if (m_moving) {
