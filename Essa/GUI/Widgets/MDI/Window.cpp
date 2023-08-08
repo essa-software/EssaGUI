@@ -40,7 +40,7 @@ void Window::constrain_position() {
     auto& mdi_host = host();
     auto position = this->position();
 
-    int margin = llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless) ? 0 : static_cast<int>(theme().tool_window_title_bar_size);
+    int margin = is_borderless() ? 0 : static_cast<int>(theme().tool_window_title_bar_size);
 
     if (position.y() < margin)
         position.set_y(margin);
@@ -58,7 +58,8 @@ void Window::handle_event(Event const& event) {
         return;
 
     bool should_pass_event_to_widgets = true;
-    if (event.is_mouse_related()) {
+
+    if (!is_borderless() && event.is_mouse_related()) {
         auto mouse_position = event.local_mouse_position();
         mouse_position += position().to_vector();
 
@@ -326,7 +327,7 @@ void Window::draw_decorations(Gfx::Painter& painter) const {
 void Window::draw(Gfx::Painter& painter) {
     using namespace Gfx::Drawing;
 
-    bool should_draw_decorations = !llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless);
+    bool should_draw_decorations = !is_borderless();
 
     if (should_draw_decorations) {
         draw_decorations(painter);
@@ -385,6 +386,17 @@ Util::Recti Window::resize_rect(ResizeDirection direction) const {
         return full_rect().take_left(theme().tool_window_resize_border_width);
     }
     ESSA_UNREACHABLE;
+}
+
+Util::Recti Window::full_rect() const {
+    if (is_borderless()) {
+        return rect();
+    }
+    return Util::Recti {
+        position() - Util::Vector2i(0, theme().tool_window_title_bar_size),
+        size() + Util::Vector2i(0, theme().tool_window_title_bar_size),
+    }
+        .inflated(static_cast<int>(theme().tool_window_resize_border_width / 2));
 }
 
 EML::EMLErrorOr<void> Window::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

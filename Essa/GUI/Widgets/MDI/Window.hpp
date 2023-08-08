@@ -41,13 +41,7 @@ public:
 
     CREATE_VALUE(Util::UString, title, "")
 
-    virtual Util::Recti full_rect() const override {
-        return Util::Recti {
-            position() - Util::Vector2i(0, theme().tool_window_title_bar_size),
-            size() + Util::Vector2i(0, theme().tool_window_title_bar_size),
-        }
-            .inflated(static_cast<int>(theme().tool_window_resize_border_width / 2));
-    }
+    virtual Util::Recti full_rect() const override;
     Util::Recti titlebar_rect() const {
         return {
             position() - Util::Vector2i(0, theme().tool_window_title_bar_size),
@@ -76,6 +70,8 @@ private:
 
     void draw_decorations(Gfx::Painter&) const;
     void constrain_position();
+
+    bool is_borderless() const { return llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless); }
 
     Util::Point2i m_position;
     Util::Size2i m_size;
