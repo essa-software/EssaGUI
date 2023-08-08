@@ -48,6 +48,9 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
     Widget::do_handle_event(event);
 
     auto transformed_event = event.relativized(raw_position().to_vector());
+    if (!is_affected_by_event(transformed_event)) {
+        return Widget::EventHandlerResult::NotAccepted;
+    }
 
     // Send global events to everyone regardless of the focused overlay
     if (transformed_event.target_type() == llgl::EventTargetType::Global) {
