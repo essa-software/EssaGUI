@@ -19,6 +19,7 @@ private:
     Util::Rectu splitter_rect(size_t index) const;
 
     virtual EventHandlerResult on_mouse_move(Event::MouseMove const&) override;
+    virtual EventHandlerResult on_mouse_leave(Event::MouseLeave const&) override;
     virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;
     virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) override;
     virtual void draw(Gfx::Painter&) const override;
@@ -26,7 +27,8 @@ private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     Util::Orientation m_orientation;
-    std::optional<size_t> m_splitter_dragged;
+    std::optional<size_t> m_dragged_splitter;
+    std::optional<size_t> m_hovered_splitter;
     int m_drag_start = 0;
 };
 

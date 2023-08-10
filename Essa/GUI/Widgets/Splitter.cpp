@@ -11,11 +11,18 @@ namespace GUI {
 constexpr unsigned SplitterWidth = 5;
 
 Widget::EventHandlerResult Splitter::on_mouse_move(Event::MouseMove const& event) {
-    if (m_splitter_dragged) {
+    m_hovered_splitter = {};
+    for (size_t i = 0; i + 1 < m_widgets.size(); i++) {
+        if (splitter_rect(i).contains(event.local_position().cast<unsigned>())) {
+            m_hovered_splitter = i;
+        }
+    }
+
+    if (m_dragged_splitter) {
         int position = event.local_position().main(m_orientation);
         auto delta = position - m_drag_start;
-        auto& first_widget = m_widgets[*m_splitter_dragged];
-        auto& second_widget = m_widgets[*m_splitter_dragged + 1];
+        auto& first_widget = m_widgets[*m_dragged_splitter];
+        auto& second_widget = m_widgets[*m_dragged_splitter + 1];
         auto first_size = first_widget->raw_size().main(m_orientation);
         auto second_size = second_widget->raw_size().main(m_orientation);
 
@@ -57,6 +64,11 @@ Widget::EventHandlerResult Splitter::on_mouse_move(Event::MouseMove const& event
     return EventHandlerResult::NotAccepted;
 }
 
+Widget::EventHandlerResult Splitter::on_mouse_leave(Event::MouseLeave const&) {
+    m_hovered_splitter = {};
+    return EventHandlerResult::NotAccepted;
+}
+
 Widget::EventHandlerResult Splitter::on_mouse_button_press(Event::MouseButtonPress const& event) {
     if (event.button() == llgl::MouseButton::Left) {
         std::optional<size_t> splitter;
@@ -66,7 +78,7 @@ Widget::EventHandlerResult Splitter::on_mouse_button_press(Event::MouseButtonPre
             }
         }
         if (splitter) {
-            m_splitter_dragged = splitter;
+            m_dragged_splitter = splitter;
             m_drag_start = event.local_position().main(m_orientation);
             return EventHandlerResult::Accepted;
         }
@@ -76,7 +88,7 @@ Widget::EventHandlerResult Splitter::on_mouse_button_press(Event::MouseButtonPre
 
 Widget::EventHandlerResult Splitter::on_mouse_button_release(Event::MouseButtonRelease const& event) {
     if (event.button() == llgl::MouseButton::Left) {
-        m_splitter_dragged = {};
+        m_dragged_splitter = {};
     }
     return EventHandlerResult::NotAccepted;
 }
@@ -85,7 +97,17 @@ void Splitter::draw(Gfx::Painter& painter) const {
     for (size_t i = 0; i + 1 < m_widgets.size(); i++) {
         Util::Rectu rect = splitter_rect(i);
         using namespace Gfx::Drawing;
-        painter.draw(Rectangle(rect.cast<float>(), Fill::solid(theme().sidebar)));
+        Util::Color color = [&]() {
+            // FIXME: Better colors?
+            if (i == m_dragged_splitter) {
+                return theme().selection.focused;
+            }
+            if (i == m_hovered_splitter) {
+                return theme().selection.unfocused;
+            }
+            return theme().sidebar;
+        }();
+        painter.draw(Rectangle(rect.cast<float>(), Fill::solid(color)));
     }
 }
 
