@@ -45,8 +45,8 @@ void WindowRoot::relayout_and_draw(Gfx::Painter& painter) {
         return;
     if (m_needs_relayout) {
         // std::cout << m_id << "\n"
-        m_main_widget->set_size({ { static_cast<int>(m_window.size().x()), Util::Length::Px },
-                                  { static_cast<int>(m_window.size().y()), Util::Length::Px } });
+        m_main_widget->set_size({ { static_cast<float>(m_window.size().x()), Util::Length::Px },
+                                  { static_cast<float>(m_window.size().y()), Util::Length::Px } });
         m_main_widget->set_raw_size(m_window.size());
         m_main_widget->do_relayout();
         if (DBG_ENABLED(GUI_DumpLayout)) {

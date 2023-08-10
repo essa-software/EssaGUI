@@ -25,8 +25,8 @@ LengthVector ImageButton::initial_size() const {
     // FIXME: More convenient way to convert theme values to pixels. Maybe
     //        just support units in themes.
     return {
-        { static_cast<int>(theme().image_button_size), Util::Length::Px },
-        { static_cast<int>(theme().image_button_size), Util::Length::Px },
+        { static_cast<float>(theme().image_button_size), Util::Length::Px },
+        { static_cast<float>(theme().image_button_size), Util::Length::Px },
     };
 }
 

@@ -33,7 +33,7 @@ public:
 
 private:
     virtual LengthVector initial_size() const override {
-        return { Util::Length::Auto, { static_cast<int>(theme().line_height), Util::Length::Px } };
+        return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } };
     }
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;

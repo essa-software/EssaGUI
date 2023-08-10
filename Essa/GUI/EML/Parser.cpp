@@ -124,11 +124,11 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
             return error("Expected unit, got EOF");
         if (maybe_unit->type() == TokenType::PercentSign) {
             get();
-            return EML::Value(Util::Length { number, Util::Length::Percent });
+            return EML::Value(Util::Length { static_cast<float>(number), Util::Length::Percent });
         }
         if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px") {
             get();
-            return EML::Value(Util::Length { number, Util::Length::Px });
+            return EML::Value(Util::Length { static_cast<float>(number), Util::Length::Px });
         }
         if (maybe_unit->type() == TokenType::DoubleDot) {
             get();

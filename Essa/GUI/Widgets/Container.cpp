@@ -61,9 +61,9 @@ void BoxLayout::run(Container& container) {
             case Util::Length::Auto:
                 return container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation);
             case Util::Length::Px:
-                return size.value();
+                return static_cast<int>(size.value());
             case Util::Length::Percent:
-                return size.value() * container.raw_size().main(m_orientation) / 100;
+                return static_cast<int>(size.value() * container.raw_size().main(m_orientation) / 100);
             case Util::Length::Initial:
                 break;
             }
@@ -74,20 +74,26 @@ void BoxLayout::run(Container& container) {
 
     // 2. Compute raw_size available for auto-sized widgets
     int available_size_for_autosized_widgets = container.raw_size().main(m_orientation) - m_padding.main_sum(m_orientation);
+    float autosized_fraction_sum = 0;
     int autosized_widget_count = 0;
     for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
-        if (w->size().main(m_orientation).unit() == Util::Length::Auto)
+        if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
+            autosized_fraction_sum += w->size().main(m_orientation).value();
             autosized_widget_count++;
-        else
+        }
+        else {
             available_size_for_autosized_widgets -= w->raw_size().main(m_orientation) + m_spacing;
+        }
     }
 
     // 3. Set autosized widgets' raw_size + arrange widgets
-    int autosized_widget_size = autosized_widget_count == 0
+    float autosized_widget_size = autosized_fraction_sum == 0
         ? 0
-        : (available_size_for_autosized_widgets - (m_spacing * (autosized_widget_count - 1))) / autosized_widget_count;
+        : (static_cast<float>(available_size_for_autosized_widgets) - (static_cast<float>(m_spacing * (autosized_widget_count - 1))))
+            / autosized_fraction_sum;
+
     if (autosized_widget_size < 0)
         autosized_widget_size = 0;
     switch (m_content_alignment) {
@@ -98,14 +104,15 @@ void BoxLayout::run(Container& container) {
                 continue;
             if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
                 auto cross = w->raw_size().cross(m_orientation);
-                w->set_raw_size(Util::Size2i::from_main_cross(m_orientation, autosized_widget_size, cross));
+                w->set_raw_size(Util::Size2i::from_main_cross(
+                    m_orientation, std::ceil(autosized_widget_size * w->size().main(m_orientation).value()), cross
+                ));
             }
             w->set_raw_position(Util::Point2i::from_main_cross(
                 m_orientation, container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
                 container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)
             ));
             current_position += w->raw_size().main(m_orientation) + m_spacing;
-            available_size_for_autosized_widgets -= autosized_widget_size;
         }
     } break;
     case ContentAlignment::BoxEnd: {
@@ -116,14 +123,15 @@ void BoxLayout::run(Container& container) {
                 continue;
             if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
                 auto cross = w->raw_size().cross(m_orientation);
-                w->set_raw_size(Util::Size2i::from_main_cross(m_orientation, autosized_widget_size, cross));
+                w->set_raw_size(Util::Size2i::from_main_cross(
+                    m_orientation, std::ceil(autosized_widget_size * w->size().main(m_orientation).value()), cross
+                ));
             }
             current_position -= w->raw_size().main(m_orientation) + m_spacing;
             w->set_raw_position(Util::Point2i::from_main_cross(
                 m_orientation, container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
                 container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)
             ));
-            available_size_for_autosized_widgets -= autosized_widget_size;
         }
     } break;
     }
@@ -226,6 +234,13 @@ void Container::remove_widget(Widget& widget) {
 }
 
 void Container::do_relayout() {
+    for (auto& widget : m_widgets) {
+        auto initial_size = widget->initial_size();
+        if (widget->m_input_size.x == Util::Length::Initial)
+            widget->m_input_size.x = initial_size.x;
+        if (widget->m_input_size.y == Util::Length::Initial)
+            widget->m_input_size.y = initial_size.y;
+    }
     Widget::do_relayout();
     for (auto const& w : m_widgets) {
         if (w->is_visible())
@@ -375,13 +390,6 @@ void Container::do_update() {
 void Container::relayout() {
     if (m_widgets.empty())
         return;
-    for (auto& w : m_widgets) {
-        auto initial_size = w->initial_size();
-        if (w->m_input_size.x == Util::Length::Initial)
-            w->m_input_size.x = initial_size.x;
-        if (w->m_input_size.y == Util::Length::Initial)
-            w->m_input_size.y = initial_size.y;
-    }
     if (!m_layout) {
         std::cout << "Not trying to relayout widget without layout!" << std::endl;
         dump(0);

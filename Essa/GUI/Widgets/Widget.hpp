@@ -44,6 +44,10 @@ struct LengthVector {
     Util::Length x;
     Util::Length y;
 
+    static LengthVector from_main_cross(Util::Orientation o, Util::Length main, Util::Length cross) {
+        return o == Util::Orientation::Horizontal ? LengthVector { main, cross } : LengthVector { cross, main };
+    }
+
     Util::Length main(Util::Orientation o) const {
         if (o == Util::Orientation::Horizontal)
             return x;

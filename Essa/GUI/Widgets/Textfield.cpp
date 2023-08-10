@@ -85,8 +85,8 @@ LengthVector Textfield::initial_size() const {
             [&](Util::UString const&) -> LengthVector {
                 auto size = needed_size_for_text();
                 return LengthVector {
-                    { static_cast<int>(size.x()), Util::Length::Px },
-                    { static_cast<int>(size.y()), Util::Length::Px },
+                    { static_cast<float>(size.x()), Util::Length::Px },
+                    { static_cast<float>(size.y()), Util::Length::Px },
                 };
             },
             [&](Gfx::RichText const&) -> LengthVector {

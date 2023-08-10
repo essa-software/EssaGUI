@@ -19,7 +19,7 @@ public:
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual LengthVector initial_size() const override {
-        return { Util::Length::Auto, { static_cast<int>(theme().line_height), Util::Length::Px } };
+        return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } };
     }
 };
 
