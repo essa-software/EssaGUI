@@ -65,6 +65,7 @@ add_library(GUI SHARED
     Widgets/SelectWidget.cpp
     Widgets/SettingsMenu.cpp
     Widgets/Slider.cpp
+    Widgets/Splitter.cpp
     Widgets/TabWidget.cpp
     Widgets/Textbox.cpp
     Widgets/TextButton.cpp
