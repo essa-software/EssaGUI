@@ -121,4 +121,21 @@ void Splitter::relayout() {
     }
 }
 
+EML::EMLErrorOr<void> Splitter::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    // We can't reuse Container's loader because it requires
+    // layout, which we don't want to be overriddable.
+    TRY(Widget::load_from_eml_object(object, loader)); // NOLINT(bugprone-parent-virtual-call)
+
+    for (auto const& child : object.objects) {
+        std::shared_ptr<Widget> widget = TRY(child.construct<Widget>(loader, window_root()));
+        assert(widget);
+        add_created_widget(std::move(widget));
+    }
+
+    return {};
+}
+
+EML_REGISTER_CLASS(HorizontalSplitter);
+EML_REGISTER_CLASS(VerticalSplitter);
+
 }

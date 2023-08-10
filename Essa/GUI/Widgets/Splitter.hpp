@@ -23,6 +23,7 @@ private:
     virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) override;
     virtual void draw(Gfx::Painter&) const override;
     virtual void relayout() override;
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     Util::Orientation m_orientation;
     std::optional<size_t> m_splitter_dragged;
