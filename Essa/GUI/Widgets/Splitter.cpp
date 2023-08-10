@@ -51,7 +51,7 @@ Widget::EventHandlerResult Splitter::on_mouse_move(Event::MouseMove const& event
         update_size(*first_widget, first_target_size);
         update_size(*second_widget, second_target_size);
 
-        m_drag_start = first_widget->raw_position().main(m_orientation) + first_target_size;
+        m_drag_start = first_widget->parent_relative_rect().position().main(m_orientation) + first_target_size;
         relayout();
     }
     return EventHandlerResult::NotAccepted;
