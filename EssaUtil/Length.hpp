@@ -42,7 +42,7 @@ private:
         ESSA_UNREACHABLE;
     }
 
-    float m_value = 0;
+    float m_value = 1;
     Unit m_unit = Auto;
 };
 
