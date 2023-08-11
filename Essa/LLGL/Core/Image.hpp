@@ -23,8 +23,14 @@ public:
     std::span<Util::Color const> pixels() const { return { m_pixels, pixel_count() }; }
     std::span<Util::Color> pixels() { return { m_pixels, pixel_count() }; }
 
-    ESSA_ALWAYS_INLINE Util::Color get_pixel(Util::Point2u pos) const { return m_pixels[pixel_index(pos)]; }
-    ESSA_ALWAYS_INLINE void set_pixel(Util::Point2u pos, Util::Color color) { m_pixels[pixel_index(pos)] = color; }
+    ESSA_ALWAYS_INLINE Util::Color get_pixel(Util::Point2u pos) const {
+        assert(is_point_in_bounds(pos.cast<float>()));
+        return m_pixels[pixel_index(pos)];
+    }
+    ESSA_ALWAYS_INLINE void set_pixel(Util::Point2u pos, Util::Color color) {
+        assert(is_point_in_bounds(pos.cast<float>()));
+        m_pixels[pixel_index(pos)] = color;
+    }
 
     void insert_image_in_bounds(Image const& other, Util::Point2u where);
 
