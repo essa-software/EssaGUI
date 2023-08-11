@@ -46,41 +46,30 @@ public:
     Size dimensions() const { return { Dimensions... }; }
     size_t size() const { return (Dimensions * ...); }
 
+    bool is_in_bounds(Point const& p) const { return is_in_bounds(p, std::make_index_sequence<Rank>()); }
+
     void fill(Type const& fill) { std::fill(m_storage, m_storage + size(), fill); }
 
-    template<class... Dim>
-        requires(std::is_unsigned_v<Dim> && ...)
-    Type const& ref(Dim... index) const {
-        assert(((index < Dimensions) && ...));
-        return *cell(index...);
-    }
+    template<std::convertible_to<size_t>... Dim> Type const& ref(Dim... index) const { return *cell(index...); }
 
-    template<class... Dim>
-        requires(std::is_unsigned_v<Dim> && ...)
-    Type& ref(Dim... index) {
+    template<std::convertible_to<size_t>... Dim> Type& ref(Dim... index) {
         return const_cast<Type&>(const_cast<Self const*>(this)->ref(index...));
     }
 
     Type const& ref(Detail::Point<Rank, size_t> const& coords) const { return ref(coords, std::make_index_sequence<Rank>()); }
     Type& ref(Detail::Point<Rank, size_t> const& coords) { return const_cast<Type&>(const_cast<Self const*>(this)->ref(coords)); }
 
-    template<class... Dim>
-        requires(std::is_unsigned_v<Dim> && ...)
-    Type get(Dim... index) const {
+    template<std::convertible_to<size_t>... Dim> Type get(Dim... index) const {
         if (!m_storage) {
             // Array doesn't take memory but appears default-initialized here.
             return T {};
         }
-        assert(((index < Dimensions) && ...));
         return *cell(index...);
     }
 
     Type get(Detail::Point<Rank, size_t> const& coords) const { return get(coords, std::make_index_sequence<Rank>()); }
 
-    template<std::convertible_to<size_t>... Dim> void set(Dim... index, T value) {
-        assert(((index < Dimensions) && ...));
-        *cell(index...) = std::move(value);
-    }
+    template<std::convertible_to<size_t>... Dim> void set(Dim... index, T value) { *cell(index...) = std::move(value); }
 
     template<class Callback>
         requires(std::is_invocable_v<Callback, Point, T&>)
@@ -117,6 +106,10 @@ public:
     }
 
 private:
+    template<size_t... Idx> bool is_in_bounds(Point const& p, std::index_sequence<Idx...>) const {
+        return ((p.template component<Idx>() < Dimensions) && ...);
+    }
+
     template<size_t... Idx> Type const& ref(Point const& coords, std::index_sequence<Idx...>) const {
         return ref(coords.component(Idx)...);
     }
@@ -127,6 +120,7 @@ private:
     template<std::convertible_to<size_t>... Dim> Type const* cell(Dim... index) const { return &m_storage[coords_to_index(index...)]; }
 
     template<std::convertible_to<size_t>... Dim> constexpr size_t coords_to_index(Dim... index) const {
+        assert((((size_t)index >= 0 && (size_t)index < Dimensions) && ...));
         size_t idx = 0;
         ((idx *= Dimensions, idx += index), ...);
         return idx;
