@@ -1,12 +1,14 @@
 #pragma once
 
 #include "../Angle.hpp"
+#include "../Checked.hpp"
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <initializer_list>
+#include <optional>
 
 namespace Util {
 
@@ -51,6 +53,17 @@ public:
         Derived<C, OtherT> v;
         for (size_t s = 0; s < C; s++) {
             v.set_component(s, static_cast<OtherT>(this->component(s)));
+        }
+        return v;
+    }
+    template<class OtherT> std::optional<Derived<C, OtherT>> safe_cast() const {
+        Derived<C, OtherT> v;
+        for (size_t s = 0; s < C; s++) {
+            auto comp = this->component(s);
+            if (!is_within_range<OtherT>(comp)) {
+                return {};
+            }
+            v.set_component(s, static_cast<OtherT>(comp));
         }
         return v;
     }
