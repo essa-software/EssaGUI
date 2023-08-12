@@ -13,7 +13,11 @@ public:
     std::optional<Util::UString> result() const { return m_result; }
 
 private:
+    virtual Widget::EventHandlerResult handle_event(llgl::Event const&) override;
+
     std::optional<Util::UString> m_result;
+    GUI::TextButton* m_ok_button = nullptr;
+    GUI::TextButton* m_cancel_button = nullptr;
 };
 
 std::optional<Util::UString>

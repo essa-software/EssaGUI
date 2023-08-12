@@ -38,20 +38,34 @@ Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString wi
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
     button_container->set_size({ Util::Length::Auto, 32.0_px });
     {
-        auto* cancel_button = button_container->add_widget<GUI::TextButton>();
-        cancel_button->set_alignment(GUI::Align::Center);
-        cancel_button->set_content("Cancel");
-        cancel_button->on_click = [this]() { close(); };
+        m_cancel_button = button_container->add_widget<GUI::TextButton>();
+        m_cancel_button->set_alignment(GUI::Align::Center);
+        m_cancel_button->set_content("Cancel");
+        m_cancel_button->on_click = [this]() { close(); };
 
-        auto* ok_button = button_container->add_widget<GUI::TextButton>();
-        ok_button->set_alignment(GUI::Align::Center);
-        ok_button->set_content("OK");
-        ok_button->on_click = [this, input]() {
+        m_ok_button = button_container->add_widget<GUI::TextButton>();
+        m_ok_button->set_alignment(GUI::Align::Center);
+        m_ok_button->set_content("OK");
+        m_ok_button->on_click = [this, input]() {
             m_result = input->content();
             close();
         };
     }
-};
+}
+
+Widget::EventHandlerResult Prompt::handle_event(llgl::Event const& event) {
+    if (auto const* keypress = event.get<Event::KeyPress>()) {
+        if (keypress->code() == llgl::KeyCode::Enter) {
+            m_ok_button->on_click();
+            return Widget::EventHandlerResult::Accepted;
+        }
+        if (keypress->code() == llgl::KeyCode::Escape) {
+            m_cancel_button->on_click();
+            return Widget::EventHandlerResult::Accepted;
+        }
+    }
+    return Widget::EventHandlerResult::NotAccepted;
+}
 
 std::optional<Util::UString> prompt(HostWindow&, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
     auto prompt = GUI::Application::the().open_host_window<Prompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
