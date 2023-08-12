@@ -55,7 +55,6 @@ add_library(GUI SHARED
     Widgets/ImageButton.cpp
     Widgets/ImageWidget.cpp
     Widgets/Listbox.cpp
-    Widgets/ListView.cpp
     Widgets/NotificationContainer.cpp
     Widgets/Progressbar.cpp
     Widgets/RadioButton.cpp

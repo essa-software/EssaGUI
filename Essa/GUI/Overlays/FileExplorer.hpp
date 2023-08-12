@@ -3,8 +3,8 @@
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
-#include <Essa/GUI/Widgets/ListView.hpp>
 #include <Essa/GUI/Widgets/Textbox.hpp>
+#include <Essa/GUI/Widgets/TreeView.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/WindowRoot.hpp>
 #include <filesystem>
@@ -69,7 +69,7 @@ private:
     Textbox* m_directory_path_textbox {};
     Textbox* m_file_name_textbox {};
     FileModel* m_model {};
-    ListView* m_list {};
+    TreeView* m_list {};
 };
 
 }

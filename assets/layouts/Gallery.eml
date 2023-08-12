@@ -163,10 +163,6 @@
             layout: @VerticalBoxLayout
             
             @TreeView {
-                
-            }
-            
-            @ListView {
             
             }
         }

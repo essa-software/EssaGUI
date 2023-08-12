@@ -37,12 +37,10 @@
                 layout: @VerticalBoxLayout
                 width: 200px
             }
-            @ListView list
+            @TreeView list
         }
         
-        // FIXME: Uncomment that when ListView supports selection
-        //        and LLGL supports double click.
-        // @Container { //footer
+        // @Container { // footer
         //     layout: @HorizontalBoxLayout {
         //         padding: 5
         //         spacing: 5

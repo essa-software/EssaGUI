@@ -8,7 +8,6 @@
 #include <Essa/GUI/TextAlign.hpp>
 #include <Essa/GUI/Widgets/Button.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
-#include <Essa/GUI/Widgets/ListView.hpp>
 #include <Essa/GUI/Widgets/TextButton.hpp>
 #include <Essa/GUI/Widgets/Textbox.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
@@ -207,9 +206,10 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
 
     auto container = static_cast<Container*>(main_widget());
 
-    m_list = container->find_widget_of_type_by_id_recursively<ListView>("list");
-    m_list->on_click = [&](unsigned row) {
-        auto path = m_model->get_path(row);
+    m_list = container->find_widget_of_type_by_id_recursively<TreeView>("list");
+    m_list->on_click = [&](Model::NodeData row) {
+        auto const* data = static_cast<FileModel::File const*>(row.data);
+        auto path = data->path;
 
         if (m_type == Type::File && !std::filesystem::is_directory(path)) {
             if (on_submit)
@@ -220,11 +220,12 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
             open_path(path);
         }
     };
-    m_list->on_context_menu_request = [&](unsigned row) -> std::optional<ContextMenu> {
-        auto path = m_model->get_path(row);
+    m_list->on_context_menu_request = [&](Model::NodeData row) -> std::optional<ContextMenu> {
+        auto const* data = static_cast<FileModel::File const*>(row.data);
+        auto path = data->path;
         ContextMenu menu;
         menu.set_title(Util::UString(path.filename().string()));
-        menu.add_action("Open", [this, path]() { open_path(path); });
+        menu.add_action("Open", [this, path]() { open_path(path.filename()); });
         return menu;
     };
 
