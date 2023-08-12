@@ -17,6 +17,7 @@ public:
     bool is_expanded(std::vector<size_t> const& path) const;
 
     void expand(std::vector<size_t> path) { m_expanded_paths.insert(std::move(path)); }
+    void focus(std::optional<std::vector<size_t>> path) { m_focused_path = std::move(path); }
 
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
