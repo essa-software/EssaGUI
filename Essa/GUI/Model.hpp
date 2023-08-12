@@ -29,7 +29,7 @@ public:
 
     struct Node {
         size_t index;
-        NodeData const& data;
+        NodeData data;
     };
 
     virtual ~Model() = default;
