@@ -10,7 +10,7 @@ namespace GUI {
 
 Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder)
     : WindowRoot(window) {
-    window.setup(std::move(window_title), { 500, 100 }, {});
+    window.setup(std::move(window_title), { 500, 110 }, {});
     window.center_on_screen();
 
     auto& container = set_main_widget<GUI::Container>();
@@ -20,7 +20,7 @@ Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString wi
 
     auto* input_container = container.add_widget<GUI::Container>();
     input_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-    input_container->set_size({ Util::Length::Auto, 30.0_px });
+    input_container->set_size({ Util::Length::Auto, 32.0_px });
 
     {
         auto* label = input_container->add_widget<GUI::Textfield>();
@@ -36,7 +36,7 @@ Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString wi
     // FIXME: Also, why buttons are red by default?
     auto* button_container = container.add_widget<GUI::Container>();
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-    button_container->set_size({ Util::Length::Auto, 30.0_px });
+    button_container->set_size({ Util::Length::Auto, 32.0_px });
     {
         auto* cancel_button = button_container->add_widget<GUI::TextButton>();
         cancel_button->set_alignment(GUI::Align::Center);
