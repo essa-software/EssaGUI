@@ -72,7 +72,7 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
 
     auto* button_container = prompt_container.add_widget<GUI::Container>();
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-    button_container->set_size({ Util::Length::Auto, 30.0_px });
+    button_container->set_size({ Util::Length::Auto, 32.0_px });
 
     auto add_button = [this, &button_container](ButtonRole button_role, Util::UString label, Util::Color bg_color) {
         auto* button = button_container->add_widget<GUI::TextButton>();
