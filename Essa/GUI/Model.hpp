@@ -38,6 +38,7 @@ public:
     size_t root_row_count() const { return children_count({}); }
     GUI::Variant root_data(size_t row, size_t column) const { return data(Node { row, child({}, row) }, column); }
     size_t depth() const;
+    NodeData node_for_path(std::vector<size_t> const&) const;
 
     virtual size_t column_count() const = 0;
     virtual ModelColumn column(size_t column) const = 0;
