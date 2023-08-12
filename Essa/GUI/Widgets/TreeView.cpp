@@ -1,10 +1,10 @@
 #include "TreeView.hpp"
-#include "Essa/GUI/Graphics/Drawing/Fill.hpp"
-#include "Essa/GUI/Graphics/Drawing/Outline.hpp"
-#include "Essa/GUI/Graphics/Drawing/Rectangle.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/Graphics/Drawing/Fill.hpp>
+#include <Essa/GUI/Graphics/Drawing/Outline.hpp>
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/AbstractListView.hpp>
@@ -16,8 +16,11 @@ namespace GUI {
 
 constexpr float IndentSize = 24;
 
+TreeView::TreeView() { set_double_click_enabled(true); }
+
 Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPress const& event) {
     size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
+    m_last_clicked_row = row;
     auto path = displayed_row_at_index(row);
     if (!path.first.empty()) {
         if (event.button() == llgl::MouseButton::Left) {
@@ -37,6 +40,21 @@ Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPre
             if (auto context_menu = on_context_menu_request(path.second)) {
                 host_window().open_context_menu(*context_menu, event.local_position() + window_root().window().position().to_vector());
             }
+        }
+    }
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult TreeView::on_mouse_double_click(Event::MouseDoubleClick const& event) {
+    size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
+    if (row != m_last_clicked_row) {
+        return on_mouse_button_press(Event::MouseButtonPress(event.local_position(), llgl::MouseButton::Left));
+    }
+    auto path = displayed_row_at_index(row);
+    if (!path.first.empty()) {
+        if (on_double_click) {
+            on_double_click(path.second);
+            return EventHandlerResult::Accepted;
         }
     }
     return EventHandlerResult::NotAccepted;

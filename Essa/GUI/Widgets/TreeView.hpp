@@ -7,9 +7,12 @@ namespace GUI {
 
 class TreeView : public AbstractListView {
 public:
+    TreeView();
+
     virtual void draw(Gfx::Painter&) const override;
 
     std::function<void(Model::NodeData)> on_click;
+    std::function<void(Model::NodeData)> on_double_click;
     std::function<std::optional<ContextMenu>(Model::NodeData)> on_context_menu_request;
 
     size_t displayed_row_count() const;
@@ -21,6 +24,7 @@ public:
 
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_double_click(Event::MouseDoubleClick const& event) override;
 
     virtual Util::Size2i content_size() const override;
     void render_rows(Gfx::Painter& window, float& current_y_pos, std::vector<size_t> path, std::optional<Model::Node> parent) const;
@@ -31,6 +35,7 @@ private:
 
     std::set<std::vector<size_t>> m_expanded_paths { {} };
     std::optional<std::vector<size_t>> m_focused_path;
+    std::optional<size_t> m_last_clicked_row;
 };
 
 }

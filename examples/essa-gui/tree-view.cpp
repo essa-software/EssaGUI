@@ -216,6 +216,20 @@ int main() {
             break;
         }
     };
+    tv.on_double_click = [](GUI::Model::NodeData data) {
+        switch ((DatabaseModel::DataType)data.type) {
+        case DatabaseModel::DataType::Column: {
+            auto const* column = static_cast<Column const*>(data.data);
+            fmt::print("double-clicked on Column({} {})\n", column->name, column->type);
+        } break;
+        case DatabaseModel::DataType::Index: {
+            auto const* index = static_cast<Index const*>(data.data);
+            fmt::print("double-clicked on Index({} {})\n", index->name, index->type);
+        } break;
+        default:
+            break;
+        }
+    };
     tv.on_context_menu_request = [&](GUI::Model::NodeData const& data) -> std::optional<GUI::ContextMenu> {
         auto type = (DatabaseModel::DataType)data.type;
         if (type != DatabaseModel::DataType::Column && type != DatabaseModel::DataType::Index) {
