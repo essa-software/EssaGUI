@@ -64,6 +64,7 @@ public:
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
     static std::optional<std::filesystem::path> get_path_to_open();
+    static std::optional<std::filesystem::path> get_directory_to_open();
 
 private:
     Textbox* m_directory_path_textbox {};

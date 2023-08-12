@@ -390,4 +390,14 @@ std::optional<std::filesystem::path> FileExplorer::get_path_to_open() {
     return result;
 }
 
+std::optional<std::filesystem::path> FileExplorer::get_directory_to_open() {
+    auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
+    std::optional<std::filesystem::path> result;
+    explorer.window.center_on_screen();
+    explorer.root.set_type(FileExplorer::Type::Directory);
+    explorer.root.on_submit = [&](std::filesystem::path const& path) { result = path; };
+    explorer.window.show_modal();
+    return result;
+}
+
 }
