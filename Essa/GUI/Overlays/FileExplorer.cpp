@@ -211,7 +211,7 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
     m_list->on_click = [&](unsigned row) {
         auto path = m_model->get_path(row);
 
-        if (m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)) {
+        if (m_type == Type::File && !std::filesystem::is_directory(path)) {
             if (on_submit)
                 on_submit(path);
             close();

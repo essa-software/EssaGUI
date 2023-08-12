@@ -53,14 +53,14 @@ class FileExplorer : public WindowRoot {
 public:
     explicit FileExplorer(WidgetTreeRoot& window);
 
-    enum class FileExplorerType { FILE, FOLDER };
+    enum class Type { File, Directory };
 
     FileModel* model() { return m_model; }
     void open_path(std::filesystem::path path);
 
     std::function<void(std::filesystem::path path)> on_submit;
 
-    CREATE_VALUE(FileExplorerType, type, FileExplorerType::FILE)
+    CREATE_VALUE(Type, type, Type::File)
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
     static std::optional<std::filesystem::path> get_path_to_open();
