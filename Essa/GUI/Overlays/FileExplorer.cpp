@@ -349,6 +349,7 @@ void FileExplorer::open_path(std::filesystem::path path) {
     m_current_path = path;
     m_directory_path_textbox->set_content(Util::UString { path.string() }, NotifyUser::No);
     m_list->set_scroll({});
+    m_list->focus({});
 }
 
 std::optional<std::filesystem::path> FileExplorer::get_path_to_open() {
