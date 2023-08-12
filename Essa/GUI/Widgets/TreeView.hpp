@@ -17,10 +17,15 @@ public:
 
     size_t displayed_row_count() const;
     std::pair<std::vector<size_t>, Model::NodeData> displayed_row_at_index(size_t row) const;
-    bool is_expanded(std::vector<size_t> const& path) const;
 
     void expand(std::vector<size_t> path) { m_expanded_paths.insert(std::move(path)); }
+    bool is_expanded(std::vector<size_t> const& path) const;
+
     void focus(std::optional<std::vector<size_t>> path) { m_focused_path = std::move(path); }
+    std::optional<std::vector<size_t>> focused_row() const { return m_focused_path; }
+    std::optional<Model::NodeData> focused_node() const {
+        return m_focused_path ? std::optional(model()->node_for_path(*m_focused_path)) : std::nullopt;
+    }
 
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
