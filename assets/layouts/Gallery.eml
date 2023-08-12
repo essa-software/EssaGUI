@@ -145,6 +145,18 @@
                     unit: "px"
                 }
             }
+            
+            @Container {
+                layout: @HBox
+                
+                @ColorPicker
+                @TextButton file_explorer {
+                    content: "File Explorer"
+                }
+                @TextButton prompt {
+                    content: "Prompt"
+                }
+            }
         }
         @Container {
             caption: "Lists"
