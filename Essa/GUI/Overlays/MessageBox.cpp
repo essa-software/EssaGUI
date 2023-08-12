@@ -102,9 +102,15 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
 }
 
 Widget::EventHandlerResult MessageBox::handle_event(llgl::Event const& event) {
-    if (auto const* keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Enter && m_default_button) {
-        m_default_button->on_click();
-        return Widget::EventHandlerResult::Accepted;
+    if (auto const* keypress = event.get<Event::KeyPress>()) {
+        if (keypress->code() == llgl::KeyCode::Enter && m_default_button) {
+            m_default_button->on_click();
+            return Widget::EventHandlerResult::Accepted;
+        }
+        if (keypress->code() == llgl::KeyCode::Escape) {
+            close();
+            return Widget::EventHandlerResult::Accepted;
+        }
     }
     return Widget::EventHandlerResult::NotAccepted;
 }
