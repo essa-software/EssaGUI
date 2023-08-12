@@ -54,7 +54,7 @@ public:
     Util::Recti resize_rect(ResizeDirection direction) const;
 
 protected:
-    virtual void handle_event(GUI::Event const&) override;
+    virtual void handle_event(llgl::Event const&) override;
     virtual void draw(Gfx::Painter&) override;
 
     virtual void update() override {

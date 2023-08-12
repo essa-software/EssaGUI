@@ -39,7 +39,7 @@ public:
 
 private:
     Util::Size2i required_size() const;
-    virtual Widget::EventHandlerResult handle_event(GUI::Event const&) override;
+    virtual Widget::EventHandlerResult handle_event(llgl::Event const&) override;
 
     MenuWidget* m_menu_widget = nullptr;
     ContextMenu m_context_menu;

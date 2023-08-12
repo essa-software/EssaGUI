@@ -28,7 +28,7 @@ public:
     ButtonRole clicked_button() const { return m_clicked_button; }
 
 private:
-    virtual Widget::EventHandlerResult handle_event(GUI::Event const&) override;
+    virtual Widget::EventHandlerResult handle_event(llgl::Event const&) override;
 
     ButtonRole m_clicked_button = ButtonRole::None;
     Button* m_default_button = nullptr;

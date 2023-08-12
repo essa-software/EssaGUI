@@ -10,7 +10,7 @@
 namespace GUI {
 
 void WidgetTreeRoot::draw(Gfx::Painter& painter) { m_root->relayout_and_draw(painter); }
-void WidgetTreeRoot::handle_event(GUI::Event const& event) {
+void WidgetTreeRoot::handle_event(llgl::Event const& event) {
     if (on_event && on_event(event) == Widget::EventHandlerResult::Accepted) {
         return;
     }

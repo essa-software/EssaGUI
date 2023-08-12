@@ -112,13 +112,13 @@ Util::Size2i ContextMenuOverlay::required_size() const {
     return options_size;
 }
 
-Widget::EventHandlerResult ContextMenuOverlay::handle_event(Event const& event) {
+Widget::EventHandlerResult ContextMenuOverlay::handle_event(llgl::Event const& event) {
     // FIXME: Add something like close_when_clicked_outside()
-    if (event.get<Event::WindowFocusLost>()) {
+    if (event.get<llgl::Event::WindowFocusLost>()) {
         close();
         return Widget::EventHandlerResult::Accepted;
     }
-    if (const auto* keypress = event.get<Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Escape) {
+    if (const auto* keypress = event.get<llgl::Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Escape) {
         close();
         return Widget::EventHandlerResult::Accepted;
     }

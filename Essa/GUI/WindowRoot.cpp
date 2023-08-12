@@ -59,14 +59,14 @@ void WindowRoot::relayout_and_draw(Gfx::Painter& painter) {
     m_main_widget->do_draw(painter);
 }
 
-void WindowRoot::do_handle_event(GUI::Event const& event) {
+void WindowRoot::do_handle_event(llgl::Event const& event) {
     if (!m_main_widget)
         return;
 
-    if (event.is<GUI::Event::WindowResize>()) {
+    if (event.is<llgl::Event::WindowResize>()) {
         m_needs_relayout = true;
     }
-    if (event.is<GUI::Event::WindowClose>()) {
+    if (event.is<llgl::Event::WindowClose>()) {
         fmt::print("close()\n");
         close();
     }
@@ -76,14 +76,18 @@ void WindowRoot::do_handle_event(GUI::Event const& event) {
     }
 
     // FIXME: Find a way to make first focusable widget focused "from start".
-    if (!m_focused_widget && event.is<GUI::Event::KeyPress>()) {
-        auto key_event = *event.get<GUI::Event::KeyPress>();
+    if (!m_focused_widget && event.is<llgl::Event::KeyPress>()) {
+        auto key_event = *event.get<llgl::Event::KeyPress>();
         if (key_event.code() == llgl::KeyCode::Tab) {
             m_main_widget->focus_first_child_or_self();
             return;
         }
     }
-    m_main_widget->do_handle_event(event);
+    event.visit([&](auto const& event) {
+        if constexpr (requires() { GUI::Event::Variant(event); }) {
+            m_main_widget->do_handle_event(GUI::Event(event));
+        }
+    });
 }
 
 void WindowRoot::close() { m_window.close(); }

@@ -53,7 +53,7 @@ void Window::constrain_position() {
     set_position(position);
 }
 
-void Window::handle_event(Event const& event) {
+void Window::handle_event(llgl::Event const& event) {
     if (m_first_tick)
         return;
 

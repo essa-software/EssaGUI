@@ -3,6 +3,7 @@
 #include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/Event.hpp>
 #include <Essa/GUI/EventLoop.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
@@ -62,13 +63,6 @@ struct LengthVector {
 };
 
 constexpr bool operator==(LengthVector const& a, LengthVector const& b) { return a.x == b.x && a.y == b.y; }
-
-struct Event : public llgl::Event {
-public:
-    template<class T>
-    Event(T&& t)
-        : llgl::Event(std::forward<T>(t)) { }
-};
 
 class Widget : public EML::EMLObject {
 public:
@@ -218,7 +212,6 @@ public:
 protected:
     EventHandlerResult handle_event(Event const&);
 
-    virtual EventHandlerResult on_window_resize(Event::WindowResize const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_key_press(Event::KeyPress const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_key_release(Event::KeyRelease const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_enter(Event::MouseEnter const&) { return EventHandlerResult::NotAccepted; }

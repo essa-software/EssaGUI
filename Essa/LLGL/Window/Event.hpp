@@ -11,13 +11,13 @@
 
 namespace llgl {
 
-struct Event;
+class Event;
 
 enum class EventTargetType {
     KeyboardFocused, // Only keyboard-focused widgets are notified
     MouseFocused,    // Only mouse-focused (mouse hovered) widgets are notified. They have mouse position.
     Specific,        // Only specific widgets are notified (e.g focus events) (is affected = false for every widget)
-    Global,          // All widgets are notified (e.g window resize) (is affected = true for every widget)
+    Window,          // Widgets are not directly notified (e.g window resize)
 };
 
 namespace EventTypes {
@@ -29,7 +29,7 @@ public:
 
 class WindowCloseEvent : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Global; }
+    static EventTargetType target_type() { return EventTargetType::Window; }
 };
 
 class WindowResizeEvent : public Base {
@@ -38,7 +38,7 @@ public:
         : m_new_size(new_size) { }
 
     Util::Size2u new_size() const { return m_new_size; }
-    static EventTargetType target_type() { return EventTargetType::Global; }
+    static EventTargetType target_type() { return EventTargetType::Window; }
 
 private:
     Util::Size2u m_new_size;
@@ -46,11 +46,11 @@ private:
 
 class WindowFocusGained : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Global; }
+    static EventTargetType target_type() { return EventTargetType::Window; }
 };
 class WindowFocusLost : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Global; }
+    static EventTargetType target_type() { return EventTargetType::Window; }
 };
 
 class KeyEvent : public Base {
@@ -107,12 +107,9 @@ public:
     // Event::transformed() function.
     Util::Point2i local_position() const { return m_local_position; }
     static EventTargetType target_type() { return EventTargetType::MouseFocused; }
-
-private:
-    friend struct ::llgl::Event;
-
     void relativize(Util::Vector2i offset) { m_local_position -= offset; }
 
+private:
     Util::Point2i m_local_position;
 };
 
@@ -184,35 +181,17 @@ using Variant = std::variant<
 
 }
 
-struct Event : public EventTypes::Variant {
-    using Variant = EventTypes::Variant;
+template<class Ev> class EventBase : public Ev {
+public:
+    using Variant = Ev;
 
     template<class T>
-    Event(T&& t)
+    EventBase(T&& t)
         requires(std::is_constructible_v<Variant, T>)
         : Variant(std::forward<T>(t)) { }
 
-    using WindowClose = EventTypes::WindowCloseEvent;
-    using WindowResize = EventTypes::WindowResizeEvent;
-    using WindowFocusGained = EventTypes::WindowFocusGained;
-    using WindowFocusLost = EventTypes::WindowFocusLost;
-    using Key = EventTypes::KeyEvent;
-    using KeyPress = EventTypes::KeyPressEvent;
-    using KeyRelease = EventTypes::KeyReleaseEvent;
-    using MouseEnter = EventTypes::MouseEnterEvent;
-    using MouseLeave = EventTypes::MouseLeaveEvent;
-    using Mouse = EventTypes::MouseEvent;
-    using MouseMove = EventTypes::MouseMoveEvent;
-    using MouseButton = EventTypes::MouseButtonEvent;
-    using MouseButtonPress = EventTypes::MouseButtonPressEvent;
-    using MouseButtonRelease = EventTypes::MouseButtonReleaseEvent;
-    using MouseScroll = EventTypes::MouseScrollEvent;
-    using TextInput = EventTypes::TextInputEvent;
-
     template<class T> bool is() const { return std::holds_alternative<T>(*this); }
-
     template<class T> T const* get() const { return is<T>() ? &std::get<T>(*this) : nullptr; }
-
     template<class T> T* get() { return is<T>() ? &std::get<T>(*this) : nullptr; }
 
     template<class... Callbacks> auto visit(Callbacks&&... callbacks) {
@@ -231,6 +210,31 @@ struct Event : public EventTypes::Variant {
             return EventType::target_type();
         });
     }
+};
+
+class Event : public EventBase<EventTypes::Variant> {
+public:
+    template<class T>
+    Event(T&& t)
+        requires(std::is_constructible_v<Variant, T>)
+        : EventBase(std::forward<T>(t)) { }
+
+    using WindowClose = EventTypes::WindowCloseEvent;
+    using WindowResize = EventTypes::WindowResizeEvent;
+    using WindowFocusGained = EventTypes::WindowFocusGained;
+    using WindowFocusLost = EventTypes::WindowFocusLost;
+    using Key = EventTypes::KeyEvent;
+    using KeyPress = EventTypes::KeyPressEvent;
+    using KeyRelease = EventTypes::KeyReleaseEvent;
+    using MouseEnter = EventTypes::MouseEnterEvent;
+    using MouseLeave = EventTypes::MouseLeaveEvent;
+    using Mouse = EventTypes::MouseEvent;
+    using MouseMove = EventTypes::MouseMoveEvent;
+    using MouseButton = EventTypes::MouseButtonEvent;
+    using MouseButtonPress = EventTypes::MouseButtonPressEvent;
+    using MouseButtonRelease = EventTypes::MouseButtonReleaseEvent;
+    using MouseScroll = EventTypes::MouseScrollEvent;
+    using TextInput = EventTypes::TextInputEvent;
 
     Event relativized(Util::Vector2i offset) const {
         return visit([&](auto const& event) -> Event {
@@ -244,7 +248,7 @@ struct Event : public EventTypes::Variant {
                 return event;
             }
         });
-    };
+    }
 
     bool is_mouse_related() const { return target_type() == EventTargetType::MouseFocused; }
 
@@ -257,7 +261,7 @@ struct Event : public EventTypes::Variant {
             }
             ESSA_UNREACHABLE;
         });
-    };
+    }
 };
 
 }

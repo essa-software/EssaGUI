@@ -31,7 +31,7 @@ public:
     virtual HostWindow& host_window() = 0;
 
     virtual void draw(Gfx::Painter&);
-    virtual void handle_event(GUI::Event const&);
+    virtual void handle_event(llgl::Event const&);
     void handle_events();
 
     virtual void update() { m_root->update(); }
@@ -58,7 +58,7 @@ public:
 
     // Override default event handler. If this returns Accepted,
     // no events will be passed to widgets.
-    std::function<GUI::Widget::EventHandlerResult(GUI::Event const&)> on_event;
+    std::function<GUI::Widget::EventHandlerResult(llgl::Event const&)> on_event;
 
 protected:
     void set_root(std::unique_ptr<WindowRoot> root) { m_root = std::move(root); }

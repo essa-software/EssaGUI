@@ -26,7 +26,7 @@ void Host::focus_window_it(WindowList::iterator new_focused_it) {
         return;
     }
     if (m_focused_window) {
-        m_focused_window->handle_event(GUI::Event::WindowFocusLost());
+        m_focused_window->handle_event(llgl::Event::WindowFocusLost());
     }
     if (new_focused_it == m_windows.end()) {
         m_focused_window = nullptr;
@@ -34,7 +34,7 @@ void Host::focus_window_it(WindowList::iterator new_focused_it) {
     }
 
     m_focused_window = new_focused_it->get();
-    m_focused_window->handle_event(GUI::Event::WindowFocusGained());
+    m_focused_window->handle_event(llgl::Event::WindowFocusGained());
 
     // Move focused window to top
     if (m_focused_window->always_on_bottom())
@@ -52,15 +52,8 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
         return Widget::EventHandlerResult::NotAccepted;
     }
 
-    // Send global events to everyone regardless of the focused overlay
-    if (transformed_event.target_type() == llgl::EventTargetType::Global) {
-        for (auto const& overlay : m_windows) {
-            overlay->handle_event(transformed_event.relativized(overlay->position().to_vector()));
-        }
-    }
-
     // Don't pass global events to all this mouse related code
-    if (transformed_event.target_type() == llgl::EventTargetType::Global) {
+    if (transformed_event.target_type() == llgl::EventTargetType::Window) {
         return Widget::EventHandlerResult::NotAccepted;
     }
 
@@ -81,10 +74,12 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
     // Store focused overlay because it may change in event handler
     auto* focused_overlay = m_focused_window;
 
+    auto gui_to_llgl_event = [](GUI::Event event) { return event.visit([](auto event) { return llgl::Event(std::move(event)); }); };
+
     // Pass all events to focused overlay
     if (focused_overlay) {
         // FIXME: Don't pass mouse moves. Currently this breaks moving ToolWindows.
-        focused_overlay->handle_event(transformed_event.relativized(focused_overlay->position().to_vector()));
+        focused_overlay->handle_event(gui_to_llgl_event(transformed_event.relativized(focused_overlay->position().to_vector())));
     }
 
     // Pass mouse events to hovered overlays
@@ -104,7 +99,7 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
                 }
                 assert(m_hovered_window == &overlay);
                 if (&overlay != focused_overlay) {
-                    overlay.handle_event(transformed_event.relativized(overlay.position().to_vector()));
+                    overlay.handle_event(gui_to_llgl_event(transformed_event.relativized(overlay.position().to_vector())));
                 }
                 break;
             }
@@ -178,7 +173,7 @@ void Host::update() {
 
 void Host::relayout() {
     m_background_window->set_size(raw_size());
-    m_background_window->handle_event(GUI::Event::WindowResize(raw_size().cast<unsigned>()));
+    m_background_window->handle_event(llgl::Event::WindowResize(raw_size().cast<unsigned>()));
 
     for (auto const& wnd : m_windows) {
         wnd->constrain_position();
