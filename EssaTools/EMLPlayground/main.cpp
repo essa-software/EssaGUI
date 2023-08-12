@@ -4,6 +4,7 @@
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/MDI/Host.hpp>
+#include <Essa/GUI/Widgets/Splitter.hpp>
 #include <Essa/GUI/Widgets/TextButton.hpp>
 #include <Essa/GUI/Widgets/TextEditor.hpp>
 #include <Essa/GUI/WindowRoot.hpp>
@@ -25,8 +26,7 @@ int main() {
     open_window->set_content("Open Window");
     open_window->set_size({ 120.0_px, Util::Length::Auto });
 
-    auto* preview = container.add_widget<GUI::Container>();
-    preview->set_layout<GUI::HorizontalBoxLayout>();
+    auto* preview = container.add_widget<GUI::HorizontalSplitter>();
 
     auto* eml_editor = preview->add_widget<GUI::TextEditor>();
     auto* eml_container = preview->add_widget<GUI::MDI::Host>();
