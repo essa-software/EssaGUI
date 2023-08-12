@@ -74,7 +74,12 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
     // Store focused overlay because it may change in event handler
     auto* focused_overlay = m_focused_window;
 
-    auto gui_to_llgl_event = [](GUI::Event event) { return event.visit([](auto event) { return llgl::Event(std::move(event)); }); };
+    auto gui_to_llgl_event = [](GUI::Event event) {
+        return event.visit(
+            [](GUI::Event::MouseDoubleClick) -> llgl::Event { ESSA_UNREACHABLE; }, //
+            [](auto event) { return llgl::Event(std::move(event)); }
+        );
+    };
 
     // Pass all events to focused overlay
     if (focused_overlay) {

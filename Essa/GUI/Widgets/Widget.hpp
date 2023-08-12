@@ -209,6 +209,8 @@ public:
     // FIXME: This should be private.
     void set_window_root(WindowRoot& wtr) { m_window_root = &wtr; }
 
+    void set_double_click_enabled(bool dblclk) { m_double_click_enabled = dblclk; }
+
 protected:
     EventHandlerResult handle_event(Event const&);
 
@@ -219,6 +221,7 @@ protected:
     virtual EventHandlerResult on_mouse_move(Event::MouseMove const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&) { return EventHandlerResult::NotAccepted; }
+    virtual EventHandlerResult on_mouse_double_click(Event::MouseDoubleClick const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_mouse_scroll(Event::MouseScroll const&) { return EventHandlerResult::NotAccepted; }
     virtual EventHandlerResult on_text_input(Event::TextInput const&) { return EventHandlerResult::NotAccepted; }
 
@@ -270,6 +273,9 @@ private:
     TooltipOverlay* m_tooltip = nullptr;
     Util::Point2i m_tooltip_position;
     EventLoop::TimerHandle m_tooltip_timer;
+
+    bool m_double_click_enabled = false;
+    EventLoop::TimerHandle m_double_click_timer;
 
     bool m_hover = false;
     bool m_hovered_on_click = false;

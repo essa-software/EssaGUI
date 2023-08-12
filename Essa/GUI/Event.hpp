@@ -4,12 +4,22 @@
 
 namespace GUI {
 
-using EventVariant = std::variant<
+namespace EventTypes {
+
+class MouseDoubleClick : public llgl::EventTypes::MouseEvent {
+public:
+    explicit MouseDoubleClick(Util::Point2i position)
+        : MouseEvent(position) { }
+};
+
+using Variant = std::variant<
     llgl::EventTypes::KeyPressEvent, llgl::EventTypes::KeyReleaseEvent, llgl::EventTypes::MouseEnterEvent,
     llgl::EventTypes::MouseLeaveEvent, llgl::EventTypes::MouseMoveEvent, llgl::EventTypes::MouseButtonPressEvent,
-    llgl::EventTypes::MouseButtonReleaseEvent, llgl::EventTypes::MouseScrollEvent, llgl::EventTypes::TextInputEvent>;
+    llgl::EventTypes::MouseButtonReleaseEvent, MouseDoubleClick, llgl::EventTypes::MouseScrollEvent, llgl::EventTypes::TextInputEvent>;
 
-class Event : public llgl::EventBase<EventVariant> {
+}
+
+class Event : public llgl::EventBase<EventTypes::Variant> {
 public:
     using Key = llgl::EventTypes::KeyEvent;
     using KeyPress = llgl::EventTypes::KeyPressEvent;
@@ -21,12 +31,13 @@ public:
     using MouseButton = llgl::EventTypes::MouseButtonEvent;
     using MouseButtonPress = llgl::EventTypes::MouseButtonPressEvent;
     using MouseButtonRelease = llgl::EventTypes::MouseButtonReleaseEvent;
+    using MouseDoubleClick = EventTypes::MouseDoubleClick;
     using MouseScroll = llgl::EventTypes::MouseScrollEvent;
     using TextInput = llgl::EventTypes::TextInputEvent;
 
     template<class T>
     Event(T&& t)
-        : llgl::EventBase<EventVariant>(std::forward<T>(t)) { }
+        : llgl::EventBase<EventTypes::Variant>(std::forward<T>(t)) { }
 
     Event relativized(Util::Vector2i offset) const {
         return visit([&](auto const& event) -> Event {

@@ -30,6 +30,7 @@ Widget::~Widget() {
         m_window_root->set_focused_widget(nullptr);
     if (EventLoop::has_current()) {
         EventLoop::current().remove_timer(m_tooltip_timer);
+        EventLoop::current().remove_timer(m_double_click_timer);
     }
 }
 
@@ -54,6 +55,19 @@ void Widget::update() {
 
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto transformed_event = event.relativized(raw_position().to_vector());
+
+    // Handle double click.
+    if (m_double_click_enabled) {
+        if (auto const* mousepress = event.get<llgl::Event::MouseButtonPress>();
+            mousepress && mousepress->button() == llgl::MouseButton::Left) {
+            using namespace std::chrono_literals;
+            if (!m_double_click_timer.expired()) {
+                GUI::EventLoop::current().remove_timer(m_double_click_timer);
+                return do_handle_event(GUI::Event::MouseDoubleClick(event.local_mouse_position()));
+            }
+            m_double_click_timer = GUI::EventLoop::current().set_timeout(400ms, []() {});
+        }
+    }
 
     // Check if widget is actually affected by the event, this
     // must be here so that event handler will actually run if
@@ -152,6 +166,7 @@ Widget::EventHandlerResult Widget::handle_event(Event const& event) {
         [&](Event::MouseMove const& event) -> EventHandlerResult { return on_mouse_move(event); },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult { return on_mouse_button_press(event); },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult { return on_mouse_button_release(event); },
+        [&](Event::MouseDoubleClick const& event) -> EventHandlerResult { return on_mouse_double_click(event); },
         [&](Event::MouseScroll const& event) -> EventHandlerResult { return on_mouse_scroll(event); },
         [&](Event::TextInput const& event) -> EventHandlerResult { return on_text_input(event); }
     );
