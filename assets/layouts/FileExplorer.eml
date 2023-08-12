@@ -40,25 +40,20 @@
             @TreeView list
         }
         
-        // @Container { // footer
-        //     layout: @HorizontalBoxLayout {
-        //         padding: 5
-        //         spacing: 5
-        //     }
-        //     
-        //     height: 42px
-        //     
-        //     @Textbox file_name
-        //     
-        //     @TextButton {
-        //         width: 100px
-        //         content: "Cancel"
-        //     }
-        //     
-        //     @TextButton {
-        //         width: 100px
-        //         content: "Open"
-        //     }
-        // }
+        @Container { // footer
+            layout: @HorizontalBoxLayout {
+                padding: 5
+                spacing: 5
+            }
+            
+            height: 42px
+            
+            @Textfield { width: auto }
+
+            @TextButton open {
+                width: 100px
+                content: "Open"
+            }
+        }
     }
 }

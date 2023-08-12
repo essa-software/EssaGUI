@@ -210,6 +210,10 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
     m_list->on_click = [&](Model::NodeData row) {
         auto const* data = static_cast<FileModel::File const*>(row.data);
         auto path = data->path;
+    };
+    m_list->on_double_click = [&](Model::NodeData row) {
+        auto const* data = static_cast<FileModel::File const*>(row.data);
+        auto path = data->path;
 
         if (m_type == Type::File && !std::filesystem::is_directory(path)) {
             if (on_submit)
@@ -235,10 +239,35 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
     m_directory_path_textbox->set_type(Textbox::TEXT);
     m_directory_path_textbox->on_enter = [this](Util::UString const& str) { open_path(str.encode()); };
 
-    // m_file_name_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("file_name");
-    // m_file_name_textbox->set_type(Textbox::TEXT);
+    auto* open_button = &container->find<TextButton>("open");
+    open_button->on_click = [this]() {
+        auto focused_node = m_list->focused_node();
+        if (!focused_node) {
+            return;
+        }
+        auto const& file = *static_cast<FileModel::File const*>(focused_node->data);
 
-    auto search_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("search");
+        bool submit = false;
+        if (m_type == Type::Directory) {
+            if (file.type == std::filesystem::file_type::directory) {
+                submit = true;
+            }
+        }
+        else {
+            if (file.type == std::filesystem::file_type::directory) {
+                open_path(file.path);
+            }
+            else {
+                submit = true;
+            }
+        }
+        if (submit) {
+            on_submit(file.path);
+            close();
+        }
+    };
+
+    auto* search_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("search");
     search_textbox->set_type(Textbox::TEXT);
     search_textbox->on_change = [this](Util::UString const& query) {
         // FIXME: Port this to UString instead of encoding this to std::string
@@ -272,10 +301,10 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
         });
     };
 
-    auto parent_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("parent_directory");
+    auto* parent_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("parent_directory");
     parent_directory_button->on_click = [&]() { open_path(m_current_path.parent_path()); };
 
-    auto create_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("create_directory");
+    auto* create_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("create_directory");
     create_directory_button->on_click = [create_directory_button, this]() {
         // FIXME: Taking HostWindow from arbitrary widget. This won't be needed after
         //        Dialog refactoring is finished.

@@ -67,7 +67,6 @@ public:
 
 private:
     Textbox* m_directory_path_textbox {};
-    Textbox* m_file_name_textbox {};
     FileModel* m_model {};
     TreeView* m_list {};
 };
