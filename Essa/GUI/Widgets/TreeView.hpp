@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Widgets/AbstractListView.hpp>
 
 namespace GUI {
@@ -8,11 +9,14 @@ class TreeView : public AbstractListView {
 public:
     virtual void draw(Gfx::Painter&) const override;
 
+    std::function<void(Model::NodeData)> on_click;
+    std::function<std::optional<ContextMenu>(Model::NodeData)> on_context_menu_request;
+
     size_t displayed_row_count() const;
     std::pair<std::vector<size_t>, Model::NodeData> displayed_row_at_index(size_t row) const;
     bool is_expanded(std::vector<size_t> const& path) const;
 
-    void expand(std::vector<size_t> path) { m_expanded_paths.insert(path); }
+    void expand(std::vector<size_t> path) { m_expanded_paths.insert(std::move(path)); }
 
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
@@ -25,6 +29,7 @@ private:
     recursive_displayed_row_at_index(std::optional<Model::Node>, std::vector<size_t> path, size_t& depth) const;
 
     std::set<std::vector<size_t>> m_expanded_paths { {} };
+    std::optional<std::vector<size_t>> m_focused_path;
 };
 
 }

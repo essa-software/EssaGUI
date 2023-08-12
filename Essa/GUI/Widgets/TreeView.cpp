@@ -1,4 +1,7 @@
 #include "TreeView.hpp"
+#include "Essa/GUI/Graphics/Drawing/Fill.hpp"
+#include "Essa/GUI/Graphics/Drawing/Outline.hpp"
+#include "Essa/GUI/Graphics/Drawing/Rectangle.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
@@ -14,15 +17,25 @@ namespace GUI {
 constexpr float IndentSize = 24;
 
 Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPress const& event) {
-    if (event.button() == llgl::MouseButton::Left) {
-        size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
-        auto path = displayed_row_at_index(row);
-        if (!path.first.empty()) {
+    size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
+    auto path = displayed_row_at_index(row);
+    if (!path.first.empty()) {
+        if (event.button() == llgl::MouseButton::Left) {
+            m_focused_path = path.first;
+            if (on_click) {
+                on_click(path.second);
+            }
+
             if (m_expanded_paths.contains(path.first)) {
                 m_expanded_paths.erase(path.first);
             }
             else {
                 expand(path.first);
+            }
+        }
+        else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
+            if (auto context_menu = on_context_menu_request(path.second)) {
+                host_window().open_context_menu(*context_menu, event.local_position() + window_root().window().position().to_vector());
             }
         }
     }
@@ -202,6 +215,14 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
                 );
 
                 current_x_pos += cell_size.x();
+            }
+
+            if (m_focused_path == child_path) {
+                painter.draw(Gfx::Drawing::Rectangle(
+                    { static_cast<float>(scroll_offset().x() + 1), current_y_pos + scroll_offset().y(), row_width() - 2,
+                      static_cast<float>(row_height) },
+                    Gfx::Drawing::Fill::none(), Gfx::Drawing::Outline::normal(theme().focus_frame, -1)
+                ));
             }
 
             current_y_pos += row_height;
