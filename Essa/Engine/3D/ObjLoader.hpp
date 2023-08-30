@@ -1,9 +1,8 @@
 #pragma once
 
-#include "EssaUtil/CoordinateSystem.hpp"
 #include "Material.hpp"
 #include "Model.hpp"
-
+#include <EssaUtil/CoordinateSystem.hpp>
 #include <istream>
 #include <optional>
 

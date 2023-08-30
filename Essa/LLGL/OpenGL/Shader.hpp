@@ -5,7 +5,7 @@
 #include "Texture.hpp"
 #include <EssaUtil/Matrix.hpp>
 #include <concepts>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <string_view>
 #include <tuple>
 #include <type_traits>

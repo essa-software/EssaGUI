@@ -95,9 +95,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                     if (!m_tooltip) {
                         m_tooltip_position = mouse_position;
                         if (m_tooltip_timer.expired()) {
-                            fmt::print("aaaa\n");
                             m_tooltip_timer = EventLoop::current().set_timeout(667ms, [this]() {
-                                fmt::print("TIMER\n");
                                 m_tooltip = &host_window().add_tooltip(
                                     m_tooltip_position.cast<unsigned>(), Tooltip { create_tooltip(m_tooltip_position) }
                                 );

@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <compare>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <ostream>
 
 namespace Util {

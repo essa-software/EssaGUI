@@ -4,7 +4,7 @@
 #include "../UString.hpp"
 #include "Stream.hpp"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <fmt/format.h>
 
 namespace Util {

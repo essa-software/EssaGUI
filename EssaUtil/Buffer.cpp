@@ -1,6 +1,6 @@
 #include "Buffer.hpp"
 #include <algorithm>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <unistd.h>
 #include <utility>
 

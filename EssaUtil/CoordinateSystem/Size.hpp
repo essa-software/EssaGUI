@@ -3,7 +3,7 @@
 #include "../Orientation.hpp"
 #include "../Vector.hpp"
 #include "Coordinates.hpp"
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #ifdef ESSA_COMPILER_GCC
 #    pragma GCC optimize("O3")

@@ -1,12 +1,11 @@
 #pragma once
 
+#include "Model.hpp"
 #include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/MappedVertex.hpp>
+#include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <EssaUtil/Color.hpp>
 #include <vector>
-
-#include "Essa/LLGL/OpenGL/MappedVertex.hpp"
-#include "Essa/LLGL/OpenGL/Vertex.hpp"
-#include "Model.hpp"
 
 namespace Essa::Shapes {
 

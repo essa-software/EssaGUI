@@ -1,10 +1,10 @@
 #pragma once
 
 #include "DefaultGUIShader.hpp"
-#include "Essa/LLGL/OpenGL/Builder.hpp"
 #include "GUIBuilder.hpp"
 #include "Vertex.hpp"
 #include <Essa/GUI/TextAlign.hpp>
+#include <Essa/LLGL/OpenGL/Builder.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
 #include <EssaUtil/NonCopyable.hpp>
 

@@ -16,7 +16,7 @@
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_video.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <iostream>
 #include <map>
 #include <queue>

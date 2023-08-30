@@ -1,7 +1,7 @@
 #pragma once
 
 #include <concepts>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include "CoordinateSystem.hpp"
 

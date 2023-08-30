@@ -3,7 +3,7 @@
 #include <Essa/GUI/Widgets/TreeView.hpp>
 #include <EssaUtil/Config.hpp>
 #include <cassert>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 struct Column {
     std::string name;

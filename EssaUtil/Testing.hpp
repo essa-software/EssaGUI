@@ -3,7 +3,7 @@
 #include <EssaUtil/Clock.hpp>
 #include <EssaUtil/Error.hpp>
 #include <fmt/chrono.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <iostream>

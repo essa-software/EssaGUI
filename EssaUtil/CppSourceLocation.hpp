@@ -26,7 +26,7 @@ struct CppSourceLocation {
 
 template<> class fmt::formatter<Util::CppSourceLocation> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::CppSourceLocation const& p, FormatContext& ctx) const {
+    static auto format(Util::CppSourceLocation const& p, fmt::format_context& ctx) {
         fmt::format_to(
             ctx.out(), "\e[33m{}()\e[m ({}:{}:{})", p.function_name(), std::filesystem::path { p.file_name() }.string(), p.line(),
             p.column()
