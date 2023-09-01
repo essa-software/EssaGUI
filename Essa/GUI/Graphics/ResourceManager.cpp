@@ -21,7 +21,7 @@ __attribute((weak)) std::string_view target_name = "builtin";
 }
 
 extern "C" {
-__attribute((weak)) const char* ESSA_RESOURCE_DIR = nullptr;
+__attribute((weak)) char const* ESSA_RESOURCE_DIR = nullptr;
 }
 
 namespace Gfx {
@@ -84,10 +84,13 @@ static std::filesystem::path exec_path() {
 
 // See docs/ResourceManager.md#searching-for-resource-directory
 void ResourceManager::find_resource_roots() {
-    auto add_resource_root_if_is_essa_resource_root = [this](std::filesystem::path const& path) {
+    auto add_resource_root = [this](std::filesystem::path const& path) {
+        std::cout << "ResourceManager: Adding resource root: " << path << std::endl;
+        m_resource_roots.push_back(path);
+    };
+    auto add_resource_root_if_is_essa_resource_root = [&](std::filesystem::path const& path) {
         if (std::filesystem::is_directory(path) && std::filesystem::is_regular_file(path / ".essaguiresources")) {
-            std::cout << "ResourceManager: Adding resource root: " << path << std::endl;
-            m_resource_roots.push_back(path);
+            add_resource_root(path);
         }
     };
 
@@ -108,26 +111,29 @@ void ResourceManager::find_resource_roots() {
 
         // -   `$CMAKE_INSTALL_PREFIX/share/$CMAKE_PROJECT_NAME/<target name>`
         //     (NOTE: Exposed as Essa::BuildConfig::install_asset_root)
-        add_resource_root_if_is_essa_resource_root(Essa::BuildConfig::install_asset_root);
+        add_resource_root(Essa::BuildConfig::install_asset_root);
 
         // -   `$CMAKE_INSTALL_PREFIX/share/Essa/builtin` (Essa builtin
         //      resources)
         //     Let's use parent paths to avoid adding another cmake variable.
-        add_resource_root_if_is_essa_resource_root(
+        add_resource_root(
             std::filesystem::path(Essa::BuildConfig::install_asset_root).parent_path().parent_path() / "Essa" / "builtin"
         );
     }
     else {
+        // We assume that paths are correct and actually contain resources,
+        // so no .essaguiresources file is required.
+
         // For development builds, the following paths are used:
         // -   Optionally: Path specified by `essa_resources()` CMake function
         //     (absolute path to source-local asset root, baked into executable)
         if (ESSA_RESOURCE_DIR) {
-            add_resource_root_if_is_essa_resource_root(ESSA_RESOURCE_DIR);
+            add_resource_root(ESSA_RESOURCE_DIR);
         }
 
         // -   $CMAKE_SOURCE_DIR/assets (Essa builtin resources)
         if (Essa::BuildConfig::builtin_asset_root) {
-            add_resource_root_if_is_essa_resource_root(*Essa::BuildConfig::builtin_asset_root);
+            add_resource_root(*Essa::BuildConfig::builtin_asset_root);
         }
     }
 
