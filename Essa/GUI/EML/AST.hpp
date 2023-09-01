@@ -142,7 +142,13 @@ template<class T, size_t S> EMLErrorOr<std::array<T, S>> Array::to_static() cons
 
 template<class T, class... Args>
 EMLErrorOr<std::unique_ptr<T>> Object::require_and_construct_object(std::string const& name, Loader& loader, Args&&... args) const {
-    return TRY(TRY(TRY(require_property(name)).to_object()).construct<T>(loader, std::forward<Args>(args)...));
+    // This awkward "if err != nil" error handling is because
+    // of a -Werror=free-nonheap-object warning (GCC bug?)
+    auto maybe_object = TRY(require_property(name)).to_object();
+    if (maybe_object.is_error()) {
+        return maybe_object.release_error();
+    }
+    return maybe_object.release_value().construct<T>(loader, std::forward<Args>(args)...);
 }
 
 template<Util::Enum T> EMLErrorOr<T> Object::get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const {
