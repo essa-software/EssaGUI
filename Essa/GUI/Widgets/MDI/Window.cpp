@@ -333,6 +333,10 @@ void Window::draw(Gfx::Painter& painter) {
         draw_decorations(painter);
     }
 
+    if (size().x() == 0 || size().y() == 0) {
+        return;
+    }
+
     // Flush because of text being draw with incorrect blending mode otherwise
     painter.render();
     painter.reset();
