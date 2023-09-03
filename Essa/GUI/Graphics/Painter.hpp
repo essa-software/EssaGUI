@@ -46,11 +46,7 @@ public:
     auto& builder() { return m_builder; }
     auto& renderer() const { return m_renderer; }
 
-    void render() {
-        apply_states();
-        m_builder.render(m_renderer);
-    }
-
+    void render();
     void draw(Drawing::Shape const&);
 
     void deprecated_draw_rectangle(Util::Rectf bounds, RectangleDrawOptions const& = {});

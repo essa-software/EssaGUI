@@ -19,9 +19,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 option(ESSAGUI_EXAMPLES "Compile examples" ON)
 option(ESSAGUI_UTIL_ONLY "Compile only EssaUtil (no GUI or Engine)" OFF)
+option(TRACY_ENABLE "Enable Tracy profiling" ON)
+option(TRACY_ON_DEMAND "" ON)
+set(TRACY_STATIC OFF)
 
 include_directories(${Essa_SOURCE_DIR})
 
+add_subdirectory(ThirdParty/tracy)
 add_subdirectory(EssaUtil)
 
 if (NOT ESSA_UTIL_ONLY)

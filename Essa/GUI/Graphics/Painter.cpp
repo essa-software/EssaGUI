@@ -1,16 +1,23 @@
 #include "Painter.hpp"
-#include "EssaUtil/Angle.hpp"
 
 #include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Drawing/Shape.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
+#include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Config.hpp>
 #include <algorithm>
 #include <fmt/ostream.h>
+#include <tracy/Tracy.hpp>
 
 namespace Gfx {
+
+void Painter::render() {
+    ZoneScoped;
+    apply_states();
+    m_builder.render(m_renderer);
+}
 
 void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices) {
     auto fill = shape.fill();

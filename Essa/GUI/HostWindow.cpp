@@ -11,6 +11,7 @@
 #include <Essa/LLGL/Window/Window.hpp>
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 namespace GUI {
 
@@ -34,6 +35,7 @@ void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
 
 void HostWindow::handle_events() {
+    ZoneScoped;
     while (true) {
         if (is_closed()) {
             break;
@@ -47,6 +49,7 @@ void HostWindow::handle_events() {
 }
 
 void HostWindow::do_draw() {
+    ZoneScopedN("HostWindow::draw");
     // hacky hacky hacky hacky
     set_active();
     renderer().clear(m_background_color);
@@ -59,7 +62,10 @@ void HostWindow::do_draw() {
     WidgetTreeRoot::draw(*m_painter);
 
     m_painter->render();
-    display();
+    {
+        ZoneScopedN("HostWindow display");
+        display();
+    }
 }
 
 void HostWindow::open_context_menu(ContextMenu menu, Util::Point2i position) {
