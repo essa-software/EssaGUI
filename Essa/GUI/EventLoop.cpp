@@ -3,7 +3,6 @@
 #include <Essa/GUI/Timer.hpp>
 #include <EssaUtil/Clock.hpp>
 #include <EssaUtil/ScopeGuard.hpp>
-#include <tracy/Tracy.hpp>
 
 #include <cassert>
 #include <chrono>
@@ -47,21 +46,15 @@ void EventLoop::run() {
     increase_system_timer_resolution();
 
     while (m_running) {
-        FrameMark;
-
-        {
-            ZoneScopedN("Update timers");
-            for (auto& timer : m_timers) {
-                timer->update();
-            }
-            std::erase_if(m_timers, [](auto const& timer) { return timer->finished(); });
+        for (auto& timer : m_timers) {
+            timer->update();
         }
+        std::erase_if(m_timers, [](auto const& timer) { return timer->finished(); });
 
         tick();
         auto processing_time = clock.elapsed();
 
         if (m_tps_limit > 0) {
-            ZoneScopedN("Tick wait");
             auto const expected_tick_time = 1.0s / m_tps_limit;
 
             // System timer is not accurate enough to sleep for the exact amount of time.

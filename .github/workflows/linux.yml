@@ -13,8 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        submodules: recursive
     - name: Install dependencies from package manager
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y

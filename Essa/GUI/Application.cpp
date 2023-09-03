@@ -1,17 +1,16 @@
 #include <Essa/GUI/Application.hpp>
 
+#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 #include "WidgetTreeRoot.hpp"
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
-#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 
 #include <cassert>
 #include <iostream>
 #include <string>
-#include <tracy/Tracy.hpp>
 
 namespace GUI {
 
@@ -55,7 +54,6 @@ void Application::redraw_all_host_windows() {
 }
 
 void Application::tick() {
-    ZoneScoped;
     for (auto& host_window : m_host_windows) {
         host_window.handle_events();
     }
