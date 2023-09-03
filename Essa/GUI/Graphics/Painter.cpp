@@ -15,6 +15,9 @@ namespace Gfx {
 void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices) {
     auto fill = shape.fill();
     auto local_bounds = shape.local_bounds();
+    if (local_bounds.width == 0 || local_bounds.height == 0) {
+        return;
+    }
 
     Util::Size2f texture_size { fill.texture() ? fill.texture()->size().cast<float>() : Util::Size2f {} };
     auto texture_rect = fill.texture_rect();
