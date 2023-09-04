@@ -156,7 +156,7 @@ Util::Size2i BoxLayout::total_size(Container const& container) const {
 }
 
 LengthVector BoxLayout::initial_size(Container const& container) const {
-    float sum = 0;
+    float sum = static_cast<float>(m_padding.main_sum(m_orientation) + m_spacing * (container.widgets().size() - 1));
     for (auto const& widget : container.widgets()) {
         auto widget_size = widget->size().main(m_orientation);
         if (widget_size.unit() == Util::Length::Px) {
