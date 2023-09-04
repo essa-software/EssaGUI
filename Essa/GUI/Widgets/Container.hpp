@@ -52,6 +52,7 @@ public:
 
     virtual void run(Container&) = 0;
     virtual Util::Size2i total_size(Container const&) const = 0;
+    virtual LengthVector initial_size(Container const&) const = 0;
 
     CREATE_VALUE(Boxi, padding, Boxi {})
 
@@ -68,6 +69,7 @@ public:
     CREATE_VALUE(int, spacing, 0)
     virtual void run(Container&) override;
     virtual Util::Size2i total_size(Container const&) const override;
+    virtual LengthVector initial_size(Container const&) const override;
 
 #define ENUMERATE_CONTENT_ALIGNMENTS(A) \
     A(BoxStart)                         \
@@ -103,6 +105,7 @@ class BasicLayout : public Layout {
 private:
     virtual void run(Container&) override;
     virtual Util::Size2i total_size(Container const&) const override;
+    virtual LengthVector initial_size(Container const&) const override;
 };
 
 class Container : public Widget {
@@ -223,6 +226,7 @@ public:
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() override;
+    virtual LengthVector initial_size() const override;
     virtual Boxi intrinsic_padding() const { return {}; }
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;

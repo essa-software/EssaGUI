@@ -252,6 +252,7 @@ protected:
     virtual void update_tooltip(Util::Point2i const&, Util::UString&) const { }
 
     void set_needs_relayout();
+    void copy_initial_sizes();
 
 private:
     friend Container;

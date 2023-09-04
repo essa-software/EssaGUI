@@ -155,6 +155,23 @@ Util::Size2i BoxLayout::total_size(Container const& container) const {
     return Util::Size2i::from_main_cross(m_orientation, main_size, cross_size);
 }
 
+LengthVector BoxLayout::initial_size(Container const& container) const {
+    float sum = 0;
+    for (auto const& widget : container.widgets()) {
+        auto widget_size = widget->size().main(m_orientation);
+        if (widget_size.unit() == Util::Length::Px) {
+            sum += widget_size.value();
+        }
+        else if (widget_size.unit() == Util::Length::Percent) {
+            sum += widget_size.value() * static_cast<float>(container.raw_size().main(m_orientation)) / 100.f;
+        }
+        else {
+            fmt::print("cannot use {} for shrink-to-fit\n", fmt::streamed(widget_size));
+        }
+    }
+    return LengthVector::from_main_cross(m_orientation, { sum, Util::Length::Px }, Util::Length::Auto);
+}
+
 EML::EMLErrorOr<void> BoxLayout::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Layout::load_from_eml_object(object, loader));
 
@@ -217,6 +234,7 @@ void BasicLayout::run(Container& container) {
 }
 
 Util::Size2i BasicLayout::total_size(Container const& container) const { return container.raw_size(); }
+LengthVector BasicLayout::initial_size(Container const&) const { return { Util::Length::Auto, Util::Length::Auto }; }
 
 EML_REGISTER_CLASS(BasicLayout);
 
@@ -233,14 +251,14 @@ void Container::remove_widget(Widget& widget) {
     set_needs_relayout();
 }
 
-void Container::do_relayout() {
-    for (auto& widget : m_widgets) {
-        auto initial_size = widget->initial_size();
-        if (widget->m_input_size.x == Util::Length::Initial)
-            widget->m_input_size.x = initial_size.x;
-        if (widget->m_input_size.y == Util::Length::Initial)
-            widget->m_input_size.y = initial_size.y;
+LengthVector Container::initial_size() const {
+    for (auto const& widget : m_widgets) {
+        widget->copy_initial_sizes();
     }
+    return m_layout ? m_layout->initial_size(*this) : LengthVector {};
+}
+
+void Container::do_relayout() {
     Widget::do_relayout();
     for (auto const& w : m_widgets) {
         if (w->is_visible())

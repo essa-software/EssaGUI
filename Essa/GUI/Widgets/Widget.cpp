@@ -236,6 +236,7 @@ Util::Recti Widget::parent_relative_rect() const { return { m_position, m_raw_si
 Util::Recti Widget::absolute_rect() const { return { raw_position(), raw_size() }; }
 
 void Widget::do_relayout() {
+    copy_initial_sizes();
     if (this->m_visible)
         this->relayout();
     // std::cout << "do_relayout "  << this << ":" << typeid(*this).name() <<
@@ -244,6 +245,14 @@ void Widget::do_relayout() {
 }
 
 void Widget::set_needs_relayout() { m_window_root->set_needs_relayout(); }
+
+void Widget::copy_initial_sizes() {
+    auto initial_size = this->initial_size();
+    if (m_input_size.x == Util::Length::Initial)
+        m_input_size.x = initial_size.x;
+    if (m_input_size.y == Util::Length::Initial)
+        m_input_size.y = initial_size.y;
+}
 
 Theme const& Widget::theme() const { return Application::the().theme(); }
 
