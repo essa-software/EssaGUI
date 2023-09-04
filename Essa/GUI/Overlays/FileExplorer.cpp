@@ -335,6 +335,7 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
         auto button = sidebar->add_widget<GUI::TextButton>();
         button->set_content(name);
         button->set_tooltip_text(Util::UString { path.string() });
+        button->set_size({ Util::Length::Auto, Util::Length::Initial });
         button->on_click = [this, path]() { open_path(path); };
     };
 

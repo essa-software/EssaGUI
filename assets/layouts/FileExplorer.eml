@@ -36,6 +36,7 @@
             @Container sidebar {
                 layout: @VerticalBoxLayout
                 width: 200px
+                height: auto
             }
             @TreeView list
         }
