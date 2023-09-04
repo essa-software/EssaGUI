@@ -415,6 +415,9 @@ void Container::relayout() {
     }
     if (m_layout->padding() == Boxi {})
         m_layout->set_padding(intrinsic_padding());
+    for (auto const& widget : m_widgets) {
+        widget->copy_initial_sizes();
+    }
     m_layout->run(*this);
 }
 
