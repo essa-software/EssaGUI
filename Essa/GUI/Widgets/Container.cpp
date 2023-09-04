@@ -157,19 +157,26 @@ Util::Size2i BoxLayout::total_size(Container const& container) const {
 
 LengthVector BoxLayout::initial_size(Container const& container) const {
     float sum = static_cast<float>(m_padding.main_sum(m_orientation) + m_spacing * (container.widgets().size() - 1));
+    bool forward_auto_size = false;
     for (auto const& widget : container.widgets()) {
         auto widget_size = widget->size().main(m_orientation);
-        if (widget_size.unit() == Util::Length::Px) {
+        switch (widget_size.unit()) {
+        case Util::Length::Initial:
+            ESSA_UNREACHABLE;
+        case Util::Length::Auto:
+            forward_auto_size = true;
+            break;
+        case Util::Length::Px:
             sum += widget_size.value();
-        }
-        else if (widget_size.unit() == Util::Length::Percent) {
+            break;
+        case Util::Length::Percent:
             sum += widget_size.value() * static_cast<float>(container.raw_size().main(m_orientation)) / 100.f;
-        }
-        else {
-            fmt::print("cannot use {} for shrink-to-fit\n", fmt::streamed(widget_size));
+            break;
         }
     }
-    return LengthVector::from_main_cross(m_orientation, { sum, Util::Length::Px }, Util::Length::Auto);
+    return LengthVector::from_main_cross(
+        m_orientation, forward_auto_size ? Util::Length::Auto : Util::Length { sum, Util::Length::Px }, Util::Length::Auto
+    );
 }
 
 EML::EMLErrorOr<void> BoxLayout::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
