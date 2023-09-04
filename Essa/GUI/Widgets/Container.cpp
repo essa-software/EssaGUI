@@ -127,11 +127,12 @@ void BoxLayout::run(Container& container) {
                     m_orientation, std::ceil(autosized_widget_size * w->size().main(m_orientation).value()), cross
                 ));
             }
-            current_position -= w->raw_size().main(m_orientation) + m_spacing;
+            current_position -= w->raw_size().main(m_orientation);
             w->set_raw_position(Util::Point2i::from_main_cross(
                 m_orientation, container.raw_position().main(m_orientation) + current_position + m_padding.main_start(m_orientation),
                 container.raw_position().cross(m_orientation) + m_padding.cross_start(m_orientation)
             ));
+            current_position -= m_spacing;
         }
     } break;
     }
