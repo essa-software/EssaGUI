@@ -61,7 +61,10 @@ Util::Recti TextEditor::scrollable_rect() const {
     return rect;
 }
 
-LengthVector TextEditor::initial_size() const { return m_multiline ? LengthVector {} : LengthVector { Util::Length::Auto, 30.0_px }; }
+LengthVector TextEditor::initial_size() const {
+    return m_multiline ? LengthVector {}
+                       : LengthVector { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } };
+}
 
 TextPosition TextEditor::real_cursor_position() const {
     TextPosition position = m_cursor;
