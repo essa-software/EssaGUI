@@ -80,22 +80,9 @@ Util::Size2u Textfield::needed_size_for_text() const {
 }
 
 LengthVector Textfield::initial_size() const {
-    return std::visit(
-        Util::Overloaded {
-            [&](Util::UString const&) -> LengthVector {
-                auto size = needed_size_for_text();
-                return LengthVector {
-                    { static_cast<float>(size.x()), Util::Length::Px },
-                    { static_cast<float>(size.y()), Util::Length::Px },
-                };
-            },
-            [&](Gfx::RichText const&) -> LengthVector {
-                // FIXME: Implement measuring rich text size.
-                return LengthVector { Util::Length::Auto, Util::Length::Auto };
-            },
-        },
-        m_content
-    );
+    auto size = needed_size_for_text();
+    size.set_y(std::max(theme().line_height, size.y()));
+    return { { static_cast<float>(size.x()), Util::Length::Px }, { static_cast<float>(size.y()), Util::Length::Px } };
 }
 
 EML::EMLErrorOr<void> Textfield::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
