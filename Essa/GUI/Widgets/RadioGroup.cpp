@@ -13,12 +13,17 @@ void RadioGroup::relayout() {
     Container::relayout();
 
     m_radio_buttons.clear();
-
     visit_children([&](auto& widget) {
         if (Util::is<RadioButton>(widget)) {
             add_radio_button(static_cast<RadioButton&>(widget));
         }
     });
+    // Ensure coherent state, especially for first relayout when
+    // no radiobutton will be active (this makes RadioGroup
+    // authoritative about selection)
+    for (size_t s = 0; s < m_radio_buttons.size(); s++) {
+        m_radio_buttons[s]->set_active(s == m_index, NotifyUser::No);
+    }
 }
 
 void RadioGroup::add_radio_button(RadioButton& button) {
