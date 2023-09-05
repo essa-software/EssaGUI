@@ -157,26 +157,48 @@ Util::Size2i BoxLayout::total_size(Container const& container) const {
 }
 
 LengthVector BoxLayout::initial_size(Container const& container) const {
-    float sum = static_cast<float>(m_padding.main_sum(m_orientation) + m_spacing * (container.widgets().size() - 1));
-    bool forward_auto_size = false;
+    float main_total_size = static_cast<float>(m_padding.main_sum(m_orientation) + m_spacing * (container.widgets().size() - 1));
+    bool forward_auto_size_for_main_axis = false;
+    float cross_total_size = 0;
+    bool forward_auto_size_for_cross_axis = false;
     for (auto const& widget : container.widgets()) {
-        auto widget_size = widget->size().main(m_orientation);
-        switch (widget_size.unit()) {
+        auto widget_size = widget->size();
+        auto main_size = widget_size.main(m_orientation);
+        auto cross_size = widget_size.cross(m_orientation);
+        switch (main_size.unit()) {
         case Util::Length::Initial:
             ESSA_UNREACHABLE;
         case Util::Length::Auto:
-            forward_auto_size = true;
+            forward_auto_size_for_main_axis = true;
             break;
         case Util::Length::Px:
-            sum += widget_size.value();
+            main_total_size += main_size.value();
             break;
         case Util::Length::Percent:
-            sum += widget_size.value() * static_cast<float>(container.raw_size().main(m_orientation)) / 100.f;
+            main_total_size += main_size.value() / 100.f * static_cast<float>(container.raw_size().main(m_orientation));
+            break;
+        }
+        switch (cross_size.unit()) {
+        case Util::Length::Initial:
+            ESSA_UNREACHABLE;
+        case Util::Length::Auto:
+            forward_auto_size_for_cross_axis = true;
+            break;
+        case Util::Length::Px:
+            cross_total_size = std::max(cross_total_size, cross_size.value());
+            break;
+        case Util::Length::Percent:
+            cross_total_size
+                = std::max(cross_total_size, cross_size.value() / 100.f * static_cast<float>(container.raw_size().cross(m_orientation)));
             break;
         }
     }
+
     return LengthVector::from_main_cross(
-        m_orientation, forward_auto_size ? Util::Length::Auto : Util::Length { sum, Util::Length::Px }, Util::Length::Auto
+        m_orientation, forward_auto_size_for_main_axis ? Util::Length::Auto : Util::Length { main_total_size, Util::Length::Px },
+        forward_auto_size_for_cross_axis
+            ? Util::Length::Auto
+            : Util::Length { cross_total_size + static_cast<float>(m_padding.cross_sum(m_orientation)), Util::Length::Px }
     );
 }
 

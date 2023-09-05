@@ -23,7 +23,6 @@
                 spacing: 10
                 content_alignment: "BoxEnd"
             }
-            height: 32px
             width: auto
             
             @TextButton ok_button {

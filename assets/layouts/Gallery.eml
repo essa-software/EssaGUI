@@ -18,7 +18,7 @@
 
             @Container {
                 layout: @HBox
-                height: 30px
+                
                 @TextButton {
                     content: "Normal"
                 }
@@ -43,7 +43,7 @@
             
             @Container {
                 layout: @HBox
-                height: 120px
+                
                 @Container {
                     layout: @VBox
                     @Checkbox {
@@ -67,19 +67,15 @@
                         layout: @VBox
                         @RadioButton {
                             caption: "Radio 1"
-                            height: auto
                         }
                         @RadioButton {
                             caption: "Radio 2"
-                            height: auto
                         }
                         @RadioButton {
                             caption: "Radio 3"
-                            height: auto
                         }
                         @RadioButton {
                             caption: "Radio 4"
-                            height: auto
                         }
                     }
                 }
@@ -87,7 +83,6 @@
             
             @Container {
                 layout: @HBox
-                height: 32px
                 
                 @Textbox {
                     type: "TEXT"
@@ -106,7 +101,6 @@
             
             @Container {
                 layout: @HBox
-                height: 32px
                 
                 @Progressbar {
                     labelling: "None"
@@ -129,7 +123,6 @@
             
             @Container {
                 layout: @HBox
-                height: 32px
 
                 @Slider {
                     width: 200px

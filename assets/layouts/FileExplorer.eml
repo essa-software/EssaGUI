@@ -47,8 +47,6 @@
                 spacing: 5
             }
             
-            height: 42px
-            
             @Textfield { width: auto }
 
             @TextButton open {

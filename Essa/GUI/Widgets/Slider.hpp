@@ -45,6 +45,9 @@ private:
     float calculate_knob_size() const;
     void round_to_step();
     virtual bool accepts_focus() const override { return true; }
+    virtual LengthVector initial_size() const override {
+        return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } };
+    }
 
     double m_val = 50;
     bool m_dragging = false;

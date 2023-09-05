@@ -20,6 +20,7 @@ Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString wi
 
     auto* input_container = container.add_widget<GUI::Container>();
     input_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
+    input_container->set_size({ Util::Length::Auto, Util::Length::Auto });
 
     {
         auto* label = input_container->add_widget<GUI::Textfield>();
@@ -33,10 +34,10 @@ Prompt::Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString wi
 
     // FIXME: Also, why buttons are red by default?
     auto* button_container = container.add_widget<GUI::Container>();
+    button_container->set_size({ Util::Length::Auto, Util::Length::Initial });
     auto& layout = button_container->set_layout<GUI::HorizontalBoxLayout>();
     layout.set_spacing(20);
     layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
-    button_container->set_size({ Util::Length::Auto, 32.0_px });
     {
         m_cancel_button = button_container->add_widget<GUI::TextButton>();
         m_cancel_button->set_alignment(GUI::Align::Center);
