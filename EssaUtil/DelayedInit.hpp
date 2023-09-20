@@ -15,6 +15,11 @@ public:
     DelayedInit(DelayedInit&&) = delete;
     DelayedInit& operator=(DelayedInit&&) = delete;
 
+    DelayedInit& operator=(T&& t) {
+        construct(std::forward<T>(t));
+        return *this;
+    }
+
     template<class... Args> DelayedInit(Args&&... object) { construct(std::forward<Args>(object)...); }
 
     ~DelayedInit() {
