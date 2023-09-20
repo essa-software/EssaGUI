@@ -14,8 +14,7 @@ int main() {
     Gfx::Painter painter { wnd.renderer() };
     while (true) {
         painter.reset();
-        while (wnd.poll_event()) {
-        }
+        while (wnd.poll_event()) { }
 
         painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { wnd.rect() } }, wnd.rect()));
 
@@ -24,26 +23,22 @@ int main() {
         painter.draw(Gfx::Drawing::Rectangle {
             { 190, 30, 100, 100 },
             Gfx::Drawing::Fill::solid(Util::Colors::Lime),
-            Gfx::Drawing::Outline::rounded(Util::Colors::Red, 5,
-                { 0, 0, 30, 0 }),
+            Gfx::Drawing::Outline::rounded(Util::Colors::Red, 5, { 0, 0, 30, 0 }),
         });
         painter.draw(Gfx::Drawing::Rectangle {
             { 320, 30, 100, 100 },
             Gfx::Drawing::Fill::solid(Util::Colors::Lime),
-            Gfx::Drawing::Outline::rounded(Util::Colors::Transparent, 0,
-                { 0, 0, 30, 0 }),
+            Gfx::Drawing::Outline::rounded(Util::Colors::Transparent, 0, { 0, 0, 30, 0 }),
         });
         painter.draw(Gfx::Drawing::Rectangle {
             { 450, 30, 100, 100 },
             Gfx::Drawing::Fill::none(),
-            Gfx::Drawing::Outline::rounded(Util::Colors::Red, 5,
-                { 0, 0, 30, 0 }),
+            Gfx::Drawing::Outline::rounded(Util::Colors::Red, 5, { 0, 0, 30, 0 }),
         });
         painter.draw(Gfx::Drawing::Rectangle {
             { 580, 30, 100, 100 },
             Gfx::Drawing::Fill::solid(Util::Colors::Lime),
-            Gfx::Drawing::Outline::rounded(Util::Colors::Red, -5,
-                { 0, 0, 30, 0 }),
+            Gfx::Drawing::Outline::rounded(Util::Colors::Red, -5, { 0, 0, 30, 0 }),
         });
 
         painter.draw(Gfx::Drawing::Rectangle {
@@ -131,6 +126,34 @@ pqrstuvwxyz{|}~
             lorem.set_position({ 40.5, 640.5 });
             lorem.draw(painter);
         }
+
+        // Shape border rounding edge cases
+        class GenericShape : public Gfx::Drawing::Shape {
+        public:
+            GenericShape(std::vector<Util::Point2f> points)
+                : Shape(Gfx::Drawing::Fill::none(), Gfx::Drawing::Outline::rounded(Util::Colors::Red, 2, 5))
+                , m_points(std::move(points)) { }
+
+            virtual size_t point_count() const { return m_points.size(); }
+            virtual Util::Point2f point(size_t idx) const { return m_points[idx]; }
+
+            // Bounds that are used for calculating texture rect. That is,
+            // point at [size()] will use bottom right corner of texture rect.
+            virtual Util::Rectf local_bounds() const { return { 0, 0, 1, 1 }; }
+
+        private:
+            std::vector<Util::Point2f> m_points;
+        };
+
+        // All these should render an identical triangle
+        painter.draw(GenericShape({ { 100, 0 }, { 0, 0 }, { 0, 0 }, { 0, 70 } }) //
+                         .set_transform(llgl::Transform().translate_2d({ 190, 450 })));
+        painter.draw(GenericShape({ { 0, 0 }, { 100, 0 }, { 0, 70 }, { 0, 0 } }) //
+                         .set_transform(llgl::Transform().translate_2d({ 320, 450 })));
+        painter.draw(GenericShape({ { 0, 70 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 100, 0 } }) //
+                         .set_transform(llgl::Transform().translate_2d({ 450, 450 })));
+        painter.draw(GenericShape({ { 0, 0 }, { 0, 0 }, { 0, 70 }, { 100, 0 }, { 0, 0 } }) //
+                         .set_transform(llgl::Transform().translate_2d({ 580, 450 })));
 
         painter.render();
         wnd.display();

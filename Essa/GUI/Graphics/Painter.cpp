@@ -1,14 +1,15 @@
 #include "Painter.hpp"
-#include "EssaUtil/Angle.hpp"
 
 #include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Drawing/Shape.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
+#include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Config.hpp>
 #include <algorithm>
 #include <fmt/ostream.h>
+#include <ranges>
 
 namespace Gfx {
 
@@ -138,8 +139,6 @@ RoundingResult round(RoundingSettings settings) {
 }
 
 static std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape const& shape) {
-    std::vector<Util::Point2f> vertices;
-
     auto round_radius_for_vertex = [&](size_t idx) {
         if (shape.point_count() == 4) {
             switch (idx) {
@@ -161,17 +160,31 @@ static std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::
         return shape.outline().round_radius().top_left;
     };
 
-    for (size_t s = 0; s < shape.point_count(); s++) {
+    // Don't allow duplicates, otherwise rounding algorithms falls apart
+    auto input_vertices = shape.points().to_vector();
+    {
+        auto const [first, last] = std::ranges::unique(input_vertices, [](auto l, auto r) { return l.is_approximately_equal(r); });
+        input_vertices.erase(first, last);
+    }
+    while (!input_vertices.empty() && input_vertices.front() == input_vertices.back()) {
+        input_vertices.pop_back();
+    }
+    if (input_vertices.size() < 3) {
+        return {};
+    }
+
+    std::vector<Util::Point2f> output_vertices;
+    for (size_t s = 0; s < input_vertices.size(); s++) {
         auto r = round_radius_for_vertex(s);
 
-        auto tip = shape.point(s);
+        auto tip = input_vertices[s];
         if (r == 0) {
-            vertices.push_back(tip);
+            output_vertices.push_back(tip);
             continue;
         }
 
-        auto left = shape.point(s == 0 ? shape.point_count() - 1 : s - 1);
-        auto right = shape.point(s == shape.point_count() - 1 ? 0 : s + 1);
+        auto left = input_vertices[s == 0 ? input_vertices.size() - 1 : s - 1];
+        auto right = input_vertices[s == input_vertices.size() - 1 ? 0 : s + 1];
 
         auto rounding = round({ left, right, tip, r });
 
@@ -181,25 +194,17 @@ static std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::
                 + (rounding.angle_end - rounding.angle_start) * static_cast<float>(s) / static_cast<float>(RoundingResolution);
             // fmt::print("{}\n", fmt::streamed(rounding.center));
             auto point = rounding.center + Util::Vector2f::create_polar(Util::Angle::radians(angle), rounding.scaled_radius);
-
-            // Don't allow duplicates
-            if (vertices.empty() || !point.is_approximately_equal(vertices.back())) {
-                vertices.push_back(point);
-            }
+            output_vertices.push_back(point);
         }
     }
-
-    // Don't allow duplicates
-    if (vertices.front().is_approximately_equal(vertices.back())) {
-        vertices.pop_back();
+    {
+        auto [first, last] = std::ranges::unique(output_vertices, [](auto l, auto r) { return l.is_approximately_equal(r); });
+        input_vertices.erase(first, last);
     }
-
-    // fmt::print("--- Rounded Vertices ---\n");
-    // for (auto const& v : vertices) {
-    //     fmt::print("* {}\n", fmt::streamed(v));
-    // }
-
-    return vertices;
+    while (!output_vertices.empty() && output_vertices.front() == output_vertices.back()) {
+        output_vertices.pop_back();
+    }
+    return output_vertices;
 }
 
 void Painter::draw(Drawing::Shape const& shape) {
@@ -209,6 +214,9 @@ void Painter::draw(Drawing::Shape const& shape) {
         }
         return calculate_vertices_for_rounded_shape(shape);
     }();
+    if (vertices_for_rounded_shape.empty()) {
+        return;
+    }
 
     m_builder.set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin().to_vector(), 0.f }));
     if (shape.fill().is_visible()) {
