@@ -9,13 +9,16 @@ void ImageWidget::draw(Gfx::Painter& painter) const {
         return;
     // TODO: Move this logic to Painter (e.g draw_best_fit_image)
     auto image_size = m_image->size();
-    float aspect = raw_size().x() / raw_size().y();
-    float image_aspect = static_cast<float>(image_size.x()) / image_size.y();
+    if (raw_size().y() == 0) {
+        return;
+    }
+    float aspect = static_cast<float>(raw_size().x()) / static_cast<float>(raw_size().y());
+    float image_aspect = static_cast<float>(image_size.x()) / static_cast<float>(image_size.y());
     Util::Size2i rect_size;
     if (aspect > image_aspect)
-        rect_size = { raw_size().y() * image_aspect, raw_size().y() };
+        rect_size = { static_cast<float>(raw_size().y()) * image_aspect, raw_size().y() };
     else
-        rect_size = { raw_size().x(), raw_size().x() / image_aspect };
+        rect_size = { raw_size().x(), static_cast<float>(raw_size().x()) / image_aspect };
 
     Gfx::RectangleDrawOptions rect;
     rect.texture = m_image;
