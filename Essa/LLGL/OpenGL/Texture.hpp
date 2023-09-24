@@ -41,8 +41,21 @@ public:
         Linear
         // TODO: Mipmap filtering
     };
-
     void set_filtering(Filtering);
+
+    enum class Wrap {
+        ClampToEdge,
+        ClampToBorder,
+        MirroredRepeat,
+        Repeat,
+        MirrorClampToEdge,
+    };
+    void set_wrap(Wrap wrap) {
+        set_wrap_x(wrap);
+        set_wrap_y(wrap);
+    }
+    void set_wrap_x(Wrap);
+    void set_wrap_y(Wrap);
 
     unsigned id() const { return m_id; }
     Util::Size2u size() const { return m_size; }

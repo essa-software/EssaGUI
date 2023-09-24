@@ -4,9 +4,9 @@
 
 #include <GL/glew.h>
 
+#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 #include <cassert>
 #include <iostream>
-#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 
 namespace llgl {
 
@@ -122,6 +122,31 @@ void Texture::set_filtering(Filtering filtering) {
     TextureBinder binder(*this);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering == Filtering::Nearest ? GL_NEAREST : GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering == Filtering::Nearest ? GL_NEAREST : GL_LINEAR);
+}
+
+static GLenum gl_wrap_mode(Texture::Wrap wrap) {
+    switch (wrap) {
+    case Texture::Wrap::ClampToEdge:
+        return GL_CLAMP_TO_EDGE;
+    case Texture::Wrap::ClampToBorder:
+        return GL_CLAMP_TO_BORDER;
+    case Texture::Wrap::MirroredRepeat:
+        return GL_MIRRORED_REPEAT;
+    case Texture::Wrap::Repeat:
+        return GL_REPEAT;
+    case Texture::Wrap::MirrorClampToEdge:
+        return GL_MIRROR_CLAMP_TO_EDGE;
+    }
+    ESSA_UNREACHABLE;
+}
+
+void Texture::set_wrap_x(Wrap wrap) {
+    TextureBinder binder(*this);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_wrap_mode(wrap));
+}
+void Texture::set_wrap_y(Wrap wrap) {
+    TextureBinder binder(*this);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_wrap_mode(wrap));
 }
 
 void Texture::bind(Texture const* texture) { OpenGL::BindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
