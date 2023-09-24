@@ -297,4 +297,6 @@ EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EM
     return {};
 }
 
+EML_REGISTER_CLASS(Widget);
+
 }
