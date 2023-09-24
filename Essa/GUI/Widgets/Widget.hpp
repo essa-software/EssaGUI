@@ -179,7 +179,7 @@ public:
     CREATE_VALUE(std::string, class_name, "")
     CREATE_VALUE(Util::Color, background_color, Util::Colors::Transparent)
 
-    virtual void dump(unsigned depth);
+    virtual void dump(std::ostream& out, unsigned depth);
     virtual void default_values() {};
 
     virtual void eml_construct(WindowRoot& root) {

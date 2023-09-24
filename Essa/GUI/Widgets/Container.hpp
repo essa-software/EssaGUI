@@ -152,7 +152,7 @@ public:
     void clear_layout() { m_layout = nullptr; }
     std::unique_ptr<Layout>& get_layout() { return m_layout; }
 
-    virtual void dump(unsigned depth) override;
+    virtual void dump(std::ostream& out, unsigned depth) override;
 
     Widget* find_widget_by_id(std::string_view) const;
     std::vector<Widget*> find_widgets_by_class_name(std::string_view) const;

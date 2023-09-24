@@ -440,7 +440,7 @@ void Container::relayout() {
         return;
     if (!m_layout) {
         std::cout << "Not trying to relayout widget without layout!" << std::endl;
-        dump(0);
+        dump(std::cerr, 0);
         assert(false);
     }
     if (m_layout->padding() == Boxi {})
@@ -451,21 +451,21 @@ void Container::relayout() {
     m_layout->run(*this);
 }
 
-void Container::dump(unsigned depth) {
-    Widget::dump(depth);
+void Container::dump(std::ostream& out, unsigned depth) {
+    Widget::dump(out, depth);
     ++depth;
     for (unsigned i = 0; i < depth; i++)
-        std::cout << "-   ";
+        out << "-   ";
     if (m_layout) {
-        std::cout << "layout: " << typeid(*m_layout).name() << std::endl;
+        out << "layout: " << typeid(*m_layout).name() << std::endl;
     }
     else {
-        std::cout << "layout: NONE!" << std::endl;
+        out << "layout: NONE!" << std::endl;
     }
     if (!is_visible())
         return;
     for (auto& w : m_widgets) {
-        w->dump(depth);
+        w->dump(out, depth);
     }
 }
 

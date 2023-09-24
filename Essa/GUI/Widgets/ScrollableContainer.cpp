@@ -57,15 +57,15 @@ void ScrollableContainer::do_relayout() {
     }
 }
 
-void ScrollableContainer::dump(unsigned depth) {
-    Widget::dump(depth);
+void ScrollableContainer::dump(std::ostream& out, unsigned depth) {
+    Widget::dump(out, depth);
     for (unsigned i = 0; i < depth; i++)
-        std::cout << "-   ";
+        out << "-   ";
 
     if (!is_visible())
         return;
     ++depth;
-    m_widget->dump(depth);
+    m_widget->dump(out, depth);
 }
 
 EML::EMLErrorOr<void> ScrollableContainer::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {

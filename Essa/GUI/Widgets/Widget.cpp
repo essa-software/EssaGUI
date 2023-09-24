@@ -268,18 +268,20 @@ void Widget::set_parent(Container& parent) {
     m_parent = &parent;
 }
 
-void Widget::dump(unsigned depth) {
+void Widget::dump(std::ostream& out, unsigned depth) {
+    auto it = std::ostream_iterator<char>(out);
+
     for (unsigned i = 0; i < depth; i++) {
-        fmt::print("-   ");
+        fmt::format_to(it, "-   ");
     }
-    fmt::print("({}) ", (m_visible ? "-" : "+"));
-    fmt::print("{} @{}", typeid(*this).name(), fmt::ptr(this));
+    fmt::format_to(it, "({}) ", (m_visible ? "-" : "+"));
+    fmt::format_to(it, "{}", typeid(*this).name());
     if (!m_id.empty()) {
-        fmt::print(" #{}", m_id);
+        fmt::format_to(it, " #{}", m_id);
     }
-    fmt::print(": pos=({}, {})={}", fmt::streamed(m_expected_pos.x), fmt::streamed(m_expected_pos.y), m_position);
-    fmt::print(", size=({}, {})={}", fmt::streamed(m_input_size.x), fmt::streamed(m_input_size.y), m_raw_size);
-    fmt::print("\n");
+    fmt::format_to(it, ": pos=({}, {})={}", fmt::streamed(m_expected_pos.x), fmt::streamed(m_expected_pos.y), m_position);
+    fmt::format_to(it, ", size=({}, {})={}", fmt::streamed(m_input_size.x), fmt::streamed(m_input_size.y), m_raw_size);
+    fmt::format_to(it, "\n");
 }
 
 EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EML::Loader&) {
