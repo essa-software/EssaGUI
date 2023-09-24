@@ -56,7 +56,7 @@ TEST_P(EMLTest, EMLTest) {
     std::ostringstream oss;
     main_widget.dump(oss, 0);
     if (p.expected_layout_dump.empty()) {
-        fmt::println(stderr, "\e[31mNo expectation for test {}, printing actual output:\e[m", p.test_name);
+        fmt::print(stderr, "\e[31mNo expectation for test {}, printing actual output:\e[m\n", p.test_name);
         main_widget.dump(std::cerr, 0);
         FAIL() << "No expectation for test";
     }
