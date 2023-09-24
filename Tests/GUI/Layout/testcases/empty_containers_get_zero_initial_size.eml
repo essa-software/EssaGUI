@@ -1,0 +1,7 @@
+@Container {
+    layout: @HorizontalBoxLayout
+
+    @Container {
+        layout: @HorizontalBoxLayout { spacing: 10 }
+    }
+}

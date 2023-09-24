@@ -1,0 +1,4 @@
+(-) N3GUI9ContainerE: pos=(initial, initial)=(0, 0), size=(512px, 512px)=512x512
+-   layout: N3GUI19HorizontalBoxLayoutE
+-   (-) N3GUI9ContainerE: pos=(initial, initial)=(0, 0), size=(0px, 0px)=0x0
+-   -   layout: N3GUI19HorizontalBoxLayoutE

@@ -157,6 +157,9 @@ Util::Size2i BoxLayout::total_size(Container const& container) const {
 }
 
 LengthVector BoxLayout::initial_size(Container const& container) const {
+    if (container.widgets().empty()) {
+        return LengthVector { 0_px, 0_px };
+    }
     float main_total_size = static_cast<float>(m_padding.main_sum(m_orientation) + m_spacing * (container.widgets().size() - 1));
     bool forward_auto_size_for_main_axis = false;
     float cross_total_size = 0;
