@@ -1,7 +1,7 @@
 @WindowRoot {
     title: "Color Picker"
     width: 500
-    height: 305
+    height: 355
     center_on_screen: true
 
     main_widget: @Container {
