@@ -45,9 +45,9 @@ MessageBox::MessageBox(WidgetTreeRoot& wnd, Util::UString message, Util::UString
         prompt_text->set_size({ Util::Length::Auto, Util::Length::Auto });
 
         {
-            auto text_rect = prompt_text->needed_size_for_text();
-            text_rect.set_y(std::max<unsigned>(IMAGE_SIZE + 10, text_rect.y()));
-            Util::Size2u total_size { x_padding + text_rect.x(), 80 + text_rect.y() };
+            auto text_size = prompt_text->needed_size_for_text();
+            text_size.set_y(std::max<unsigned>(IMAGE_SIZE + 10, text_size.y()));
+            Util::Size2u total_size { x_padding + text_size.x(), 82 + text_size.y() };
             window().setup(std::move(title), total_size, {});
             window().center_on_screen();
         }
