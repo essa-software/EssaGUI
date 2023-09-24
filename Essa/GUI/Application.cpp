@@ -26,6 +26,10 @@ Application::Application() {
     s_the = this;
 }
 
+Application::~Application() {
+    s_the = nullptr;
+}
+
 Theme const& Application::theme() const {
     if (!m_cached_theme) {
         m_cached_theme = std::make_unique<Theme>();

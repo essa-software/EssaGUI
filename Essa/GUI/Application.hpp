@@ -11,6 +11,7 @@ namespace GUI {
 class Application : public EventLoop {
 public:
     Application();
+    ~Application();
 
     static Application& the();
 
