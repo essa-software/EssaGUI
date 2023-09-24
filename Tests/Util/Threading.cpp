@@ -20,25 +20,25 @@ void run(size_t tasks) {
             return fac;
         }));
     }
-    // fmt::print("Waiting on {} futures\n", futures.size());
+    fmt::print("Waiting on {} futures\n", futures.size());
     while (true) {
         bool any_unfinished = false;
         size_t idx = 0;
         for (auto& fut : futures) {
-            // fmt::print("Waiting for {}\n", idx);
+            fmt::print("Waiting for {}\n", idx);
             auto status = fut.wait_for(100ms);
             if (status == std::future_status::ready) {
-                // fmt::print("Future {} finished\n", idx);
+                fmt::print("Future {} finished\n", idx);
             }
             else {
-                // fmt::print("Future {} UNfinished yet!\n", idx);
+                fmt::print("Future {} UNfinished yet!\n", idx);
                 // pool.dump();
                 any_unfinished = true;
             }
             idx++;
         }
         if (!any_unfinished) {
-            // fmt::print("Finished everything yay!!!\n");
+            fmt::print("Finished everything yay!!!\n");
             break;
         }
     }

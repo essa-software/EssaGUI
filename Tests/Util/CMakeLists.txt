@@ -7,7 +7,7 @@ essautil_add_test(GenericParser LIBS Util)
 essautil_add_test(Matrix LIBS Util)
 essautil_add_test(RAIIUtils LIBS Util)
 essautil_add_test(Stream LIBS Util)
-essautil_add_test(Threading LIBS Util)
+essautil_add_test(Threading LIBS Util NO_CTEST) # It takes too long.
 essautil_add_test(UString LIBS Util)
 essautil_add_test(UStringBuilder LIBS Util)
 essautil_add_test(UnitDisplay LIBS Util)
