@@ -46,6 +46,8 @@ void HostWindow::handle_events() {
     }
 }
 
+DBG_DECLARE(GUI_DrawHostWindowDebugInfo);
+
 void HostWindow::do_draw() {
     // hacky hacky hacky hacky
     set_active();
@@ -57,6 +59,15 @@ void HostWindow::do_draw() {
     m_painter->builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
 
     WidgetTreeRoot::draw(*m_painter);
+
+    if (DBG_ENABLED(GUI_DrawHostWindowDebugInfo)) {
+        Gfx::Text text(
+            Util::UString::format("FPS={:.1f} size={}", EventLoop::current().tps(), size()), resource_manager().fixed_width_font()
+        );
+        text.set_font_size(8);
+        text.align(GUI::Align::TopLeft, {});
+        text.draw(*m_painter);
+    }
 
     m_painter->render();
     display();
