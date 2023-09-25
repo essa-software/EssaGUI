@@ -11,21 +11,22 @@ EML::EMLErrorOr<void> WindowRoot::load_from_eml_object(EML::Object const& object
     auto height = TRY(object.get_property("height", EML::Value(0.0)).to_double());
     auto center_on_screen = TRY(object.get_property("center_on_screen", EML::Value(false)).to_bool());
     llgl::WindowSettings settings;
+    settings.flags = llgl::WindowFlags(0);
 
-#define FLAG(name, Name)                                                         \
-    if (TRY(object.get_property("flags_" #name, EML::Value(false)).to_bool())) { \
-        settings.flags |= llgl::WindowFlags::Name;                               \
+#define FLAG(name, Name, default)                                                  \
+    if (TRY(object.get_property("flags_" #name, EML::Value(default)).to_bool())) { \
+        settings.flags |= llgl::WindowFlags::Name;                                 \
     }
 
     // TODO: Better window flags
-    FLAG(fullscreen, Fullscreen)
-    FLAG(borderless, Borderless)
-    FLAG(resizable, Resizable)
-    FLAG(minimized, Minimized)
-    FLAG(maximized, Maximized)
-    FLAG(transparent_background, TransparentBackground)
-    FLAG(shaped, Shaped)
-    FLAG(tooltip, Tooltip)
+    FLAG(fullscreen, Fullscreen, false)
+    FLAG(borderless, Borderless, false)
+    FLAG(resizable, Resizable, true)
+    FLAG(minimized, Minimized, false)
+    FLAG(maximized, Maximized, false)
+    FLAG(transparent_background, TransparentBackground, false)
+    FLAG(shaped, Shaped, false)
+    FLAG(tooltip, Tooltip, false)
 
 #undef FLAG
 
