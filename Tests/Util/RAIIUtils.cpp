@@ -1,7 +1,7 @@
-#include "EssaUtil/TemporaryChange.hpp"
 #include <EssaUtil/Testing.hpp>
 
 #include <EssaUtil/ScopeGuard.hpp>
+#include <EssaUtil/TemporaryChange.hpp>
 
 TEST_CASE(scope_guard) {
     int a = 5;
