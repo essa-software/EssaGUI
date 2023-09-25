@@ -1,12 +1,28 @@
 #pragma once
 
 #include <cassert>
+#include <fmt/core.h>
+#include <type_traits>
 #include <utility>
 
 namespace Util {
 
+template<class T> struct DependentPtr {
+    using Type = T*;
+};
+template<class T> struct DependentPtr<T&> {
+    using Type = T*;
+};
+
 template<class T> class DelayedInit {
 public:
+    static constexpr bool IsReference = std::is_reference_v<T>;
+    using StorageType = std::conditional_t<IsReference, std::remove_reference_t<T>*, T>;
+    using PtrType = DependentPtr<T>::Type;
+    using ConstPtrType = DependentPtr<std::remove_const_t<T> const>::Type;
+    using RefType = std::remove_reference_t<T>&;
+    using ConstRefType = std::remove_const_t<std::remove_reference_t<T>> const&;
+
     DelayedInit() = default;
 
     // TODO: Implement these
@@ -15,55 +31,107 @@ public:
     DelayedInit(DelayedInit&&) = delete;
     DelayedInit& operator=(DelayedInit&&) = delete;
 
-    DelayedInit& operator=(T&& t) {
-        construct(std::forward<T>(t));
+    template<class... Args>
+    DelayedInit(Args&&... object)
+        requires(!IsReference)
+    {
+        construct(std::forward<Args>(object)...);
+    }
+    DelayedInit(RefType rt)
+        requires(IsReference)
+    {
+        construct(std::forward<RefType>(rt));
+    }
+    DelayedInit(std::remove_reference<T>&& rt)
+        requires(IsReference)
+    = delete;
+
+    template<class... Args>
+    DelayedInit& operator=(Args&&... object)
+        requires(!IsReference)
+    {
+        construct(std::forward<Args>(object)...);
         return *this;
     }
-
-    template<class... Args> DelayedInit(Args&&... object) { construct(std::forward<Args>(object)...); }
+    DelayedInit& operator=(RefType rt)
+        requires(IsReference)
+    {
+        construct(std::forward<RefType>(rt));
+        return *this;
+    }
+    DelayedInit& operator=(std::remove_reference<T>&& rt)
+        requires(IsReference)
+    = delete;
 
     ~DelayedInit() {
         if (m_initialized)
             destruct();
     }
 
-    template<class... Args> void construct(Args&&... args) {
+    template<class... Args>
+    void construct(Args&&... args)
+        requires(!IsReference)
+    {
         if (m_initialized)
             destruct();
-        new (m_storage) T { std::forward<Args>(args)... };
+        new (m_storage) StorageType { std::forward<Args>(args)... };
         m_initialized = true;
     }
 
+    void construct(RefType rt)
+        requires(IsReference)
+    {
+        if (m_initialized)
+            destruct();
+        new (m_storage) StorageType { &rt };
+        m_initialized = true;
+    }
+    void construct(std::remove_reference<T>&& rt)
+        requires(IsReference)
+    = delete;
+
     void destruct() {
         assert(m_initialized);
-        ptr()->~T();
+        if constexpr (!IsReference) {
+            ptr()->~T();
+        }
         m_initialized = false;
     }
 
-    T* ptr() {
+    PtrType ptr() {
         if (!m_initialized)
             return nullptr;
-        return reinterpret_cast<T*>(m_storage);
+        if constexpr (IsReference) {
+            return std::bit_cast<PtrType>(m_storage);
+        }
+        else {
+            return reinterpret_cast<PtrType>(&m_storage);
+        }
     }
-    T const* ptr() const {
+    ConstPtrType ptr() const {
         if (!m_initialized)
             return nullptr;
-        return reinterpret_cast<T const*>(m_storage);
+        if constexpr (IsReference) {
+            return std::bit_cast<ConstPtrType>(m_storage);
+        }
+        else {
+            return reinterpret_cast<ConstPtrType>(&m_storage);
+        }
     }
 
-    T* operator->() {
+    PtrType operator->() {
         assert(m_initialized);
         return ptr();
     }
-    T const* operator->() const {
+    ConstPtrType operator->() const {
         assert(m_initialized);
         return ptr();
     }
-    T& operator*() {
+    RefType operator*() {
         assert(m_initialized);
         return *ptr();
     }
-    T const& operator*() const {
+    ConstRefType operator*() const {
         assert(m_initialized);
         return *ptr();
     }
@@ -72,7 +140,17 @@ public:
 
 private:
     bool m_initialized { false };
-    alignas(T) char m_storage[sizeof(T)];
+    alignas(StorageType) char m_storage[sizeof(StorageType)];
 };
 
 }
+
+template<class T> class fmt::formatter<Util::DelayedInit<T>> : public fmt::formatter<std::remove_cvref_t<T>> {
+public:
+    auto format(Util::DelayedInit<T> const& obj, fmt::format_context& ctx) const {
+        if (!obj.is_initialized()) {
+            return fmt::format_to(ctx.out(), "<not-initialized>");
+        }
+        return fmt::formatter<std::remove_cvref_t<T>>::format(*obj, ctx);
+    }
+};
