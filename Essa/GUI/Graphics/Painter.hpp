@@ -46,7 +46,7 @@ public:
     auto& builder() { return m_builder; }
     auto& renderer() const { return m_renderer; }
 
-    void render() {
+    void render() const {
         apply_states();
         m_builder.render(m_renderer);
     }
@@ -100,7 +100,7 @@ public:
     Blending blending() const { return m_blending; }
 
 private:
-    void apply_states();
+    void apply_states() const;
 
     // In these functions, vertices are and after rounding, but not transformed.
     void draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices);
