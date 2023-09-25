@@ -31,7 +31,7 @@ public:
     ~ClipViewScope();
 
 private:
-    static llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2i offset_position, Util::Size2u framebuffer_size);
+    static llgl::Projection create_clip_view(Util::Recti const&, Util::Vector2i offset_position);
 
     Painter& m_target;
     llgl::Projection m_old_projection;

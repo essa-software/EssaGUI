@@ -12,10 +12,7 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
     , m_parent(s_current) {
     s_current = this;
 
-    auto framebuffer_size = target.renderer().size();
-
     auto old_viewport = m_old_projection.viewport();
-    old_viewport.top = static_cast<int>(framebuffer_size.y()) - old_viewport.top - old_viewport.height;
     if (mode != Mode::NewStack) {
         rect = rect.move_x(old_viewport.left).move_y(old_viewport.top);
         if (m_parent) {
@@ -40,7 +37,7 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
 
     m_offset = offset_position;
 
-    auto clip_view = create_clip_view(clip_rect, offset_position, framebuffer_size);
+    auto clip_view = create_clip_view(clip_rect, offset_position);
 
     m_target.builder().set_projection(clip_view);
 }
@@ -50,16 +47,8 @@ ClipViewScope::~ClipViewScope() {
     s_current = m_parent;
 }
 
-llgl::Projection ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2i offset_position, Util::Size2u framebuffer_size) {
-    return llgl::Projection::ortho(
-        { { offset_position.cast<double>().to_point(), rect.size().cast<double>() } },
-        Util::Recti {
-            static_cast<int>(rect.left),
-            static_cast<int>(framebuffer_size.y() - rect.top - rect.height),
-            static_cast<int>(rect.width),
-            static_cast<int>(rect.height),
-        }
-    );
+llgl::Projection ClipViewScope::create_clip_view(Util::Recti const& rect, Util::Vector2i offset_position) {
+    return llgl::Projection::ortho({ { offset_position.cast<double>().to_point(), rect.size().cast<double>() } }, rect);
 }
 
 }
