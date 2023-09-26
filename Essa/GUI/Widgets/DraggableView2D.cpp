@@ -2,6 +2,9 @@
 
 namespace GUI {
 
+DraggableView2D::DraggableView2D()
+    : m_drag_behavior([&](Util::Vector2i delta) { m_offset -= delta.cast<float>() / m_zoom; }) { }
+
 llgl::Transform DraggableView2D::transform() const {
     return llgl::Transform {}.translate_2d((raw_size().cast<float>().to_vector() / 2.f).rounded()).scale(m_zoom).translate_2d(-m_offset);
 }
@@ -46,9 +49,8 @@ Widget::EventHandlerResult DraggableView2D::on_mouse_button_press(Event::MouseBu
     if (event.button() != m_pan_button) {
         return Widget::EventHandlerResult::NotAccepted;
     }
-    m_drag_start_mouse = event.local_position();
-    m_drag_start_offset = m_offset;
-    m_dragging = true;
+    fmt::println("yay");
+    m_drag_behavior.start_dragging(event.local_position());
     return EventHandlerResult::NotAccepted;
 }
 
@@ -56,19 +58,12 @@ Widget::EventHandlerResult DraggableView2D::on_mouse_button_release(Event::Mouse
     if (event.button() != m_pan_button) {
         return Widget::EventHandlerResult::NotAccepted;
     }
-    m_dragging = false;
-    m_actually_dragging = false;
+    m_drag_behavior.stop_dragging();
     return Widget::EventHandlerResult::NotAccepted;
 }
 
 Widget::EventHandlerResult DraggableView2D::on_mouse_move(Event::MouseMove const& event) {
-    auto delta = event.local_position() - m_drag_start_mouse;
-    if (m_dragging && delta.length_squared() > 400) {
-        m_actually_dragging = true;
-    }
-    if (m_actually_dragging) {
-        m_offset = m_drag_start_offset - delta.cast<float>() / m_zoom;
-    }
+    m_drag_behavior.on_mouse_move(event.local_position());
     return EventHandlerResult::NotAccepted;
 }
 

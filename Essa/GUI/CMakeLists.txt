@@ -49,6 +49,7 @@ add_library(GUI SHARED
     Widgets/Console.cpp
     Widgets/Container.cpp
     Widgets/Datebox.cpp
+    Widgets/DragBehavior.cpp
     Widgets/DraggableView2D.cpp
     Widgets/Frame.cpp
     Widgets/Grid.cpp

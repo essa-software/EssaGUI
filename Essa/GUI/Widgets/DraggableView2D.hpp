@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Essa/GUI/Widgets/DragBehavior.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
@@ -8,6 +9,8 @@ namespace GUI {
 
 class DraggableView2D : public Widget {
 public:
+    DraggableView2D();
+
     llgl::Transform transform() const;
     llgl::Transform inverse_transform() const;
 
@@ -18,8 +21,8 @@ public:
     Util::Rectf visible_area() const;
     Util::Point2f screen_to_world(Util::Point2i const&) const;
     Util::Point2i world_to_screen(Util::Point2f const&) const;
-    bool dragging() const { return m_dragging; }
-    bool actually_dragging() const { return m_actually_dragging; }
+    bool dragging() const { return m_drag_behavior.is_dragging(); }
+    bool actually_dragging() const { return m_drag_behavior.is_actually_dragging(); }
     void set_pan_button(llgl::MouseButton button) { m_pan_button = button; }
     void set_zoom_enabled(bool enabled) { m_zoom_enabled = enabled; }
 
@@ -31,15 +34,11 @@ protected:
 
 private:
     float m_zoom = 1;
+    bool m_zoom_enabled = true;
     Util::Vector2f m_offset;
 
-    Util::Point2i m_drag_start_mouse;
-    Util::Vector2f m_drag_start_offset;
-    bool m_dragging = false;
-    bool m_actually_dragging = false;
     llgl::MouseButton m_pan_button = llgl::MouseButton::Middle;
-
-    bool m_zoom_enabled = true;
+    DragBehavior m_drag_behavior;
 };
 
 }
