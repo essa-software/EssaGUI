@@ -10,8 +10,14 @@ namespace GUI {
 class ScrollableWidget : public Widget {
 public:
     void set_scroll(Util::Vector2i);
-    void set_scroll_x(int x) { m_scroll.set_x(x); }
-    void set_scroll_y(int y) { m_scroll.set_y(y); }
+    void set_scroll_x(int x) {
+        m_scroll.set_x(x);
+        clamp_scrollbars();
+    }
+    void set_scroll_y(int y) {
+        m_scroll.set_y(y);
+        clamp_scrollbars();
+    }
     Util::Vector2i scroll() const { return m_scroll; }
 
     // If this is set to false, scrollbar won't be visible even if content overflows.
@@ -27,6 +33,7 @@ protected:
     Util::Vector2i scroll_offset() const;
     void draw_scrollbar(Gfx::Painter&) const;
     void scroll_to_bottom();
+    void clamp_scrollbars();
 
 private:
     // The rect that the scroll is applied to. Scrollbars are drawn on edges

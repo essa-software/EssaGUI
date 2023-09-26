@@ -29,6 +29,8 @@ Widget::EventHandlerResult ScrollableWidget::on_mouse_scroll(Event::MouseScroll 
         m_scroll.set_y(scroll_component);
     }
 
+    clamp_scrollbars();
+
     if (on_scroll) {
         on_scroll();
     }
@@ -36,9 +38,29 @@ Widget::EventHandlerResult ScrollableWidget::on_mouse_scroll(Event::MouseScroll 
     return Widget::EventHandlerResult::Accepted;
 }
 
+void ScrollableWidget::clamp_scrollbars() {
+    auto content_size = this->content_size();
+    auto scroll_area_size = this->scroll_area_size();
+    if (m_scroll.x() > content_size.x() - scroll_area_size.x()) {
+        m_scroll.set_x(content_size.x() - scroll_area_size.x());
+    }
+    if (m_scroll.x() < 0) {
+        m_scroll.set_x(0);
+    }
+    if (m_scroll.y() > content_size.y() - scroll_area_size.y()) {
+        m_scroll.set_y(content_size.y() - scroll_area_size.y());
+    }
+    if (m_scroll.y() < 0) {
+        m_scroll.set_y(0);
+    }
+}
+
 Util::Vector2i ScrollableWidget::scroll_offset() const { return -m_scroll; }
 
-void ScrollableWidget::set_scroll(Util::Vector2i scroll) { m_scroll = scroll; }
+void ScrollableWidget::set_scroll(Util::Vector2i scroll) {
+    m_scroll = scroll;
+    clamp_scrollbars();
+}
 
 void ScrollableWidget::draw_scrollbar(Gfx::Painter& window) const {
     auto scrollable_rect = this->scrollable_rect();
@@ -106,17 +128,7 @@ Util::Size2i ScrollableWidget::scroll_area_size() const {
 }
 
 void ScrollableWidget::relayout() {
-    // Clamp scroll to content size
-    auto content_size = this->content_size();
-    auto scroll_area_size = this->scroll_area_size();
-    auto scroll_end = content_size - scroll_area_size;
-    scroll_end = { std::max(0, scroll_end.x()), std::max(0, scroll_end.y()) };
-    if (m_scroll.x() > scroll_end.x()) {
-        m_scroll.set_x(scroll_end.x());
-    }
-    if (m_scroll.y() > scroll_end.y()) {
-        m_scroll.set_y(scroll_end.y());
-    }
+    clamp_scrollbars();
 }
 
 }
