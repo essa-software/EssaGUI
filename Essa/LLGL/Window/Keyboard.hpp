@@ -49,6 +49,8 @@ namespace llgl {
     Ex(Space, SDLK_SPACE)               \
     Ex(LShift, SDLK_LSHIFT)             \
     Ex(RShift, SDLK_RSHIFT)             \
+    Ex(LCtrl, SDLK_LCTRL)               \
+    Ex(RCtrl, SDLK_RCTRL)               \
     Ex(Tab, SDLK_TAB)                   \
     Ex(Tilde, SDLK_BACKQUOTE)           \
     Ex(Period, SDLK_PERIOD)             \
@@ -59,6 +61,7 @@ ESSA_ENUM_TO_STRING(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
 
 bool is_key_pressed(KeyCode key);
 inline bool is_shift_pressed() { return is_key_pressed(KeyCode::LShift) || is_key_pressed(KeyCode::RShift); }
+inline bool is_ctrl_pressed() { return is_key_pressed(KeyCode::LCtrl) || is_key_pressed(KeyCode::RCtrl); }
 
 }
 
