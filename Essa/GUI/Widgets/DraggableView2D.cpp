@@ -49,7 +49,6 @@ Widget::EventHandlerResult DraggableView2D::on_mouse_button_press(Event::MouseBu
     if (event.button() != m_pan_button) {
         return Widget::EventHandlerResult::NotAccepted;
     }
-    fmt::println("yay");
     m_drag_behavior.start_dragging(event.local_position());
     return EventHandlerResult::NotAccepted;
 }
