@@ -262,6 +262,10 @@ void Painter::draw_outline(std::span<Util::Point2f const> positions, Util::Color
     if (thickness == 0)
         return;
 
+    if (positions.size() < 3) {
+        return;
+    }
+
     std::vector<Gfx::Vertex> vertices;
     for (size_t i = 0; i < positions.size() + 1; i++) {
         auto A = i == 0 ? positions.back() : positions[i - 1];
