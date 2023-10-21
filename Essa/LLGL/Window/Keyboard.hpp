@@ -1,7 +1,6 @@
 #pragma once
 
 #include <EssaUtil/Enum.hpp>
-#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
 #include <fmt/format.h>
 #include <string>
