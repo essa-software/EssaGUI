@@ -145,39 +145,13 @@ int UniformMapping<Members...>::resolve_uniform_location(Shader& program, Unifor
 namespace Detail {
 
 unsigned compile_shader(GLenum type, std::string_view source);
-
-template<class... Args>
-    requires(std::is_same_v<Args, unsigned> && ...)
-unsigned link_shader(Args... ids) {
-    assert((ids && ...));
-    std::cout << "Program: Linking " << sizeof...(Args) << " shader objects" << std::endl;
-    auto id = OpenGL::CreateProgram();
-    (glAttachShader(id, ids), ...);
-
-    // TODO: Attrib locations if supported
-    OpenGL::LinkProgram(id);
-    GLint success = 0;
-    OpenGL::GetProgramiv(id, GL_LINK_STATUS, &success);
-    if (!success) {
-        GLint max_length = 0;
-        OpenGL::GetProgramiv(id, GL_INFO_LOG_LENGTH, &max_length);
-        std::string error_message;
-        error_message.resize(max_length);
-        OpenGL::GetProgramInfoLog(id, max_length, &max_length, error_message.data());
-        std::cout << "Program: Failed to link shader program: " << error_message << std::endl;
-        OpenGL::DeleteProgram(id);
-        return 0;
-    }
-
-    (glDetachShader(id, ids), ...);
-    return id;
-}
+unsigned link_shader(std::initializer_list<unsigned> ids);
 
 template<ShaderImpl Shader> inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
     if (!shader.program()) {
         auto fragment_shader = compile_shader(GL_FRAGMENT_SHADER, shader.source(ShaderType::Fragment));
         auto vertex_shader = compile_shader(GL_VERTEX_SHADER, shader.source(ShaderType::Vertex));
-        shader.set_program(link_shader(fragment_shader, vertex_shader));
+        shader.set_program(link_shader({fragment_shader, vertex_shader}));
     }
 
     OpenGL::UseProgram(shader.program());
