@@ -30,4 +30,11 @@ LengthVector ImageButton::initial_size() const {
     };
 }
 
+EML::EMLErrorOr<void> ImageButton::load_from_eml_object(EML::Object const& object, EML::Loader&) {
+    m_image = resource_manager().get<llgl::Texture>(TRY(TRY(object.require_property("image")).to_resource_id()));
+    return {};
+}
+
+EML_REGISTER_CLASS(ImageButton);
+
 }
