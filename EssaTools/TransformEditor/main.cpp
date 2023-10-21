@@ -156,9 +156,7 @@ CameraView::CameraView() {
     constexpr auto AxisSize = 100;
     std::vector<Essa::Model::Vertex> vertices {
         { { -AxisSize, 0, 0 }, Util::Colors::Red, {}, {} },   { { AxisSize, 0, 0 }, Util::Colors::Red, {}, {} },
-
         { { 0, -AxisSize, 0 }, Util::Colors::Green, {}, {} }, { { 0, AxisSize, 0 }, Util::Colors::Green, {}, {} },
-
         { { 0, 0, -AxisSize }, Util::Colors::Blue, {}, {} },  { { 0, 0, AxisSize }, Util::Colors::Blue, {}, {} },
     };
     Essa::Shapes::add_wireframe_cube(vertices);
@@ -172,7 +170,8 @@ void CameraView::draw(Gfx::Painter& painter) const {
     painter.render();
     painter.reset();
     {
-        GUI::WorldDrawScope scope(painter);
+        OpenGL::Enable(GL_DEPTH_TEST);
+        OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
         static Essa::Shaders::Lighting shader;
         auto axises_uniforms = m_uniforms;
         if (m_axises_coord_system > CoordinateSystem::Local) {
@@ -186,6 +185,7 @@ void CameraView::draw(Gfx::Painter& painter) const {
         }
         painter.renderer().draw_vertices(m_axises_vao, llgl::DrawState { shader, axises_uniforms, llgl::PrimitiveType::Lines });
         m_object->render(painter.renderer(), shader, m_uniforms);
+        OpenGL::Disable(GL_DEPTH_TEST);
     }
 
     {

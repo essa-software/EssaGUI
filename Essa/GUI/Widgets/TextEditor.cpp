@@ -657,7 +657,7 @@ static void draw_error_line(Gfx::Painter& painter, TextEditor::ErrorSpan::Type t
     auto draw_curly = [&](Util::Point2f position, float width, Util::Color color) {
         std::vector<Gfx::Vertex> vertices;
         for (int x = position.x(); x < position.x() + width; x += 1) {
-            int y = position.y() + CurlyHeights[x % 6];
+            int y = position.y() + CurlyHeights[x < 0 ? 5 + ((x + 1) % 6) : x % 6];
             vertices.push_back(Gfx::Vertex { { x, y }, color, {} });
         }
         painter.draw_vertices(llgl::PrimitiveType::Points, vertices);
@@ -781,6 +781,7 @@ void TextEditor::draw(Gfx::Painter& painter) const {
                 for (auto const& error : m_error_spans) {
                     Util::Point2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
                     for_each_line_in_range(error.range, [&](size_t line, size_t start, size_t end) {
+                        fmt::print("{}..{}\n", start, end);
                         Util::Point2f start_position { base_position.x() + start * character_width,
                                                        base_position.y() + line * line_height + 3 };
                         draw_error_line(painter, error.type, start_position, (end - start) * character_width);
