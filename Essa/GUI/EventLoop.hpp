@@ -3,7 +3,6 @@
 #include <Essa/GUI/Timer.hpp>
 
 #include <functional>
-#include <list>
 #include <memory>
 #include <set>
 

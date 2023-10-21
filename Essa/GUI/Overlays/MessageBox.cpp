@@ -1,6 +1,7 @@
 #include "MessageBox.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>

@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Debug.hpp>
+#include <Essa/GUI/Graphics/DefaultResources.hpp>
 
 #include <filesystem>
 #include <fstream>

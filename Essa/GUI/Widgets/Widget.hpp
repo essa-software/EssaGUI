@@ -1,15 +1,13 @@
 #pragma once
 
-#include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/EML/EMLObject.hpp>
-#include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Event.hpp>
 #include <Essa/GUI/EventLoop.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Theme.hpp>
-#include <Essa/LLGL/Window/Event.hpp>
 #include <EssaUtil/Color.hpp>
+#include <EssaUtil/Length.hpp>
 #include <EssaUtil/Orientation.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Units.hpp>

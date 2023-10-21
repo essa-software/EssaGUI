@@ -5,7 +5,6 @@
 #include <EssaUtil/Enum.hpp>
 #include <EssaUtil/Is.hpp>
 #include <EssaUtil/Orientation.hpp>
-#include <algorithm>
 #include <initializer_list>
 #include <memory>
 #include <optional>

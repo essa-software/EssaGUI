@@ -1,5 +1,8 @@
 #include "ArgParser.hpp"
 
+#include <algorithm>
+#include <fmt/format.h>
+
 namespace Util {
 
 ArgParser::PositionalParameter ArgParser::parameter_handler(std::string_view name, int& target) {

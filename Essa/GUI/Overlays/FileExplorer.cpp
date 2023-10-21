@@ -1,6 +1,7 @@
 #include "FileExplorer.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
 #include <Essa/GUI/Overlays/Prompt.hpp>

@@ -1,6 +1,9 @@
 #include "ColorPicker.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/NotifyUser.hpp>

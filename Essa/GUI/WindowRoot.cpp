@@ -1,6 +1,7 @@
 #include "WindowRoot.hpp"
 
 #include <Essa/GUI/Debug.hpp>
+#include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
 
 namespace GUI {

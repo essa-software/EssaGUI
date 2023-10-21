@@ -2,6 +2,9 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Debug.hpp>
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>

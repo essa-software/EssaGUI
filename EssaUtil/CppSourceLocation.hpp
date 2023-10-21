@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <filesystem>
 #include <fmt/format.h>
 
 #if __has_builtin(__builtin_source_location)
@@ -28,7 +27,7 @@ template<> class fmt::formatter<Util::CppSourceLocation> : public fmt::formatter
 public:
     static auto format(Util::CppSourceLocation const& p, fmt::format_context& ctx) {
         fmt::format_to(
-            ctx.out(), "\e[33m{}()\e[m ({}:{}:{})", p.function_name(), std::filesystem::path { p.file_name() }.string(), p.line(),
+            ctx.out(), "\e[33m{}()\e[m ({}:{}:{})", p.function_name(), p.file_name(), p.line(),
             p.column()
         );
         return ctx.out();

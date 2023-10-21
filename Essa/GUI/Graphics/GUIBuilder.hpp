@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Essa/GUI/Graphics/DefaultGUIShader.hpp>
+#include <Essa/GUI/Graphics/Vertex.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/Builder.hpp>
 #include <Essa/LLGL/OpenGL/MappedVertex.hpp>

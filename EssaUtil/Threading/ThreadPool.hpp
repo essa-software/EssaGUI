@@ -1,7 +1,7 @@
 #pragma once
 
-#include <fmt/format.h>
-#include <fmt/format.h>
+#include <fmt/core.h>
+#include <fmt/core.h>
 #include <fmt/std.h>
 #include <functional>
 #include <future>

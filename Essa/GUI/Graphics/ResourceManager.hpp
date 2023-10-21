@@ -1,39 +1,30 @@
 #pragma once
 
 #include <Essa/GUI/Util/ConfigFile.hpp>
-#include <Essa/LLGL/OpenGL/Texture.hpp>
-#include <Essa/LLGL/Resources/TTFFont.hpp>
 #include <compare>
-#include <filesystem>
 #include <map>
 #include <memory>
 #include <optional>
-#include <sstream>
 #include <string>
 #include <type_traits>
 #include <vector>
 
+namespace llgl {
+class Texture;
+class TTFFont;
+}
+
 namespace Gfx {
+
+using Texture = llgl::Texture;
+using Font = llgl::TTFFont;
 
 template<class T> struct ResourceTraits;
 
 template<class T>
 concept Resource = requires() {
-                       { ResourceTraits<T>::load_from_file("") } -> std::convertible_to<std::optional<T>>;
-                       { ResourceTraits<T>::base_path() } -> std::convertible_to<std::string_view>;
-                   };
-
-using Font = llgl::TTFFont;
-using Texture = llgl::Texture;
-
-template<> struct ResourceTraits<Font> {
-    static std::optional<Font> load_from_file(std::string const&);
-    static std::string_view base_path() { return "fonts"; }
-};
-
-template<> struct ResourceTraits<Texture> {
-    static std::optional<Texture> load_from_file(std::string const&);
-    static std::string_view base_path() { return "textures"; }
+    { ResourceTraits<T>::load_from_file("") } -> std::convertible_to<std::optional<T>>;
+    { ResourceTraits<T>::base_path() } -> std::convertible_to<std::string_view>;
 };
 
 class ResourceId {
@@ -147,15 +138,14 @@ public:
     }
 
     template<Resource T> T& require(std::string path) const { return require<T>(ResourceId::asset(std::move(path))); }
-
     template<Resource T> T& require_external(std::string path) const { return require<T>(ResourceId::external(std::move(path))); }
 
-    Texture& require_texture(std::string path) const { return require<Texture>(std::move(path)); }
-    Font& require_font(std::string path) const { return require<Font>(std::move(path)); }
+    Texture& require_texture(std::string path) const;
+    Font& require_font(std::string path) const;
 
-    llgl::TTFFont& font() const;
-    llgl::TTFFont& bold_font() const;
-    llgl::TTFFont& fixed_width_font() const;
+    Gfx::Font& font() const;
+    Gfx::Font& bold_font() const;
+    Gfx::Font& fixed_width_font() const;
 
 private:
     void find_resource_roots();

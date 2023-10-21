@@ -3,6 +3,7 @@
 #include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Drawing/Shape.hpp>
+#include <Essa/GUI/Graphics/Vertex.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
 #include <EssaUtil/Angle.hpp>

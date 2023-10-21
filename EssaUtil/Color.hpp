@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <fmt/format.h>
 #include <iostream>
 
 namespace Util {

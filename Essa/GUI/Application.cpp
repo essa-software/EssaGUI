@@ -1,12 +1,13 @@
 #include <Essa/GUI/Application.hpp>
 
-#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 #include "WidgetTreeRoot.hpp"
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -26,9 +27,7 @@ Application::Application() {
     s_the = this;
 }
 
-Application::~Application() {
-    s_the = nullptr;
-}
+Application::~Application() { s_the = nullptr; }
 
 Theme const& Application::theme() const {
     if (!m_cached_theme) {
@@ -75,6 +74,33 @@ void Application::tick() {
         host_window.update();
     }
     redraw_all_host_windows();
+}
+
+WindowRoot& Application::setup_window_root(HostWindow& window, std::unique_ptr<WindowRoot> root) {
+    // We expect that root will initialize/open the window.
+    assert(!window.is_closed());
+    auto* root_ptr = root.get();
+    window.set_root(std::move(root));
+    return *root_ptr;
+}
+
+namespace Detail {
+
+SimpleApplicationBase::SimpleApplicationBase(Util::UString const& title, Util::Size2u window_size, std::unique_ptr<Widget> main_widget)
+    : m_window(create_host_window(window_size, title)) {
+    if (window_size == Util::Size2u {}) {
+        m_window.set_size({ 500, 500 });
+        m_window.maximize();
+    }
+    m_window.center_on_screen();
+    m_window.set_created_main_widget(std::move(main_widget));
+}
+
+Widget& SimpleApplicationBase::main_widget_impl() {
+    assert(m_window.main_widget());
+    return *m_window.main_widget();
+}
+
 }
 
 }

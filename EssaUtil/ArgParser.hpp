@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Error.hpp"
-#include <algorithm>
 #include <functional>
 #include <map>
 

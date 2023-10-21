@@ -1,6 +1,8 @@
 #include "Progressbar.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/TextAlign.hpp>
 #include <EssaUtil/Rect.hpp>

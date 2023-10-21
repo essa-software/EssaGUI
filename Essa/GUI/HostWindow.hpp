@@ -1,11 +1,8 @@
 #pragma once
 
-#include <Essa/GUI/Graphics/GUIBuilder.hpp>
 #include <Essa/GUI/Overlays/ContextMenu.hpp>
-#include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
-#include <Essa/GUI/Widgets/MDI/Host.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 
@@ -17,8 +14,8 @@ class HostWindow
     : public llgl::Window
     , public WidgetTreeRoot {
 public:
-    friend Gfx::Painter;
-    friend Gfx::GUIBuilder;
+    friend class Gfx::Painter;
+    friend class Gfx::GUIBuilder;
     HostWindow() = default;
     [[deprecated]] HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& = {});
 

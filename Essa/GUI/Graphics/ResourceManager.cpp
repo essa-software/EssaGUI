@@ -1,9 +1,8 @@
 #include "ResourceManager.hpp"
 
+#include "DefaultResources.hpp"
 #include <Essa/BuildConfig.hpp>
 #include <Essa/GUI/Util/ConfigFile.hpp>
-#include <Essa/LLGL/Resources/ImageLoader.hpp>
-#include <EssaUtil/NonCopyable.hpp>
 #include <filesystem>
 #include <type_traits>
 #include <unistd.h>
@@ -57,15 +56,6 @@ std::string ResourceManager::require_lookup_resource(ResourceIdAndBase const& id
     return *fs_path;
 }
 
-std::optional<Texture> ResourceTraits<Texture>::load_from_file(std::string const& path) {
-    auto image = llgl::ImageLoader::load_from_file(path);
-    if (!image)
-        return {};
-    return llgl::Texture::create_from_image(*image);
-}
-
-std::optional<Font> ResourceTraits<Font>::load_from_file(std::string const& path) { return llgl::TTFFont::open_from_file(path); }
-
 llgl::TTFFont& ResourceManager::font() const { return require<Font>(m_config.get("DefaultFont").value_or("font.ttf")); }
 
 llgl::TTFFont& ResourceManager::bold_font() const { return require<Font>(m_config.get("DefaultBoldFont").value_or("bold-font.ttf")); }
@@ -116,9 +106,7 @@ void ResourceManager::find_resource_roots() {
         // -   `$CMAKE_INSTALL_PREFIX/share/Essa/builtin` (Essa builtin
         //      resources)
         //     Let's use parent paths to avoid adding another cmake variable.
-        add_resource_root(
-            std::filesystem::path(Essa::BuildConfig::install_asset_root).parent_path().parent_path() / "Essa" / "builtin"
-        );
+        add_resource_root(std::filesystem::path(Essa::BuildConfig::install_asset_root).parent_path().parent_path() / "Essa" / "builtin");
     }
     else {
         // We assume that paths are correct and actually contain resources,
@@ -144,5 +132,8 @@ void ResourceManager::find_resource_roots() {
         exit(1);
     }
 }
+
+Texture& ResourceManager::require_texture(std::string path) const { return require<Texture>(std::move(path)); }
+Font& ResourceManager::require_font(std::string path) const { return require<Font>(std::move(path)); }
 
 }

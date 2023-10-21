@@ -1,5 +1,8 @@
 #include "ImageButton.hpp"
 
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/Graphics/DefaultResources.hpp>
 #include <Essa/LLGL/OpenGL/Texture.hpp>
 #include <array>
 

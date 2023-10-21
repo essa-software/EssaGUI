@@ -1,6 +1,7 @@
 #include "ContextMenu.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>

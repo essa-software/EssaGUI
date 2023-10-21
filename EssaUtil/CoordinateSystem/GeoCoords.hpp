@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point.hpp"
+#include <fmt/format.h>
 #include <EssaUtil/Angle.hpp>
 
 namespace Util {

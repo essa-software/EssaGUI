@@ -1,12 +1,18 @@
 #pragma once
 
-#include <Essa/GUI/Graphics/Painter.hpp>
+#include <Essa/GUI/EventLoop.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/HostWindow.hpp>
 #include <Essa/LLGL/Resources/TTFFont.hpp>
+#include <Essa/LLGL/Window/WindowSettings.hpp>
 #include <type_traits>
 
 namespace GUI {
+
+class HostWindow;
+class Theme;
+class Widget;
+class WindowRoot;
 
 class Application : public EventLoop {
 public:
@@ -37,14 +43,11 @@ public:
         requires(std::is_base_of_v<WindowRoot, T>)
     OpenedHostWindow<T> open_host_window(Args&&... args) {
         auto& window = create_uninitialized_host_window();
-        // We expect that root will initialize/open the window.
-        auto root = std::make_unique<T>(window, std::forward<Args>(args)...);
-        assert(!window.is_closed());
-        auto root_ptr = root.get();
-        window.set_root(std::move(root));
+        auto& root = setup_window_root(window, std::make_unique<T>(window, std::forward<Args>(args)...));
+
         return {
             .window = window,
-            .root = *root_ptr,
+            .root = static_cast<T&>(root),
         };
     }
 
@@ -57,39 +60,41 @@ public:
 
 private:
     virtual void tick() override;
+    static WindowRoot& setup_window_root(HostWindow&, std::unique_ptr<WindowRoot>);
 
     Gfx::ResourceManager m_resource_manager;
     mutable std::unique_ptr<Theme> m_cached_theme;
     std::list<HostWindow> m_host_windows;
 };
 
+namespace Detail {
+
+class SimpleApplicationBase : public Application {
+public:
+    auto& window() { return m_window; }
+
+protected:
+    explicit SimpleApplicationBase(Util::UString const& title, Util::Size2u window_size, std::unique_ptr<Widget> main_widget);
+
+    Widget& main_widget_impl();
+
+private:
+    GUI::HostWindow& m_window;
+};
+
+}
+
 // An application with a single maximized by default window.
 template<class W>
     requires(std::is_base_of_v<Widget, W>)
-class SimpleApplication : public Application {
+class SimpleApplication : public Detail::SimpleApplicationBase {
 public:
     template<class... Args>
         requires std::is_constructible_v<W, Args...>
     SimpleApplication(Util::UString const& title, Util::Size2u window_size = {}, Args&&... args)
-        : m_window(create_host_window(window_size, title)) {
-        if (window_size == Util::Size2u {}) {
-            m_window.set_size({ 500, 500 });
-            m_window.maximize();
-        }
-        m_window.center_on_screen();
-        m_window.set_root_widget<W>(std::forward<Args>(args)...);
-    }
+        : Detail::SimpleApplicationBase(title, window_size, std::make_unique<W>(std::forward<Args>(args)...)) { }
 
-    auto& window() { return m_window; }
-    W& main_widget() {
-        assert(m_window.root_widget());
-        return static_cast<W&>(*m_window.root_widget());
-    }
-
-private:
-    void setup();
-
-    GUI::HostWindow& m_window;
+    W& main_widget() { return static_cast<W&>(main_widget_impl()); }
 };
 
 }

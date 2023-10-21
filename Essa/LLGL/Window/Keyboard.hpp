@@ -2,7 +2,7 @@
 
 #include <EssaUtil/Enum.hpp>
 #include <SDL2/SDL_keycode.h>
-#include <fmt/format.h>
+#include <fmt/core.h>
 #include <string>
 
 namespace llgl {

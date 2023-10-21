@@ -1,9 +1,10 @@
 #include "TextButton.hpp"
 
 #include "Button.hpp"
-#include "Essa/GUI/Graphics/Painter.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/Graphics/DefaultResources.hpp>
+#include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 
 #include <Essa/GUI/ThemeRenderer.hpp>

@@ -3,7 +3,6 @@
 #include "EMLError.hpp"
 #include "EMLResource.hpp"
 
-#include <EssaUtil/GenericParser.hpp>
 #include <EssaUtil/Stream/Stream.hpp>
 #include <string>
 

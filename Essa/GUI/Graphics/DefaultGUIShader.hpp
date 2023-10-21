@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Vertex.hpp"
-
 #include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Texture.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Transform.hpp>
-#include <Essa/LLGL/OpenGL/Vertex.hpp>
 
 namespace Gfx {
+
+class Vertex;
 
 class DefaultGUIShader : public llgl::Shader {
 public:

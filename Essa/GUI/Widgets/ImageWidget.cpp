@@ -1,5 +1,8 @@
 #include "ImageWidget.hpp"
 
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
+#include <Essa/GUI/Graphics/DefaultResources.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 
 namespace GUI {

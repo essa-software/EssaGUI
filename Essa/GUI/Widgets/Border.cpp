@@ -1,4 +1,7 @@
 #include "Border.hpp"
+
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
 #include <cassert>
 
 namespace GUI {

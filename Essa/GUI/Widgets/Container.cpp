@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Debug.hpp>
+#include <Essa/GUI/WindowRoot.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>

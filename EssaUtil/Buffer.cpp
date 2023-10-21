@@ -1,4 +1,5 @@
 #include "Buffer.hpp"
+
 #include <algorithm>
 #include <fmt/format.h>
 #include <unistd.h>

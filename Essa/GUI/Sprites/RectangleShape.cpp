@@ -1,5 +1,8 @@
 #include "RectangleShape.hpp"
 
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
+
 namespace GUI {
 
 void RectangleShape::draw(Gfx::Painter& painter) const {

@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
+#include <filesystem>
 
 namespace Essa {
 

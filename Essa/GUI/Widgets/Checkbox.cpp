@@ -1,6 +1,8 @@
 #include "Checkbox.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/EML/AST.hpp>
+#include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <EssaUtil/Rect.hpp>
 #include <EssaUtil/UString.hpp>
