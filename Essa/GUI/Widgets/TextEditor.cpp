@@ -781,7 +781,6 @@ void TextEditor::draw(Gfx::Painter& painter) const {
                 for (auto const& error : m_error_spans) {
                     Util::Point2f base_position { scroll_offset().x(), scroll_offset().y() + line_height };
                     for_each_line_in_range(error.range, [&](size_t line, size_t start, size_t end) {
-                        fmt::print("{}..{}\n", start, end);
                         Util::Point2f start_position { base_position.x() + start * character_width,
                                                        base_position.y() + line * line_height + 3 };
                         draw_error_line(painter, error.type, start_position, (end - start) * character_width);
