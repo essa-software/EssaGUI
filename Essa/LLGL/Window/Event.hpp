@@ -44,11 +44,20 @@ private:
     Util::Size2u m_new_size;
 };
 
-class WindowFocusGained : public Base {
+class WindowMouseEnterEvent : public Base {
 public:
     static EventTargetType target_type() { return EventTargetType::Window; }
 };
-class WindowFocusLost : public Base {
+class WindowMouseLeaveEvent : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Window; }
+};
+
+class WindowFocusGainedEvent : public Base {
+public:
+    static EventTargetType target_type() { return EventTargetType::Window; }
+};
+class WindowFocusLostEvent : public Base {
 public:
     static EventTargetType target_type() { return EventTargetType::Window; }
 };
@@ -85,16 +94,6 @@ class KeyReleaseEvent : public KeyEvent {
 public:
     explicit KeyReleaseEvent(llgl::KeyCode key_code, KeyModifiers modifiers)
         : KeyEvent(key_code, modifiers) { }
-};
-
-class MouseEnterEvent : public Base {
-public:
-    static EventTargetType target_type() { return EventTargetType::Specific; }
-};
-
-class MouseLeaveEvent : public Base {
-public:
-    static EventTargetType target_type() { return EventTargetType::Specific; }
 };
 
 class MouseEvent : public Base {
@@ -174,8 +173,8 @@ private:
 };
 
 using Variant = std::variant<
-    EventTypes::WindowCloseEvent, EventTypes::WindowResizeEvent, EventTypes::WindowFocusGained, EventTypes::WindowFocusLost,
-    EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent, EventTypes::MouseEnterEvent, EventTypes::MouseLeaveEvent,
+    EventTypes::WindowCloseEvent, EventTypes::WindowResizeEvent, EventTypes::WindowFocusGainedEvent, EventTypes::WindowFocusLostEvent,
+    EventTypes::WindowMouseEnterEvent, EventTypes::WindowMouseLeaveEvent, EventTypes::KeyPressEvent, EventTypes::KeyReleaseEvent,
     EventTypes::MouseMoveEvent, EventTypes::MouseButtonPressEvent, EventTypes::MouseButtonReleaseEvent, EventTypes::MouseScrollEvent,
     EventTypes::TextInputEvent>;
 
@@ -221,13 +220,13 @@ public:
 
     using WindowClose = EventTypes::WindowCloseEvent;
     using WindowResize = EventTypes::WindowResizeEvent;
-    using WindowFocusGained = EventTypes::WindowFocusGained;
-    using WindowFocusLost = EventTypes::WindowFocusLost;
+    using WindowFocusGained = EventTypes::WindowFocusGainedEvent;
+    using WindowFocusLost = EventTypes::WindowFocusLostEvent;
+    using WindowMouseEnter = EventTypes::WindowMouseEnterEvent;
+    using WindowMouseLeave = EventTypes::WindowMouseLeaveEvent;
     using Key = EventTypes::KeyEvent;
     using KeyPress = EventTypes::KeyPressEvent;
     using KeyRelease = EventTypes::KeyReleaseEvent;
-    using MouseEnter = EventTypes::MouseEnterEvent;
-    using MouseLeave = EventTypes::MouseLeaveEvent;
     using Mouse = EventTypes::MouseEvent;
     using MouseMove = EventTypes::MouseMoveEvent;
     using MouseButton = EventTypes::MouseButtonEvent;
@@ -290,21 +289,36 @@ public:
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::WindowFocusGained> : public fmt::formatter<std::string_view> {
+template<> class fmt::formatter<llgl::EventTypes::WindowFocusGainedEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusGained const&, FC& ctx) const {
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusGainedEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowFocusGained");
         return ctx.out();
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::WindowFocusLost> : public fmt::formatter<std::string_view> {
+template<> class fmt::formatter<llgl::EventTypes::WindowFocusLostEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusLost const&, FC& ctx) const {
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusLostEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowFocusLost");
         return ctx.out();
     }
 };
+template<> class fmt::formatter<llgl::EventTypes::WindowMouseEnterEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowMouseEnterEvent const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "WindowMouseEnterEvent");
+        return ctx.out();
+    }
+};
+template<> class fmt::formatter<llgl::EventTypes::WindowMouseLeaveEvent> : public fmt::formatter<std::string_view> {
+public:
+    template<typename FC> constexpr auto format(llgl::EventTypes::WindowMouseLeaveEvent const&, FC& ctx) const {
+        fmt::format_to(ctx.out(), "WindowMouseLeaveEvent");
+        return ctx.out();
+    }
+};
+
 template<> class fmt::formatter<llgl::EventTypes::KeyEvent::KeyModifiers> : public fmt::formatter<std::string_view> {
 public:
     template<typename FC> constexpr auto format(llgl::EventTypes::KeyEvent::KeyModifiers const& mod, FC& ctx) const {
@@ -334,20 +348,6 @@ template<> class fmt::formatter<llgl::EventTypes::KeyReleaseEvent> : public fmt:
 public:
     template<typename FC> constexpr auto format(llgl::EventTypes::KeyReleaseEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "KeyReleaseEvent(key={}, mod={})", llgl::to_string(event.code()), event.modifiers());
-        return ctx.out();
-    }
-};
-template<> class fmt::formatter<llgl::EventTypes::MouseEnterEvent> : public fmt::formatter<std::string_view> {
-public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::MouseEnterEvent const&, FC& ctx) const {
-        fmt::format_to(ctx.out(), "MouseEnterEvent");
-        return ctx.out();
-    }
-};
-template<> class fmt::formatter<llgl::EventTypes::MouseLeaveEvent> : public fmt::formatter<std::string_view> {
-public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::MouseLeaveEvent const&, FC& ctx) const {
-        fmt::format_to(ctx.out(), "MouseLeaveEvent");
         return ctx.out();
     }
 };

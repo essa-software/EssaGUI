@@ -4,10 +4,10 @@
 #include <Essa/GUI/Debug.hpp>
 #include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
-#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Overlays/Tooltip.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/LLGL/Window/Mouse.hpp>
@@ -59,7 +59,7 @@ void Widget::update() {
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto transformed_event = event.relativized(raw_position().to_vector());
 
-    // Handle double click.
+    // Handle double click
     if (m_double_click_enabled) {
         if (auto const* mousepress = event.get<llgl::Event::MouseButtonPress>();
             mousepress && mousepress->button() == llgl::MouseButton::Left) {
@@ -76,10 +76,12 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     // must be here so that event handler will actually run if
     // line below will change widget state (e.g hover)
     bool should_run_event_handler = is_affected_by_event(transformed_event);
+
     EventHandlerResult result = should_run_event_handler ? handle_event(transformed_event) : EventHandlerResult::NotAccepted;
 
     // Handle events common to all widgets
     auto result2 = transformed_event.visit(
+        [&](Event::MouseEnter const&) -> EventHandlerResult { return EventHandlerResult::NotAccepted; },
         [&](Event::MouseLeave const&) -> EventHandlerResult {
             if (m_tooltip) {
                 // FIXME: This makes tooltips not work at all because widget gets MouseLeave
@@ -87,11 +89,23 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 m_tooltip->window().close();
                 m_tooltip = nullptr;
             }
+            handle_event(GUI::Event::MouseLeave());
             return EventHandlerResult::NotAccepted;
         },
         [&](Event::MouseMove const& event) -> EventHandlerResult {
             auto mouse_position = event.local_position();
-            m_hover = is_mouse_over(mouse_position + raw_position().to_vector());
+            bool new_hover = is_mouse_over(mouse_position + raw_position().to_vector());
+
+            // Handle mouse enter/leave
+            if (new_hover && !m_hover) {
+                handle_event(GUI::Event::MouseEnter());
+            }
+            if (!new_hover && m_hover) {
+                handle_event(GUI::Event::MouseLeave());
+            }
+
+            m_hover = new_hover;
+
             switch (m_tooltip_mode) {
             case TooltipMode::Hint: {
                 if (m_hover && should_display_tooltip(mouse_position)) {
@@ -162,14 +176,14 @@ Widget::EventHandlerResult Widget::handle_event(Event const& event) {
     return event.visit(
         [&](Event::KeyPress const& event) -> EventHandlerResult { return on_key_press(event); },
         [&](Event::KeyRelease const& event) -> EventHandlerResult { return on_key_release(event); },
-        [&](Event::MouseEnter const& event) -> EventHandlerResult { return on_mouse_enter(event); },
-        [&](Event::MouseLeave const& event) -> EventHandlerResult { return on_mouse_leave(event); },
         [&](Event::MouseMove const& event) -> EventHandlerResult { return on_mouse_move(event); },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult { return on_mouse_button_press(event); },
         [&](Event::MouseButtonRelease const& event) -> EventHandlerResult { return on_mouse_button_release(event); },
-        [&](Event::MouseDoubleClick const& event) -> EventHandlerResult { return on_mouse_double_click(event); },
         [&](Event::MouseScroll const& event) -> EventHandlerResult { return on_mouse_scroll(event); },
-        [&](Event::TextInput const& event) -> EventHandlerResult { return on_text_input(event); }
+        [&](Event::TextInput const& event) -> EventHandlerResult { return on_text_input(event); },
+        [&](Event::MouseDoubleClick const& event) -> EventHandlerResult { return on_mouse_double_click(event); },
+        [&](Event::MouseEnter const& event) -> EventHandlerResult { return on_mouse_enter(event); },
+        [&](Event::MouseLeave const& event) -> EventHandlerResult { return on_mouse_leave(event); }
     );
 }
 
@@ -193,6 +207,7 @@ bool Widget::is_affected_by_event(Event const& event) const {
     if (!are_all_parents_enabled()) {
         return false;
     }
+
     switch (event.target_type()) {
     case llgl::EventTargetType::KeyboardFocused:
         return is_focused();

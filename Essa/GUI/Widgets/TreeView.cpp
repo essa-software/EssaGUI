@@ -60,6 +60,19 @@ Widget::EventHandlerResult TreeView::on_mouse_double_click(Event::MouseDoubleCli
     return EventHandlerResult::NotAccepted;
 }
 
+Widget::EventHandlerResult TreeView::on_mouse_move(Event::MouseMove const& event) {
+    if (is_mouse_over(event.local_position() + raw_position().to_vector())) {
+        m_hovered_row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
+    }
+    return EventHandlerResult::NotAccepted;
+}
+
+Widget::EventHandlerResult TreeView::on_mouse_leave(Event::MouseLeave const&) {
+    fmt::print("TEST\n");
+    m_hovered_row = {};
+    return EventHandlerResult::NotAccepted;
+}
+
 void TreeView::draw(Gfx::Painter& wnd) const {
     if (!model()) {
         return;
@@ -89,6 +102,9 @@ void TreeView::draw(Gfx::Painter& wnd) const {
         for (size_t r = first_row; r < last_row; r++) {
             Gfx::RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
+            if (r == m_hovered_row) {
+                rs.fill_color = Util::Colors::White;
+            }
             wnd.deprecated_draw_rectangle(
                 {
                     Util::Point2f { 0, row_height * (display_header() ? r + 1 : r) } + scroll_offset().cast<float>(),

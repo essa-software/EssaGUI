@@ -52,10 +52,7 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
         return Widget::EventHandlerResult::NotAccepted;
     }
 
-    // Don't pass global events to all this mouse related code
-    if (transformed_event.target_type() == llgl::EventTargetType::Window) {
-        return Widget::EventHandlerResult::NotAccepted;
-    }
+    assert(transformed_event.target_type() != llgl::EventTargetType::Window);
 
     // Focus overlay if mouse button pressed
     if (auto const* mouse_button = transformed_event.get<llgl::Event::MouseButtonPress>()) {
@@ -77,6 +74,8 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
     auto gui_to_llgl_event = [](GUI::Event event) {
         return event.visit(
             [](GUI::Event::MouseDoubleClick) -> llgl::Event { ESSA_UNREACHABLE; }, //
+            [](GUI::Event::MouseEnter) -> llgl::Event { ESSA_UNREACHABLE; },       //
+            [](GUI::Event::MouseLeave) -> llgl::Event { ESSA_UNREACHABLE; },       //
             [](auto event) { return llgl::Event(std::move(event)); }
         );
     };
@@ -97,10 +96,10 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
             if (overlay.full_rect().contains(transformed_event.local_mouse_position())) {
                 if (m_hovered_window != &overlay) {
                     if (m_hovered_window) {
-                        m_hovered_window->handle_event(GUI::Event::MouseLeave());
+                        m_hovered_window->handle_event(llgl::Event::WindowMouseLeave());
                     }
                     m_hovered_window = &overlay;
-                    overlay.handle_event(GUI::Event::MouseEnter());
+                    overlay.handle_event(llgl::Event::WindowMouseEnter());
                 }
                 assert(m_hovered_window == &overlay);
                 if (&overlay != focused_overlay) {

@@ -85,11 +85,15 @@ void WindowRoot::do_handle_event(llgl::Event const& event) {
             return;
         }
     }
-    event.visit([&](auto const& event) {
-        if constexpr (requires() { GUI::Event::Variant(event); }) {
-            m_main_widget->do_handle_event(GUI::Event(event));
+    event.visit(
+        [&](llgl::Event::WindowMouseEnter const&) { m_main_widget->do_handle_event(GUI::Event::MouseEnter()); },
+        [&](llgl::Event::WindowMouseLeave const&) { m_main_widget->do_handle_event(GUI::Event::MouseLeave()); },
+        [&](auto const& event) {
+            if constexpr (requires() { GUI::Event::Variant(event); }) {
+                m_main_widget->do_handle_event(GUI::Event(event));
+            }
         }
-    });
+    );
 }
 
 void WindowRoot::close() { m_window.close(); }

@@ -30,6 +30,8 @@ public:
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
     virtual Widget::EventHandlerResult on_mouse_double_click(Event::MouseDoubleClick const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
+    virtual Widget::EventHandlerResult on_mouse_leave(Event::MouseLeave const& event) override;
 
     virtual Util::Size2i content_size() const override;
     void render_rows(Gfx::Painter& window, float& current_y_pos, std::vector<size_t> path, std::optional<Model::Node> parent) const;
@@ -41,6 +43,7 @@ private:
     std::set<std::vector<size_t>> m_expanded_paths { {} };
     std::optional<std::vector<size_t>> m_focused_path;
     std::optional<size_t> m_last_clicked_row;
+    std::optional<size_t> m_hovered_row = 0;
 };
 
 }

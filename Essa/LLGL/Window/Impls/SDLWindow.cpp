@@ -162,10 +162,10 @@ std::optional<Event> Window::poll_event_impl() {
                 return Event::WindowClose {};
             } break;
             case SDL_WINDOWEVENT_ENTER: {
-                return Event::MouseEnter {};
+                return Event::WindowMouseEnter {};
             } break;
             case SDL_WINDOWEVENT_LEAVE: {
-                return Event::MouseLeave {};
+                return Event::WindowMouseLeave {};
             } break;
             default:
                 std::cout << "SDLWindow: Unhandled window event (type=" << (int)sdl_event->window.event << ")" << std::endl;
