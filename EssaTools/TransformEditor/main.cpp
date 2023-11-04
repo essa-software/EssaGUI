@@ -53,11 +53,18 @@ static Util::OsErrorOr<Util::Matrix4x4f> parse_line(Util::UString const& l) {
 
     auto consume_float = [&]() -> Util::OsErrorOr<float> {
         TRY(reader.consume_while(isspace));
-        return TRY(reader.consume_while([](uint32_t cp) { return isdigit(cp) || cp == '.' || cp == '-'; })).parse<float>();
+        return TRY(reader.consume_while([](uint32_t cp) { return isdigit(cp) || cp == '.' || cp == '-' || cp == 'e'; })).parse<float>();
     };
 
     auto command = MUST(reader.consume_while(isalpha));
 
+    if (command == "mat") {
+        float data[4 * 4];
+        for (auto& d : data) {
+            d = TRY(consume_float());
+        }
+        return Util::Matrix4x4f(data);
+    }
     if (command == "persp") {
         float fov = TRY(consume_float());
         float aspect = TRY(consume_float());
