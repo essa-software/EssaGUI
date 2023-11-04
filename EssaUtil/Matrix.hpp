@@ -32,6 +32,17 @@ struct Matrix {
         }
     }
 
+    template<size_t ArrSize>
+    constexpr Matrix(T const (&data)[ArrSize])
+        requires(ArrSize == Size * Size)
+    {
+        for (size_t row = 0; row < Size; row++) {
+            for (size_t column = 0; column < Size; column++) {
+                m_data[row][column] = data[row * Size + column];
+            }
+        }
+    }
+
     template<class... T2>
     constexpr Matrix(T2... data)
         requires(sizeof...(data) == Size * Size)
