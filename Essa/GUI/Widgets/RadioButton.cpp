@@ -11,8 +11,11 @@
 
 namespace GUI {
 
+constexpr float circle_radius = 8;
+constexpr float text_circle_padding = 5;
+constexpr float text_offset = circle_radius * 2 + text_circle_padding + 2;
+
 void RadioButton::draw(Gfx::Painter& window) const {
-    constexpr float circle_radius = 8;
     auto colors = colors_for_state();
 
     window.draw(Gfx::Drawing::Ellipse { { 2 + circle_radius, raw_size().y() / 2 },
@@ -27,7 +30,7 @@ void RadioButton::draw(Gfx::Painter& window) const {
             { 2 + circle_radius, raw_size().y() / 2 }, active_circle_radius, Gfx::Drawing::Fill::solid(theme().placeholder) });
     }
 
-    Util::Rectf text_rect(raw_size().y() + 5, 0, local_rect().left - raw_size().y() - 5, local_rect().height);
+    Util::Rectf text_rect = local_rect().cast<float>().expand_left(-text_offset);
     Gfx::Text text_opt { m_caption, Application::the().font() };
     text_opt.set_fill_color(theme().label.text);
     text_opt.set_font_size(theme().label_font_size);
@@ -53,6 +56,13 @@ EML::EMLErrorOr<void> RadioButton::load_from_eml_object(EML::Object const& objec
     m_caption = TRY(object.get_property("caption", EML::Value(Util::UString {})).to_string());
 
     return {};
+}
+
+LengthVector RadioButton::initial_size() const {
+    return {
+        { Application::the().font().calculate_text_size(m_caption, theme().label_font_size).x() + text_offset, Util::Length::Px },
+        { static_cast<float>(theme().line_height), Util::Length::Px },
+    };
 }
 
 EML_REGISTER_CLASS(RadioButton);
