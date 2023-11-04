@@ -14,10 +14,12 @@
 
 namespace GUI {
 
+constexpr float checkbox_size = 16;
+constexpr float checkbox_text_padding = 5;
+constexpr float text_offset = checkbox_size + checkbox_text_padding + 4;
+
 void Checkbox::draw(Gfx::Painter& painter) const {
     auto colors = colors_for_state();
-
-    constexpr float checkbox_size = 16;
 
     Util::Rectf box(2, raw_size().y() / 2 - checkbox_size / 2, checkbox_size, checkbox_size);
     Gfx::RectangleDrawOptions box_opt;
@@ -72,7 +74,7 @@ void Checkbox::draw(Gfx::Painter& painter) const {
         }
     }
 
-    Util::Rectf text_rect(7 + box.width, 0, raw_size().x() - 10, raw_size().y());
+    Util::Rectf text_rect(text_offset, 0, raw_size().x() - text_offset, raw_size().y());
 
     Gfx::Text text { m_caption, Application::the().font() };
     text.set_fill_color(theme().label.text);
@@ -107,6 +109,13 @@ EML::EMLErrorOr<void> Checkbox::load_from_eml_object(EML::Object const& object, 
     }
 
     return {};
+}
+
+LengthVector Checkbox::initial_size() const {
+    return {
+        { Application::the().font().calculate_text_size(m_caption, theme().label_font_size).x() + text_offset, Util::Length::Px },
+        { static_cast<float>(theme().line_height), Util::Length::Px },
+    };
 }
 
 EML_REGISTER_CLASS(Checkbox);

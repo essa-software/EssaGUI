@@ -45,6 +45,7 @@
                 layout: @HBox
                 
                 @Container {
+                    width: auto
                     layout: @VBox
                     @Checkbox {
                         caption: "Checkbox 1"
@@ -62,6 +63,7 @@
                     }
                 }
                 @Container {
+                    width: auto
                     layout: @VBox
                     @RadioGroup {
                         layout: @VBox
