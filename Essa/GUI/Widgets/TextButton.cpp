@@ -75,6 +75,14 @@ EML::EMLErrorOr<void> TextButton::load_from_eml_object(EML::Object const& object
     return {};
 }
 
+LengthVector TextButton::initial_size() const {
+    float width = GUI::Application::the().font().calculate_text_size(m_content, theme().label_font_size).x() + 20;
+    if (m_image) {
+        width += m_image->size().x() + 5;
+    }
+    return { { width, Util::Length::Px }, { static_cast<float>(theme().line_height), Util::Length::Px } };
+}
+
 EML_REGISTER_CLASS(TextButton);
 
 }

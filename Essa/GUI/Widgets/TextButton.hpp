@@ -21,9 +21,7 @@ private:
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
     virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
-    virtual LengthVector initial_size() const override {
-        return { 100_px, { static_cast<float>(theme().line_height), Util::Length::Px } };
-    }
+    virtual LengthVector initial_size() const override;
 };
 
 }
