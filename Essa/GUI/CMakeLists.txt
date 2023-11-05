@@ -21,6 +21,7 @@ add_library(GUI SHARED
     Graphics/ClipViewScope.cpp
     Graphics/DefaultGUIShader.cpp
     Graphics/DefaultResources.cpp
+    Graphics/GUIBuilder.cpp
     Graphics/Painter.cpp
     Graphics/ResourceManager.cpp
     Graphics/RichText.cpp

@@ -4,15 +4,22 @@
 #include <Essa/GUI/Graphics/Vertex.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/Builder.hpp>
+#include <Essa/LLGL/OpenGL/DynamicShader.hpp>
 #include <Essa/LLGL/OpenGL/MappedVertex.hpp>
 #include <Essa/LLGL/OpenGL/Projection.hpp>
 #include <Essa/LLGL/OpenGL/Renderer.hpp>
 #include <Essa/LLGL/OpenGL/Transform.hpp>
 #include <Essa/LLGL/OpenGL/VertexArray.hpp>
 #include <EssaUtil/Angle.hpp>
+#include <EssaUtil/Any.hpp>
 #include <vector>
 
 namespace Gfx {
+
+struct ShaderContext {
+    llgl::DynamicShader<Gfx::Vertex> shader;
+    Util::AnyWithBase<Gfx::DefaultGUIShader::Uniforms> uniforms;
+};
 
 struct GUIBuilderRenderRange : public llgl::RenderRange {
     llgl::Projection projection;
@@ -20,6 +27,7 @@ struct GUIBuilderRenderRange : public llgl::RenderRange {
     llgl::Transform model;
     llgl::Transform submodel;
     llgl::Texture const* texture = nullptr;
+    std::optional<ShaderContext> shader_context;
 };
 
 // Builder optimized for generating 2D GUI components, widgets etc.
@@ -30,10 +38,15 @@ public:
         Util::Angle rotation {};
     };
 
-    void add_vertices(llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const> vertices, llgl::Texture const* texture) {
+    void add_vertices(
+        llgl::PrimitiveType mode, std::span<Gfx::DefaultGUIShader::Vertex const> vertices, llgl::Texture const* texture,
+        std::optional<ShaderContext> shader_context = {}
+    ) {
         for (auto const& v : vertices)
             add(v);
-        add_render_range_for_last_vertices(vertices.size(), mode, m_projection, m_view, m_model, m_submodel, texture);
+        add_render_range_for_last_vertices(
+            vertices.size(), mode, m_projection, m_view, m_model, m_submodel, texture, std::move(shader_context)
+        );
     }
 
     void set_projection(llgl::Projection projection) { m_projection = projection; }
@@ -54,16 +67,7 @@ private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add_render_range_for_last_vertices;
 
     virtual void
-    render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override {
-        Gfx::DefaultGUIShader::Uniforms uniforms;
-        uniforms.set_transform(range.model.matrix(), range.view.matrix(), range.projection.matrix());
-        uniforms.set_texture(range.texture);
-        uniforms.submodel_matrix = range.submodel.matrix();
-        auto viewport = range.projection.viewport();
-        viewport.top = static_cast<int>(renderer.size().y()) - viewport.top - viewport.height;
-        llgl::set_viewport(viewport);
-        renderer.draw_vertices(vao, llgl::DrawState { m_shader, uniforms, range.type }, range.first, range.size);
-    }
+    render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, GUIBuilderRenderRange const& range) const override;
 
     mutable Gfx::DefaultGUIShader m_shader;
     llgl::Projection m_projection;

@@ -1,8 +1,12 @@
 #pragma once
 
+#include <Essa/GUI/Graphics/DefaultGUIShader.hpp>
 #include <Essa/GUI/Graphics/Drawing/Fill.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>
+#include <Essa/GUI/Graphics/GUIBuilder.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/DynamicShader.hpp>
+#include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <iterator>
 
 namespace Gfx::Drawing {
@@ -23,6 +27,10 @@ public:
         m_origin = o;
         return *this;
     }
+    template<llgl::ShaderImpl S> Shape& set_shader(S& shader, typename S::Uniforms uniforms) {
+        m_shader_context = Gfx::ShaderContext { llgl::DynamicShader<Gfx::Vertex>(shader), std::move(uniforms) };
+        return *this;
+    }
     Shape& move(Util::Vector2f const& t) {
         m_transform = m_transform.translate(Util::Vector3f { t, 0.f });
         return *this;
@@ -41,6 +49,7 @@ public:
     Util::Point2f origin() const { return m_origin; }
     Fill fill() const { return m_fill; }
     Outline outline() const { return m_outline; }
+    std::optional<ShaderContext> shader_context() const { return m_shader_context; }
 
     virtual size_t point_count() const = 0;
     virtual Util::Point2f point(size_t idx) const = 0;
@@ -90,12 +99,17 @@ private:
     Util::Point2f m_origin;
     Fill m_fill;
     Outline m_outline;
+    std::optional<ShaderContext> m_shader_context;
 };
 
 }
 
 #define __ESSA_DEFINE_SHAPE_CHAINABLES(Subclass)                                                           \
     Subclass& set_transform(llgl::Transform t) { return static_cast<Subclass&>(Shape::set_transform(t)); } \
+    Subclass& set_origin(Util::Point2f t) { return static_cast<Subclass&>(Shape::set_origin(t)); }         \
+    template<llgl::ShaderImpl S> Subclass& set_shader(S& shader, typename S::Uniforms uniforms) {          \
+        return static_cast<Subclass&>(Shape::set_shader(shader, std::move(uniforms)));                     \
+    }                                                                                                      \
     Subclass& move(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }             \
     Subclass& rotate(float t) { return static_cast<Subclass&>(Shape::rotate(t)); }                         \
     Subclass& scale(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::scale(t)); }

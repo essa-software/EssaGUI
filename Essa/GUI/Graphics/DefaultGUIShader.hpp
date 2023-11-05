@@ -17,8 +17,8 @@ public:
         , public llgl::ShaderBases::Transform {
         Util::Matrix4x4f submodel_matrix;
 
-        static inline auto mapping = llgl::make_uniform_mapping(llgl::Uniform { "submodelMatrix", &Uniforms::submodel_matrix })
-            | llgl::ShaderBases::Texture::mapping | llgl::ShaderBases::Transform::mapping;
+        static inline auto mapping = llgl::ShaderBases::Texture::mapping | llgl::ShaderBases::Transform::mapping
+            | llgl::Uniform { "submodelMatrix", &Uniforms::submodel_matrix };
     };
 
     std::string_view source(llgl::ShaderType type) const;

@@ -14,7 +14,7 @@
 
 namespace Gfx {
 
-void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices) {
+void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices, std::optional<ShaderContext> shader_context) {
     auto fill = shape.fill();
     auto local_bounds = shape.local_bounds();
     if (local_bounds.width == 0 || local_bounds.height == 0) {
@@ -55,7 +55,7 @@ void Painter::draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> 
         });
     }
 
-    draw_vertices(llgl::PrimitiveType::TriangleFan, fill_vertices, fill.texture());
+    draw_vertices(llgl::PrimitiveType::TriangleFan, fill_vertices, fill.texture(), std::move(shader_context));
 }
 
 void Painter::draw_outline(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices) {
@@ -221,7 +221,7 @@ void Painter::draw(Drawing::Shape const& shape) {
 
     m_builder.set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin().to_vector(), 0.f }));
     if (shape.fill().is_visible()) {
-        draw_fill(shape, vertices_for_rounded_shape);
+        draw_fill(shape, vertices_for_rounded_shape, shape.shader_context());
     }
     if (shape.outline().is_visible()) {
         draw_outline(shape, vertices_for_rounded_shape);
@@ -286,8 +286,10 @@ void Painter::draw_outline(std::span<Util::Point2f const> positions, Util::Color
     draw_vertices(llgl::PrimitiveType::TriangleStrip, vertices);
 }
 
-void Painter::draw_vertices(llgl::PrimitiveType type, std::span<Gfx::Vertex const> vertices, llgl::Texture const* texture) {
-    m_builder.add_vertices(type, vertices, texture);
+void Painter::draw_vertices(
+    llgl::PrimitiveType type, std::span<Gfx::Vertex const> vertices, llgl::Texture const* texture, std::optional<ShaderContext> shader_context
+) {
+    m_builder.add_vertices(type, vertices, texture, std::move(shader_context));
 }
 
 void Painter::apply_states() const {

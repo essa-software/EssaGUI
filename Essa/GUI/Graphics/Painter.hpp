@@ -62,7 +62,10 @@ public:
     void draw_line(Util::Point2f start, Util::Point2f end, LineDrawOptions const& options) { draw_line({ start, end }, options); }
 
     void draw_outline(std::span<Util::Point2f const>, Util::Color color, float thickness);
-    void draw_vertices(llgl::PrimitiveType type, std::span<Gfx::DefaultGUIShader::Vertex const>, llgl::Texture const* = nullptr);
+    void draw_vertices(
+        llgl::PrimitiveType type, std::span<Gfx::DefaultGUIShader::Vertex const>, llgl::Texture const* = nullptr,
+        std::optional<ShaderContext> shader_context = {}
+    );
 
     void reset() { m_builder.reset(); }
 
@@ -103,7 +106,7 @@ private:
     void apply_states() const;
 
     // In these functions, vertices are and after rounding, but not transformed.
-    void draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices);
+    void draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices, std::optional<ShaderContext> shader_context = {});
     void draw_outline(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices);
 
     GUIBuilder m_builder;
