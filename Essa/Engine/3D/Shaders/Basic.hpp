@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Essa/GUI/Graphics/ResourceManager.hpp>
+#include <Essa/GUI/Graphics/ShaderResource.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Texture.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Transform.hpp>
@@ -8,7 +10,7 @@
 
 namespace Essa::Shaders {
 
-class Basic : public llgl::Shader {
+class Basic {
 public:
     using Vertex = llgl::Vertex<Util::Point3f, Util::Colorf, Util::Point2f>;
 
@@ -18,7 +20,7 @@ public:
         static inline auto mapping = llgl::ShaderBases::Transform::mapping | llgl::ShaderBases::Texture::mapping;
     };
 
-    std::string_view source(llgl::ShaderType type) const;
+    static Gfx::FullShaderResource<Basic> load(Gfx::ResourceManager&);
 };
 
 }
