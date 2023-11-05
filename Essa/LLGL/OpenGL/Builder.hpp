@@ -32,6 +32,11 @@ public:
         set_modified();
     }
 
+    void add(std::span<Vertex const> v) {
+        m_vertices.insert(m_vertices.end(), v.begin(), v.end());
+        set_modified();
+    }
+
     void add(Vertex v) {
         m_vertices.push_back(std::move(v));
         set_modified();
@@ -80,7 +85,7 @@ protected:
     std::vector<llgl::RenderRange<StoredRenderRange>> m_ranges;
 
 private:
-    virtual void render_range(llgl::Renderer&, llgl::VertexArray<Vertex> const&, llgl::RenderRange<StoredRenderRange>) const {}
+    virtual void render_range(llgl::Renderer&, llgl::VertexArray<Vertex> const&, llgl::RenderRange<StoredRenderRange>) const { }
 };
 
 }

@@ -34,19 +34,14 @@ struct GUIBuilderRenderRange {
 // Builder optimized for generating 2D GUI components, widgets etc.
 class GUIBuilder : public llgl::Builder<Vertex, GUIBuilderRenderRange> {
 public:
-    struct RegularPolygonDrawOptions {
-        Util::Colorf color = Util::Colors::White;
-        Util::Angle rotation {};
-    };
-
     void add_vertices(std::span<Gfx::DefaultGUIShader::Vertex const> vertices, GUIBuilderRenderRange range) {
-        for (auto const& v : vertices)
-            add(v);
+        add(vertices);
         add_render_range_for_last_vertices(vertices.size(), std::move(range));
     }
 
-    virtual void
-    render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, llgl::RenderRange<GUIBuilderRenderRange> range) const override;
+    virtual void render_range(
+        llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, llgl::RenderRange<GUIBuilderRenderRange> range
+    ) const override;
 
 private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::create_vertex;
