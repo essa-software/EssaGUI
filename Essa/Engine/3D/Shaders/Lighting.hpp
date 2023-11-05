@@ -2,6 +2,7 @@
 
 #include <Essa/Engine/3D/Material.hpp>
 #include <Essa/Engine/3D/Model.hpp>
+#include <Essa/GUI/Graphics/ShaderResource.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Texture.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Transform.hpp>
@@ -9,7 +10,7 @@
 namespace Essa::Shaders {
 
 // FIXME: Recall which lighting algorithm it uses.
-class Lighting : public llgl::Shader {
+class Lighting {
 public:
     using Vertex = Model::Vertex;
 
@@ -48,7 +49,7 @@ public:
         }
     };
 
-    std::string_view source(llgl::ShaderType type) const;
+    static Gfx::FullShaderResource<Lighting>& load(Gfx::ResourceManager const&);
 };
 
 }

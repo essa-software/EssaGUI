@@ -9,14 +9,12 @@
 #include <EssaUtil/Angle.hpp>
 
 int main() {
-    // FIXME: This is needed for ResourceManager used by OBJ loader
-    GUI::Application app;
-
     llgl::Window window { { 500, 500 }, "Primitive Shapes" };
 
     OpenGL::Enable(GL_DEPTH_TEST);
 
-    Essa::Shaders::Lighting shader;
+    Gfx::ResourceManager resource_manager;
+    auto& shader = Essa::Shaders::Lighting::load(resource_manager);
     Essa::Sphere sphere;
     Essa::Cube cube;
 
@@ -43,24 +41,30 @@ int main() {
         {
             Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
             uniforms.set_light_color(Util::Colors::Red * 0.8);
-            uniforms.set_transform(llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
-                camera.view_matrix(), camera.projection().matrix());
+            uniforms.set_transform(
+                llgl::Transform {}.translate({ -1.5, 0, 0 }).rotate_x(shape_angle).matrix(), camera.view_matrix(),
+                camera.projection().matrix()
+            );
             sphere.render(window.renderer(), shader, uniforms);
         }
 
         {
             Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
             uniforms.set_light_color(Util::Colors::Green * 0.8);
-            uniforms.set_transform(llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(),
-                camera.view_matrix(), camera.projection().matrix());
+            uniforms.set_transform(
+                llgl::Transform {}.translate({ 1.5, 0, 0 }).rotate_x(shape_angle).matrix(), camera.view_matrix(),
+                camera.projection().matrix()
+            );
             sphere.render(window.renderer(), shader, uniforms);
         }
 
         {
             Essa::Shaders::Lighting::Uniforms uniforms = uniforms_base;
             uniforms.set_light_color(Util::Colors::Blue * 0.8);
-            uniforms.set_transform(llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
-                camera.view_matrix(), camera.projection().matrix());
+            uniforms.set_transform(
+                llgl::Transform {}.scale(0.7).translate({ 0, 3.5, 0 }).rotate_x(shape_angle).rotate_y(Util::deg_to_rad(45.0)).matrix(),
+                camera.view_matrix(), camera.projection().matrix()
+            );
             cube.render(window.renderer(), shader, uniforms);
         }
 

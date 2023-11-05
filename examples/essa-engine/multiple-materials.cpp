@@ -11,12 +11,9 @@
 class WorldView : public GUI::WorldView {
 private:
     llgl::Camera camera() const {
-        return llgl::Camera {
-            llgl::Projection::perspective(
-                { 1.44, static_cast<double>(raw_size().x() / raw_size().y()),
-                    0.1, 20 },
-                Util::Recti { local_rect() })
-        }
+        return llgl::Camera { llgl::Projection::perspective(
+                                  { 1.44, static_cast<double>(raw_size().x() / raw_size().y()), 0.1, 20 }, Util::Recti { local_rect() }
+                              ) }
             .translate({ 0, 3, 3 })
             .rotate_x(45.0_deg)
             .translate({ 0, 0, -1 });
@@ -29,23 +26,17 @@ private:
     }
 
     virtual void draw(Gfx::Painter& painter) const override {
-        GUI::WorldDrawScope scope { painter,
-            GUI::WorldDrawScope::ClearDepth::Yes };
+        GUI::WorldDrawScope scope { painter, GUI::WorldDrawScope::ClearDepth::Yes };
 
-        static Essa::Shaders::Lighting shader;
+        static auto& shader = Essa::Shaders::Lighting::load(resource_manager());
         Essa::Shaders::Lighting::Uniforms uniforms;
         uniforms.set_light_color(Util::Colors::LightGoldenRodYellow);
         uniforms.set_light_position({ 0, 5, 10 });
 
-        auto& model = resource_manager().require_external<Essa::Model>(
-            "../examples/essa-engine/multiple-materials.obj");
+        auto& model = resource_manager().require_external<Essa::Model>("../examples/essa-engine/multiple-materials.obj");
 
-        auto transform = llgl::Transform {}
-                             .rotate_x(m_angle_x.rad())
-                             .rotate_y(m_angle_y.rad())
-                             .rotate_z(m_angle_z.rad());
-        uniforms.set_transform(transform.matrix(), camera().view_matrix(),
-            camera().projection().matrix());
+        auto transform = llgl::Transform {}.rotate_x(m_angle_x.rad()).rotate_y(m_angle_y.rad()).rotate_z(m_angle_z.rad());
+        uniforms.set_transform(transform.matrix(), camera().view_matrix(), camera().projection().matrix());
         model.render(painter.renderer(), shader, uniforms);
     }
 
@@ -56,8 +47,7 @@ private:
 
 int main() {
     GUI::Application app;
-    auto& host_window = app.create_host_window(
-        { 500, 500 }, "Multiple Materials support in Model");
+    auto& host_window = app.create_host_window({ 500, 500 }, "Multiple Materials support in Model");
     host_window.set_root_widget<WorldView>();
     host_window.set_background_color(Util::Colors::Black);
     app.run();

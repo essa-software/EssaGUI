@@ -1,12 +1,12 @@
 #include "Lighting.hpp"
 
-#include <Essa/Engine/3D/ShaderResource.hpp>
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/ShaderResource.hpp>
 
 namespace Essa::Shaders {
 
-std::string_view Lighting::source(llgl::ShaderType type) const {
-    return GUI::Application::the().resource_manager().require<FullShaderResource>("Lighting.shader").source(type);
+Gfx::FullShaderResource<Lighting>& Lighting::load(Gfx::ResourceManager const& res) {
+    return res.require<Gfx::FullShaderResource<Lighting>>("Lighting.shader");
 }
 
 }

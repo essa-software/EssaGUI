@@ -39,7 +39,7 @@ private:
     virtual void draw(Gfx::Painter& painter) const override {
         GUI::WorldDrawScope scope(painter, GUI::WorldDrawScope::ClearDepth::Yes);
 
-        static Essa::Shaders::Lighting shader;
+        static auto& shader = Essa::Shaders::Lighting::load(resource_manager());
         Essa::Shaders::Lighting::Uniforms shader_uniforms;
         shader_uniforms.set_light_color(Util::Colors::LightGoldenRodYellow);
 

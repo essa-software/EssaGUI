@@ -26,6 +26,7 @@ add_library(GUI SHARED
     Graphics/ResourceManager.cpp
     Graphics/RichText.cpp
     Graphics/RichText/Fragments.cpp
+    Graphics/ShaderResource.cpp
     Graphics/Text.cpp
     
     Overlays/ContextMenu.cpp

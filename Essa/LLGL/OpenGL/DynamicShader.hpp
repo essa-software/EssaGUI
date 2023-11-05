@@ -12,6 +12,10 @@ public:
     using Vertex = V;
 
     struct Uniforms {
+        template<class T>
+        Uniforms(T data)
+            : data(std::move(data)) { }
+
         struct DynamicMapping {
             void bind(DynamicShader const& shader, Uniforms const& uniforms) { return shader.m_mapping_bind_func(uniforms); }
         };

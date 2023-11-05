@@ -179,7 +179,7 @@ void CameraView::draw(Gfx::Painter& painter) const {
     {
         OpenGL::Enable(GL_DEPTH_TEST);
         OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
-        static Essa::Shaders::Lighting shader;
+        static auto& shader = Essa::Shaders::Lighting::load(resource_manager());
         auto axises_uniforms = m_uniforms;
         if (m_axises_coord_system > CoordinateSystem::Local) {
             axises_uniforms.set_model({});

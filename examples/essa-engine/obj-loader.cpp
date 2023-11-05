@@ -15,10 +15,6 @@
 #include <iostream>
 
 int main() {
-    // FIXME: (Hack) GUI::Application is required for ResourceManager to work, which is
-    //        required by Lighting shader now (Try to find a way to fix this!)
-    GUI::Application app;
-
     llgl::Window window { { 500, 500 }, "OBJ loader", { .context_settings = { 3, 2 } } };
 
     // TODO: Port to llgl, especially clear color.
@@ -34,7 +30,8 @@ int main() {
     llgl::Transform model_transform;
     model_transform = model_transform.translate({ -1.5, -1.5, -5 }).rotate_y(Util::deg_to_rad(45));
 
-    Essa::Shaders::Lighting lighting_shader;
+    Gfx::ResourceManager resource_manager;
+    auto& lighting_shader = Essa::Shaders::Lighting::load(resource_manager);
 
     double light_angle = 0;
 

@@ -17,7 +17,8 @@ constexpr size_t ModelCount = 100000;
 class WorldView : public GUI::Widget {
 public:
     WorldView()
-        : m_model(GUI::Application::the().resource_manager().require_external<Essa::Model>("../examples/essa-engine/tree.obj")) { }
+        : m_model(GUI::Application::the().resource_manager().require_external<Essa::Model>("../examples/essa-engine/tree.obj"))
+        , m_shader(Essa::Shaders::Lighting::load(resource_manager())) { }
 
 private:
     virtual void draw(Gfx::Painter& painter) const override {
@@ -39,7 +40,7 @@ private:
     };
 
     Essa::Model const& m_model;
-    mutable Essa::Shaders::Lighting m_shader;
+    Gfx::FullShaderResource<Essa::Shaders::Lighting>& m_shader;
 };
 
 int main() {

@@ -27,7 +27,7 @@ public:
         m_origin = o;
         return *this;
     }
-    template<llgl::ShaderImpl S> Shape& set_shader(S& shader, typename S::Uniforms uniforms) {
+    template<llgl::ShaderImplPartial S> Shape& set_shader(S& shader, typename S::Uniforms uniforms) {
         m_shader_context = Gfx::ShaderContext { llgl::DynamicShader<Gfx::Vertex>(shader), std::move(uniforms) };
         return *this;
     }
@@ -107,7 +107,7 @@ private:
 #define __ESSA_DEFINE_SHAPE_CHAINABLES(Subclass)                                                           \
     Subclass& set_transform(llgl::Transform t) { return static_cast<Subclass&>(Shape::set_transform(t)); } \
     Subclass& set_origin(Util::Point2f t) { return static_cast<Subclass&>(Shape::set_origin(t)); }         \
-    template<llgl::ShaderImpl S> Subclass& set_shader(S& shader, typename S::Uniforms uniforms) {          \
+    template<llgl::ShaderImplPartial S> Subclass& set_shader(S& shader, typename S::Uniforms uniforms) {   \
         return static_cast<Subclass&>(Shape::set_shader(shader, std::move(uniforms)));                     \
     }                                                                                                      \
     Subclass& move(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }             \
