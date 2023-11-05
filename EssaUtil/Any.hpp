@@ -7,16 +7,24 @@
 
 namespace Util {
 
+template<class T>
+    requires(std::is_trivially_copyable_v<T>)
+class AnyWithBase;
+
 class Any {
 public:
     Any() = default;
 
     template<class U>
         requires(std::is_trivially_copyable_v<U>)
-    Any(U const& u)
+    explicit Any(U const& u)
         : m_storage(sizeof(U)) {
         memcpy(m_storage.data(), &u, sizeof(U));
     }
+
+    template<class U>
+    Any(AnyWithBase<U> any)
+        requires(std::is_trivially_copyable_v<U>);
 
     template<class U>
     U const& cast() const
@@ -67,7 +75,16 @@ public:
     T const& ref() const { return cast<T>(); }
 
 private:
+    friend class Any;
+
     std::vector<uint8_t> m_storage;
 };
+
+template<class U>
+Any::Any(AnyWithBase<U> any)
+    requires(std::is_trivially_copyable_v<U>)
+    : m_storage(any.m_storage.size()) {
+    memcpy(m_storage.data(), any.m_storage.data(), any.m_storage.size());
+}
 
 }
