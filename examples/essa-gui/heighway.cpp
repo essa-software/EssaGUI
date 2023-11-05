@@ -25,11 +25,13 @@ private:
         rect.texture_rect = { 0, 0, 500, 500 };
         painter.deprecated_draw_rectangle(local_rect().cast<float>(), rect);
 
-        Gfx::Text text { Util::UString { std::to_string(m_point_count) + "; "
-                                         + std::to_string(static_cast<int>(GUI::Application::the().tps())) + " FPS; "
-                                         + std::to_string(std::floor(static_cast<double>(m_point_count) / (m_clock.elapsed() / 1.0s)))
-                                         + " pps" },
-                         resource_manager().font() };
+        Gfx::Text text {
+            Util::UString::format(
+                "{}; {:.2f} FPS; {} pps", m_point_count, GUI::Application::the().tps(),
+                std::floor(static_cast<double>(m_point_count) / (m_clock.elapsed() / 1.0s))
+            ),
+            resource_manager().font(),
+        };
         text.set_font_size(16);
         text.set_fill_color(Util::Colors::Wheat);
         text.set_position({ 10, 20 });
