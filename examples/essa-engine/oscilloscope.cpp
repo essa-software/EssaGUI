@@ -37,7 +37,7 @@ public:
         void set_pass1(llgl::Texture const* tex) { pass1.texture = tex; }
     };
 
-    auto source(llgl::ShaderType type) {
+    auto source(llgl::ShaderType type) const {
         switch (type) {
         case llgl::ShaderType::Fragment:
             return R"~~~(// BlurShader fs

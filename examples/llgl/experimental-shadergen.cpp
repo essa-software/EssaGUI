@@ -55,7 +55,7 @@ struct MyShader : public llgl::Shader {
         );
     };
 
-    std::string_view source(llgl::ShaderType type) {
+    std::string_view source(llgl::ShaderType type) const {
         switch (type) {
         case llgl::ShaderType::Fragment:
             return FragmentShader;

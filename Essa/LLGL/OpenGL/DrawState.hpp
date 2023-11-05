@@ -5,7 +5,7 @@
 
 namespace llgl {
 
-template<ShaderImpl Shader> struct DrawState {
+template<ShaderImplPartial Shader> struct DrawState {
 public:
     DrawState(Shader& shader, typename Shader::Uniforms uniforms, llgl::PrimitiveType pt)
         : m_shader(shader)

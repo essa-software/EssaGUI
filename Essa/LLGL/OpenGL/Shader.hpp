@@ -60,12 +60,14 @@ template<class... T1, class... T2> auto concat_tuples(std::tuple<T1...> const& t
 
 // ShaderImpl
 template<class T>
-concept ShaderImplPartial = requires(T t, ShaderType st) {
-                                typename T::Vertex;
-                                typename T::Uniforms;
-                                { t.source(st) } -> std::convertible_to<std::string_view>;
-                                { T::Uniforms::mapping };
-                            };
+concept ShaderImplPartial = requires(T t, T const ct, ShaderType st) {
+    typename T::Vertex;
+    typename T::Uniforms;
+    { ct.source(st) } -> std::convertible_to<std::string_view>;
+    { ct.program() } -> std::same_as<unsigned>;
+    { t.set_program((unsigned)0) } -> std::same_as<void>;
+    { T::Uniforms::mapping };
+};
 
 class Shader;
 
@@ -146,11 +148,11 @@ namespace Detail {
 unsigned compile_shader(GLenum type, std::string_view source);
 unsigned link_shader(std::initializer_list<unsigned> ids);
 
-template<ShaderImpl Shader> inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
+template<ShaderImplPartial Shader> inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
     if (!shader.program()) {
         auto fragment_shader = compile_shader(GL_FRAGMENT_SHADER, shader.source(ShaderType::Fragment));
         auto vertex_shader = compile_shader(GL_VERTEX_SHADER, shader.source(ShaderType::Vertex));
-        shader.set_program(link_shader({fragment_shader, vertex_shader}));
+        shader.set_program(link_shader({ fragment_shader, vertex_shader }));
     }
 
     OpenGL::UseProgram(shader.program());
