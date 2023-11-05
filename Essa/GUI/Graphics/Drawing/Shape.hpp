@@ -95,11 +95,15 @@ public:
     Points points() const { return Points { *this }; }
 
     std::vector<Util::Point2f> const& vertices() const;
+    std::vector<Gfx::Vertex> const& fill_vertices() const;
 
 protected:
     void invalidate() { m_vertex_cache_dirty = true; }
 
 private:
+    void ensure_cache_up_to_date() const;
+    void generate_fill_vertices() const;
+
     llgl::Transform m_transform;
     Util::Point2f m_origin;
     Fill m_fill;
@@ -108,6 +112,7 @@ private:
 
     mutable bool m_vertex_cache_dirty = true;
     mutable std::vector<Util::Point2f> m_vertex_cache;
+    mutable std::vector<Gfx::Vertex> m_fill_vertex_cache;
 };
 
 struct RoundingResult {

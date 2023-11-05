@@ -139,17 +139,72 @@ std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape c
 
 }
 
-std::vector<Util::Point2f> const& Shape::vertices() const {
-    if (m_vertex_cache_dirty) {
-        m_vertex_cache_dirty = false;
-        if (outline().is_rounded()) {
-            m_vertex_cache = calculate_vertices_for_rounded_shape(*this);
-        }
-        else {
-            m_vertex_cache = points().to_vector();
-        }
+void Shape::generate_fill_vertices() const {
+    auto fill = this->fill();
+    auto local_bounds = this->local_bounds();
+    if (local_bounds.width == 0 || local_bounds.height == 0) {
+        return;
     }
+
+    Util::Size2f texture_size { fill.texture() ? fill.texture()->size().cast<float>() : Util::Size2f {} };
+    auto texture_rect = fill.texture_rect();
+    if (texture_rect.size().is_zero()) {
+        texture_rect.width = texture_size.x();
+        texture_rect.height = texture_size.y();
+    }
+
+    auto normalized_texture_coord_for_point = [&](Util::Point2f point) -> Util::Point2f {
+        if (!fill.texture()) {
+            return {};
+        }
+
+        Util::Point2f point_normalized_coords {
+            (point.x() - local_bounds.left) / local_bounds.width,
+            (point.y() - local_bounds.top) / local_bounds.height,
+        };
+        Util::Point2f texture_coords {
+            texture_rect.left + point_normalized_coords.x() * texture_rect.width,
+            texture_rect.top + point_normalized_coords.y() * texture_rect.height,
+        };
+
+        return { texture_coords.x() / texture_size.x(), texture_coords.y() / texture_size.y() };
+    };
+
+    std::vector<Gfx::Vertex> fill_vertices;
+    fill_vertices.reserve(m_vertex_cache.size());
+    for (auto const& point : m_vertex_cache) {
+        fill_vertices.push_back(Gfx::Vertex {
+            point,
+            fill.color(),
+            normalized_texture_coord_for_point(point),
+        });
+    }
+    m_fill_vertex_cache = std::move(fill_vertices);
+}
+
+void Shape::ensure_cache_up_to_date() const {
+    if (!m_vertex_cache_dirty) {
+        return;
+    }
+    m_vertex_cache_dirty = false;
+
+    if (outline().is_rounded()) {
+        m_vertex_cache = calculate_vertices_for_rounded_shape(*this);
+    }
+    else {
+        m_vertex_cache = points().to_vector();
+    }
+
+    generate_fill_vertices();
+}
+
+std::vector<Util::Point2f> const& Shape::vertices() const {
+    ensure_cache_up_to_date();
     return m_vertex_cache;
 }
 
+std::vector<Gfx::Vertex> const& Shape::fill_vertices() const {
+    ensure_cache_up_to_date();
+    return m_fill_vertex_cache;
+}
 }

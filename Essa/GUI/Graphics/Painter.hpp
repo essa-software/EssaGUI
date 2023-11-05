@@ -113,8 +113,8 @@ private:
     void apply_states() const;
 
     // In these functions, vertices are and after rounding, but not transformed.
-    void draw_fill(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices, std::optional<ShaderContext> shader_context = {});
-    void draw_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices);
+    void draw_shape_fill(Drawing::Shape const& shape, std::optional<ShaderContext> shader_context = {});
+    void draw_shape_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices);
 
     // It is not guaranteed to maintain state after drawing calls.
     void set_submodel(llgl::Transform const& transform) { m_submodel = transform; }

@@ -14,62 +14,21 @@
 
 namespace Gfx {
 
-void Painter::draw_fill(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices, std::optional<ShaderContext> shader_context) {
-    auto fill = shape.fill();
-    auto local_bounds = shape.local_bounds();
-    if (local_bounds.width == 0 || local_bounds.height == 0) {
-        return;
-    }
-
-    Util::Size2f texture_size { fill.texture() ? fill.texture()->size().cast<float>() : Util::Size2f {} };
-    auto texture_rect = fill.texture_rect();
-    if (texture_rect.size().is_zero()) {
-        texture_rect.width = texture_size.x();
-        texture_rect.height = texture_size.y();
-    }
-
-    auto normalized_texture_coord_for_point = [&](Util::Point2f point) -> Util::Point2f {
-        if (!fill.texture()) {
-            return {};
-        }
-
-        Util::Point2f point_normalized_coords {
-            (point.x() - local_bounds.left) / local_bounds.width,
-            (point.y() - local_bounds.top) / local_bounds.height,
-        };
-        Util::Point2f texture_coords {
-            texture_rect.left + point_normalized_coords.x() * texture_rect.width,
-            texture_rect.top + point_normalized_coords.y() * texture_rect.height,
-        };
-
-        return { texture_coords.x() / texture_size.x(), texture_coords.y() / texture_size.y() };
-    };
-
-    std::vector<Gfx::Vertex> fill_vertices;
-    fill_vertices.reserve(vertices.size());
-    for (auto const& point : vertices) {
-        fill_vertices.push_back(Gfx::Vertex {
-            point,
-            fill.color(),
-            normalized_texture_coord_for_point(point),
-        });
-    }
-
-    draw_vertices(llgl::PrimitiveType::TriangleFan, fill_vertices, fill.texture(), std::move(shader_context));
+void Painter::draw_shape_fill(Drawing::Shape const& shape, std::optional<ShaderContext> shader_context) {
+    draw_vertices(llgl::PrimitiveType::TriangleFan, shape.fill_vertices(), shape.fill().texture(), std::move(shader_context));
 }
 
-void Painter::draw_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices) {
+void Painter::draw_shape_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices) {
     draw_outline(vertices, shape.outline().color(), shape.outline().thickness());
 }
 
 void Painter::draw(Drawing::Shape const& shape) {
-    auto const& verts = shape.vertices();
     set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin().to_vector(), 0.f }));
     if (shape.fill().is_visible()) {
-        draw_fill(shape, verts, shape.shader_context());
+        draw_shape_fill(shape, shape.shader_context());
     }
     if (shape.outline().is_visible()) {
-        draw_outline(shape, verts);
+        draw_shape_outline(shape, shape.vertices());
     }
     set_submodel(llgl::Transform {});
 }
