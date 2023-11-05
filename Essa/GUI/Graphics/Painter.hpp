@@ -106,8 +106,8 @@ private:
     void apply_states() const;
 
     // In these functions, vertices are and after rounding, but not transformed.
-    void draw_fill(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices, std::optional<ShaderContext> shader_context = {});
-    void draw_outline(Drawing::Shape const& shape, std::vector<Util::Point2f> const& vertices);
+    void draw_fill(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices, std::optional<ShaderContext> shader_context = {});
+    void draw_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices);
 
     GUIBuilder m_builder;
     llgl::Renderer& m_renderer;
