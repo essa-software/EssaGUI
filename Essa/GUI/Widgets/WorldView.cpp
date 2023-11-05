@@ -12,7 +12,7 @@ void WorldDrawScope::verify() { assert(current()); }
 WorldDrawScope const* WorldDrawScope::current() { return s_current; }
 
 WorldDrawScope::WorldDrawScope(Gfx::Painter const& painter, ClearDepth clear_depth)
-    : m_previous_projection(painter.builder().projection()) {
+    : m_previous_projection(painter.projection()) {
 
     if (current())
         return;

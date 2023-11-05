@@ -219,14 +219,14 @@ void Painter::draw(Drawing::Shape const& shape) {
         return;
     }
 
-    m_builder.set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin().to_vector(), 0.f }));
+    set_submodel(shape.transform().translate(Util::Vector3f { -shape.origin().to_vector(), 0.f }));
     if (shape.fill().is_visible()) {
         draw_fill(shape, vertices_for_rounded_shape, shape.shader_context());
     }
     if (shape.outline().is_visible()) {
         draw_outline(shape, vertices_for_rounded_shape);
     }
-    m_builder.set_submodel(llgl::Transform {});
+    set_submodel(llgl::Transform {});
 }
 
 void Painter::deprecated_draw_rectangle(Util::Rectf bounds, Gfx::RectangleDrawOptions const& options) {
@@ -290,7 +290,18 @@ void Painter::draw_vertices(
     llgl::PrimitiveType type, std::span<Gfx::Vertex const> vertices, llgl::Texture const* texture,
     std::optional<ShaderContext> shader_context
 ) {
-    m_builder.add_vertices(type, vertices, texture, std::move(shader_context));
+    m_builder.add_vertices(
+        vertices,
+        {
+            .type = type,
+            .projection = m_projection,
+            .view = m_view,
+            .model = m_model,
+            .submodel = m_submodel,
+            .texture = texture,
+            .shader_context = std::move(shader_context),
+        }
+    );
 }
 
 void Painter::apply_states() const {

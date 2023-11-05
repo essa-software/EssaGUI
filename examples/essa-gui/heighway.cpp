@@ -50,7 +50,7 @@ private:
             m_current_position.set_y(0.4 * old_position.x() + 0.76 * old_position.y());
         }
 
-        m_painter.builder().set_projection(llgl::Projection { {}, { 0, 0, 500, 500 } });
+        m_painter.set_projection(llgl::Projection { {}, { 0, 0, 500, 500 } });
         Gfx::RectangleDrawOptions point;
         point.fill_color = Util::Colors::White;
         m_painter.deprecated_draw_rectangle({ m_current_position, { 0.001, 0.001 } }, point);

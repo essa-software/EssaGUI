@@ -7,17 +7,15 @@
 
 namespace llgl {
 
-struct RenderRange {
+template<class T> struct RenderRange {
     size_t first;
     size_t size;
-    llgl::PrimitiveType type;
+    T data;
 };
 
 // A class which simplifies generating VAOs and abstract away
 // all modifications to it
-template<class Vertex, class RR>
-    requires std::is_base_of_v<RenderRange, RR>
-class Builder {
+template<class Vertex, class RR> class Builder {
 public:
     using MappedVertex = llgl::MappedVertex<Vertex>;
     using StoredRenderRange = RR;
@@ -72,22 +70,17 @@ protected:
 
     void set_modified() { m_was_modified = true; }
 
-    template<class... Args> void add_render_range_for_last_vertices(size_t count, llgl::PrimitiveType pt, Args&&... args) {
-        if constexpr (std::is_same_v<StoredRenderRange, RenderRange>) {
-            m_ranges.push_back(StoredRenderRange { m_vertices.size() - count, count, pt });
-        }
-        else {
-            m_ranges.push_back(StoredRenderRange { { m_vertices.size() - count, count, pt }, std::forward<Args>(args)... });
-        }
+    template<class... Args> void add_render_range_for_last_vertices(size_t count, StoredRenderRange range) {
+        m_ranges.push_back(llgl::RenderRange<StoredRenderRange> { m_vertices.size() - count, count, std::move(range) });
     }
 
     mutable llgl::VertexArray<Vertex> m_vao;
     std::vector<Vertex> m_vertices;
     mutable bool m_was_modified = false;
-    std::vector<StoredRenderRange> m_ranges;
+    std::vector<llgl::RenderRange<StoredRenderRange>> m_ranges;
 
 private:
-    virtual void render_range(llgl::Renderer&, llgl::VertexArray<Vertex> const&, StoredRenderRange const&) const {};
+    virtual void render_range(llgl::Renderer&, llgl::VertexArray<Vertex> const&, llgl::RenderRange<StoredRenderRange>) const {}
 };
 
 }

@@ -8,7 +8,7 @@ static thread_local ClipViewScope* s_current = nullptr;
 
 ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
     : m_target(target)
-    , m_old_projection(target.builder().projection())
+    , m_old_projection(target.projection())
     , m_parent(s_current) {
     s_current = this;
 
@@ -39,11 +39,11 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
 
     auto clip_view = create_clip_view(clip_rect, offset_position);
 
-    m_target.builder().set_projection(clip_view);
+    m_target.set_projection(clip_view);
 }
 
 ClipViewScope::~ClipViewScope() {
-    m_target.builder().set_projection(m_old_projection);
+    m_target.set_projection(m_old_projection);
     s_current = m_parent;
 }
 

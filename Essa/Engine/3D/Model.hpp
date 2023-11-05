@@ -29,7 +29,8 @@ template<> struct llgl::VertexMapping<Essa::ModelVertex> {
 
 namespace Essa {
 
-struct ModelRenderRange : public llgl::RenderRange {
+struct ModelRenderRange {
+    llgl::PrimitiveType type;
     std::optional<Material> material;
 };
 
@@ -44,7 +45,7 @@ public:
         for (auto const& vertex : vertices) {
             add(vertex);
         }
-        add_render_range_for_last_vertices(vertices.size(), llgl::PrimitiveType::Triangles, std::move(material));
+        add_render_range_for_last_vertices(vertices.size(), { llgl::PrimitiveType::Triangles, std::move(material) });
     }
 
     void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto const& uniforms) {
@@ -53,11 +54,13 @@ public:
             m_was_modified = false;
         }
         auto range_renderer
-            = [&shader, uniforms](llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range) {
+            = [&shader, uniforms](
+                  llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, llgl::RenderRange<ModelRenderRange> const& range
+              ) {
                   auto uniforms_copy = uniforms;
-                  if constexpr (requires() { uniforms_copy.set_material(*range.material); }) {
-                      if (range.material) {
-                          uniforms_copy.set_material(*range.material);
+                  if constexpr (requires() { uniforms_copy.set_material(*range.data.material); }) {
+                      if (range.data.material) {
+                          uniforms_copy.set_material(*range.data.material);
                       }
                       else {
                           uniforms_copy.set_material(Material {
@@ -67,7 +70,7 @@ public:
                           });
                       }
                   }
-                  renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.type }, range.first, range.size);
+                  renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms_copy, range.data.type }, range.first, range.size);
               };
         for (auto const& range : m_ranges) {
             range_renderer(renderer, m_vao, range);
@@ -75,7 +78,7 @@ public:
     }
 
 private:
-    virtual void render_range(llgl::Renderer&, llgl::VertexArray<ModelVertex> const&, ModelRenderRange const&) const override {
+    virtual void render_range(llgl::Renderer&, llgl::VertexArray<ModelVertex> const&, llgl::RenderRange<ModelRenderRange>) const override {
         ESSA_UNREACHABLE;
     }
     RangeRenderer m_renderer;

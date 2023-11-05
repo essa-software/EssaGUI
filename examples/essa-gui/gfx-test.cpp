@@ -16,7 +16,7 @@ int main() {
         painter.reset();
         while (wnd.poll_event()) { }
 
-        painter.builder().set_projection(llgl::Projection::ortho({ Util::Rectd { wnd.rect() } }, wnd.rect()));
+        painter.set_projection(llgl::Projection::ortho({ Util::Rectd { wnd.rect() } }, wnd.rect()));
 
         wnd.renderer().clear(Util::Color { 100, 100, 100 });
 

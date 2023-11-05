@@ -56,7 +56,7 @@ void HostWindow::do_draw() {
     m_painter->reset();
 
     Util::Recti viewport { {}, size() };
-    m_painter->builder().set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
+    m_painter->set_projection(llgl::Projection::ortho({ Util::Rectd { {}, size().cast<double>() } }, Util::Recti { viewport }));
 
     WidgetTreeRoot::draw(*m_painter);
 

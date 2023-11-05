@@ -102,12 +102,23 @@ public:
     void set_blending(Blending blending) { m_blending = blending; }
     Blending blending() const { return m_blending; }
 
+    void set_projection(llgl::Projection projection) { m_projection = projection; }
+    auto projection() const { return m_projection; }
+    void set_view(llgl::Transform const& transform) { m_view = transform; }
+    auto view() const { return m_view; }
+    void set_model(llgl::Transform const& transform) { m_model = transform; }
+    auto model() const { return m_model; }
+
 private:
     void apply_states() const;
 
     // In these functions, vertices are and after rounding, but not transformed.
     void draw_fill(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices, std::optional<ShaderContext> shader_context = {});
     void draw_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices);
+
+    // It is not guaranteed to maintain state after drawing calls.
+    void set_submodel(llgl::Transform const& transform) { m_submodel = transform; }
+    auto submodel() const { return m_submodel; }
 
     GUIBuilder m_builder;
     llgl::Renderer& m_renderer;
@@ -117,6 +128,10 @@ private:
         .src_alpha = BlendingFunc::SrcAlpha,
         .dst_alpha = BlendingFunc::OneMinusSrcAlpha,
     };
+    llgl::Projection m_projection;
+    llgl::Transform m_view;
+    llgl::Transform m_model;
+    llgl::Transform m_submodel;
 };
 
 class PainterTransformScope {
@@ -128,11 +143,11 @@ public:
 
     PainterTransformScope(Gfx::Painter& painter, llgl::Transform const& transform)
         : m_painter(painter)
-        , m_old_transform(painter.builder().view()) {
-        painter.builder().set_view(transform);
+        , m_old_transform(painter.view()) {
+        painter.set_view(transform);
     }
 
-    ~PainterTransformScope() { m_painter.builder().set_view(m_old_transform); }
+    ~PainterTransformScope() { m_painter.set_view(m_old_transform); }
 
 private:
     Gfx::Painter& m_painter;
