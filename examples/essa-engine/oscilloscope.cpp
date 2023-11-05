@@ -101,7 +101,8 @@ int main() {
     llgl::Window window({ 512, 512 }, "Oscilloscope");
     llgl::opengl::enable_debug_output();
 
-    Essa::Shaders::Basic basic_shader;
+    Gfx::ResourceManager resource_manager;
+    auto& basic_shader = Essa::Shaders::Basic::load(resource_manager);
     BlurShader blur_shader;
 
     auto& renderer = window.renderer();

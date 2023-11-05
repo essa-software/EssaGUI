@@ -20,7 +20,7 @@ public:
         static inline auto mapping = llgl::ShaderBases::Transform::mapping | llgl::ShaderBases::Texture::mapping;
     };
 
-    static Gfx::FullShaderResource<Basic> load(Gfx::ResourceManager&);
+    static Gfx::FullShaderResource<Basic>& load(Gfx::ResourceManager&);
 };
 
 }
