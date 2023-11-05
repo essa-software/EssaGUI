@@ -1,4 +1,6 @@
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Drawing/Fill.hpp>
+#include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/LLGL/OpenGL/Framebuffer.hpp>
@@ -51,11 +53,12 @@ private:
         }
 
         m_painter.set_projection(llgl::Projection { {}, { 0, 0, 500, 500 } });
-        Gfx::RectangleDrawOptions point;
-        point.fill_color = Util::Colors::White;
-        m_painter.deprecated_draw_rectangle({ m_current_position, { 0.001, 0.001 } }, point);
+
+        m_rectangle.set_transform(llgl::Transform());
+        m_painter.draw(m_rectangle.move(m_current_position.to_vector()));
     }
 
+    Gfx::Drawing::Rectangle m_rectangle { { 1 / 500.f, 1 / 500.f }, Gfx::Drawing::Fill::solid(Util::Colors::White) };
     llgl::Framebuffer m_framebuffer { { 500, 500 } };
     Gfx::Painter m_painter { m_framebuffer.renderer() };
     Util::Point2f m_current_position;
@@ -66,7 +69,6 @@ private:
 int main() {
     GUI::Application app;
     auto& wnd = app.create_host_window({ 750, 750 }, "Heighway's Dragon (Gfx::Painter benchmark)");
-
     wnd.set_root_widget<MainWidget>();
 
     app.run();

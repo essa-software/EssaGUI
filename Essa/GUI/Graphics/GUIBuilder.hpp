@@ -45,13 +45,13 @@ public:
         add_render_range_for_last_vertices(vertices.size(), std::move(range));
     }
 
+    virtual void
+    render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, llgl::RenderRange<GUIBuilderRenderRange> range) const override;
+
 private:
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::create_vertex;
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add;
     using llgl::Builder<Vertex, GUIBuilderRenderRange>::add_render_range_for_last_vertices;
-
-    virtual void
-    render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex> const& vao, llgl::RenderRange<GUIBuilderRenderRange> range) const override;
 
     mutable Gfx::DefaultGUIShader m_shader;
 };

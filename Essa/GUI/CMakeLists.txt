@@ -29,6 +29,8 @@ add_library(GUI SHARED
     Graphics/ShaderResource.cpp
     Graphics/Text.cpp
     
+    Graphics/Drawing/Shape.cpp
+    
     Overlays/ContextMenu.cpp
     Overlays/FileExplorer.cpp
     Overlays/FilePrompt.cpp

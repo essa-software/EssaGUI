@@ -94,13 +94,36 @@ public:
 
     Points points() const { return Points { *this }; }
 
+    std::vector<Util::Point2f> const& vertices() const;
+
+protected:
+    void invalidate() { m_vertex_cache_dirty = true; }
+
 private:
     llgl::Transform m_transform;
     Util::Point2f m_origin;
     Fill m_fill;
     Outline m_outline;
     std::optional<ShaderContext> m_shader_context;
+
+    mutable bool m_vertex_cache_dirty = true;
+    mutable std::vector<Util::Point2f> m_vertex_cache;
 };
+
+struct RoundingResult {
+    Util::Point2f center;
+    float angle_start;
+    float angle_end;
+    float scaled_radius;
+};
+struct RoundingSettings {
+    Util::Point2f left;
+    Util::Point2f right;
+    Util::Point2f tip;
+    float radius;
+};
+
+RoundingResult round(RoundingSettings settings);
 
 }
 
