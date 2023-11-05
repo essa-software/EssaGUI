@@ -29,7 +29,7 @@ unsigned compile_shader(GLenum type, std::string_view source) {
 }
 
 unsigned link_shader(std::initializer_list<unsigned> ids) {
-    for (auto id : ids) {
+    for ([[maybe_unused]] auto id : ids) {
         assert(id != 0);
     }
     auto program_id = OpenGL::CreateProgram();
