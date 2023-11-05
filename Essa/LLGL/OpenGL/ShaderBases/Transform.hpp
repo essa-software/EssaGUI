@@ -22,10 +22,8 @@ public:
     void set_view(Util::Matrix4x4f m) { m_view_matrix = m; }
     void set_projection(Util::Matrix4x4f m) { m_projection_matrix = m; }
 
-    static inline auto mapping = llgl::make_uniform_mapping(
-        llgl::Uniform { "modelMatrix", &Transform::m_model_matrix }, llgl::Uniform { "viewMatrix", &Transform::m_view_matrix },
-        llgl::Uniform { "projectionMatrix", &Transform::m_projection_matrix }
-    );
+    static inline auto mapping = llgl::Uniform { "modelMatrix", &Transform::m_model_matrix }
+        | llgl::Uniform { "viewMatrix", &Transform::m_view_matrix } | llgl::Uniform { "projectionMatrix", &Transform::m_projection_matrix };
 
     auto model() const { return m_model_matrix; }
     auto view() const { return m_view_matrix; }

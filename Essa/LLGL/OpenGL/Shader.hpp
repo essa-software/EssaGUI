@@ -92,6 +92,7 @@ public:
     template<class... Members2> auto operator|(UniformMapping<Members2...> const& other) const {
         return UniformMapping<Members..., Members2...>(Detail::concat_tuples(m_uniforms, other.m_uniforms));
     }
+    template<class Member> auto operator|(Uniform<Member> const& u1) { return operator|(UniformMapping<Member>(u1)); }
 
 private:
     template<class... M2> friend class UniformMapping;
@@ -105,6 +106,10 @@ private:
 
     std::tuple<Uniform<Members>...> m_uniforms;
 };
+
+template<class Member1, class Member2> auto operator|(Uniform<Member1> u1, Uniform<Member2> u2) {
+    return UniformMapping<Member1, Member2>(std::move(u1), std::move(u2));
+}
 
 template<class... Members> UniformMapping<Members...> make_uniform_mapping(Uniform<Members>&&... members) {
     return { std::move(members)... };

@@ -15,9 +15,7 @@ public:
         m_texture_set = tex;
     }
 
-    static inline auto mapping = llgl::make_uniform_mapping(
-        llgl::Uniform { "texture", &Texture::m_texture }, llgl::Uniform { "textureSet", &Texture::m_texture_set }
-    );
+    static inline auto mapping = llgl::Uniform { "texture", &Texture::m_texture } | llgl::Uniform { "textureSet", &Texture::m_texture_set };
 };
 
 }
