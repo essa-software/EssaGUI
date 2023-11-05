@@ -17,7 +17,9 @@ void GUIBuilder::render_range(llgl::Renderer& renderer, llgl::VertexArray<Vertex
 
     if (range.shader_context) {
         renderer.draw_vertices(
-            vao, llgl::DrawState { range.shader_context->shader, llgl::DynamicShader<Gfx::Vertex>::Uniforms { uniforms }, range.type },
+            vao,
+            llgl::DrawState { range.shader_context->shader, llgl::DynamicShader<Gfx::Vertex>::Uniforms { range.shader_context->uniforms },
+                              range.type },
             range.first, range.size
         );
     }
