@@ -43,6 +43,7 @@ public:
         m_transform = m_transform.scale_x(vec.x()).scale_y(vec.y());
         return *this;
     }
+    Shape& set_fill(Fill fill);
 
     llgl::Transform transform() const { return m_transform; }
     // All points are offsetted by -origin() before transforming.

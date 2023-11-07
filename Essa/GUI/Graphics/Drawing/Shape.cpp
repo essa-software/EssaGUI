@@ -138,6 +138,15 @@ std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape c
 }
 
 }
+Shape& Shape::set_fill(Fill fill) {
+    // FIXME: Color shouldn't invalidate
+    if (m_fill.texture() != fill.texture() || m_fill.texture_rect() != fill.texture_rect() || m_fill.color() != fill.color()
+        || (!m_fill.is_visible() && fill.is_visible())) {
+        invalidate();
+    }
+    m_fill = fill;
+    return *this;
+}
 
 void Shape::generate_fill_vertices() const {
     auto fill = this->fill();
