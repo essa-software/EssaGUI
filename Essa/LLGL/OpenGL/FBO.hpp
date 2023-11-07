@@ -22,7 +22,8 @@ public:
 
     void bind(Target = Target::Framebuffer) const;
     void resize(Util::Size2u);
-    Texture const& color_texture() const { return m_color_texture; }
+    Texture const& color_texture() const& { return m_color_texture; }
+    Texture color_texture() && { return std::move(m_color_texture); }
     unsigned id() const { return m_fbo; }
 
     void set_label(std::string const&);
