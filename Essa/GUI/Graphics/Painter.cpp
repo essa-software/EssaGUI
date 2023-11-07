@@ -116,6 +116,10 @@ void Painter::apply_states() const {
         static_cast<GLenum>(m_blending.src_alpha), //
         static_cast<GLenum>(m_blending.dst_alpha)
     );
+    glBlendEquationSeparate(
+        static_cast<GLenum>(m_blending.equation_rgb), //
+        static_cast<GLenum>(m_blending.equation_alpha)
+    );
 }
 
 }

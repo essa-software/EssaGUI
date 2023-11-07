@@ -91,11 +91,21 @@ public:
         OneMinusSrc1Alpha = GL_ONE_MINUS_SRC1_ALPHA,
     };
 
+    enum class BlendingEquation {
+        Add = GL_FUNC_ADD,
+        Subtract = GL_FUNC_SUBTRACT,
+        ReverseSubtract = GL_FUNC_REVERSE_SUBTRACT,
+        Min = GL_MIN,
+        Max = GL_MAX,
+    };
+
     struct Blending {
         BlendingFunc src_rgb;
         BlendingFunc dst_rgb;
+        BlendingEquation equation_rgb = BlendingEquation::Add;
         BlendingFunc src_alpha;
         BlendingFunc dst_alpha;
+        BlendingEquation equation_alpha = BlendingEquation::Add;
     };
     // Set blending used for rendering. NOTE/FIXME: This is applied only
     // on actual rendering, not on individual draw() calls.
