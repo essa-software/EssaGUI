@@ -103,7 +103,7 @@ void TreeView::draw(Gfx::Painter& wnd) const {
             Gfx::RectangleDrawOptions rs;
             rs.fill_color = r % 2 == 0 ? list_even.background : list_odd.background;
             if (r == m_hovered_row) {
-                rs.fill_color = Util::Colors::White;
+                rs.fill_color = rs.fill_color * theme().hover_highlight_factor;
             }
             wnd.deprecated_draw_rectangle(
                 {
