@@ -1,0 +1,21 @@
+@window {
+    width: 500
+    height: 500
+    center_on_screen: true
+    title: "DevTools"
+    
+    main_widget: @TabWidget {
+        @Container {
+            caption: "Debug Switches"
+            layout: @VerticalBoxLayout
+            
+            @ScrollableContainer switches_scroll {
+                widget: @Container {
+                    layout: @VerticalBoxLayout {
+                        padding: 5
+                    }
+                }
+            }
+        }
+    }
+}

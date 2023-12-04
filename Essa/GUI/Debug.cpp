@@ -26,13 +26,19 @@ private:
     std::vector<bool> m_switches;
 };
 
-static DebugSettings s_debug_settings;
-static std::map<std::string, DebugSwitch const*> s_debug_switches;
-static size_t s_current_id = 0;
+namespace {
+
+DebugSettings s_debug_settings;
+std::map<std::string, DebugSwitch const*> s_debug_switches;
+size_t s_current_id = 0;
+
+}
+
+std::map<std::string, DebugSwitch const*>& DebugSwitch::switches() { return s_debug_switches; }
 
 bool is_enabled_from_env(std::string const& switch_) {
     static std::set<std::string> essa_debug_switches = []() {
-        auto essa_debug = getenv("ESSA_DEBUG");
+        auto* essa_debug = getenv("ESSA_DEBUG");
         if (!essa_debug || strcmp(essa_debug, "") == 0) {
             return std::set<std::string> {};
         }

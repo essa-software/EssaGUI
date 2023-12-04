@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -17,6 +18,8 @@ public:
 
     operator bool() const { return get(); }
 
+    static std::map<std::string, DebugSwitch const*>& switches();
+
 private:
     size_t m_id;
 };
@@ -24,15 +27,11 @@ private:
 }
 
 #define DBG_ENABLED(name) __debug_##name
-#define DBG_DECLARE(name)                      \
-    static ::GUI::DebugSwitch __debug_##name { \
-#        name                                  \
-    }
+#define DBG_DECLARE(name) \
+    static ::GUI::DebugSwitch __debug_##name { #name }
 #define DBG_DECLARE_EXTERN(name) extern ::GUI::DebugSwitch __debug_##name;
-#define DBG_DEFINE_GLOBAL(name)                    \
-    /*global*/ ::GUI::DebugSwitch __debug_##name { \
-#        name                                      \
-    }
+#define DBG_DEFINE_GLOBAL(name) \
+    /*global*/ ::GUI::DebugSwitch __debug_##name { #name }
 #define DBG_PRINTLN(name, fmtstr, ...)                                    \
     {                                                                     \
         if (DBG_ENABLED(name)) {                                          \

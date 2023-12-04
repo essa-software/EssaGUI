@@ -2,6 +2,7 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Debug.hpp>
+#include <Essa/GUI/DevTools/DevTools.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
@@ -32,6 +33,7 @@ void HostWindow::close() { llgl::Window::close(); }
 void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 
 DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
+DBG_DECLARE(DevTools);
 
 void HostWindow::handle_events() {
     while (true) {
@@ -43,6 +45,15 @@ void HostWindow::handle_events() {
             break;
         }
         handle_event(*event);
+
+        // FIXME: Don't hack it in here
+        if (DBG_ENABLED(DevTools)) {
+            if (auto* keypress = event->get<llgl::Event::KeyPress>()) {
+                if (keypress->modifiers().ctrl && keypress->modifiers().shift && keypress->code() == llgl::KeyCode::I) {
+                    GUI::Application::the().open_host_window<GUI::DevTools>();
+                }
+            }
+        }
     }
 }
 

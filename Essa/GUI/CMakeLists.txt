@@ -10,6 +10,8 @@ add_library(GUI SHARED
     WidgetTreeRoot.cpp
     WindowRoot.cpp
 
+    DevTools/DevTools.cpp
+
     EML/AST.cpp
     EML/EMLObject.cpp
     EML/EMLResource.cpp
