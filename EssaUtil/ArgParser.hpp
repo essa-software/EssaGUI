@@ -19,6 +19,7 @@ public:
         Handler handler;
         std::string_view name;
         bool is_boolean;
+        std::string_view help_string {};
     };
 
     explicit ArgParser(int argc, char* argv[]);
@@ -39,13 +40,17 @@ public:
         });
     }
 
-    template<class T> void option(std::string_view name, T& target) { m_options.insert({ name, option_handler(name, target) }); }
+    template<class T> void option(std::string_view name, T& target, std::string_view help_string) {
+        auto opt = option_handler(name, target);
+        opt.help_string = help_string;
+        m_options.insert({ name, std::move(opt) });
+    }
 
-    template<class T> void option(std::string_view name, std::optional<T>& target) {
+    template<class T> void option(std::string_view name, std::optional<T>& target, std::string_view help_string) {
         m_options.insert({
             name,
             Option {
-                .handler = [name, &target](std::string_view value) -> Result {
+                .handler = [name, &target, help_string](std::string_view value) -> Result {
                     T out;
                     TRY(option_handler(name, out).handler(value));
                     target = std::move(out);
@@ -53,11 +58,15 @@ public:
                 },
                 .name = name,
                 .is_boolean = std::is_same_v<T, bool>,
+                .help_string = help_string,
             },
         });
     }
 
     Result parse() const;
+    void parse_or_quit() const;
+
+    void display_help() const;
 
 private:
     static ArgParser::PositionalParameter parameter_handler(std::string_view name, int& target);
@@ -69,6 +78,7 @@ private:
     std::vector<PositionalParameter> m_positional_parameters;
     std::vector<PositionalParameter> m_optional_positional_parameters;
     std::map<std::string_view, Option> m_options;
+    bool m_display_help = false;
 };
 
 }

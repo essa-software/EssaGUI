@@ -57,6 +57,8 @@ ArgParser::ArgParser(int argc, char* argv[]) {
     for (int i = 0; i < argc; i++) {
         m_arguments.push_back(std::string_view(argv[i]));
     }
+
+    option("--help", m_display_help, "display this message");
 }
 
 ArgParser::Result ArgParser::parse() const {
@@ -102,6 +104,34 @@ ArgParser::Result ArgParser::parse() const {
         return fmt::format("Missing required parameters: {}", fmt::join(out, ", "));
     }
     return {};
+}
+
+void ArgParser::parse_or_quit() const {
+    auto result = parse();
+    if (result.is_error()) {
+        fmt::println(stderr, "{}", result.release_error());
+        display_help();
+        exit(1);
+    }
+    if (m_display_help) {
+        display_help();
+        exit(0);
+    }
+}
+
+void ArgParser::display_help() const {
+    auto argv0 = m_arguments[0];
+    fmt::print(stderr, "Usage: {} [options...]", argv0);
+    for (auto const& arg : m_positional_parameters) {
+        fmt::print(" {}", arg.name);
+    }
+    for (auto const& arg : m_optional_positional_parameters) {
+        fmt::print(" [{}]", arg.name);
+    }
+    fmt::println("\n\nOptions:");
+    for (auto const& opt : m_options) {
+        fmt::println("  {:20}{}", opt.first, opt.second.help_string);
+    }
 }
 
 }
