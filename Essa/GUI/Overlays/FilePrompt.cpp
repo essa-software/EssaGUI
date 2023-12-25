@@ -47,7 +47,7 @@ FilePrompt::FilePrompt(WidgetTreeRoot& window, Util::UString help_text, Util::US
 
         file_explorer_wnd.root.on_submit = [input](std::filesystem::path path) { input->set_content(Util::UString { path.string() }); };
 
-        file_explorer_wnd.window.show_modal();
+        file_explorer_wnd.window.show_modal(&input->host_window());
     };
 
     // FIXME: Also, why buttons are red by default?
@@ -70,10 +70,10 @@ FilePrompt::FilePrompt(WidgetTreeRoot& window, Util::UString help_text, Util::US
     }
 };
 
-FilePrompt* file_prompt(HostWindow&, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
+FilePrompt* file_prompt(HostWindow& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder) {
     auto prompt
         = GUI::Application::the().open_host_window<FilePrompt>(std::move(help_text), std::move(window_title), std::move(placeholder));
-    prompt.window.show_modal();
+    prompt.window.show_modal(&window);
     return &prompt.root;
 }
 

@@ -319,7 +319,7 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
                 m_model->update_content(m_current_path);
             } catch (std::filesystem::filesystem_error& error) {
                 GUI::message_box(
-                    Util::UString { error.what() }, "Error",
+                    &this->window().host_window(), Util::UString { error.what() }, "Error",
                     {
                         .buttons = GUI::MessageBox::Buttons::Ok,
                         .icon = GUI::MessageBox::Icon::Error,
@@ -369,7 +369,7 @@ void FileExplorer::open_path(std::filesystem::path path) {
     } catch (std::filesystem::filesystem_error& error) {
         m_model->update_content(m_current_path);
         GUI::message_box(
-            Util::UString { error.path1().string() + ": " + error.code().message() }, "Error",
+            &this->window().host_window(), Util::UString { error.path1().string() + ": " + error.code().message() }, "Error",
             {
                 .buttons = GUI::MessageBox::Buttons::Ok,
                 .icon = GUI::MessageBox::Icon::Error,
@@ -383,22 +383,22 @@ void FileExplorer::open_path(std::filesystem::path path) {
     m_list->focus({});
 }
 
-std::optional<std::filesystem::path> FileExplorer::get_path_to_open() {
+std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow* window) {
     auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;
     explorer.window.center_on_screen();
     explorer.root.on_submit = [&](std::filesystem::path const& path) { result = path; };
-    explorer.window.show_modal();
+    explorer.window.show_modal(window);
     return result;
 }
 
-std::optional<std::filesystem::path> FileExplorer::get_directory_to_open() {
+std::optional<std::filesystem::path> FileExplorer::get_directory_to_open(HostWindow* window) {
     auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;
     explorer.window.center_on_screen();
     explorer.root.set_type(FileExplorer::Type::Directory);
     explorer.root.on_submit = [&](std::filesystem::path const& path) { result = path; };
-    explorer.window.show_modal();
+    explorer.window.show_modal(window);
     return result;
 }
 

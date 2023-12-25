@@ -1,8 +1,8 @@
 #include "MessageBox.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/ImageWidget.hpp>
@@ -118,14 +118,14 @@ Widget::EventHandlerResult MessageBox::handle_event(llgl::Event const& event) {
     return Widget::EventHandlerResult::NotAccepted;
 }
 
-MessageBox::ButtonRole message_box(Util::UString message, Util::UString title, MessageBox::Settings settings) {
-    auto msgbox = GUI::Application::the().open_host_window<GUI::MessageBox>(std::move(message), std::move(title), settings);
-    msgbox.window.show_modal();
-    return msgbox.root.clicked_button();
+MessageBox::ButtonRole message_box(HostWindow& host_window, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
+    return message_box(&host_window, std::move(message), std::move(title), { .buttons = buttons });
 }
 
-MessageBox::ButtonRole message_box(HostWindow&, Util::UString message, Util::UString title, MessageBox::Buttons buttons) {
-    return message_box(std::move(message), std::move(title), { .buttons = buttons });
+MessageBox::ButtonRole message_box(HostWindow* host_window, Util::UString message, Util::UString title, MessageBox::Settings settings) {
+    auto msgbox = GUI::Application::the().open_host_window<GUI::MessageBox>(std::move(message), std::move(title), settings);
+    msgbox.window.show_modal(host_window);
+    return msgbox.root.clicked_button();
 }
 
 }

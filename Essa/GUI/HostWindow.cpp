@@ -10,6 +10,7 @@
 #include <Essa/LLGL/OpenGL/Error.hpp>
 #include <Essa/LLGL/Window/Event.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
+#include <EssaUtil/ScopeGuard.hpp>
 
 #include <cassert>
 
@@ -87,7 +88,7 @@ void HostWindow::do_draw() {
 void HostWindow::open_context_menu(ContextMenu menu, Util::Point2i position) {
     auto menu_overlay = GUI::Application::the().open_host_window<ContextMenuOverlay>(std::move(menu));
     menu_overlay.window.set_position(position);
-    menu_overlay.window.show_modal();
+    menu_overlay.window.show_modal(this);
 }
 
 TooltipOverlay& HostWindow::add_tooltip(Util::Point2u position, Tooltip t) const {
@@ -101,7 +102,7 @@ Theme const& HostWindow::theme() const { return Application::the().theme(); }
 
 Gfx::ResourceManager const& HostWindow::resource_manager() const { return Application::the().resource_manager(); }
 
-void HostWindow::show_modal() {
+void HostWindow::show_modal(HostWindow* parent) {
     class ModalDialogEventLoop : public EventLoop {
     public:
         explicit ModalDialogEventLoop(HostWindow& window)
@@ -125,7 +126,7 @@ void HostWindow::show_modal() {
                     if (!event) {
                         break;
                     }
-                    if (!event->is<llgl::EventTypes::WindowResizeEvent>()) {
+                    if (window.m_is_blocked_by_modal_dialog && !event->is<llgl::EventTypes::WindowResizeEvent>()) {
                         continue;
                     }
                     window.handle_event(*event);
@@ -154,6 +155,14 @@ void HostWindow::show_modal() {
         HostWindow& m_window;
     };
 
+    if (parent) {
+        parent->m_is_blocked_by_modal_dialog = true;
+    }
+    Util::ScopeGuard guard = [parent]() {
+        if (parent) {
+            parent->m_is_blocked_by_modal_dialog = false;
+        }
+    };
     ModalDialogEventLoop loop(*this);
     loop.run();
 }

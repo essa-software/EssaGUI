@@ -63,8 +63,8 @@ public:
     CREATE_VALUE(Type, type, Type::File)
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
-    static std::optional<std::filesystem::path> get_path_to_open();
-    static std::optional<std::filesystem::path> get_directory_to_open();
+    static std::optional<std::filesystem::path> get_path_to_open(HostWindow*);
+    static std::optional<std::filesystem::path> get_directory_to_open(HostWindow*);
 
 private:
     Textbox* m_directory_path_textbox {};

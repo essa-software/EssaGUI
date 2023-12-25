@@ -55,7 +55,7 @@ public:
     // FIXME: Rename this to main_widget after removing the old main_widget
     Widget* root_widget() { return WidgetTreeRoot::main_widget(); }
 
-    void show_modal();
+    void show_modal(HostWindow* parent);
     bool is_modal() const { return m_modal; }
 
 private:
@@ -66,6 +66,7 @@ private:
     Util::DelayedInit<Gfx::Painter> m_painter;
 
     bool m_modal = false;
+    bool m_is_blocked_by_modal_dialog = false;
 };
 
 }
