@@ -56,7 +56,6 @@ int main() {
     };
 
     list.set_model(std::make_unique<TestModel>());
-    list.set_display_header(true);
 
     app.run();
     return 0;

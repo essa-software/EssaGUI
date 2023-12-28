@@ -158,7 +158,7 @@
             layout: @VerticalBoxLayout
             
             @TreeView list {
-            
+                display_header: true
             }
         }
     }

@@ -41,6 +41,8 @@ private:
     std::pair<std::vector<size_t>, Model::NodeData>
     recursive_displayed_row_at_index(std::optional<Model::Node>, std::vector<size_t> path, size_t& depth) const;
 
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
+
     std::set<std::vector<size_t>> m_expanded_paths { {} };
     std::optional<std::vector<size_t>> m_focused_path;
     std::optional<size_t> m_last_clicked_row;

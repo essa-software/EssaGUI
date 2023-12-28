@@ -1,4 +1,5 @@
 #include "TreeView.hpp"
+#include "Essa/GUI/EML/AST.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
@@ -350,6 +351,12 @@ Util::Size2i TreeView::content_size() const {
 }
 
 bool TreeView::is_expanded(std::vector<size_t> const& path) const { return m_expanded_paths.contains(path); }
+
+EML::EMLErrorOr<void> TreeView::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
+    TRY(AbstractListView::load_from_eml_object(object, loader));
+    m_display_header = TRY(object.get_property("display_header", EML::Value(false)).to_bool());
+    return {};
+}
 
 EML_REGISTER_CLASS(TreeView);
 
