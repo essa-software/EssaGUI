@@ -5,7 +5,7 @@
 int main() {
     GUI::Application app;
     GUI::message_box(
-        "Test\nmultiline\nAND VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY LONG LINE\nmessage", "test",
+        nullptr, "Test\nmultiline\nAND VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY VERY LONG LINE\nmessage", "test",
         {
             .buttons = GUI::MessageBox::Buttons::Ok,
             .icon = GUI::MessageBox::Icon::Warning,
