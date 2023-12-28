@@ -157,7 +157,7 @@
             caption: "Lists"
             layout: @VerticalBoxLayout
             
-            @TreeView {
+            @TreeView list {
             
             }
         }
