@@ -18,10 +18,31 @@ constexpr float IndentSize = 24;
 
 TreeView::TreeView() { set_double_click_enabled(true); }
 
+std::optional<size_t> TreeView::row_at_y(int local_y) const {
+    auto abs_coords = Util::Point2i(0, local_y) + raw_position().to_vector();
+    auto scrolled_coords = Util::Point2i(0, local_y) - scroll_offset();
+    if (is_mouse_over(abs_coords)) {
+        std::optional<size_t> row = scrolled_coords.y() / theme().line_height;
+        if (m_display_header) {
+            if (*row == 0) {
+                row = {};
+            }
+            else {
+                row = *row - 1;
+            }
+        }
+        return row;
+    }
+    return {};
+}
+
 Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPress const& event) {
-    size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
+    auto row = row_at_y(event.local_position().y());
     m_last_clicked_row = row;
-    auto path = displayed_row_at_index(row);
+    if (!row) {
+        return Widget::EventHandlerResult::NotAccepted;
+    }
+    auto path = displayed_row_at_index(*row);
     if (!path.first.empty()) {
         if (event.button() == llgl::MouseButton::Left) {
             m_focused_path = path.first;
@@ -46,11 +67,14 @@ Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPre
 }
 
 Widget::EventHandlerResult TreeView::on_mouse_double_click(Event::MouseDoubleClick const& event) {
-    size_t row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
+    auto row = row_at_y(event.local_position().y());
+    if (!row) {
+        return EventHandlerResult::NotAccepted;
+    }
     if (row != m_last_clicked_row) {
         return on_mouse_button_press(Event::MouseButtonPress(event.local_position(), llgl::MouseButton::Left));
     }
-    auto path = displayed_row_at_index(row);
+    auto path = displayed_row_at_index(*row);
     if (!path.first.empty()) {
         if (on_double_click) {
             on_double_click(path.second);
@@ -61,9 +85,7 @@ Widget::EventHandlerResult TreeView::on_mouse_double_click(Event::MouseDoubleCli
 }
 
 Widget::EventHandlerResult TreeView::on_mouse_move(Event::MouseMove const& event) {
-    if (is_mouse_over(event.local_position() + raw_position().to_vector())) {
-        m_hovered_row = (event.local_position().y() - scroll_offset().y()) / theme().line_height;
-    }
+    m_hovered_row = row_at_y(event.local_position().y());
     return EventHandlerResult::NotAccepted;
 }
 
