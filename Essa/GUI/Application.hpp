@@ -24,6 +24,7 @@ public:
     static Application& the();
 
     Gfx::ResourceManager const& resource_manager() const { return m_resource_manager; }
+    Gfx::ResourceManager& resource_manager() { return m_resource_manager; }
 
     llgl::TTFFont& font() const { return m_resource_manager.font(); }
     llgl::TTFFont& bold_font() const { return m_resource_manager.bold_font(); }
