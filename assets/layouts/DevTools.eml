@@ -17,5 +17,11 @@
                 }
             }
         }
+        @Container {
+            caption: "Layout Tree"
+            layout: @VerticalBoxLayout
+
+            @TreeView layout_tree {}
+        }
     }
 }

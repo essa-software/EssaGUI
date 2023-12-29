@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Essa/GUI/DevTools/Object.hpp>
 #include <Essa/GUI/EML/EMLObject.hpp>
 #include <Essa/GUI/Event.hpp>
 #include <Essa/GUI/EventLoop.hpp>
@@ -62,7 +63,9 @@ struct LengthVector {
 
 constexpr bool operator==(LengthVector const& a, LengthVector const& b) { return a.x == b.x && a.y == b.y; }
 
-class Widget : public EML::EMLObject {
+class Widget
+    : public EML::EMLObject
+    , public DevToolsObject {
 public:
     Widget() = default;
     Widget(Widget const&) = delete;
@@ -178,7 +181,8 @@ public:
     CREATE_VALUE(Util::Color, background_color, Util::Colors::Transparent)
 
     virtual void dump(std::ostream& out, unsigned depth);
-    virtual void default_values() {};
+    virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
+    virtual Util::UString dev_tools_name() const override;
 
     virtual void eml_construct(WindowRoot& root) {
         set_window_root(root);

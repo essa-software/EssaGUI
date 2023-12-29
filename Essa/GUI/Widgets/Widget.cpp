@@ -317,6 +317,10 @@ EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EM
     return {};
 }
 
+std::vector<DevToolsObject const*> Widget::dev_tools_children() const { return {}; }
+
+Util::UString Widget::dev_tools_name() const { return Util::UString(id()); }
+
 EML_REGISTER_CLASS(Widget);
 
 }

@@ -26,4 +26,6 @@ EML::EMLErrorOr<void> WidgetTreeRoot::load_from_eml_object(EML::Object const& ob
     return {};
 }
 
+std::vector<DevToolsObject const*> WidgetTreeRoot::dev_tools_children() const { return { m_root.get() }; }
+
 }

@@ -84,6 +84,14 @@ WindowRoot& Application::setup_window_root(HostWindow& window, std::unique_ptr<W
     return *root_ptr;
 }
 
+std::vector<DevToolsObject const*> Application::dev_tools_children() const {
+    std::vector<DevToolsObject const*> vec;
+    for (auto const& window : m_host_windows) {
+        vec.push_back(&window);
+    }
+    return vec;
+}
+
 namespace Detail {
 
 SimpleApplicationBase::SimpleApplicationBase(Util::UString const& title, Util::Size2u window_size, std::unique_ptr<Widget> main_widget)

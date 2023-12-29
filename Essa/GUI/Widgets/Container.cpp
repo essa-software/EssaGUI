@@ -2,11 +2,11 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Debug.hpp>
-#include <Essa/GUI/WindowRoot.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
+#include <Essa/GUI/WindowRoot.hpp>
 #include <Essa/LLGL/Window/Event.hpp>
 #include <EssaUtil/Config.hpp>
 #include <cassert>
@@ -471,6 +471,14 @@ void Container::dump(std::ostream& out, unsigned depth) {
     for (auto& w : m_widgets) {
         w->dump(out, depth);
     }
+}
+
+std::vector<DevToolsObject const*> Container::dev_tools_children() const {
+    std::vector<DevToolsObject const*> vec;
+    for (auto const& w : m_widgets) {
+        vec.push_back(w.get());
+    }
+    return vec;
 }
 
 Widget* Container::find_widget_by_id(std::string_view id) const {

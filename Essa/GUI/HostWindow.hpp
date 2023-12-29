@@ -58,6 +58,8 @@ public:
     void show_modal(HostWindow* parent);
     bool is_modal() const { return m_modal; }
 
+    virtual Util::UString dev_tools_name() const override { return title(); }
+
 private:
     friend WidgetTreeRoot;
     friend class Application;

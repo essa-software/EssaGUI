@@ -14,7 +14,9 @@ class Theme;
 class Widget;
 class WindowRoot;
 
-class Application : public EventLoop {
+class Application
+    : public EventLoop
+    , public DevToolsObject {
 public:
     Application();
     ~Application();
@@ -57,6 +59,9 @@ public:
 
     // This is called every tick, just before updating host windows.
     std::function<void()> on_tick;
+
+    virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
+    virtual Util::UString dev_tools_name() const override { return "Application"; }
 
 private:
     virtual void tick() override;

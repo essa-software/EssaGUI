@@ -14,7 +14,9 @@
 namespace GUI {
 
 // TODO: Rename this to AbstractWindow or something like this
-class WidgetTreeRoot : public EML::EMLObject {
+class WidgetTreeRoot
+    : public EML::EMLObject
+    , public DevToolsObject {
 public:
     WidgetTreeRoot() = default;
     WidgetTreeRoot(WidgetTreeRoot const&) = delete;
@@ -59,6 +61,9 @@ public:
     // Override default event handler. If this returns Accepted,
     // no events will be passed to widgets.
     std::function<GUI::Widget::EventHandlerResult(llgl::Event const&)> on_event;
+
+    virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
+    virtual Util::UString dev_tools_name() const override { return "Generic WTR"; }
 
 protected:
     void set_root(std::unique_ptr<WindowRoot> root) { m_root = std::move(root); }

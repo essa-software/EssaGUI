@@ -11,7 +11,9 @@ class WidgetTreeRoot;
 // that can be loaded from EML. This is to support attaching
 // them to any kind of Window (HostWindow, MDIWindow).
 // FIXME: Some better names (GUIScreen?)
-class WindowRoot : public EML::EMLObject {
+class WindowRoot
+    : public EML::EMLObject
+    , public DevToolsObject {
 public:
     explicit WindowRoot(WidgetTreeRoot& wnd)
         : m_window(wnd) { }
@@ -48,10 +50,14 @@ public:
             m_main_widget->do_update();
     }
 
+    auto const* main_widget() const { return m_main_widget.get(); }
     auto* main_widget() { return m_main_widget.get(); }
 
     /*restricted(WidgetTreeRoot)*/ void relayout_and_draw(Gfx::Painter&);
     /*restricted(WidgetTreeRoot)*/ void do_handle_event(llgl::Event const& event);
+
+    /*restricted(DevTools)*/ virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
+    /*restricted(DevTools)*/ virtual Util::UString dev_tools_name() const override { return "Generic WindowRoot"; }
 
 protected:
     void close();
