@@ -45,11 +45,11 @@ void Host::focus_window_it(WindowList::iterator new_focused_it) {
 }
 
 Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
-    Widget::do_handle_event(event);
+    auto base_result = Widget::do_handle_event(event);
 
     auto transformed_event = event.relativized(raw_position().to_vector());
     if (!is_affected_by_event(transformed_event)) {
-        return Widget::EventHandlerResult::NotAccepted;
+        return base_result;
     }
 
     assert(transformed_event.target_type() != llgl::EventTargetType::Window);
@@ -108,9 +108,8 @@ Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {
                 break;
             }
         }
-        return Widget::EventHandlerResult::NotAccepted;
     }
-    return is_focused() ? Widget::EventHandlerResult::Accepted : Widget::EventHandlerResult::NotAccepted;
+    return base_result;
 }
 
 DBG_DECLARE(GUI_DrawOverlayBounds);
