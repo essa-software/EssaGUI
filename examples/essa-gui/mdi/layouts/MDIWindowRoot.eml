@@ -1,0 +1,11 @@
+@wtr {
+    width: 256
+    height: 256
+    title: "MDI Window"
+    main_widget: @Container {
+        layout: @VerticalBoxLayout { spacing: 5 padding: 10 }
+        
+        @TextButton { content: "Test button" active_content: "Test button" toggleable: true }
+        @Textbox { placeholder: "Test textbox" }
+    }
+}
