@@ -9,8 +9,7 @@
 
 namespace GUI::MDI {
 
-Host::Host()
-    : m_next_window_position({ 10, 10 + theme().tool_window_title_bar_size }) {
+Host::Host() {
     struct BackgroundWindow : public WindowRoot {
         BackgroundWindow(WidgetTreeRoot& window)
             : WindowRoot(window) {
@@ -18,7 +17,10 @@ Host::Host()
         }
     };
     m_background_window = &open_window<BackgroundWindow>().window;
+    m_background_window->set_position({});
     m_background_window->set_always_on_bottom(true);
+
+    m_next_window_position = { 10, 10 + theme().tool_window_title_bar_size };
 }
 
 void Host::focus_window_it(WindowList::iterator new_focused_it) {
@@ -134,10 +136,13 @@ void Host::draw(Gfx::Painter& painter) const {
 
 Window& Host::open_window_impl(std::unique_ptr<Window> overlay) {
     auto* overlay_ptr = overlay.get();
-    m_next_window_position += Util::Vector2u(theme().tool_window_title_bar_size * 2, theme().tool_window_title_bar_size * 2);
-    if (m_next_window_position.x() > raw_size().x() - theme().tool_window_title_bar_size
-        || m_next_window_position.y() > raw_size().y() - theme().tool_window_title_bar_size)
-        m_next_window_position = { 10, 10 };
+    if (overlay_ptr->position() == Util::Point2i {}) {
+        overlay_ptr->set_position(m_next_window_position.cast<int>());
+        m_next_window_position += Util::Vector2u(theme().tool_window_title_bar_size, theme().tool_window_title_bar_size * 2);
+        if (m_next_window_position.x() > raw_size().x() - theme().tool_window_title_bar_size
+            || m_next_window_position.y() > raw_size().y() - theme().tool_window_title_bar_size)
+            m_next_window_position = { 10, 10 };
+    }
     m_windows.push_back(std::move(overlay));
     if (!overlay_ptr->ignores_events()) {
         focus_window(*overlay_ptr);
