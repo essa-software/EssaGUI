@@ -47,6 +47,8 @@ public:
 
     UString decode_infallible(UString::Encoding = UString::Encoding::Utf8, uint32_t replacement = 0xfffd) const;
     ErrorOr<UString, UString::DecodingErrorTag> decode(UString::Encoding = UString::Encoding::Utf8) const;
+    // std::string's are basically byte buffers so it makes sense to do this
+    std::string to_std_string() const;
 
     // Remove s bytes from back
     void take_from_back(size_t s = 1);

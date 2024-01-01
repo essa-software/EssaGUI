@@ -80,6 +80,8 @@ UString Buffer::decode_infallible(UString::Encoding encoding, uint32_t replaceme
 
 ErrorOr<UString, UString::DecodingErrorTag> Buffer::decode(UString::Encoding encoding) const { return UString::decode(span(), encoding); }
 
+std::string Buffer::to_std_string() const { return std::string(reinterpret_cast<char const*>(m_data), m_size); }
+
 void Buffer::insert(size_t position, uint8_t byte) { insert(position, { &byte, 1 }); }
 
 void Buffer::insert(size_t position, std::span<uint8_t const> data) {
