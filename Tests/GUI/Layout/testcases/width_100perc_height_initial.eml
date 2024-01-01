@@ -1,0 +1,8 @@
+// 512x128
+@Container {
+    layout: @VerticalBoxLayout
+    
+    @Textfield {
+        width: 100%
+    }
+}

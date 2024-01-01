@@ -6,11 +6,13 @@
 #include <EssaUtil/Stream/File.hpp>
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <regex>
 
 struct TestCase {
     std::string test_name;
     std::string eml_input;
     std::string expected_layout_dump;
+    Util::Size2i wtr_size;
 };
 std::ostream& operator<<(std::ostream& out, TestCase const& ts) { return out << "TestCase(" << ts.test_name << ")"; }
 
@@ -30,6 +32,8 @@ TEST_P(EMLTest, EMLTest) {
 
     class MockWTR : public GUI::WidgetTreeRoot {
     public:
+        explicit MockWTR(TestCase const& testcase)
+            : m_testcase(testcase) { }
         virtual void setup(Util::UString, Util::Size2u, llgl::WindowSettings const&) override { }
         virtual void set_size(Util::Size2i) override { }
         virtual void center_on_screen() override { }
@@ -39,9 +43,12 @@ TEST_P(EMLTest, EMLTest) {
             return hw;
         }
         virtual Util::Point2i position() const override { return {}; }
-        virtual Util::Size2i size() const override { return { 512, 512 }; }
+        virtual Util::Size2i size() const override { return m_testcase.wtr_size; }
+
+    private:
+        TestCase const& m_testcase;
     };
-    MockWTR wtr;
+    MockWTR wtr(p);
     GUI::WindowRoot root(wtr);
 
     auto& main_widget = root.set_main_widget<GUI::Container>();
@@ -65,6 +72,16 @@ TEST_P(EMLTest, EMLTest) {
     }
 }
 
+namespace re {
+
+std::optional<std::smatch> match(std::regex const& pattern, std::string const& string) {
+    std::smatch match;
+    bool matched = std::regex_search(string, match, pattern);
+    return matched ? match : std::optional<std::smatch>();
+}
+
+}
+
 std::vector<TestCase> read_test_cases() {
     std::vector<TestCase> tests;
     for (auto const& file : std::filesystem::recursive_directory_iterator(TESTCASES_PATH)) {
@@ -73,11 +90,23 @@ std::vector<TestCase> read_test_cases() {
             stem.replace_extension("");
             fmt::print("{}\n", stem.string());
             auto input_file = MUST(Util::ReadableFileStream::read_file(stem.replace_extension(".eml")));
+
+            // Read size
+            auto input_file_str = MUST(input_file.decode());
+            auto nl_pos = input_file_str.find("\n");
+            auto first_line = (nl_pos ? input_file_str.substring(0, *nl_pos) : input_file_str).encode();
+
+            std::smatch match;
+            auto matched = std::regex_search(first_line, match, std::regex("// (\\d*)x(\\d*)"));
+            Util::Size2i wtr_size = matched && (match.size() == 3) ? Util::Size2i(std::stoi(match[1].str()), std::stoi(match[2].str()))
+                                                                   : Util::Size2i(512, 512);
+
             auto expectation_file = MUST(Util::ReadableFileStream::read_file(stem.replace_extension(".txt")));
             tests.push_back(TestCase {
                 .test_name = file.path().lexically_relative(TESTCASES_PATH).string(),
                 .eml_input = MUST(input_file.decode()).encode(),
                 .expected_layout_dump = MUST(expectation_file.decode()).encode(),
+                .wtr_size = wtr_size,
             });
         }
     }

@@ -64,7 +64,7 @@ void BoxLayout::run(Container& container) {
             case Util::Length::Px:
                 return static_cast<int>(size.value());
             case Util::Length::Percent:
-                return static_cast<int>(size.value() * container.raw_size().main(m_orientation) / 100);
+                return static_cast<int>(size.value() * container.raw_size().cross(m_orientation) / 100);
             case Util::Length::Initial:
                 break;
             }
