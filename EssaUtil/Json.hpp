@@ -1,18 +1,22 @@
 #pragma once
 
+#include <EssaUtil/Config.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>
+
 namespace JSON {
-class Node;
+class Object;
 class Value;
 
 template<class T> class PrimitiveWrapper {
@@ -22,39 +26,36 @@ private:
 public:
     PrimitiveWrapper(T val = 0)
         : val(val) { }
+
     operator T&() { return val; }
     T* operator&() { return &val; }
 };
 
 using Number = PrimitiveWrapper<double>;
 
-class Array : public std::vector<Node> {
+class Array : public std::vector<Value> {
 public:
     Array() = default;
     Array(std::initializer_list<Value> const& _list);
 };
 
-class Node {
-    std::map<std::string, Value> m_data;
-    std::shared_ptr<Value> m_value;
-
-    std::string stringify_value(Value const& val) const;
-
+class Object : public std::map<std::string, Value> {
 public:
-    Node() = default;
-    Node(std::initializer_list<std::pair<std::string, Value>> _list);
+    Object() = default;
+    Object(std::initializer_list<std::pair<std::string, Value>> _list);
 
-    Node(Value val);
+    template<typename T> Object& add_value(std::string const& key, T const& val);
 
-    template<typename T> Node& add_value(std::string const& key, T const& val);
-
-    Node& add_value(std::string const& key, Value const& val);
+    Object& add_value(std::string const& key, Value const& val);
 
     std::string stringify() const;
+
+    Value const& operator[](std::string const& key) const;
+    std::optional<std::reference_wrapper<Value const>> get(std::string const& key) const;
 };
 
 class Value {
-    using Type = std::variant<Number, bool, std::string, Node, Array>;
+    using Type = std::variant<Number, bool, std::string, Object, Array>;
     Type m_data;
     static Value parse_value(std::string str);
     static Array parse_array(std::string str);
@@ -64,10 +65,27 @@ public:
 
     template<typename T> bool is_type_of() const { return std::holds_alternative<T>(m_data); }
 
-    template<typename T> T get() const { return std::get<T>(m_data); }
+    template<typename T> T const& get() const { return std::get<T>(m_data); }
 
-    static Node parse_node(std::string str);
+    static Object parse_object(std::string str);
+    std::string stringify() const;
 };
+
+inline Value const& Object::operator[](std::string const& key) const {
+    auto it = find(key);
+    if (it == end()) {
+        ESSA_UNREACHABLE;
+    }
+    return it->second;
+}
+
+inline std::optional<std::reference_wrapper<Value const>> Object::get(std::string const& key) const {
+    auto it = find(key);
+    if (it == end()) {
+        return std::nullopt;
+    }
+    return it->second;
+}
 
 inline Array::Array(std::initializer_list<Value> const& _list) {
     for (auto const& n : _list) {
@@ -75,26 +93,26 @@ inline Array::Array(std::initializer_list<Value> const& _list) {
     }
 }
 
-inline std::string Node::stringify_value(Value const& val) const {
+inline std::string Value::stringify() const {
     std::stringstream ss;
-    if (val.is_type_of<Number>()) {
-        Number v = val.get<Number>();
+    if (is_type_of<Number>()) {
+        Number v = get<Number>();
         ss << v;
     }
-    else if (val.is_type_of<bool>()) {
-        bool v = val.get<bool>();
+    else if (is_type_of<bool>()) {
+        bool v = get<bool>();
         ss << (v ? "true" : "false");
     }
-    else if (val.is_type_of<std::string>()) {
-        std::string v = val.get<std::string>();
+    else if (is_type_of<std::string>()) {
+        std::string v = get<std::string>();
         ss << "\"" << v << "\"";
     }
-    else if (val.is_type_of<Node>()) {
-        Node v = val.get<Node>();
+    else if (is_type_of<Object>()) {
+        Object v = get<Object>();
         ss << v.stringify();
     }
-    else if (val.is_type_of<Array>()) {
-        Array v = val.get<Array>();
+    else if (is_type_of<Array>()) {
+        Array v = get<Array>();
         ss << "[";
         int i = 0;
         for (auto const& n : v) {
@@ -109,45 +127,38 @@ inline std::string Node::stringify_value(Value const& val) const {
     return ss.str();
 }
 
-inline Node::Node(std::initializer_list<std::pair<std::string, Value>> _list) {
+inline Object::Object(std::initializer_list<std::pair<std::string, Value>> _list) {
     for (auto const& p : _list) {
-        m_data.insert(p);
+        insert(p);
     }
 }
 
-inline Node::Node(Value val) { m_value = std::make_shared<Value>(val); }
-
-inline std::string Node::stringify() const {
+inline std::string Object::stringify() const {
     std::stringstream ss;
-    if (m_value) {
-        ss << stringify_value(*m_value);
-    }
-    else {
-        ss << "{";
-        int it = 0;
+    ss << "{";
+    int it = 0;
 
-        for (auto const& p : m_data) {
-            ss << "\"" << p.first << "\":" << stringify_value(p.second);
-            if (it < (int)m_data.size() - 1) {
-                ss << ",";
-            }
-            it++;
+    for (auto const& p : *this) {
+        ss << "\"" << p.first << "\":" << p.second.stringify();
+        if (it < (int)size() - 1) {
+            ss << ",";
         }
-
-        ss << "}";
+        it++;
     }
+
+    ss << "}";
 
     return ss.str();
 }
 
-template<typename T> Node& Node::add_value(std::string const& key, T const& val) {
-    m_data.insert({ key, val });
+template<typename T> Object& Object::add_value(std::string const& key, T const& val) {
+    insert({ key, val });
 
     return *this;
 }
 
-inline Node& Node::add_value(std::string const& key, Value const& val) {
-    m_data.insert({ key, val });
+inline Object& Object::add_value(std::string const& key, Value const& val) {
+    insert({ key, val });
 
     return *this;
 }
@@ -160,7 +171,9 @@ inline Array Value::parse_array(std::string str) {
     Array result;
 
     str = str.substr(1, str.size() - 2);
-    bool escape = false, read_str = false, read_arr = false;
+    bool escape = false;
+    bool read_str = false;
+    bool read_arr = false;
     std::string val_str;
 
     for (auto const& c : str) {
@@ -182,17 +195,17 @@ inline Array Value::parse_array(std::string str) {
 
         if (c == ' ' && !read_str)
             continue;
-        else if (c == '\\' && read_str) {
+        if (c == '\\' && read_str) {
             escape = true;
             continue;
         }
-        else if (c == '\"' && !escape) {
+        if (c == '\"' && !escape) {
             read_str = !read_str;
             val_str += c;
 
             continue;
         }
-        else if (c == ',') {
+        if (c == ',') {
             Value obj = Value::parse_value(val_str);
             result.push_back(obj);
 
@@ -212,44 +225,47 @@ inline Array Value::parse_array(std::string str) {
 
 inline Value Value::parse_value(std::string str) {
     if (str.starts_with('{')) {
-        Value result(Value::parse_node(str));
+        Value result(Value::parse_object(str));
         return result;
     }
-    else if (str.starts_with('[')) {
+    if (str.starts_with('[')) {
         Value result(Value::parse_array(str));
         return result;
     }
-    else if (str.starts_with('\"')) {
+    if (str.starts_with('\"')) {
         if (!str.ends_with('\"')) {
             throw std::runtime_error("Missing \'\"\' to close JSON string!");
         }
         Value result(str.substr(1, str.size() - 2));
         return result;
     }
-    else if (str == "true" || str == "false") {
+    if (str == "true" || str == "false") {
         Value result(str == "true" ? true : false);
         return result;
     }
-    else {
-        try {
-            Value result(std::stod(str));
-            return result;
-        } catch (...) {
-            throw std::runtime_error("Unrecognized JSON value!");
-        }
+    try {
+        Value result(std::stod(str));
+        return result;
+    } catch (...) {
+        throw std::runtime_error("Unrecognized JSON value!");
     }
 }
 
-inline Node Value::parse_node(std::string str) {
+inline Object Value::parse_object(std::string str) {
     if (!str.starts_with('{') || !str.ends_with('}')) {
-        throw std::runtime_error("JSON node not limited!");
+        throw std::runtime_error("JSON object not limited!");
     }
 
     str = str.substr(1, str.size() - 2);
-    bool escape = false, key = true, val = false, read_str = false, read_arr = false;
-    std::string key_str, val_str;
+    bool escape = false;
+    bool key = true;
+    bool val = false;
+    bool read_str = false;
+    bool read_arr = false;
+    std::string key_str;
+    std::string val_str;
 
-    Node result;
+    Object result;
 
     for (auto const& c : str) {
         if (read_arr) {
@@ -272,11 +288,11 @@ inline Node Value::parse_node(std::string str) {
 
         if (c == ' ' && !read_str)
             continue;
-        else if (c == '\\' && read_str) {
+        if (c == '\\' && read_str) {
             escape = true;
             continue;
         }
-        else if (c == '\"' && !escape) {
+        if (c == '\"' && !escape) {
             read_str = !read_str;
 
             // if(key){
@@ -287,14 +303,14 @@ inline Node Value::parse_node(std::string str) {
 
             continue;
         }
-        else if (c == ':') {
+        if (c == ':') {
             if (!key)
                 throw std::runtime_error("Missing key!");
             key = false;
             val = true;
             continue;
         }
-        else if (c == ',') {
+        if (c == ',') {
             if (!val)
                 throw std::runtime_error("Missing value!");
             key = true;
@@ -322,6 +338,6 @@ inline Node Value::parse_node(std::string str) {
     return result;
 }
 
-inline Node Marshall(std::string const& str) { return Value::parse_node(str); }
+inline Object Marshall(std::string const& str) { return Value::parse_object(str); }
 
 }
