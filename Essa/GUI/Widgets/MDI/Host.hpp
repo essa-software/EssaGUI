@@ -61,6 +61,7 @@ public:
     }
 
     virtual EventHandlerResult do_handle_event(GUI::Event const&) override;
+    virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
 
     /*restricted(HostWindow)*/ void remove_closed_windows();
 

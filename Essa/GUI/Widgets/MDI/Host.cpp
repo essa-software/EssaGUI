@@ -206,4 +206,12 @@ void Host::remove_closed_windows() {
     });
 }
 
+std::vector<DevToolsObject const*> Host::dev_tools_children() const {
+    std::vector<DevToolsObject const*> children;
+    for (auto const& wnd : m_windows) {
+        children.push_back(wnd.get());
+    }
+    return children;
+}
+
 }
