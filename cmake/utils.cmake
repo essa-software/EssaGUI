@@ -1,7 +1,9 @@
 # TODO: Implement portable installs
 
+option(ESSA_FORCE_DEVEL "Force building in Development mode even on Release" OFF)
+
 unset(ESSA_IS_PRODUCTION CACHE)
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT ESSA_FORCE_DEVEL)
     set(ESSA_IS_PRODUCTION 1 CACHE INTERNAL "Is production")
     message("Building in production mode")
 else()
