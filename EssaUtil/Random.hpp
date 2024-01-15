@@ -54,9 +54,11 @@ inline DefaultEngine& default_engine() {
     static DefaultEngine rng;
     return rng;
 }
-
 // Generate random T ∈ ℤ ∩ <min; max>
 template<std::integral T> T integer(T min, T max) { return default_engine().next_int<T>(min, max); }
+
+// Generate random T ∈ ℤ chosen from all possible values of T.
+template<std::integral T> T integer() { return integer(std::numeric_limits<T>::min(), std::numeric_limits<T>::max()); }
 
 // Generate random T ∈ ℝ ∩ <min; max)
 template<std::floating_point T> T floating(T min, T max) { return default_engine().next_float<T>(min, max); }
