@@ -1,7 +1,7 @@
 #include "TreeView.hpp"
-#include "Essa/GUI/EML/AST.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
 #include <Essa/GUI/Graphics/Drawing/Fill.hpp>
 #include <Essa/GUI/Graphics/Drawing/Outline.hpp>
@@ -26,7 +26,7 @@ std::optional<size_t> TreeView::row_at_y(int local_y) const {
         std::optional<size_t> row = scrolled_coords.y() / theme().line_height;
         if (m_display_header) {
             if (*row == 0) {
-                row = {};
+                row = std::nullopt;
             }
             else {
                 row = *row - 1;
