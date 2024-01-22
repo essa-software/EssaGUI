@@ -1,5 +1,6 @@
 add_library(Geometry SHARED
     Distance.cpp
+    Intersection.cpp
     Line2D.cpp
 )
 add_library(Essa::Geometry ALIAS Geometry)
