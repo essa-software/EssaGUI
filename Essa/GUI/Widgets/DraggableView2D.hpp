@@ -33,7 +33,11 @@ protected:
     virtual EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
 
 private:
+    void set_zoom_with_animation(float new_zoom, Util::Point2i const& origin);
+    virtual void update() override;
+
     float m_zoom = 1;
+    float m_zoom_speed = 0.f;
     bool m_zoom_enabled = true;
     Util::Vector2f m_offset;
 
