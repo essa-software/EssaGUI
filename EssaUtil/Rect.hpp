@@ -28,6 +28,8 @@ public:
         , width(size.x())
         , height(size.y()) { }
 
+    static Rect from_points(Point2<T> p1, Point2<T> p2) { return Rect(p1, (p2 - p1).to_size()).with_negative_size_fixed(); }
+
     template<class U>
     explicit Rect(Rect<U> const& other)
         : left(other.left)
