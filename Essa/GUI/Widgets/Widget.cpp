@@ -224,9 +224,11 @@ bool Widget::is_affected_by_event(Event const& event) const {
 void Widget::do_draw(Gfx::Painter& painter) const {
     Gfx::ClipViewScope scope(painter, parent_relative_rect(), Gfx::ClipViewScope::Mode::Intersect);
 
-    Gfx::RectangleDrawOptions background;
-    background.fill_color = m_background_color;
-    painter.deprecated_draw_rectangle(local_rect().cast<float>(), background);
+    painter.draw(Gfx::Drawing::Rectangle {
+        local_rect().cast<float>(),
+        Gfx::Drawing::Fill {}.set_color(m_background_color),
+        Gfx::Drawing::Outline::none(),
+    });
 
     this->draw(painter);
 
