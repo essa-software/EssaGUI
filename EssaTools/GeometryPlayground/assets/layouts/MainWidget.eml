@@ -1,0 +1,7 @@
+@Container {
+    layout: @VerticalBoxLayout
+    
+    @PlotView plot {
+        background_color: #d0d0d0
+    }
+}

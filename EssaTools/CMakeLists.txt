@@ -1,2 +1,3 @@
 add_subdirectory(EMLPlayground)
+add_subdirectory(GeometryPlayground)
 add_subdirectory(TransformEditor)
