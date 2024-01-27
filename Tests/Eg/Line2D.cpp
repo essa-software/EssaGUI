@@ -56,6 +56,26 @@ TEST(Line2DTest, ConstructionAndBasicParams) {
     }
 }
 
+TEST(Line2DTest, Project) {
+    // arbitrary
+    {
+        auto line = Eg::Line2D::from_axbyc({ 2, 3, 1 });
+        EXPECT_TRUE(line.project({ 0.2, 0.3 }).is_approximately_equal(Util::Point2f(-0.15384614, -0.23076925)));
+    }
+    // vertical
+    {
+        auto line = Eg::Line2D::vertical(5);
+        EXPECT_EQ(line.project({ 0, 0 }), Util::Point2f(5, 0));
+        EXPECT_EQ(line.project({ 5, 0 }), Util::Point2f(5, 0));
+    }
+    // horizontal
+    {
+        auto line = Eg::Line2D::horizontal(5);
+        EXPECT_EQ(line.project({ 0, 0 }), Util::Point2f(0, 5));
+        EXPECT_EQ(line.project({ 0, 5 }), Util::Point2f(0, 5));
+    }
+}
+
 int main() {
     testing::InitGoogleTest();
     return RUN_ALL_TESTS();
