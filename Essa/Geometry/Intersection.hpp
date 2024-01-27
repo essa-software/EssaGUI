@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Essa/Geometry/Line2D.hpp>
+#include <Essa/Geometry/LineSegment2D.hpp>
 #include <variant>
 
 namespace Eg {
@@ -17,6 +18,7 @@ public:
 
     bool is_point() const { return std::holds_alternative<Util::Point2f>(m_v); }
     bool operator==(Line2DIntersection const& l2l2i) const = default;
+    bool operator==(Util::Point2f const& point) const { return is_point() && std::get<Util::Point2f>(m_v) == point; }
     operator Util::Point2f() const { return std::get<Util::Point2f>(m_v); }
     Util::Point2f point() const { return *this; }
 
@@ -25,5 +27,8 @@ private:
 };
 
 Line2DIntersection intersection(Line2D const&, Line2D const&);
+Line2DIntersection intersection(LineSegment2D const&, Line2D const&);
+inline Line2DIntersection intersection(Line2D const& a, LineSegment2D const& b) { return intersection(b, a); }
+Line2DIntersection intersection(LineSegment2D const&, LineSegment2D const&);
 
 }

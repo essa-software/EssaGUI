@@ -18,4 +18,32 @@ Line2DIntersection intersection(Line2D const& line1, Line2D const& line2) {
     return { { detx / det, dety / det } };
 }
 
+Line2DIntersection intersection(LineSegment2D const& line1, Line2D const& line2) {
+    auto intersection = Eg::intersection(line2, line1.extension());
+    if (intersection.is_point()) {
+        if (line1.bounding_box().contains(intersection.point())) {
+            return intersection.point();
+        }
+        return Line2DIntersection::Distinct;
+    }
+    return intersection;
+}
+
+Line2DIntersection intersection(LineSegment2D const& line1, LineSegment2D const& line2) {
+    auto intersection = Eg::intersection(line1.extension(), line2.extension());
+    if (intersection.is_point()) {
+        if (line1.bounding_box().contains(intersection.point()) && line2.bounding_box().contains(intersection.point())) {
+            return intersection.point();
+        }
+        return Line2DIntersection::Distinct;
+    }
+    if (intersection == Line2DIntersection::Overlapping) {
+        if (line1.bounding_box().contains(line2.point1()) || line1.bounding_box().contains(line2.point2())) {
+            return Line2DIntersection::Overlapping;
+        }
+        return Line2DIntersection::Distinct;
+    }
+    return intersection;
+}
+
 }
