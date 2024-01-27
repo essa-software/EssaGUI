@@ -213,26 +213,32 @@ Util::ParseErrorOr<Util::Color> Parser::parse_hexcolor() {
     }
 
     if (str.size() != 6 && str.size() != 8) {
-        return error_in_already_read("Not valid hexadecimal number");
+        return error_in_already_read("Hex color must be in format #RRGGBB or #RRGGBBAA");
     }
 
     unsigned color = 0;
 
-    for (const auto& c : str) {
-        if (c >= '0' && c <= '9')
-            color += c - 48;
+    for (auto const& c : str) {
+        color <<= 4;
+        if (c >= '0' && c <= '9') {
+            color += c - '0';
+        }
         else if (c >= 'A' && c <= 'F') {
-            color += c - 55;
+            color += c - 'A' + 10;
+        }
+        else if (c >= 'a' && c <= 'f') {
+            color += c - 'a' + 10;
         }
         else {
-            return error_in_already_read("Not valid hexadecimal number");
+            return error_in_already_read("Invalid hex digit");
         }
-        color <<= 4;
     }
 
     if (str.size() == 6) {
         color <<= 8;
+        color |= 0xFF;
     }
+    fmt::print("{:x}\n", color);
 
     return Util::Color(color);
 }
