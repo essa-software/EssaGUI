@@ -31,8 +31,8 @@ class TabWidget : public Container {
 public:
     virtual void on_init() override;
 
-    template<class... Args> Container& add_tab(Util::UString caption, Args&&... args) {
-        auto tab = m_tab_container->add_widget<Container>(std::forward<Args>(args)...);
+    template<class T, class... Args> T& add_tab(Util::UString caption, Args&&... args) {
+        auto tab = m_tab_container->add_widget<T>(std::forward<Args>(args)...);
         setup_tab(caption, tab);
         return *tab;
     }
@@ -44,13 +44,13 @@ public:
 
 private:
     unsigned m_index = 0;
-    void setup_tab(Util::UString caption, Container* tab);
+    void setup_tab(Util::UString caption, Widget* tab);
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
 
     TabSelectWidget* m_tab_select {};
     Container* m_tab_container {};
-    std::vector<Container*> m_tabs;
+    std::vector<Widget*> m_tabs;
 
 protected:
     using Container::add_created_widget;
