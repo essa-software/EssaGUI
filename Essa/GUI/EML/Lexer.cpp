@@ -74,6 +74,10 @@ Util::OsErrorOr<std::vector<Token>> Lexer::lex() {
                 TRY(consume());
                 tokens.push_back(create_token(TokenType::CurlyClose, "}", start));
                 break;
+            case '-':
+                TRY(consume());
+                tokens.push_back(create_token(TokenType::Dash, "-", start));
+                break;
             case '.':
                 TRY(consume());
                 if (TRY(peek()) == '.') {

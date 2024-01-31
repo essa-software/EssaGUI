@@ -19,6 +19,7 @@ enum class TokenType {
     Comma,       // ,
     CurlyOpen,   // {
     CurlyClose,  // }
+    Dash,        // -
     DoubleDot,   // ..
     Hash,        // #
     ParenOpen,   // (

@@ -107,7 +107,29 @@ Util::ParseErrorOr<Property> Parser::parse_property() {
 }
 
 Util::ParseErrorOr<Value> Parser::parse_value() {
-    auto token = peek();
+    auto parse_number_with_unit = [this](bool negative, Token const& token) -> Util::ParseErrorOr<Value> {
+        auto number = MUST(token.value().parse<int>());
+        float mul = negative ? -1.0f : 1.0f;
+        const auto* maybe_unit = peek();
+        if (!maybe_unit)
+            return error("Expected unit, got EOF");
+        if (maybe_unit->type() == TokenType::PercentSign) {
+            get();
+            return EML::Value(Util::Length { mul * static_cast<float>(number), Util::Length::Percent });
+        }
+        if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px") {
+            get();
+            return EML::Value(Util::Length { mul * static_cast<float>(number), Util::Length::Px });
+        }
+        if (maybe_unit->type() == TokenType::DoubleDot) {
+            get();
+            auto range_max = TRY(expect(TokenType::Number));
+            return EML::Value(Range { mul * static_cast<double>(number), MUST(range_max.value().parse<float>()) });
+        }
+        return EML::Value(mul * static_cast<double>(number));
+    };
+
+    auto const* token = peek();
     if (!token) {
         return error("Unexpected EOF in value");
     }
@@ -116,26 +138,14 @@ Util::ParseErrorOr<Value> Parser::parse_value() {
         get();
         return EML::Value(TRY(parse_hexcolor()));
     }
+    case TokenType::Dash: {
+        get();
+        auto number_token = TRY(expect(TokenType::Number));
+        return parse_number_with_unit(true, number_token);
+    }
     case TokenType::Number: {
         get();
-        auto number = MUST(token->value().parse<int>());
-        auto maybe_unit = peek();
-        if (!maybe_unit)
-            return error("Expected unit, got EOF");
-        if (maybe_unit->type() == TokenType::PercentSign) {
-            get();
-            return EML::Value(Util::Length { static_cast<float>(number), Util::Length::Percent });
-        }
-        if (maybe_unit->type() == TokenType::Identifier && maybe_unit->value() == "px") {
-            get();
-            return EML::Value(Util::Length { static_cast<float>(number), Util::Length::Px });
-        }
-        if (maybe_unit->type() == TokenType::DoubleDot) {
-            get();
-            auto range_max = TRY(expect(TokenType::Number));
-            return EML::Value(Range { static_cast<double>(number), MUST(range_max.value().parse<float>()) });
-        }
-        return EML::Value(static_cast<double>(number));
+        return parse_number_with_unit(false, *token);
     }
     case TokenType::Identifier: {
         get();
