@@ -68,7 +68,7 @@ public:
     // Construction from ErrorOr containing one of errors
     template<class U, class ET>
     ESSA_ALWAYS_INLINE ErrorOr(ErrorOr<U, ET>&& value, CppSourceLocation loc = CppSourceLocation::current())
-        requires(!std::is_same_v<ET, First<ErrorTypes...>> && (std::is_convertible_v<U, T> && IsConvertibleToError<ET>))
+        requires(std::is_convertible_v<U, T> && IsConvertibleToError<ET>)
         : Variant(value.is_error() ? Variant { value.release_error() } : Variant { value.release_value() })
         , m_location(loc) { }
 
@@ -125,8 +125,8 @@ public:
     }
 
     template<class E>
-        requires(ContainsError<E>) bool
-    is_error_of_type() const {
+        requires(ContainsError<E>)
+    bool is_error_of_type() const {
         return std::holds_alternative<E>(*this);
     }
 
