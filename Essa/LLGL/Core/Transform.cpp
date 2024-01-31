@@ -83,6 +83,9 @@ Util::Point3f Transform::transform_point(Util::Point3f const& vector) const {
     if (m_matrix == Util::Matrix4x4f::identity())
         return vector;
     auto result = m_matrix * vector4;
+    if (result.w() == 0) {
+        return Util::Point3f(result.x(), result.y(), result.z());
+    }
     result /= result.w();
     return Util::Point3f { result };
 }
