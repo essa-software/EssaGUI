@@ -7,6 +7,9 @@ namespace llgl {
 
 template<ShaderImplPartial Shader> struct DrawState {
 public:
+    // You should have the non-const shader object here!
+    DrawState(Shader const& shader, typename Shader::Uniforms uniforms, llgl::PrimitiveType pt) = delete;
+
     DrawState(Shader& shader, typename Shader::Uniforms uniforms, llgl::PrimitiveType pt)
         : m_shader(shader)
         , m_uniforms(std::move(uniforms))
