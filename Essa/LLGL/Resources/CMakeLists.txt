@@ -1,6 +1,7 @@
 set(SOURCES
     GlyphCache.cpp
     ImageLoader.cpp
+    ImageSaver.cpp
     TTFFont.cpp
 )
 add_llgl_library(Resources resources)
