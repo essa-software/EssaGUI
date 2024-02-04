@@ -264,7 +264,11 @@ void Widget::do_relayout() {
     // std::endl;
 }
 
-void Widget::set_needs_relayout() { m_window_root->set_needs_relayout(); }
+void Widget::set_needs_relayout() {
+    if (m_window_root) {
+        m_window_root->set_needs_relayout();
+    }
+}
 
 void Widget::copy_initial_sizes() {
     auto initial_size = this->initial_size();
