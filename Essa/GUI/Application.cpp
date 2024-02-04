@@ -44,7 +44,14 @@ HostWindow& Application::create_host_window(Util::Size2u size, Util::UString con
 }
 
 void Application::remove_closed_host_windows() {
-    std::erase_if(m_host_windows, [](auto const& window) { return window.is_closed(); });
+    // Destructors (of e.g widgets) may close windows too, so we
+    // need to loop until no more are closed
+    while (true) {
+        auto removed_c = std::erase_if(m_host_windows, [](auto const& window) { return window.is_closed(); });
+        if (removed_c == 0) {
+            break;
+        }
+    }
 }
 
 void Application::redraw_all_host_windows() {
