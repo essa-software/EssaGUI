@@ -152,6 +152,13 @@ void HostWindow::show_modal(HostWindow* parent) {
                 return;
             }
 
+            m_window.update();
+            // prevent UAF
+            if (m_window.is_closed()) {
+                quit();
+                return;
+            }
+
             // Draw all windows
             GUI::Application::the().remove_closed_host_windows();
             GUI::Application::the().redraw_all_host_windows();
