@@ -25,6 +25,8 @@ public:
     [[nodiscard]] Transform scale_y(float) const;
     [[nodiscard]] Transform scale_z(float) const;
 
+    [[nodiscard]] Transform inverse() const { return Transform { m_matrix.inverted() }; }
+
     Util::Matrix4x4f matrix() const { return m_matrix; }
 
     Util::Point3f transform_point(Util::Point3f const&) const;
