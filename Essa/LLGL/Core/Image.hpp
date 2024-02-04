@@ -38,6 +38,9 @@ public:
     size_t pixel_count() const { return static_cast<size_t>(m_size.x()) * m_size.y(); }
     bool is_point_in_bounds(Util::Point2f const&) const;
 
+    Image flip_x() const;
+    Image flip_y() const;
+
 private:
     Image(Util::Size2u size);
 
