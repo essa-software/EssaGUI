@@ -3,9 +3,9 @@
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/AST.hpp>
 #include <Essa/GUI/EML/Loader.hpp>
-#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/Graphics/Drawing/Rectangle.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
@@ -385,6 +385,12 @@ void ColorPickerDialog::set_color(Util::Color color) {
     m_b_slider->set_value(color.b);
 }
 
+ColorPicker::~ColorPicker() {
+    if (m_color_picker_window) {
+        m_color_picker_window->close();
+    }
+}
+
 void ColorPicker::on_init() {
     on_click = [this]() {
         auto window = GUI::Application::the().open_host_window<ColorPickerDialog>(m_color);
@@ -393,6 +399,13 @@ void ColorPicker::on_init() {
             if (on_change)
                 on_change(color);
         };
+        window.window.on_event = [this](llgl::Event const& event) {
+            if (event.is<llgl::Event::WindowClose>()) {
+                m_color_picker_window = nullptr;
+            }
+            return GUI::Widget::EventHandlerResult::NotAccepted;
+        };
+        m_color_picker_window = &window.window;
     };
 }
 

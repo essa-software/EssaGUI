@@ -8,6 +8,8 @@ namespace GUI {
 
 class ColorPicker : public Button {
 public:
+    ~ColorPicker();
+
     virtual void on_init() override;
 
     CREATE_VALUE(Util::Color, color, Util::Colors::Black)
@@ -22,6 +24,8 @@ private:
     virtual LengthVector initial_size() const override {
         return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } };
     }
+
+    HostWindow* m_color_picker_window = nullptr;
 };
 
 }
