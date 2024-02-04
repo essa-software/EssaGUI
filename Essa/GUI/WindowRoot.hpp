@@ -45,7 +45,7 @@ public:
         return *widget_ptr;
     }
 
-    void update() {
+    virtual void update() {
         if (m_main_widget)
             m_main_widget->do_update();
     }
