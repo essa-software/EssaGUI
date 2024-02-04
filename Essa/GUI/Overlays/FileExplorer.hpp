@@ -51,23 +51,28 @@ private:
 
 class FileExplorer : public WindowRoot {
 public:
-    explicit FileExplorer(WidgetTreeRoot& window);
+    // save mode has an additional textbox for file name & warns if file exists
+    enum class Mode { Open, Save };
 
-    enum class Type { File, Directory };
+    explicit FileExplorer(WidgetTreeRoot& window, Mode mode = Mode::Open);
+
+    enum class FileType { File, Directory };
 
     FileModel* model() { return m_model; }
     void open_path(std::filesystem::path path);
 
     std::function<void(std::filesystem::path path)> on_submit;
 
-    CREATE_VALUE(Type, type, Type::File)
+    CREATE_VALUE(FileType, type, FileType::File)
     CREATE_VALUE(std::filesystem::path, current_path, ".")
 
     static std::optional<std::filesystem::path> get_path_to_open(HostWindow*);
+    static std::optional<std::filesystem::path> get_path_to_save(HostWindow*);
     static std::optional<std::filesystem::path> get_directory_to_open(HostWindow*);
 
 private:
     Textbox* m_directory_path_textbox {};
+    Textbox* m_file_name_textbox {};
     FileModel* m_model {};
     TreeView* m_list {};
 };

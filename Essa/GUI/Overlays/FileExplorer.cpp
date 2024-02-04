@@ -201,31 +201,57 @@ llgl::Texture const* FileModel::file_icon(File const& file) const {
     }
 }
 
-FileExplorer::FileExplorer(WidgetTreeRoot& window)
+FileExplorer::FileExplorer(WidgetTreeRoot& window, Mode mode)
     : WindowRoot(window) {
     (void)load_from_eml_resource(Application::the().resource_manager().require<EML::EMLResource>("FileExplorer.eml"));
 
     auto container = static_cast<Container*>(main_widget());
 
-    m_list = container->find_widget_of_type_by_id_recursively<TreeView>("list");
-    m_list->on_click = [&](Model::NodeData row) {
-        auto const* data = static_cast<FileModel::File const*>(row.data);
-        auto path = data->path;
+    auto submit_save = [this]() {
+        auto path = m_current_path / m_file_name_textbox->content().encode();
+        if (std::filesystem::exists(path)) {
+            auto result = GUI::message_box(
+                &this->window().host_window(), "File already exists. Overwrite?", "Warning",
+                {
+                    .buttons = GUI::MessageBox::Buttons::YesNo,
+                    .icon = GUI::MessageBox::Icon::Warning,
+                }
+            );
+            if (result == GUI::MessageBox::ButtonRole::No) {
+                return;
+            }
+        }
+        on_submit(path);
+        close();
     };
-    m_list->on_double_click = [&](Model::NodeData row) {
+
+    m_list = container->find_widget_of_type_by_id_recursively<TreeView>("list");
+    m_list->on_click = [mode, this](Model::NodeData row) {
+        if (mode == Mode::Save) {
+            auto const* data = static_cast<FileModel::File const*>(row.data);
+            auto path = data->path;
+            m_file_name_textbox->set_content(Util::UString { path.filename().string() }, NotifyUser::No);
+        }
+    };
+    m_list->on_double_click = [submit_save, mode, this](Model::NodeData row) {
         auto const* data = static_cast<FileModel::File const*>(row.data);
         auto path = data->path;
 
-        if (m_type == Type::File && !std::filesystem::is_directory(path)) {
-            if (on_submit)
-                on_submit(path);
-            close();
+        if (m_type == FileType::File && !std::filesystem::is_directory(path)) {
+            if (mode == Mode::Save) {
+                submit_save();
+            }
+            else {
+                if (on_submit)
+                    on_submit(path);
+                close();
+            }
         }
         else {
             open_path(path);
         }
     };
-    m_list->on_context_menu_request = [&](Model::NodeData row) -> std::optional<ContextMenu> {
+    m_list->on_context_menu_request = [this](Model::NodeData row) -> std::optional<ContextMenu> {
         auto const* data = static_cast<FileModel::File const*>(row.data);
         auto path = data->path;
         ContextMenu menu;
@@ -236,37 +262,63 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window)
 
     m_model = &m_list->create_and_set_model<FileModel>();
 
+    m_file_name_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("file_name");
+    if (mode == Mode::Open) {
+        m_file_name_textbox->set_visible(false);
+    }
+    else {
+        m_file_name_textbox->set_type(Textbox::TEXT);
+        m_file_name_textbox->on_enter = [this, submit_save](Util::UString const& str) {
+            if (str.find("/").has_value()) {
+                open_path(str.encode());
+            }
+            else {
+                submit_save();
+            }
+        };
+    }
+
     m_directory_path_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("directory_path");
     m_directory_path_textbox->set_type(Textbox::TEXT);
     m_directory_path_textbox->on_enter = [this](Util::UString const& str) { open_path(str.encode()); };
 
-    auto* open_button = &container->find<TextButton>("open");
-    open_button->on_click = [this]() {
-        auto focused_node = m_list->focused_node();
-        if (!focused_node) {
-            return;
-        }
-        auto const& file = *static_cast<FileModel::File const*>(focused_node->data);
-
-        bool submit = false;
-        if (m_type == Type::Directory) {
-            if (file.type == std::filesystem::file_type::directory) {
-                submit = true;
+    auto* submit_button = &container->find<TextButton>("submit");
+    if (mode == Mode::Save) {
+        submit_button->set_content("Save");
+        m_list->on_click = [this](Model::NodeData node) {
+            auto const& file = *static_cast<FileModel::File const*>(node.data);
+            m_file_name_textbox->set_content(Util::UString { file.path.filename().string() }, NotifyUser::No);
+        };
+        submit_button->on_click = [submit_save]() { submit_save(); };
+    }
+    else {
+        submit_button->on_click = [this]() {
+            auto focused_node = m_list->focused_node();
+            if (!focused_node) {
+                return;
             }
-        }
-        else {
-            if (file.type == std::filesystem::file_type::directory) {
-                open_path(file.path);
+            auto const& file = *static_cast<FileModel::File const*>(focused_node->data);
+
+            bool submit = false;
+            if (m_type == FileType::Directory) {
+                if (file.type == std::filesystem::file_type::directory) {
+                    submit = true;
+                }
             }
             else {
-                submit = true;
+                if (file.type == std::filesystem::file_type::directory) {
+                    open_path(file.path);
+                }
+                else {
+                    submit = true;
+                }
             }
-        }
-        if (submit) {
-            on_submit(file.path);
-            close();
-        }
-    };
+            if (submit) {
+                on_submit(file.path);
+                close();
+            }
+        };
+    }
 
     auto* search_textbox = container->find_widget_of_type_by_id_recursively<Textbox>("search");
     search_textbox->set_type(Textbox::TEXT);
@@ -392,11 +444,20 @@ std::optional<std::filesystem::path> FileExplorer::get_path_to_open(HostWindow* 
     return result;
 }
 
+std::optional<std::filesystem::path> FileExplorer::get_path_to_save(HostWindow* window) {
+    auto explorer = GUI::Application::the().open_host_window<FileExplorer>(FileExplorer::Mode::Save);
+    std::optional<std::filesystem::path> result;
+    explorer.window.center_on_screen();
+    explorer.root.on_submit = [&](std::filesystem::path const& path) { result = path; };
+    explorer.window.show_modal(window);
+    return result;
+}
+
 std::optional<std::filesystem::path> FileExplorer::get_directory_to_open(HostWindow* window) {
     auto explorer = GUI::Application::the().open_host_window<FileExplorer>();
     std::optional<std::filesystem::path> result;
     explorer.window.center_on_screen();
-    explorer.root.set_type(FileExplorer::Type::Directory);
+    explorer.root.set_type(FileExplorer::FileType::Directory);
     explorer.root.on_submit = [&](std::filesystem::path const& path) { result = path; };
     explorer.window.show_modal(window);
     return result;

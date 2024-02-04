@@ -46,10 +46,15 @@
                 padding: 5
                 spacing: 5
             }
+
+            @Textbox file_name {
+                width: 250px
+                placeholder: "File name"
+            }
             
             @Textfield { width: auto }
 
-            @TextButton open {
+            @TextButton submit {
                 width: 100px
                 content: "Open"
             }
