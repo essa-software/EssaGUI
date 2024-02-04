@@ -394,6 +394,7 @@ ColorPicker::~ColorPicker() {
 void ColorPicker::on_init() {
     on_click = [this]() {
         auto window = GUI::Application::the().open_host_window<ColorPickerDialog>(m_color);
+        window.window.set_always_on_top();
         window.root.on_change = [this](Util::Color const& color) {
             m_color = color;
             if (on_change)

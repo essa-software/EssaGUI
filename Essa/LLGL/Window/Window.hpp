@@ -31,18 +31,19 @@ public:
     void create(Util::Size2u size, Util::UString const& title, WindowSettings const& = {});
 
     bool is_closed() const;
-    void close();
-    void set_title(Util::UString const&);
-    Util::UString title() const;
-    void set_size(Util::Size2u);
-    void set_position(Util::Point2i);
-    void display();
-    std::optional<Event> poll_event();
-    void set_mouse_position(Util::Point2i);
     bool is_focused() const;
-    void set_active() const;
-    void maximize();
+    std::optional<Event> poll_event();
     Util::Recti system_rect() const;
+    Util::UString title() const;
+    void close();
+    void display();
+    void maximize();
+    void set_active() const;
+    void set_always_on_top(bool on_top = true);
+    void set_mouse_position(Util::Point2i);
+    void set_position(Util::Point2i);
+    void set_size(Util::Size2u);
+    void set_title(Util::UString const&);
 
     Renderer& renderer() { return m_renderer; }
     Util::Point2i position() const;

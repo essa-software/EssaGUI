@@ -234,6 +234,11 @@ void Window::set_active() const {
     SDL_GL_MakeCurrent(m_data->window, s_context);
 }
 
+void Window::set_always_on_top(bool on_top) {
+    assert(!is_closed());
+    SDL_SetWindowAlwaysOnTop(m_data->window, on_top ? SDL_TRUE : SDL_FALSE);
+}
+
 void Window::maximize() {
     assert(!is_closed());
     SDL_MaximizeWindow(m_data->window);
@@ -256,6 +261,7 @@ Util::Recti Window::system_rect() const {
 }
 
 Util::Point2i Window::position() const {
+    assert(!is_closed());
     int x;
     int y;
     SDL_GetWindowPosition(m_data->window, &x, &y);
