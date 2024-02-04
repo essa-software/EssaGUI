@@ -400,12 +400,7 @@ void ColorPicker::on_init() {
             if (on_change)
                 on_change(color);
         };
-        window.window.on_event = [this](llgl::Event const& event) {
-            if (event.is<llgl::Event::WindowClose>()) {
-                m_color_picker_window = nullptr;
-            }
-            return GUI::Widget::EventHandlerResult::NotAccepted;
-        };
+        window.window.on_close = [this]() { m_color_picker_window = nullptr; };
         m_color_picker_window = &window.window;
     };
 }

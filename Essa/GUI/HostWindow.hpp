@@ -60,6 +60,8 @@ public:
 
     virtual Util::UString dev_tools_name() const override { return title(); }
 
+    std::function<void()> on_close;
+
 private:
     friend WidgetTreeRoot;
     friend class Application;

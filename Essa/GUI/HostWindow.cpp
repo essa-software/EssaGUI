@@ -29,7 +29,12 @@ void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSetti
     set_background_color(GUI::Application::the().theme().window_background);
 }
 
-void HostWindow::close() { llgl::Window::close(); }
+void HostWindow::close() {
+    llgl::Window::close();
+    if (on_close) {
+        on_close();
+    }
+}
 
 void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
 
