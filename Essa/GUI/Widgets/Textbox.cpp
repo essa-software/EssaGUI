@@ -15,7 +15,7 @@
 namespace GUI {
 
 bool Textbox::find_decimal() const {
-    for (const auto& c : content()) {
+    for (auto const& c : content()) {
         if (c == '.')
             return true;
     }
@@ -61,7 +61,7 @@ EML::EMLErrorOr<void> Textbox::load_from_eml_object(EML::Object const& object, E
     TRY(TextEditor::load_from_eml_object(object, loader));
     m_limit = TRY(object.get_property("limit", EML::Value(static_cast<double>(m_limit))).to_double());
     m_min = TRY(object.get_property("min_value", EML::Value(m_min)).to_double());
-    m_max = TRY(object.get_property("max_value", EML::Value(m_min)).to_double());
+    m_max = TRY(object.get_property("max_value", EML::Value(m_max)).to_double());
     return {};
 }
 
