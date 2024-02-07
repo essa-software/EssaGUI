@@ -223,6 +223,15 @@ public:
         }
     }
 
+    template<class C> void visit_children(C const& callback) const {
+        for (const auto& widget : m_widgets) {
+            callback(*widget);
+            if (Util::is<Container>(*widget)) {
+                static_cast<Container const&>(*widget).visit_children(callback);
+            }
+        }
+    }
+
     virtual LengthVector initial_size() const override;
 
 protected:
