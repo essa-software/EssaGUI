@@ -48,8 +48,8 @@ bool Image::is_point_in_bounds(Util::Point2f const& point) const {
 
 Image Image::flip_x() const {
     Image out = create_uninitialized(m_size);
-    for (unsigned x = 0; x < m_size.x(); x++) {
-        for (unsigned y = 0; y < m_size.y(); y++) {
+    for (unsigned y = 0; y < m_size.y(); y++) {
+        for (unsigned x = 0; x < m_size.x(); x++) {
             out.set_pixel({ m_size.x() - x - 1, y }, get_pixel({ x, y }));
         }
     }
@@ -58,10 +58,8 @@ Image Image::flip_x() const {
 
 Image Image::flip_y() const {
     Image out = create_uninitialized(m_size);
-    for (unsigned x = 0; x < m_size.x(); x++) {
-        for (unsigned y = 0; y < m_size.y(); y++) {
-            out.set_pixel({ x, m_size.y() - y - 1 }, get_pixel({ x, y }));
-        }
+    for (unsigned y = 0; y < m_size.y(); y++) {
+        memcpy(out.m_pixels + y * m_size.x(), m_pixels + (m_size.y() - y - 1) * m_size.x(), m_size.x() * sizeof(Util::Color));
     }
     return out;
 }
