@@ -45,6 +45,9 @@ void TextButton::draw(Gfx::Painter& painter) const {
     text.set_fill_color(colors.text);
 
     auto text_rect = local_rect();
+    if (m_alignment == Align::CenterLeft) {
+        text_offset += 5;
+    }
     text_rect.left += text_offset;
     text_rect.width -= text_offset;
 
@@ -53,7 +56,7 @@ void TextButton::draw(Gfx::Painter& painter) const {
     else
         text.set_string(m_content);
 
-    text.align(GUI::Align::Center, text_rect.cast<float>());
+    text.align(m_alignment, text_rect.cast<float>());
     text.draw(painter);
 
     if (is_focused()) {
