@@ -26,6 +26,8 @@ public:
 
     CREATE_VALUE(Util::UString, placeholder, "")
 
+    void set_editable(bool e) { m_editable = e; }
+    bool is_editable() const { return m_editable; }
     void set_multiline(bool m);
     bool is_multiline() const { return m_multiline; }
 
@@ -116,6 +118,7 @@ private:
     std::vector<ErrorSpan> m_error_spans;
     bool m_content_changed = false;
     bool m_multiline = true;
+    bool m_editable = true;
 };
 
 }

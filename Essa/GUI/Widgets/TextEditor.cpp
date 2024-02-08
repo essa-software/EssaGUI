@@ -181,6 +181,9 @@ void TextEditor::update_selection_after_set_cursor(SetCursorSelectionBehavior ex
 
 Widget::EventHandlerResult TextEditor::on_text_input(Event::TextInput const& event) {
     ScrollableWidget::on_text_input(event);
+    if (!m_editable) {
+        return EventHandlerResult::NotAccepted;
+    }
     for (auto codepoint : event.text()) {
         insert_codepoint(codepoint);
     }
@@ -233,6 +236,9 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
         break;
     }
     case llgl::KeyCode::X: {
+        if (!m_editable) {
+            return EventHandlerResult::NotAccepted;
+        }
         if (event.modifiers().ctrl) {
             auto selected_text = this->selected_text();
             llgl::Clipboard::set_string(selected_text);
@@ -248,6 +254,9 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
         break;
     }
     case llgl::KeyCode::V: {
+        if (!m_editable) {
+            return EventHandlerResult::NotAccepted;
+        }
         if (event.modifiers().ctrl && llgl::Clipboard::has_string()) {
             erase_selected_text();
             m_selection_start = real_cursor_position();
@@ -257,8 +266,10 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
         break;
     }
     case llgl::KeyCode::Enter: {
-        // TODO: Handle multiline case
         if (m_multiline) {
+            if (!m_editable) {
+                return EventHandlerResult::NotAccepted;
+            }
             if (event.modifiers().ctrl && on_enter) {
                 on_enter(content());
             }
@@ -280,16 +291,24 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
         break;
     }
     case llgl::KeyCode::Tab: {
-        if (!m_multiline)
+        if (!m_editable) {
+            return EventHandlerResult::NotAccepted;
+        }
+        if (!m_multiline) {
             break;
-        if (!can_insert_codepoint(' '))
+        }
+        if (!can_insert_codepoint(' ')) {
             break;
+        }
         do {
             insert_codepoint(' ');
         } while (real_cursor_position().column % 4 != 0);
         break;
     }
     case llgl::KeyCode::Backspace: {
+        if (!m_editable) {
+            return EventHandlerResult::NotAccepted;
+        }
         if (line_count() > 0) {
             m_cursor = real_cursor_position();
             if (m_cursor == m_selection_start) {
@@ -333,6 +352,9 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
         break;
     }
     case llgl::KeyCode::Delete: {
+        if (!m_editable) {
+            return EventHandlerResult::NotAccepted;
+        }
         if (line_count() > 0) {
             m_cursor = real_cursor_position();
             if (m_cursor == m_selection_start) {
