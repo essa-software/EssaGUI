@@ -36,8 +36,7 @@
     constexpr inline std::string_view to_string(Enum e) { \
         using _Enum = Enum;                               \
         switch (e) { EnumMacro(_ESSA_ENUM_TO_STRING); }   \
-        ESSA_UNREACHABLE;                                 \
-        return {};                                        \
+        return "Unknown";                                 \
     }
 
 #define ESSA_ENUM_FROM_STRING(Enum, prefix, EnumMacro)                              \
