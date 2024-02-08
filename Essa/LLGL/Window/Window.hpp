@@ -38,12 +38,17 @@ public:
     void close();
     void display();
     void maximize();
+    void request_focus();
     void set_active() const;
     void set_always_on_top(bool on_top = true);
+    // This does capture_mouse(), but clears capture when the window is closed.
+    void set_captures_mouse(bool captures = true);
     void set_mouse_position(Util::Point2i);
     void set_position(Util::Point2i);
     void set_size(Util::Size2u);
     void set_title(Util::UString const&);
+
+    static void capture_mouse(bool capture = true);
 
     Renderer& renderer() { return m_renderer; }
     Util::Point2i position() const;
@@ -72,6 +77,7 @@ private:
     std::unique_ptr<Detail::SDLWindowData> m_data;
     Renderer m_renderer { 0 };
     Util::Size2u m_size;
+    bool m_captures_mouse = false;
 };
 
 }

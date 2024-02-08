@@ -56,6 +56,9 @@ bool Window::is_closed() const {
 }
 
 void Window::close() {
+    if (m_captures_mouse) {
+        capture_mouse(false);
+    }
     if (!m_foreign) {
         destroy();
     }

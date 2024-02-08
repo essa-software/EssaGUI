@@ -99,20 +99,23 @@ std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
 
 uint32_t SDLHelpers::llgl_window_flags_to_sdl(WindowFlags flags) {
     uint32_t sdl_flags = 0;
-    if (has_flag(flags, WindowFlags::Fullscreen)) {
-        sdl_flags |= SDL_WINDOW_FULLSCREEN;
-    }
     if (has_flag(flags, WindowFlags::Borderless)) {
         sdl_flags |= SDL_WINDOW_BORDERLESS;
     }
-    if (has_flag(flags, WindowFlags::Resizable)) {
-        sdl_flags |= SDL_WINDOW_RESIZABLE;
+    if (has_flag(flags, WindowFlags::Fullscreen)) {
+        sdl_flags |= SDL_WINDOW_FULLSCREEN;
     }
     if (has_flag(flags, WindowFlags::Minimized)) {
         sdl_flags |= SDL_WINDOW_MINIMIZED;
     }
     if (has_flag(flags, WindowFlags::Maximized)) {
         sdl_flags |= SDL_WINDOW_MAXIMIZED;
+    }
+    if (has_flag(flags, WindowFlags::PopupMenu)) {
+        sdl_flags |= SDL_WINDOW_POPUP_MENU;
+    }
+    if (has_flag(flags, WindowFlags::Resizable)) {
+        sdl_flags |= SDL_WINDOW_RESIZABLE;
     }
     if (has_flag(flags, WindowFlags::Tooltip)) {
         sdl_flags |= SDL_WINDOW_TOOLTIP;

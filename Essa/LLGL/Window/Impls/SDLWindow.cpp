@@ -135,7 +135,6 @@ std::optional<Event> Window::poll_event_impl() {
                 auto is_event = SDL_PollEvent(&sdl_event2);
                 if (!is_event)
                     return {};
-
                 if (sdl_event2.window.windowID != SDL_GetWindowID(m_data->window)) {
                     s_event_queues[sdl_event2.window.windowID].push(sdl_event2);
                     return {};
@@ -219,6 +218,16 @@ std::optional<Event> Window::poll_event_impl() {
     }
 }
 
+void Window::set_captures_mouse(bool captures) {
+    if (!captures && m_captures_mouse) {
+        capture_mouse(false);
+    }
+    else if (captures) {
+        capture_mouse(true);
+    }
+    m_captures_mouse = captures;
+}
+
 void Window::set_mouse_position(Util::Point2i pos) {
     assert(!is_closed());
     SDL_WarpMouseInWindow(m_data->window, pos.x(), pos.y());
@@ -227,6 +236,12 @@ void Window::set_mouse_position(Util::Point2i pos) {
 bool Window::is_focused() const {
     assert(!is_closed());
     return m_data->focused;
+}
+
+void Window::request_focus() {
+    assert(!is_closed());
+    SDL_SetWindowInputFocus(m_data->window);
+    SDL_RaiseWindow(m_data->window);
 }
 
 void Window::set_active() const {
@@ -267,5 +282,7 @@ Util::Point2i Window::position() const {
     SDL_GetWindowPosition(m_data->window, &x, &y);
     return { x, y };
 }
+
+void Window::capture_mouse(bool capture) { SDL_CaptureMouse(capture ? SDL_TRUE : SDL_FALSE); }
 
 }

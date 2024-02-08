@@ -13,6 +13,7 @@ enum class WindowFlags {
     TransparentBackground = 0x20,
     Shaped = 0x40,
     Tooltip = 0x80,
+    PopupMenu = 0x100,
 };
 
 ESSA_ENUM_BITWISE_OPERATORS(WindowFlags)
