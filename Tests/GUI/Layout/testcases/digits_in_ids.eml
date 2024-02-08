@@ -1,0 +1,5 @@
+@Container {
+    layout: @HorizontalBoxLayout
+    @Widget id1 {}
+    @Widget i1d {}
+}

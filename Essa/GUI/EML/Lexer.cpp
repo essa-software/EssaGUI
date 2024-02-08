@@ -9,7 +9,7 @@ Util::OsErrorOr<std::vector<Token>> Lexer::lex() {
         auto next = TRY(peek()).value();
         auto start = location();
         if (isalpha(next) || next == '_') {
-            auto string = TRY(consume_while([](char c) { return isalpha(c) || c == '_'; }));
+            auto string = TRY(consume_while([](char c) { return isalpha(c) || isdigit(c) || c == '_'; }));
             if (string == "asset")
                 tokens.push_back(create_token(TokenType::KeywordAsset, string, start));
             else if (string == "define")
