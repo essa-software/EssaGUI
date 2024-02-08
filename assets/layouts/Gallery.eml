@@ -145,6 +145,11 @@
                 layout: @HBox
                 
                 @ColorPicker
+                @SelectWidget select {
+                    @Option test1 { label: "Test 1" }
+                    @Option test2 { label: "Test 2" }
+                    @Option test3 { label: "Test 3" }
+                }
                 @TextButton file_explorer {
                     content: "File Explorer"
                 }

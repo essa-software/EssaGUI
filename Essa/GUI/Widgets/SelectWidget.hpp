@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ArrowButton.hpp"
-#include "Textfield.hpp"
-#include <Essa/GUI/Widgets/Widget.hpp>
+#include "Container.hpp"
+#include "Textbox.hpp"
 #include <map>
 #include <memory>
 #include <string>
@@ -10,23 +10,31 @@
 
 namespace GUI {
 
-template<typename T> class SelectWidget : public Widget {
-    std::shared_ptr<Container> m_container;
-    std::shared_ptr<Container> m_elements_container;
-
-    Textfield* m_label;
-    Textfield* m_textfield;
-
-    std::shared_ptr<ArrowButton> m_expand_button;
-    std::map<Util::UString, T> m_contents;
-    unsigned m_index;
-    bool expanded = false;
-
+class SelectWidget : public Container {
 public:
     virtual void on_init() override;
 
-    void add_entry(Util::UString label, T value);
-    void set_label(Util::UString label) { m_label->set_content(label); }
+    struct SelectOption {
+        std::string name;
+        Util::UString label;
+    };
+
+    void add_option(SelectOption option);
+    void set_selected_index(unsigned idx, NotifyUser = NotifyUser::Yes);
+    unsigned selected_index() const { return m_selected_index; }
+
+    std::function<void(unsigned)> on_change;
+
+private:
+    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader& loader) override;
+
+    std::shared_ptr<Container> m_elements_container;
+
+    Textbox* m_textbox = nullptr;
+
+    std::vector<SelectOption> m_options;
+    unsigned m_selected_index = 0;
+    bool m_expanded = false;
 };
 
 }
