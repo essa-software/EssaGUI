@@ -51,14 +51,9 @@ void Property::print(size_t depth) const {
     fmt::print("{}{}: {}\n", indent(depth), name, value_string);
 }
 
-// https://en.cppreference.com/w/cpp/utility/variant/visit
-template<class... Ts> struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-
 std::string Value::string() const {
     return std::visit(
-        overloaded {
+        Util::Overloaded {
             [](double d) -> std::string { return fmt::format("{}", d); },
             [](bool b) -> std::string { return b ? "true" : "false"; },
             [](Util::UString const& str) -> std::string { return "\"" + str.encode() + "\""; },
@@ -137,7 +132,7 @@ EMLErrorOr<std::unique_ptr<EMLObject>> Object::construct_impl(EML::Loader& loade
     //    from base without C++ wrapper defined for this exact
     //    type. E.g if there is `define EssaSplash : @ToolWindow`
     //    and EssaSplash isn't registered, construct ToolWindow.
-    const auto* class_definition = loader.find_class_definition(class_name);
+    auto const* class_definition = loader.find_class_definition(class_name);
     if (class_definition) {
         return class_definition->base.construct_impl(loader);
     }
@@ -151,7 +146,7 @@ EMLErrorOr<void> Object::populate_impl(EML::Loader& loader, EMLObject& construct
     Object object_to_load = *this;
 
     // 1. Load EML defined defaults into this object (`define` declaration)
-    const auto* class_definition = loader.find_class_definition(class_name);
+    auto const* class_definition = loader.find_class_definition(class_name);
     if (class_definition)
         object_to_load.merge(class_definition->base);
 

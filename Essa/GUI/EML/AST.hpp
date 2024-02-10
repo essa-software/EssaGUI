@@ -50,7 +50,7 @@ struct Object : public Scope {
     template<class T, class... Args>
         requires(sizeof...(Args) == 0) || requires(T t, Args... args) { t.eml_construct(args...); }
     EMLErrorOr<std::unique_ptr<T>> construct(EML::Loader& loader, Args&&... args) const {
-        auto object = TRY(construct_impl(loader)).release();
+        auto* object = TRY(construct_impl(loader)).release();
         // MANUAL MEMORY MANAGEMENT OF object STARTS HERE
         std::unique_ptr<T> specific_object { dynamic_cast<T*>(object) };
         if (!specific_object) {
