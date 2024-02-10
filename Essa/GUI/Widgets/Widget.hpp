@@ -231,7 +231,7 @@ protected:
     virtual void relayout() { }
     // Check if mouse at given absolute position is over the widget.
     virtual bool is_mouse_over(Util::Point2i) const;
-    virtual void update();
+    virtual void update() { }
     virtual bool accepts_focus() const { return false; }
 
     // "Steals focus" - so that the widget cannot be focused from outside

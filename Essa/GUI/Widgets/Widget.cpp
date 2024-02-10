@@ -39,23 +39,6 @@ Widget::~Widget() {
 
 bool Widget::is_mouse_over(Util::Point2i mouse_pos) const { return Util::Recti(raw_position(), m_raw_size).contains(mouse_pos); }
 
-void Widget::update() {
-    Util::Point2i tooltip_position { m_tooltip_position };
-    auto widget_relative_mouse_position = llgl::mouse_position();
-    widget_relative_mouse_position -= m_window_root->window().position().to_vector() + raw_position().to_vector();
-
-    if (m_tooltip) {
-        // You will soon see why the API here is so twisted...
-        auto text = m_tooltip->text();
-        update_tooltip(widget_relative_mouse_position, text);
-        m_tooltip->set_text(text);
-        static_cast<HostWindow&>(m_tooltip->window())
-            .set_position(
-                (m_window_root->window().position() + raw_position().to_vector() + tooltip_position.to_vector() + Util::Vector2i(32, 32))
-            );
-    }
-}
-
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto transformed_event = event.relativized(raw_position().to_vector());
 
@@ -145,6 +128,21 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 break;
             }
             }
+
+            Util::Point2i tooltip_position { m_tooltip_position };
+
+            if (m_tooltip) {
+                // You will soon see why the API here is so twisted...
+                auto text = m_tooltip->text();
+                update_tooltip(mouse_position, text);
+                m_tooltip->set_text(text);
+                static_cast<HostWindow&>(m_tooltip->window())
+                    .set_position(
+                        (m_window_root->window().position() + raw_position().to_vector() + tooltip_position.to_vector()
+                         + Util::Vector2i(32, 32))
+                    );
+            }
+
             return EventHandlerResult::NotAccepted;
         },
         [&](Event::MouseButtonPress const& event) -> EventHandlerResult {
