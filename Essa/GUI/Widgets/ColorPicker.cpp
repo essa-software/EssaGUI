@@ -14,6 +14,7 @@
 #include <Essa/GUI/Widgets/Textfield.hpp>
 #include <Essa/GUI/Widgets/ValueSlider.hpp>
 #include <EssaUtil/Color.hpp>
+#include <utility>
 
 namespace GUI {
 
@@ -243,6 +244,7 @@ private:
     ValueSlider* m_h_slider = nullptr;
     ValueSlider* m_s_slider = nullptr;
     ValueSlider* m_v_slider = nullptr;
+    Textbox* m_html_textbox = nullptr;
 };
 
 ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window, Util::Color initial_color)
@@ -308,13 +310,13 @@ ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window, Util::Color initial
                 sliders_container->set_layout<VerticalBoxLayout>().set_spacing(10);
                 sliders_container->set_size({ Util::Length::Initial, Util::Length::Auto });
                 auto create_color_slider = [&](Util::UString component, int max, Mode mode) {
-                    auto slider = sliders_container->add_widget<ValueSlider>();
+                    auto* slider = sliders_container->add_widget<ValueSlider>();
                     slider->set_min(0);
                     slider->set_max(max);
                     slider->set_name_textfield_size(20.0_px);
                     slider->set_unit_textfield_size(0.0_px);
                     slider->set_step(1);
-                    slider->set_name(component);
+                    slider->set_name(std::move(component));
                     slider->on_change = [this, mode](double) { update_controls(mode); };
                     return slider;
                 };
@@ -326,9 +328,29 @@ ColorPickerDialog::ColorPickerDialog(WidgetTreeRoot& window, Util::Color initial
                 m_s_slider = create_color_slider("S", 100, Mode::HSV);
                 m_v_slider = create_color_slider("V", 100, Mode::HSV);
             }
-            auto* tf = right_container.add_widget<GUI::Textfield>();
-            tf->set_id("tf");
-            tf->set_size({ Util::Length::Auto, 40_px });
+            auto& html_value = *right_container.add_widget<GUI::Container>();
+            auto& layout = html_value.set_layout<GUI::HorizontalBoxLayout>();
+            layout.set_spacing(10);
+            layout.set_padding({ 0, 5, 0, 0 });
+            html_value.set_size({ Util::Length::Auto, 40_px });
+            {
+                auto& html_label = *html_value.add_widget<GUI::Textfield>();
+                html_label.set_content("HTML:");
+                m_html_textbox = html_value.add_widget<GUI::Textbox>();
+                m_html_textbox->set_type(GUI::Textbox::Type::TEXT);
+                m_html_textbox->set_content(m_initial_color.to_html_string());
+                m_html_textbox->on_change = [this](Util::UString const& text) {
+                    if (!text.starts_with("#") || text.size() != 7) {
+                        return;
+                    }
+                    auto hex = text.substring(1).parse<int>(16);
+                    if (hex.is_error()) {
+                        return;
+                    }
+                    auto color = Util::Color(hex.release_value() << 8);
+                    set_color(color);
+                };
+            }
         }
     }
 
@@ -367,6 +389,7 @@ void ColorPickerDialog::update_controls(Mode mode) {
     m_field->set_color(hsv);
     m_hue_slider->set_color(hsv);
     m_current_color_widget->set_background_color(hsv.to_rgb());
+    m_html_textbox->set_content(color().to_html_string(), GUI::NotifyUser::No);
     if (on_change) {
         on_change(color());
     }
