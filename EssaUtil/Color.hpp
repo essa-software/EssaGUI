@@ -65,6 +65,10 @@ public:
     bool operator==(Color const&) const = default;
 
     static Color rgb_blend(Color const& l, Color const& r, float how_much_r);
+
+    constexpr uint32_t to_rgba32() const {
+        return (r << 24) | (g << 16) | (b << 8) | a;
+    }
 };
 
 struct HSV {
