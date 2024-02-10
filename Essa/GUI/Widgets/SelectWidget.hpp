@@ -12,6 +12,7 @@ namespace GUI {
 
 class SelectWidget : public Container {
 public:
+    ~SelectWidget();
     virtual void on_init() override;
 
     struct SelectOption {
@@ -35,6 +36,7 @@ private:
     std::vector<SelectOption> m_options;
     unsigned m_selected_index = 0;
     bool m_expanded = false;
+    HostWindow* m_select_overlay = nullptr;
 };
 
 }

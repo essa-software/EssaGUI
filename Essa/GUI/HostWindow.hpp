@@ -56,7 +56,8 @@ public:
     Widget* root_widget() { return WidgetTreeRoot::main_widget(); }
 
     void show_modal(HostWindow* parent);
-    bool is_modal() const { return m_modal; }
+    void show_modal_non_blocking(HostWindow& parent);
+    bool is_modal() const { return m_modal_parent != nullptr; }
 
     virtual Util::UString dev_tools_name() const override { return title(); }
 
@@ -69,7 +70,7 @@ private:
     Util::Color m_background_color;
     Util::DelayedInit<Gfx::Painter> m_painter;
 
-    bool m_modal = false;
+    HostWindow* m_modal_parent = nullptr;
     bool m_is_blocked_by_modal_dialog = false;
 };
 

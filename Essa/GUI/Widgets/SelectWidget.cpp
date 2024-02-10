@@ -13,6 +13,12 @@
 
 namespace GUI {
 
+SelectWidget::~SelectWidget() {
+    if (m_select_overlay) {
+        m_select_overlay->close();
+    }
+}
+
 void SelectWidget::on_init() {
     set_layout<GUI::HorizontalBoxLayout>();
     m_textbox = add_widget<GUI::Textbox>();
@@ -51,11 +57,13 @@ void SelectWidget::on_init() {
                 select_overlay.close();
             };
         }
-        select_overlay.set_size({ root.initial_size().x.value(), select_overlay.size().y() });
+        select_overlay.on_close = [&]() { m_select_overlay = nullptr; };
+        select_overlay.set_size({ std::max<float>(raw_size().x(), root.initial_size().x.value()), select_overlay.size().y() });
         for (auto const& btn : root.widgets()) {
             btn->set_size({ { static_cast<float>(select_overlay.size().x()), Util::Length::Px }, Util::Length::Initial });
         }
-        select_overlay.show_modal(&host_window());
+        m_select_overlay = &select_overlay;
+        select_overlay.show_modal_non_blocking(host_window());
     };
 }
 

@@ -30,9 +30,17 @@ void HostWindow::setup(Util::UString title, Util::Size2u size, llgl::WindowSetti
 }
 
 void HostWindow::close() {
+    if (m_is_blocked_by_modal_dialog) {
+        fmt::print("!!! close() called on a blocked window! UAF incoming!\n");
+        return;
+    }
+
     llgl::Window::close();
     if (on_close) {
         on_close();
+    }
+    if (m_modal_parent) {
+        m_modal_parent->m_is_blocked_by_modal_dialog = false;
     }
 }
 
@@ -49,6 +57,9 @@ void HostWindow::handle_events() {
         auto event = poll_event();
         if (!event) {
             break;
+        }
+        if (m_is_blocked_by_modal_dialog && !event->is<llgl::EventTypes::WindowResizeEvent>()) {
+            continue;
         }
         handle_event(*event);
 
@@ -108,6 +119,8 @@ Theme const& HostWindow::theme() const { return Application::the().theme(); }
 Gfx::ResourceManager const& HostWindow::resource_manager() const { return Application::the().resource_manager(); }
 
 void HostWindow::show_modal(HostWindow* parent) {
+    set_always_on_top();
+
     class ModalDialogEventLoop : public EventLoop {
     public:
         explicit ModalDialogEventLoop(HostWindow& window)
@@ -177,6 +190,12 @@ void HostWindow::show_modal(HostWindow* parent) {
     };
     ModalDialogEventLoop loop(*this);
     loop.run();
+}
+
+void HostWindow::show_modal_non_blocking(HostWindow& parent) {
+    set_always_on_top();
+    parent.m_is_blocked_by_modal_dialog = true;
+    m_modal_parent = &parent;
 }
 
 }
