@@ -35,8 +35,8 @@ public:
 
     TimerHandle set_timeout(Timer::Clock::duration const&, Timer::Callback&&);
     TimerHandle set_interval(Timer::Clock::duration const&, Timer::Callback&&);
-    void remove_timer(TimerHandle);
-    static void reset_timer(TimerHandle);
+    void remove_timer(TimerHandle const&);
+    static void reset_timer(TimerHandle const&);
 
     template<class Callback> void deferred_invoke(Callback&& c) {
         using namespace std::chrono_literals;

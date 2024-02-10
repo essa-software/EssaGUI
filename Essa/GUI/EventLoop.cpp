@@ -83,9 +83,9 @@ EventLoop::TimerHandle EventLoop::set_interval(Timer::Clock::duration const& tim
     return *m_timers.insert(std::shared_ptr<Timer>(new Timer(timeout, std::move(callback), Timer::Mode::MultiShot))).first;
 }
 
-void EventLoop::remove_timer(TimerHandle handle) { m_timers.erase(handle.lock()); }
+void EventLoop::remove_timer(TimerHandle const& handle) { m_timers.erase(handle.lock()); }
 
-void EventLoop::reset_timer(TimerHandle handle) {
+void EventLoop::reset_timer(TimerHandle const& handle) {
     if (auto timer = handle.lock()) {
         timer->reset();
     }
