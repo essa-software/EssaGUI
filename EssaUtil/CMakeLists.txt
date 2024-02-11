@@ -1,5 +1,6 @@
 add_library(Util SHARED
     ArgParser.cpp
+    Base64.cpp
     Buffer.cpp
     Color.cpp
     Config.cpp

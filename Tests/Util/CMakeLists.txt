@@ -1,3 +1,4 @@
+essautil_add_test(Base64 LIBS Util)
 essautil_add_test(Buffer LIBS Util)
 essautil_add_test(Color LIBS Util)
 essautil_add_test(ColorScale LIBS Util)
