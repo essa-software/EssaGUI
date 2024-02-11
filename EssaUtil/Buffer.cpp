@@ -47,6 +47,12 @@ Buffer::Buffer(std::initializer_list<uint8_t> data) {
     std::copy(data.begin(), data.end(), m_data);
 }
 
+Buffer Buffer::from_std_string(std::string str) {
+    Buffer buffer(str.size());
+    std::copy(str.begin(), str.end(), buffer.m_data);
+    return buffer;
+}
+
 Buffer Buffer::uninitialized(size_t size) { return Buffer(size); }
 
 Buffer Buffer::filled(size_t size, uint8_t byte) {

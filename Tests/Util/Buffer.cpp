@@ -28,6 +28,15 @@ TEST_CASE(constructors) {
         EXPECT_EQ(buffer[2], 0x56);
     }
 
+    // From std::string
+    {
+        Buffer buffer = Buffer::from_std_string("abc");
+        EXPECT_EQ(buffer.size(), 3ull);
+        EXPECT_EQ(buffer[0], 'a');
+        EXPECT_EQ(buffer[1], 'b');
+        EXPECT_EQ(buffer[2], 'c');
+    }
+
     // Uninitialized
     {
         Buffer buffer = Buffer::uninitialized(40);

@@ -20,6 +20,8 @@ public:
 
     Buffer(std::span<uint8_t const>);
     Buffer(std::initializer_list<uint8_t>);
+    // std::string's are basically byte buffers so it makes sense to do this
+    static Buffer from_std_string(std::string);
     static Buffer uninitialized(size_t size);
     static Buffer filled(size_t size, uint8_t byte = 0);
 
