@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <fmt/format.h>
 #include <map>
 #include <string>
 #include <unordered_map>

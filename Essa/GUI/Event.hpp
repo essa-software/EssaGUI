@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Essa/LLGL/Window/Event.hpp>
+#include <fmt/format.h>
 
 namespace GUI {
 

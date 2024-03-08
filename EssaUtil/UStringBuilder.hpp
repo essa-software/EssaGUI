@@ -3,6 +3,7 @@
 #include "UString.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <fmt/format.h>
 
 namespace Util {
 

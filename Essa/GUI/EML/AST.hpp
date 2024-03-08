@@ -8,6 +8,7 @@
 #include <EssaUtil/Length.hpp>
 #include <EssaUtil/UString.hpp>
 #include <cstdint>
+#include <fmt/format.h>
 #include <list>
 #include <variant>
 

@@ -4,8 +4,7 @@
 #include "../UString.hpp"
 #include "Stream.hpp"
 
-#include <fmt/core.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 namespace Util {
 
@@ -28,8 +27,8 @@ public:
 
     template<std::integral T>
         requires requires(T t) {
-                     { convert_from_host_to_little_endian(t) } -> std::same_as<T>;
-                 }
+            { convert_from_host_to_little_endian(t) } -> std::same_as<T>;
+        }
     OsErrorOr<void> write_little_endian(T const value) {
         auto converted_value = convert_from_host_to_little_endian(value);
         return write_all({ reinterpret_cast<uint8_t const*>(&converted_value), sizeof(T) });
@@ -49,8 +48,8 @@ public:
 
     template<std::integral T>
         requires requires(T t) {
-                     { convert_from_host_to_big_endian(t) } -> std::same_as<T>;
-                 }
+            { convert_from_host_to_big_endian(t) } -> std::same_as<T>;
+        }
     OsErrorOr<void> write_big_endian(T const value) {
         auto converted_value = convert_from_host_to_big_endian(value);
         return write_all({ reinterpret_cast<uint8_t const*>(&converted_value), sizeof(T) });

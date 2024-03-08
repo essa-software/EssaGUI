@@ -6,6 +6,7 @@
 #include <EssaUtil/CoordinateSystem.hpp>
 #include <EssaUtil/UString.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <fmt/format.h>
 #include <type_traits>
 #include <variant>
 

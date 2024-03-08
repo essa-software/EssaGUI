@@ -3,6 +3,7 @@
 #include "Error.hpp"
 #include <compare>
 #include <cstdint>
+#include <fmt/format.h>
 #include <optional>
 #include <ostream>
 #include <span>

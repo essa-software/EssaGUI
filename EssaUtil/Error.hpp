@@ -14,6 +14,7 @@
 #include "CppSourceLocation.hpp"
 #include <cassert>
 #include <cerrno>
+#include <fmt/format.h>
 #include <fmt/std.h>
 #include <optional>
 #include <string_view>

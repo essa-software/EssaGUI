@@ -4,6 +4,7 @@
 #include "Stream/Reader.hpp"
 #include "Stream/Stream.hpp"
 
+#include <fmt/format.h>
 #include <string>
 #include <type_traits>
 #include <vector>
