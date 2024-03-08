@@ -81,7 +81,7 @@ Widget::EventHandlerResult DraggableView2D::on_mouse_move(Event::MouseMove const
 
 void DraggableView2D::update() {
     if (m_zoom_speed != 0) {
-        set_zoom_with_animation(m_zoom * (1 + m_zoom_speed), (llgl::mouse_position() - this->raw_position()).to_point());
+        set_zoom_with_animation(m_zoom * (1 + m_zoom_speed), local_mouse_position());
     }
     m_zoom_speed *= 0.7f;
     if (std::abs(m_zoom_speed) < 0.001f) {

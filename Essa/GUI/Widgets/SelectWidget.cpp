@@ -44,7 +44,7 @@ void SelectWidget::on_init() {
             }
             return Widget::EventHandlerResult::NotAccepted;
         };
-        select_overlay.set_position(this->host_position() + Util::Vector2i(0, this->raw_size().y()));
+        select_overlay.set_position(this->screen_position() + Util::Vector2i(0, this->raw_size().y()));
         auto& root = select_overlay.set_root_widget<GUI::Container>();
         root.set_layout<GUI::VerticalBoxLayout>();
         for (auto const& option : m_options) {

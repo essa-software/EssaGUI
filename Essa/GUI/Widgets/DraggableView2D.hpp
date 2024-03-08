@@ -31,10 +31,10 @@ protected:
     virtual EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const& event) override;
     virtual EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
     virtual EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
+    virtual void update() override;
 
 private:
     void set_zoom_with_animation(float new_zoom, Util::Point2i const& origin);
-    virtual void update() override;
 
     float m_zoom = 1;
     float m_zoom_speed = 0.f;

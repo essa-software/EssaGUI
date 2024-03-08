@@ -22,7 +22,9 @@ WorldDrawScope::WorldDrawScope(Gfx::Painter const& painter, ClearDepth clear_dep
     if (clear_depth == ClearDepth::Yes)
         OpenGL::Clear(GL_DEPTH_BUFFER_BIT);
 
-    llgl::set_viewport(m_previous_projection.viewport());
+    auto viewport = m_previous_projection.viewport();
+    viewport.top = static_cast<int>(painter.renderer().size().y()) - viewport.top - viewport.height;
+    llgl::set_viewport(viewport);
 
     m_parent = current();
     s_current = this;

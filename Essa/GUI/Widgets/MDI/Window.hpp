@@ -20,7 +20,10 @@ public:
 
     virtual void center_on_screen() override;
 
-    virtual Util::Point2i position() const override { return m_position; }
+    // Position relative to the MDI::Host.
+    Util::Point2i position() const { return m_position; }
+    // Position relative to HostWindow.
+    virtual Util::Point2i host_position() const override;
     void set_position(Util::Point2i position) { m_position = position; }
     virtual Util::Size2i size() const override { return m_size; }
     virtual void set_size(Util::Size2i size) override { m_size = size; }
@@ -41,7 +44,9 @@ public:
 
     CREATE_VALUE(Util::UString, title, "")
 
-    virtual Util::Recti full_rect() const override;
+    // MDI::Host relative rect
+    Util::Recti client_rect() const { return { position(), size() }; }
+    Util::Recti full_rect() const;
     Util::Recti titlebar_rect() const {
         return {
             position() - Util::Vector2i(0, theme().tool_window_title_bar_size),

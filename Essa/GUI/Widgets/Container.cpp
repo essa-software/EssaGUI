@@ -41,14 +41,14 @@ void BoxLayout::run(Container& container) {
             continue;
 
         int raw_size = 0;
-        switch (w->size().main(m_orientation).unit()) {
+        switch (w->input_size().main(m_orientation).unit()) {
         case Util::Length::Px:
             // std::cout << "test" << std::endl;
-            raw_size = w->size().main(m_orientation).value();
+            raw_size = w->input_size().main(m_orientation).value();
             break;
         case Util::Length::Percent:
             // std::cout << raw_size << std::endl;
-            raw_size = w->size().main(m_orientation).value() * (container.raw_size().main(m_orientation) - total_spacing_size) / 100;
+            raw_size = w->input_size().main(m_orientation).value() * (container.raw_size().main(m_orientation) - total_spacing_size) / 100;
             break;
         case Util::Length::Auto:
             raw_size = 0;
@@ -57,7 +57,7 @@ void BoxLayout::run(Container& container) {
             ESSA_UNREACHABLE;
         }
         int raw_cross_size = [&]() {
-            auto size = w->size().cross(m_orientation);
+            auto size = w->input_size().cross(m_orientation);
             switch (size.unit()) {
             case Util::Length::Auto:
                 return container.raw_size().cross(m_orientation) - m_padding.cross_sum(m_orientation);
@@ -80,8 +80,8 @@ void BoxLayout::run(Container& container) {
     for (auto& w : container.widgets()) {
         if (!w->is_visible())
             continue;
-        if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
-            autosized_fraction_sum += w->size().main(m_orientation).value();
+        if (w->input_size().main(m_orientation).unit() == Util::Length::Auto) {
+            autosized_fraction_sum += w->input_size().main(m_orientation).value();
             autosized_widget_count++;
         }
         else {
@@ -103,10 +103,10 @@ void BoxLayout::run(Container& container) {
         for (auto& w : container.widgets()) {
             if (!w->is_visible())
                 continue;
-            if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
+            if (w->input_size().main(m_orientation).unit() == Util::Length::Auto) {
                 auto cross = w->raw_size().cross(m_orientation);
                 w->set_raw_size(Util::Size2i::from_main_cross(
-                    m_orientation, std::ceil(autosized_widget_size * w->size().main(m_orientation).value()), cross
+                    m_orientation, std::ceil(autosized_widget_size * w->input_size().main(m_orientation).value()), cross
                 ));
             }
             w->set_raw_position(Util::Point2i::from_main_cross(
@@ -122,10 +122,10 @@ void BoxLayout::run(Container& container) {
             auto& w = *it;
             if (!w->is_visible())
                 continue;
-            if (w->size().main(m_orientation).unit() == Util::Length::Auto) {
+            if (w->input_size().main(m_orientation).unit() == Util::Length::Auto) {
                 auto cross = w->raw_size().cross(m_orientation);
                 w->set_raw_size(Util::Size2i::from_main_cross(
-                    m_orientation, std::ceil(autosized_widget_size * w->size().main(m_orientation).value()), cross
+                    m_orientation, std::ceil(autosized_widget_size * w->input_size().main(m_orientation).value()), cross
                 ));
             }
             current_position -= w->raw_size().main(m_orientation);
@@ -166,7 +166,7 @@ LengthVector BoxLayout::initial_size(Container const& container) const {
     float cross_total_size = 0;
     bool forward_auto_size_for_cross_axis = false;
     for (auto const& widget : container.widgets()) {
-        auto widget_size = widget->size();
+        auto widget_size = widget->input_size();
         auto main_size = widget_size.main(m_orientation);
         auto cross_size = widget_size.cross(m_orientation);
         switch (main_size.unit()) {
@@ -255,8 +255,8 @@ void BasicLayout::run(Container& container) {
     };
 
     for (auto& w : container.widgets()) {
-        auto input_position = w->position();
-        w->set_raw_size({ resolve_size(container.raw_size().x(), w->size().x), resolve_size(container.raw_size().y(), w->size().y) });
+        auto input_position = w->input_position();
+        w->set_raw_size({ resolve_size(container.raw_size().x(), w->input_size().x), resolve_size(container.raw_size().y(), w->input_size().y) });
         auto x = resolve_position(container.raw_size().x(), w->raw_size().x(), input_position.x);
         auto y = resolve_position(container.raw_size().y(), w->raw_size().y(), input_position.y);
 

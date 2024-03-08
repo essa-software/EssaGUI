@@ -38,13 +38,11 @@ public:
 
     virtual void update() { m_root->update(); }
 
-    virtual Util::Point2i position() const = 0;
+    // Position relative to HostWindow. For HostWindows itself, it's 0.
+    // Used in Widget::host_position(), and to calculate widget-relative
+    // mouse position from llgl::mouse_position().
+    virtual Util::Point2i host_position() const = 0;
     virtual Util::Size2i size() const = 0;
-    Util::Recti rect() const { return { position(), size() }; }
-
-    // The rect that the WidgetTreeRoot should consume events from. For
-    // ToolWindows, it is content + titlebar + resize rect.
-    virtual Util::Recti full_rect() const { return rect(); }
 
     template<class T, class... Args>
         requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>

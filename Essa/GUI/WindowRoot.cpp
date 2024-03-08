@@ -52,7 +52,7 @@ void WindowRoot::relayout_and_draw(Gfx::Painter& painter) {
         m_main_widget->set_raw_size(m_window.size());
         m_main_widget->do_relayout();
         if (DBG_ENABLED(GUI_DumpLayout)) {
-            fmt::print(stderr, "Window: {} (pos={}, size={})\n", typeid(m_window).name(), m_window.position(), m_window.size());
+            fmt::print(stderr, "Window: {} (pos={}, size={})\n", typeid(m_window).name(), m_window.host_position(), m_window.size());
             fmt::print(stderr, "    Screen: {}\n", typeid(*this).name());
             m_main_widget->dump(std::cerr, 2);
         }

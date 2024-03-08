@@ -60,7 +60,7 @@ Widget::EventHandlerResult TreeView::on_mouse_button_press(Event::MouseButtonPre
         }
         else if (event.button() == llgl::MouseButton::Right && on_context_menu_request) {
             if (auto context_menu = on_context_menu_request(path.second)) {
-                host_window().open_context_menu(*context_menu, event.local_position() + window_root().window().position().to_vector());
+                host_window().open_context_menu(event.local_position() + host_position().to_vector(), *context_menu);
             }
         }
     }

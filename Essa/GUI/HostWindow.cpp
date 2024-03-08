@@ -101,16 +101,16 @@ void HostWindow::do_draw() {
     display();
 }
 
-void HostWindow::open_context_menu(ContextMenu menu, Util::Point2i position) {
+void HostWindow::open_context_menu(Util::Point2i position, ContextMenu menu) {
     auto menu_overlay = GUI::Application::the().open_host_window<ContextMenuOverlay>(std::move(menu));
-    menu_overlay.window.set_position(position);
+    menu_overlay.window.set_position(this->position() + position.to_vector());
     menu_overlay.window.show_modal(this);
 }
 
-TooltipOverlay& HostWindow::add_tooltip(Util::Point2u position, Tooltip t) const {
+TooltipOverlay& HostWindow::add_tooltip(Util::Point2i position, Tooltip t) const {
     Gfx::Text text(t.text, GUI::Application::the().font());
     auto tooltip_window = GUI::Application::the().open_host_window<TooltipOverlay>(std::move(t));
-    tooltip_window.window.set_position(this->position() + position.cast<int>().to_vector());
+    tooltip_window.window.set_position(this->position() + position.to_vector());
     return tooltip_window.root;
 }
 

@@ -122,7 +122,7 @@ void Host::draw(Gfx::Painter& painter) const {
 
         if (DBG_ENABLED(GUI_DrawOverlayBounds)) {
             using namespace Gfx::Drawing;
-            painter.draw(Rectangle(overlay->rect().cast<float>(), Fill::none(), Outline::normal(Util::Colors::Cyan, -1)));
+            painter.draw(Rectangle(overlay->client_rect().cast<float>(), Fill::none(), Outline::normal(Util::Colors::Cyan, -1)));
             painter.draw(Rectangle(overlay->full_rect().cast<float>(), Fill::none(), Outline::normal(Util::Colors::Cyan * 0.5, 1)));
             Gfx::Text debug_text(Util::UString(overlay->id()), resource_manager().fixed_width_font());
             debug_text.set_font_size(10);

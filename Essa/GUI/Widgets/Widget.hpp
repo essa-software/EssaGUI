@@ -86,18 +86,32 @@ public:
     virtual void do_update();
     virtual void draw(Gfx::Painter&) const { }
 
-    // TODO: Rename to absolute_position
-    Util::Point2i raw_position() const;
-    /*deprecated*/ void set_raw_position(Util::Point2i);
-    Util::Point2i host_position() const { return host_rect().position(); }
+    Util::Point2i screen_position() const;
+    Util::Point2i host_position() const;
+    Util::Point2i absolute_position() const;
+    Util::Point2i parent_relative_position() const;
+
+    // Returns bounding box relative to host window's top left corner.
+    Util::Recti host_rect() const { return { host_position(), raw_size() }; }
+    // Returns bounding box relative to widget tree root's top left corner
+    Util::Recti absolute_rect() const { return { absolute_position(), raw_size() }; }
+    // Returns bounding box relative to parent. If this is a main widget,
+    // this will be equal to absolute_rect().
+    Util::Recti parent_relative_rect() const { return { parent_relative_position(), raw_size() }; }
+    // Returns bounding box with position = (0, 0)
+    Util::Recti local_rect() const { return { {}, m_raw_size }; }
+
+    [[deprecated("Use absolute_position() instead")]] Util::Point2i raw_position() const { return absolute_position(); }
+    [[deprecated]] void set_raw_position(Util::Point2i);
+
     CREATE_VALUE(Util::Size2i, raw_size, Util::Size2i())
 
-    LengthVector position() const { return m_expected_pos; }
-    LengthVector size() const { return m_input_size; }
+    LengthVector input_position() const { return m_input_position; }
+    LengthVector input_size() const { return m_input_size; }
 
     // clang-format off
     void set_position(LengthVector l) {
-        m_expected_pos = l;
+        m_input_position = l;
         set_needs_relayout();
     }
 
@@ -133,16 +147,6 @@ public:
         m_input_size = l;
         set_needs_relayout();
     }
-
-    // Returns bounding box relative to host window's top left corner.
-    Util::Recti host_rect() const;
-    // Returns bounding box relative to parent. If this is a main widget,
-    // this will be equal to absolute_rect().
-    Util::Recti parent_relative_rect() const;
-    // Returns bounding box relative to widget tree root's top left corner
-    Util::Recti absolute_rect() const;
-    // Returns bounding box with position = (0, 0)
-    Util::Recti local_rect() const { return { {}, m_raw_size }; }
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
@@ -229,6 +233,8 @@ protected:
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() { }
+    // Get mouse position relative to widget's top left corner.
+    Util::Point2i local_mouse_position() const;
     // Check if mouse at given absolute position is over the widget.
     virtual bool is_mouse_over(Util::Point2i) const;
     virtual void update() { }
@@ -268,12 +274,13 @@ private:
     WindowRoot* m_window_root = nullptr;
     // Position, relative to parent container.
     Util::Point2i m_position;
-    LengthVector m_expected_pos;
+    LengthVector m_input_position;
     LengthVector m_input_size { Util::Length::Initial, Util::Length::Initial };
     Alignment m_horizontal_alignment = Alignment::Start;
     Alignment m_vertical_alignment = Alignment::Start;
 
     TooltipOverlay* m_tooltip = nullptr;
+    // local position
     Util::Point2i m_tooltip_position;
     EventLoop::TimerHandle m_tooltip_timer;
 

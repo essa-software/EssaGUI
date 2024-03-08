@@ -32,7 +32,7 @@ Widget::EventHandlerResult Splitter::on_mouse_move(Event::MouseMove const& event
         int second_target_size = first_size + second_size - first_target_size;
 
         auto update_size = [this](Widget& widget, int target_size) {
-            auto size = widget.size().main(m_orientation);
+            auto size = widget.input_size().main(m_orientation);
             if (size == Util::Length::Auto) {
                 size = { 1, Util::Length::Auto };
             }
@@ -54,7 +54,7 @@ Widget::EventHandlerResult Splitter::on_mouse_move(Event::MouseMove const& event
                 break;
             }
             }
-            widget.set_size(LengthVector::from_main_cross(m_orientation, size, widget.size().cross(m_orientation)));
+            widget.set_size(LengthVector::from_main_cross(m_orientation, size, widget.input_size().cross(m_orientation)));
         };
 
         update_size(*first_widget, first_target_size);
@@ -135,7 +135,7 @@ void Splitter::relayout() {
 
     // "Renormalize" fraction units to pixels to avoid precision loss over time
     for (auto& widget : m_widgets) {
-        auto size = widget->size();
+        auto size = widget->input_size();
         if (size.main(m_orientation).unit() == Util::Length::Auto) {
             auto raw_size = widget->raw_size().main(m_orientation);
             widget->set_size(LengthVector::from_main_cross(

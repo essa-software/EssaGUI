@@ -37,10 +37,15 @@ Widget::~Widget() {
     }
 }
 
-bool Widget::is_mouse_over(Util::Point2i mouse_pos) const { return Util::Recti(raw_position(), m_raw_size).contains(mouse_pos); }
+Util::Point2i Widget::local_mouse_position() const {
+    auto mouse_pos_relative_to_host_window = llgl::mouse_position();
+    return mouse_pos_relative_to_host_window - this->host_position().to_vector();
+}
+
+bool Widget::is_mouse_over(Util::Point2i mouse_pos) const { return absolute_rect().contains(mouse_pos); }
 
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
-    auto transformed_event = event.relativized(raw_position().to_vector());
+    auto transformed_event = event.relativized(absolute_position().to_vector());
 
     // Handle double click
     if (m_double_click_enabled) {
@@ -97,7 +102,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                         if (m_tooltip_timer.expired()) {
                             m_tooltip_timer = EventLoop::current().set_timeout(667ms, [this]() {
                                 m_tooltip = &host_window().add_tooltip(
-                                    m_tooltip_position.cast<unsigned>(), Tooltip { create_tooltip(m_tooltip_position) }
+                                    this->host_position() + m_tooltip_position.to_vector(), Tooltip { create_tooltip(m_tooltip_position) }
                                 );
                             });
                         }
@@ -117,7 +122,7 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 if (m_hover && should_display_tooltip(mouse_position)) {
                     if (!m_tooltip) {
                         m_tooltip = &host_window().add_tooltip(
-                            m_tooltip_position.cast<unsigned>(), Tooltip { create_tooltip(m_tooltip_position) }
+                            m_tooltip_position + host_position().to_vector(), Tooltip { create_tooltip(m_tooltip_position) }
                         );
                     }
                 }
@@ -136,11 +141,8 @@ Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
                 auto text = m_tooltip->text();
                 update_tooltip(mouse_position, text);
                 m_tooltip->set_text(text);
-                static_cast<HostWindow&>(m_tooltip->window())
-                    .set_position(
-                        (m_window_root->window().position() + raw_position().to_vector() + tooltip_position.to_vector()
-                         + Util::Vector2i(32, 32))
-                    );
+                auto screen_tooltip_position = host_window().position() + absolute_position().to_vector() + tooltip_position.to_vector();
+                static_cast<HostWindow&>(m_tooltip->window()).set_position(screen_tooltip_position + Util::Vector2i(32, 32));
             }
 
             return EventHandlerResult::NotAccepted;
@@ -236,22 +238,19 @@ void Widget::do_draw(Gfx::Painter& painter) const {
     }
 }
 
-Util::Point2i Widget::raw_position() const { return m_position + (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i()); }
+Util::Point2i Widget::screen_position() const { return host_window().position() + host_position().to_vector(); }
+
+Util::Point2i Widget::host_position() const { return m_window_root->window().host_position() + absolute_position().to_vector(); }
+
+Util::Point2i Widget::absolute_position() const {
+    return m_position + (m_parent ? m_parent->absolute_position().to_vector() : Util::Vector2i());
+}
+
+Util::Point2i Widget::parent_relative_position() const { return m_position; }
 
 void Widget::set_raw_position(Util::Point2i position) {
     m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());
 }
-
-Util::Recti Widget::host_rect() const {
-    return {
-        raw_position() + m_window_root->window().position().to_vector(),
-        raw_size(),
-    };
-}
-
-Util::Recti Widget::parent_relative_rect() const { return { m_position, m_raw_size }; }
-
-Util::Recti Widget::absolute_rect() const { return { raw_position(), raw_size() }; }
 
 void Widget::do_relayout() {
     copy_initial_sizes();
@@ -301,7 +300,7 @@ void Widget::dump(std::ostream& out, unsigned depth) {
     if (!m_id.empty()) {
         fmt::format_to(it, " #{}", m_id);
     }
-    fmt::format_to(it, ": pos=({}, {})={}", fmt::streamed(m_expected_pos.x), fmt::streamed(m_expected_pos.y), m_position);
+    fmt::format_to(it, ": pos=({}, {})={}", fmt::streamed(m_input_position.x), fmt::streamed(m_input_position.y), m_position);
     fmt::format_to(it, ", size=({}, {})={}", fmt::streamed(m_input_size.x), fmt::streamed(m_input_size.y), m_raw_size);
     fmt::format_to(it, "\n");
 }
@@ -313,8 +312,8 @@ EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EM
     m_horizontal_alignment = TRY(object.get_enum<Alignment>("horizontal_alignment", alignment_from_string, Alignment::Start));
     m_input_size.x = TRY(object.get_property("width", EML::Value(Util::Length { Util::Length::Initial })).to_length());
     m_input_size.y = TRY(object.get_property("height", EML::Value(Util::Length { Util::Length::Initial })).to_length());
-    m_expected_pos.x = TRY(object.get_property("left", EML::Value(Util::Length { Util::Length::Initial })).to_length());
-    m_expected_pos.y = TRY(object.get_property("top", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_input_position.x = TRY(object.get_property("left", EML::Value(Util::Length { Util::Length::Initial })).to_length());
+    m_input_position.y = TRY(object.get_property("top", EML::Value(Util::Length { Util::Length::Initial })).to_length());
     m_background_color = TRY(object.get_property("background_color", EML::Value(Util::Color { 0x000000 })).to_color());
     m_enabled = TRY(object.get_property("enabled", EML::Value(true)).to_bool());
     m_visible = TRY(object.get_property("visible", EML::Value(true)).to_bool());

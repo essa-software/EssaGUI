@@ -1,9 +1,9 @@
 #include "ContextMenu.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Graphics/ClipViewScope.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
@@ -33,14 +33,7 @@ void MenuWidget::draw(Gfx::Painter& painter) const {
         text_align_rect.width -= 10;
         text_align_rect.top -= 2; // HACK: to fix text alignment
 
-        // FIXME: llgl::mouse_position() here breaks abstraction:
-        // - Widgets shouldn't need to know about which window they are in
-        // - llgl::mouse_position() forwards to SDL_GetMouseState which returns
-        //   position relative to current focused host window
-        // - So this wouldn't work in MDI windows, because we would need to
-        //   subtract MDI window's position on host window
-        // Basically we would need some GUI aware equivalent of llgl::mouse_position().
-        if (background_rect.contains(llgl::mouse_position() - raw_position().to_vector())) {
+        if (background_rect.contains(local_mouse_position())) {
             Gfx::RectangleDrawOptions hovered_background;
             hovered_background.fill_color = theme().selection.value(*this);
             painter.deprecated_draw_rectangle(background_rect, hovered_background);
@@ -119,7 +112,7 @@ Widget::EventHandlerResult ContextMenuOverlay::handle_event(llgl::Event const& e
         close();
         return Widget::EventHandlerResult::Accepted;
     }
-    if (const auto* keypress = event.get<llgl::Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Escape) {
+    if (auto const* keypress = event.get<llgl::Event::KeyPress>(); keypress && keypress->code() == llgl::KeyCode::Escape) {
         close();
         return Widget::EventHandlerResult::Accepted;
     }

@@ -28,14 +28,15 @@ public:
     void do_draw();
     void handle_events(); // Called by Application
 
-    // NOTE: The opened context menu is modal, meaning that this
-    //       function won't return until user chooses an action
-    //       or dismisses the menu.
-    void open_context_menu(ContextMenu, Util::Point2i position);
+    // The opened context menu is modal, meaning that this
+    // function won't return until user chooses an action
+    // or dismisses the menu.
     // Position is relative to this HostWindow.
-    TooltipOverlay& add_tooltip(Util::Point2u position, Tooltip t) const;
+    void open_context_menu(Util::Point2i position, ContextMenu);
+    // Position is relative to this HostWindow.
+    TooltipOverlay& add_tooltip(Util::Point2i position, Tooltip t) const;
 
-    virtual Util::Point2i position() const override { return llgl::Window::position(); }
+    virtual Util::Point2i host_position() const override { return {}; }
     virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
     Util::Recti rect() const { return { {}, size() }; }
 

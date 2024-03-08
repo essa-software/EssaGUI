@@ -37,6 +37,8 @@ void Window::center_on_screen() {
     set_position((window.raw_size() / 2 - size() / 2.f).to_vector().to_point());
 }
 
+Util::Point2i Window::host_position() const { return host().host_position() + position().to_vector(); }
+
 HostWindow& Window::host_window() { return host().host_window(); }
 
 void Window::constrain_position() {
@@ -397,7 +399,7 @@ Util::Recti Window::resize_rect(ResizeDirection direction) const {
 
 Util::Recti Window::full_rect() const {
     if (is_borderless()) {
-        return rect();
+        return client_rect();
     }
     return Util::Recti {
         position() - Util::Vector2i(0, theme().tool_window_title_bar_size),

@@ -42,7 +42,7 @@ TEST_P(EMLTest, EMLTest) {
             static GUI::HostWindow hw;
             return hw;
         }
-        virtual Util::Point2i position() const override { return {}; }
+        virtual Util::Point2i host_position() const override { return {}; }
         virtual Util::Size2i size() const override { return m_testcase.wtr_size; }
 
     private:
