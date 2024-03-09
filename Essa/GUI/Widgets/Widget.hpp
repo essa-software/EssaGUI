@@ -102,7 +102,10 @@ public:
     Util::Recti local_rect() const { return { {}, m_raw_size }; }
 
     [[deprecated("Use absolute_position() instead")]] Util::Point2i raw_position() const { return absolute_position(); }
-    [[deprecated]] void set_raw_position(Util::Point2i);
+    // This sets widget's position directly. Usually this is done
+    // by Layout.
+    void set_parent_relative_position(Util::Point2i p);
+    [[deprecated("Use set_parent_relative_position() instead")]] void set_raw_position(Util::Point2i);
 
     CREATE_VALUE(Util::Size2i, raw_size, Util::Size2i())
 
@@ -170,7 +173,7 @@ public:
     void set_focused();
     virtual bool is_focused() const;
 
-    Container* parent() const { return m_parent; }
+    Widget* parent() const { return m_parent; }
 
     // FIXME: The names are not the best.
     enum class TooltipMode {
@@ -212,8 +215,11 @@ public:
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
 
-    // FIXME: This should be private.
-    void set_window_root(WindowRoot& wtr) { m_window_root = &wtr; }
+    // Use these only if you implement (custom) containers.
+    // So e.g GUI::Container, GUI::ScrollableContainer, ...
+
+    /*restricted(Custom Containers)*/ void set_window_root(WindowRoot& wtr) { m_window_root = &wtr; }
+    /*restricted(Custom Containers)*/ void set_parent(Widget& parent);
 
     void set_double_click_enabled(bool dblclk) { m_double_click_enabled = dblclk; }
 
@@ -266,11 +272,9 @@ private:
     friend Container;
     friend class WindowRoot;
 
-    void set_parent(Container& parent);
-
     virtual LengthVector initial_size() const { return LengthVector {}; }
 
-    Container* m_parent = nullptr;
+    Widget* m_parent = nullptr;
     WindowRoot* m_window_root = nullptr;
     // Position, relative to parent container.
     Util::Point2i m_position;

@@ -248,6 +248,8 @@ Util::Point2i Widget::absolute_position() const {
 
 Util::Point2i Widget::parent_relative_position() const { return m_position; }
 
+void Widget::set_parent_relative_position(Util::Point2i p) { m_position = p; }
+
 void Widget::set_raw_position(Util::Point2i position) {
     m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());
 }
@@ -284,7 +286,7 @@ HostWindow& Widget::host_window() const {
     return window.host_window();
 }
 
-void Widget::set_parent(Container& parent) {
+void Widget::set_parent(Widget& parent) {
     set_window_root(parent.window_root());
     m_parent = &parent;
 }

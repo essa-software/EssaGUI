@@ -8,9 +8,11 @@ class ScrollableContainer : public ScrollableWidget {
 public:
     ScrollableContainer();
 
-    template<class T> T& set_widget() {
+    template<class T>
+        requires(std::is_base_of_v<Widget, T>)
+    T& set_widget() {
         m_widget = std::make_shared<T>();
-        m_widget->set_window_root(window_root());
+        m_widget->set_parent(*this);
         m_widget->init();
         set_needs_relayout();
         return *static_cast<T*>(m_widget.get());

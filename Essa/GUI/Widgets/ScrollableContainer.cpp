@@ -5,7 +5,7 @@
 namespace GUI {
 
 ScrollableContainer::ScrollableContainer() {
-    on_scroll = [&]() { m_widget->set_raw_position(scroll_offset().to_point()); };
+    on_scroll = [&]() { m_widget->set_parent_relative_position(scroll_offset().to_point()); };
 }
 
 Util::Size2i ScrollableContainer::content_size() const { return m_widget->total_size(); }
@@ -14,7 +14,7 @@ Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& eve
     if (Widget::do_handle_event(event) == EventHandlerResult::Accepted) {
         return EventHandlerResult::Accepted;
     }
-    return m_widget->do_handle_event(event.relativized(raw_position().to_vector()));
+    return m_widget->do_handle_event(event);
 }
 
 void ScrollableContainer::draw(Gfx::Painter& painter) const {
@@ -36,14 +36,13 @@ void ScrollableContainer::do_relayout() {
     bool needs_horizontal_scrollbar = false;
     bool needs_vertical_scrollbar = false;
     if (m_widget->total_size().x() > raw_size().x()) {
-        actually_needed_size.set_y(actually_needed_size.x() - 5);
+        actually_needed_size.set_y(actually_needed_size.y() - 5);
         needs_horizontal_scrollbar = true;
     }
     if (m_widget->total_size().y() > raw_size().y()) {
         actually_needed_size.set_x(actually_needed_size.x() - 5);
         needs_vertical_scrollbar = true;
     }
-    fmt::print("{} != {} ?\n", actually_needed_size, raw_size());
     if (actually_needed_size != raw_size()) {
         auto size = m_widget->total_size();
         if (needs_horizontal_scrollbar) {
@@ -59,8 +58,6 @@ void ScrollableContainer::do_relayout() {
 
 void ScrollableContainer::dump(std::ostream& out, unsigned depth) {
     Widget::dump(out, depth);
-    for (unsigned i = 0; i < depth; i++)
-        out << "-   ";
 
     if (!is_visible())
         return;

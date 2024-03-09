@@ -256,7 +256,8 @@ void BasicLayout::run(Container& container) {
 
     for (auto& w : container.widgets()) {
         auto input_position = w->input_position();
-        w->set_raw_size({ resolve_size(container.raw_size().x(), w->input_size().x), resolve_size(container.raw_size().y(), w->input_size().y) });
+        w->set_raw_size({ resolve_size(container.raw_size().x(), w->input_size().x),
+                          resolve_size(container.raw_size().y(), w->input_size().y) });
         auto x = resolve_position(container.raw_size().x(), w->raw_size().x(), input_position.x);
         auto y = resolve_position(container.raw_size().y(), w->raw_size().y(), input_position.y);
 
@@ -359,11 +360,11 @@ bool Container::is_focused() const {
 }
 
 std::optional<size_t> Container::focused_widget_index(bool recursive) const {
-    for (size_t c = 0; auto& w : m_widgets) {
+    for (size_t c = 0; auto const& w : m_widgets) {
         if (window_root().focused_widget() == w.get())
             return c;
         if (recursive) {
-            auto container = dynamic_cast<Container*>(w.get());
+            auto* container = dynamic_cast<Container*>(w.get());
             if (container) {
                 auto index = container->focused_widget_index(true);
                 if (index.has_value())
@@ -393,13 +394,15 @@ bool Container::focus_next_widget(bool called_from_child) {
         // std::cout << "focus_next_widget " << called_from_child << ": " <<
         // index << " " << m_widgets.raw_size() << std::endl;
         if (index == m_widgets.size()) {
-            if (m_parent && !steals_focus())
-                m_parent->focus_next_widget(true);
-            else
+            if (m_parent && !steals_focus() && Util::is<Container>(*m_parent)) {
+                static_cast<Container*>(m_parent)->focus_next_widget(true);
+            }
+            else {
                 focus_first_child_or_self();
+            }
             break;
         }
-        else if (m_widgets[index]->is_visible() && m_widgets[index]->accepts_focus() && !m_widgets[index]->steals_focus()) {
+        if (m_widgets[index]->is_visible() && m_widgets[index]->accepts_focus() && !m_widgets[index]->steals_focus()) {
             // std::cout << "Focusing first_child_or_self: " << index <<
             // std::endl;
             m_widgets[index]->focus_first_child_or_self();
