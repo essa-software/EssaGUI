@@ -16,6 +16,7 @@ ClipViewScope::ClipViewScope(Gfx::Painter& target, Util::Recti rect, Mode mode)
     if (mode != Mode::NewStack) {
         rect = rect.move_x(old_viewport.left).move_y(old_viewport.top);
         if (m_parent) {
+            rect = rect.move_x(-m_parent->m_offset.x());
             rect = rect.move_y(-m_parent->m_offset.y());
         }
     }
