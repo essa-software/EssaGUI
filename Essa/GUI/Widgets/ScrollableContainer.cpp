@@ -14,7 +14,7 @@ Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& eve
     if (Widget::do_handle_event(event) == EventHandlerResult::Accepted) {
         return EventHandlerResult::Accepted;
     }
-    return m_widget->do_handle_event(event.relativized(parent_relative_position().to_vector()));
+    return m_widget->do_handle_event(event);
 }
 
 void ScrollableContainer::draw(Gfx::Painter& painter) const {
@@ -68,6 +68,8 @@ void ScrollableContainer::dump(std::ostream& out, unsigned depth) {
 EML::EMLErrorOr<void> ScrollableContainer::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));
     m_widget = TRY(object.require_and_construct_object<Widget>("widget", loader, window_root()));
+    m_widget->set_parent(*this);
+    m_widget->init();
     return {};
 }
 
