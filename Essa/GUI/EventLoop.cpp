@@ -79,8 +79,16 @@ EventLoop::TimerHandle EventLoop::set_timeout(Timer::Clock::duration const& time
     return *m_timers.insert(std::shared_ptr<Timer>(new Timer(timeout, std::move(callback), Timer::Mode::SingleShot))).first;
 }
 
+TimerScopeGuard EventLoop::set_timeout_with_guard(Timer::Clock::duration const& timeout, Timer::Callback&& callback) {
+    return TimerScopeGuard(*this, set_timeout(timeout, std::move(callback)));
+}
+
 EventLoop::TimerHandle EventLoop::set_interval(Timer::Clock::duration const& timeout, Timer::Callback&& callback) {
     return *m_timers.insert(std::shared_ptr<Timer>(new Timer(timeout, std::move(callback), Timer::Mode::MultiShot))).first;
+}
+
+TimerScopeGuard EventLoop::set_interval_with_guard(Timer::Clock::duration const& timeout, Timer::Callback&& callback) {
+    return TimerScopeGuard(*this, set_interval(timeout, std::move(callback)));
 }
 
 void EventLoop::remove_timer(TimerHandle const& handle) { m_timers.erase(handle.lock()); }
