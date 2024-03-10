@@ -4,6 +4,11 @@
 
 namespace GUI {
 
+// A container will scroll its child widgets if it's overflowing.
+//
+// The underlying widget DOESN'T get update() calls. Use timers for
+// this. In general, I'm going to deprecate update() in favor of timers
+// or Application::on_tick.
 class ScrollableContainer : public ScrollableWidget {
 public:
     ScrollableContainer();
