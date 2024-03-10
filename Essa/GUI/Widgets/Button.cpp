@@ -34,6 +34,10 @@ Theme::BgFgTextColors Button::colors_for_state() const {
 }
 
 void Button::click() {
+    if (!are_all_parents_enabled()) {
+        return;
+    }
+
     if (m_toggleable) {
         m_active = !m_active;
         if (on_change)
