@@ -150,6 +150,14 @@ public:
         m_input_size = l;
         set_needs_relayout();
     }
+    void set_width(Util::Length l) {
+        m_input_size.x = l;
+        set_needs_relayout();
+    }
+    void set_height(Util::Length l) {
+        m_input_size.y = l;
+        set_needs_relayout();
+    }
 
     // FIXME: These should be private somehow.
     virtual void do_relayout();
