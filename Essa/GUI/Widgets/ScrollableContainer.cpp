@@ -14,7 +14,7 @@ Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& eve
     if (Widget::do_handle_event(event) == EventHandlerResult::Accepted) {
         return EventHandlerResult::Accepted;
     }
-    return m_widget->do_handle_event(event);
+    return m_widget->do_handle_event(event.relativized(parent_relative_position().to_vector()));
 }
 
 void ScrollableContainer::draw(Gfx::Painter& painter) const {
