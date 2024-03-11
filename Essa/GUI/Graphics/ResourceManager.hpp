@@ -137,6 +137,8 @@ public:
         return *resource;
     }
 
+    void remove_resource(ResourceIdAndBase const&);
+
     template<Resource T> T& require(std::string path) const { return require<T>(ResourceId::asset(std::move(path))); }
     template<Resource T> T& require_external(std::string path) const { return require<T>(ResourceId::external(std::move(path))); }
 
