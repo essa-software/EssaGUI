@@ -75,4 +75,29 @@ private:
     bool m_is_blocked_by_modal_dialog = false;
 };
 
+// Closes the host window when destroyed. Also ensures that only one
+// HostWindow is open at a time (closes the previous one on assignment).
+class ScopedHostWindow {
+public:
+    ScopedHostWindow() = default;
+    ~ScopedHostWindow() {
+        if (m_window) {
+            m_window->close();
+        }
+    }
+
+    void set_window(HostWindow& window) {
+        if (m_window) {
+            m_window->close();
+        }
+        m_window = &window;
+        window.on_close = [this] { m_window = nullptr; };
+    }
+    HostWindow* window() { return m_window; }
+    HostWindow const* window() const { return m_window; }
+
+private:
+    HostWindow* m_window = nullptr;
+};
+
 }
