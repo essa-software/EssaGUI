@@ -194,92 +194,98 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
             line_rect.fill_color = theme().placeholder;
             Util::Point2i line_position { depth * IndentSize - IndentSize / 2, current_y_pos + row_height / 2.f };
             line_position += scroll_offset();
-            painter.deprecated_draw_rectangle({ line_position.cast<float>(), { IndentSize / 2, 1 } }, line_rect);
 
-            float first_column_position = depth * IndentSize;
-            if (model.children_count(child) > 0) {
-                auto base_position = Util::Point2i { first_column_position + 13, current_y_pos + row_height / 2.f } + scroll_offset();
+            bool visible_on_screen = line_position.y() < raw_size().y() && line_position.y() + (int)row_height > 0;
 
-                std::vector<Util::Point2f> vertices;
-                if (is_expanded(child_path)) {
-                    vertices.push_back((base_position + Util::Vector2i { -6, -3 }).cast<float>());
-                    vertices.push_back((base_position + Util::Vector2i { 0, 3 }).cast<float>());
-                    vertices.push_back((base_position + Util::Vector2i { 6, -3 }).cast<float>());
+            if (visible_on_screen) {
+                painter.deprecated_draw_rectangle({ line_position.cast<float>(), { IndentSize / 2, 1 } }, line_rect);
+
+                float first_column_position = depth * IndentSize;
+                if (model.children_count(child) > 0) {
+                    auto base_position = Util::Point2i { first_column_position + 13, current_y_pos + row_height / 2.f } + scroll_offset();
+
+                    std::vector<Util::Point2f> vertices;
+                    if (is_expanded(child_path)) {
+                        vertices.push_back((base_position + Util::Vector2i { -6, -3 }).cast<float>());
+                        vertices.push_back((base_position + Util::Vector2i { 0, 3 }).cast<float>());
+                        vertices.push_back((base_position + Util::Vector2i { 6, -3 }).cast<float>());
+                    }
+                    else {
+                        vertices.push_back((base_position + Util::Vector2i { -3, -6 }).cast<float>());
+                        vertices.push_back((base_position + Util::Vector2i { 3, 0 }).cast<float>());
+                        vertices.push_back((base_position + Util::Vector2i { -3, 6 }).cast<float>());
+                    }
+                    painter.draw_line(vertices, Gfx::LineDrawOptions { .color = theme().text_button.active.unhovered.text });
+                    first_column_position += 22;
                 }
-                else {
-                    vertices.push_back((base_position + Util::Vector2i { -3, -6 }).cast<float>());
-                    vertices.push_back((base_position + Util::Vector2i { 3, 0 }).cast<float>());
-                    vertices.push_back((base_position + Util::Vector2i { -3, 6 }).cast<float>());
+
+                auto icon = model.icon(child);
+                if (icon) {
+                    Gfx::RectangleDrawOptions rect;
+                    rect.texture = icon;
+                    Util::Point2i icon_position { first_column_position + 4, current_y_pos + row_height / 2.f - 8 };
+                    icon_position += scroll_offset();
+                    painter.deprecated_draw_rectangle({ icon_position.cast<float>(), { 16, 16 } }, rect);
+                    first_column_position += 20;
                 }
-                painter.draw_line(vertices, Gfx::LineDrawOptions { .color = theme().text_button.active.unhovered.text });
-                first_column_position += 22;
-            }
 
-            auto icon = model.icon(child);
-            if (icon) {
-                Gfx::RectangleDrawOptions rect;
-                rect.texture = icon;
-                Util::Point2i icon_position { first_column_position + 4, current_y_pos + row_height / 2.f - 8 };
-                icon_position += scroll_offset();
-                painter.deprecated_draw_rectangle({ icon_position.cast<float>(), { 16, 16 } }, rect);
-                first_column_position += 20;
-            }
+                for (size_t c = 0; c < columns; c++) {
+                    auto column = model.column(c);
 
-            for (size_t c = 0; c < columns; c++) {
-                auto column = model.column(c);
+                    auto data = model.data(child, c);
+                    Util::Point2i cell_position { c == 0 ? first_column_position : current_x_pos, current_y_pos };
+                    cell_position += scroll_offset();
+                    auto cell_size = this->cell_size(r, c);
 
-                auto data = model.data(child, c);
-                Util::Point2i cell_position { c == 0 ? first_column_position : current_x_pos, current_y_pos };
-                cell_position += scroll_offset();
-                auto cell_size = this->cell_size(r, c);
+                    // TODO: ClipViewScope it
+                    // TODO: Make this all (font, font raw_size, alignment)
+                    // configurable
+                    std::visit(
+                        Util::Overloaded {
+                            [&](Util::UString const& data) {
+                                Gfx::Text text { data, Application::the().bold_font() };
+                                text.set_font_size(theme().label_font_size);
+                                text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
+                                text.align(
+                                    Align::CenterLeft, { (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
+                                );
+                                text.draw(painter);
+                            },
+                            [&](Gfx::RichText const& data) {
+                                Gfx::RichTextDrawable drawable {
+                                    data,
+                                    {
+                                        .default_font = Application::the().font(),
+                                        .font_color = theme().label.text,
+                                        .font_size = static_cast<int>(theme().label_font_size),
+                                        .text_alignment = GUI::Align::CenterLeft,
+                                    },
+                                };
+                                drawable.set_rect({ (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
+                                drawable.draw(painter);
+                            },
+                            [&](llgl::Texture const* data) {
+                                Gfx::RectangleDrawOptions rect;
+                                rect.texture = data;
+                                painter.deprecated_draw_rectangle(
+                                    { { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 },
+                                      { 16, 16 } },
+                                    rect
+                                );
+                            } },
+                        data
+                    );
 
-                // TODO: ClipViewScope it
-                // TODO: Make this all (font, font raw_size, alignment)
-                // configurable
-                std::visit(
-                    Util::Overloaded {
-                        [&](Util::UString const& data) {
-                            Gfx::Text text { data, Application::the().bold_font() };
-                            text.set_font_size(theme().label_font_size);
-                            text.set_fill_color(c % 2 == 0 ? list_even.text : list_odd.text);
-                            text.align(
-                                Align::CenterLeft, { (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() }
-                            );
-                            text.draw(painter);
-                        },
-                        [&](Gfx::RichText const& data) {
-                            Gfx::RichTextDrawable drawable {
-                                data,
-                                {
-                                    .default_font = Application::the().font(),
-                                    .font_color = theme().label.text,
-                                    .font_size = static_cast<int>(theme().label_font_size),
-                                    .text_alignment = GUI::Align::CenterLeft,
-                                },
-                            };
-                            drawable.set_rect({ (cell_position + Util::Vector2i(5, 0)).cast<float>(), cell_size.cast<float>() });
-                            drawable.draw(painter);
-                        },
-                        [&](llgl::Texture const* data) {
-                            Gfx::RectangleDrawOptions rect;
-                            rect.texture = data;
-                            painter.deprecated_draw_rectangle(
-                                { { cell_position.x() + cell_size.x() / 2 - 8, cell_position.y() + cell_size.y() / 2 - 8 }, { 16, 16 } },
-                                rect
-                            );
-                        } },
-                    data
-                );
+                    current_x_pos += cell_size.x();
+                }
 
-                current_x_pos += cell_size.x();
-            }
-
-            if (m_focused_path == child_path) {
-                painter.draw(Gfx::Drawing::Rectangle(
-                    { static_cast<float>(scroll_offset().x() + 1), current_y_pos + scroll_offset().y(), row_width() - 2,
-                      static_cast<float>(row_height) },
-                    Gfx::Drawing::Fill::none(), Gfx::Drawing::Outline::normal(theme().focus_frame, -1)
-                ));
+                if (m_focused_path == child_path) {
+                    painter.draw(Gfx::Drawing::Rectangle(
+                        { static_cast<float>(scroll_offset().x() + 1), current_y_pos + scroll_offset().y(), row_width() - 2,
+                          static_cast<float>(row_height) },
+                        Gfx::Drawing::Fill::none(), Gfx::Drawing::Outline::normal(theme().focus_frame, -1)
+                    ));
+                }
             }
 
             current_y_pos += row_height;
