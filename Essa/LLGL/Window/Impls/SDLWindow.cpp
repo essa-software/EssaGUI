@@ -75,8 +75,26 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
         );
     }
     else {
-        m_data->window
-            = SDL_CreateWindow((char*)title.encode().c_str(), 0, 0, size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags);
+        // Show new window on the display where the mouse is
+        int mouse_display = 0;
+        int display_count = SDL_GetNumVideoDisplays();
+        int mouse_x;
+        int mouse_y;
+        SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
+        for (int i = 0; i < display_count; i++) {
+            SDL_Rect display_bounds;
+            SDL_GetDisplayBounds(i, &display_bounds);
+            if (mouse_x >= display_bounds.x && mouse_x < display_bounds.x + display_bounds.w &&
+                mouse_y >= display_bounds.y && mouse_y < display_bounds.y + display_bounds.h) {
+                mouse_display = i;
+                break;
+            }
+        }
+
+        m_data->window = SDL_CreateWindow(
+            (char*)title.encode().c_str(), SDL_WINDOWPOS_UNDEFINED_DISPLAY(mouse_display), SDL_WINDOWPOS_UNDEFINED_DISPLAY(mouse_display),
+            size.x(), size.y(), SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | sdl_flags
+        );
     }
     if (!s_context)
         s_context = SDL_GL_CreateContext(m_data->window);
