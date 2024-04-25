@@ -66,8 +66,12 @@ public:
 
     static Color rgb_blend(Color const& l, Color const& r, float how_much_r);
 
-    constexpr uint32_t to_rgba32() const {
-        return (r << 24) | (g << 16) | (b << 8) | a;
+    constexpr uint32_t to_rgba32() const { return (r << 24) | (g << 16) | (b << 8) | a; }
+
+    Util::Color brighten(int amount) const {
+        return { static_cast<uint8_t>(std::clamp(static_cast<int>(r) + amount, 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(g) + amount, 0, 255)),
+                 static_cast<uint8_t>(std::clamp(static_cast<int>(b) + amount, 0, 255)), a };
     }
 };
 
