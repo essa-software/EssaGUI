@@ -7,6 +7,7 @@
 #include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/ResourceManager.hpp>
 #include <Essa/GUI/Theme.hpp>
+#include <Essa/LLGL/Window/Cursor.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Length.hpp>
 #include <EssaUtil/Orientation.hpp>
@@ -230,6 +231,8 @@ public:
     /*restricted(Custom Containers)*/ void set_parent(Widget& parent);
 
     void set_double_click_enabled(bool dblclk) { m_double_click_enabled = dblclk; }
+
+    virtual llgl::Cursor const& cursor([[maybe_unused]] Util::Point2i local_position) const { return llgl::Cursor::arrow(); }
 
 protected:
     EventHandlerResult handle_event(Event const&);

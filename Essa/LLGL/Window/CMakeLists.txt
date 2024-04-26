@@ -1,5 +1,6 @@
 set(SOURCES
     Clipboard.cpp
+    Cursor.cpp
     Impls/SDLHelpers.cpp
     Impls/SDLWindow.cpp
     Keyboard.cpp

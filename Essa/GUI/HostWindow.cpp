@@ -12,8 +12,6 @@
 #include <Essa/LLGL/Window/Window.hpp>
 #include <EssaUtil/ScopeGuard.hpp>
 
-#include <cassert>
-
 namespace GUI {
 
 HostWindow::HostWindow(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings) {

@@ -240,6 +240,7 @@ protected:
     virtual Boxi intrinsic_padding() const { return {}; }
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;
+    virtual llgl::Cursor const& cursor(Util::Point2i local_position) const override;
 
     virtual EventHandlerResult on_key_press(Event::KeyPress const&) override;
 

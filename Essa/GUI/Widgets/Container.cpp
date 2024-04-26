@@ -436,6 +436,15 @@ bool Container::accepts_focus() const {
     return false;
 }
 
+llgl::Cursor const& Container::cursor(Util::Point2i local_position) const {
+    for (auto const& widget : m_widgets) {
+        if (widget->is_visible() && widget->is_mouse_over(local_position + absolute_position().to_vector())) {
+            return widget->cursor(local_position - widget->parent_relative_position().to_vector());
+        }
+    }
+    return Widget::cursor(local_position);
+}
+
 void Container::do_update() {
     Widget::do_update();
     for (auto const& w : m_widgets)

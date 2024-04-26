@@ -76,6 +76,8 @@ private:
     virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
     virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
 
+    virtual llgl::Cursor const& cursor(Util::Point2i /*local_position*/) const override { return llgl::Cursor::system(llgl::SystemCursor::IBeam); }
+
     TextPosition text_position_at(Util::Point2i);
     Util::Point2i calculate_cursor_position() const;
     void erase_selected_text();

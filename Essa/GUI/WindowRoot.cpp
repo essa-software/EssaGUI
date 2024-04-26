@@ -85,6 +85,9 @@ void WindowRoot::do_handle_event(llgl::Event const& event) {
             return;
         }
     }
+    if (auto const* mousemove = event.get<llgl::Event::MouseMove>()) {
+        llgl::Cursor::set(main_widget()->cursor(mousemove->local_position()));
+    }
     event.visit(
         [&](llgl::Event::WindowMouseEnter const&) { m_main_widget->do_handle_event(GUI::Event::MouseEnter()); },
         [&](llgl::Event::WindowMouseLeave const&) { m_main_widget->do_handle_event(GUI::Event::MouseLeave()); },
