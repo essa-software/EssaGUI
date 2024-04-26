@@ -1,6 +1,6 @@
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/Widgets/Checkbox.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/Widgets/Checkbox.hpp>
 #include <Essa/GUI/Widgets/Progressbar.hpp>
 #include <Essa/GUI/Widgets/RadioButton.hpp>
 #include <Essa/GUI/Widgets/RadioGroup.hpp>
@@ -26,28 +26,27 @@ int main() {
 
     std::vector<std::thread> thread_vec;
 
-    auto create_progressbar = [&](Util::Color color, size_t timestep, GUI::Container& con, Util::UString const& content, GUI::Progressbar::Labelling label) {
-        auto prog1 = con.add_widget<GUI::Progressbar>();
-        prog1->set_max(100);
-        prog1->set_content(content);
-        prog1->set_size({ Util::Length::Auto, 30.0_px });
-        prog1->set_progressbar_color(color);
-        prog1->set_labelling(label);
-        // prog1->set_step(1);
+    auto create_progressbar
+        = [&](Util::Color color, size_t timestep, GUI::Container& con, Util::UString const& content, GUI::Progressbar::Labelling label) {
+              auto prog1 = con.add_widget<GUI::Progressbar>();
+              prog1->set_max(100);
+              prog1->set_content(content);
+              prog1->set_size({ Util::Length::Auto, 30.0_px });
+              prog1->set_progressbar_color(color);
+              prog1->set_labelling(label);
+              // prog1->set_step(1);
 
-        prog1->on_finish = [content]() {
-            std::cout << "Finished " + content << "\n";
-        };
+              prog1->on_finish = [content]() { std::cout << "Finished " + content << "\n"; };
 
-        auto busy_progressbar = [](GUI::Progressbar* prog, size_t time) {
-            while (!prog->finished()) {
-                std::this_thread::sleep_for(std::chrono::duration<size_t, std::milli>(time));
-                prog->step_by();
-            }
-        };
+              auto busy_progressbar = [](GUI::Progressbar* prog, size_t time) {
+                  while (!prog->finished()) {
+                      std::this_thread::sleep_for(std::chrono::duration<size_t, std::milli>(time));
+                      prog->step_by();
+                  }
+              };
 
-        thread_vec.push_back(std::thread(busy_progressbar, prog1, timestep));
-    };
+              thread_vec.push_back(std::thread(busy_progressbar, prog1, timestep));
+          };
 
     create_progressbar(Util::Colors::Green, 100, container1, "Processbar1", GUI::Progressbar::Labelling::Percentage);
     create_progressbar(Util::Colors::Blue, 200, container1, "Processbar2", GUI::Progressbar::Labelling::Value);

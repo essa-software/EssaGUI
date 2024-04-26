@@ -24,18 +24,28 @@ public:
         bool is_executable;
     };
 
-    virtual size_t children_count(std::optional<Model::Node> node) const override { return node ? 0 : m_files.size(); }
+    virtual size_t children_count(std::optional<Model::Node> node) const override {
+        return node ? 0 : m_files.size();
+    }
 
-    virtual size_t column_count() const override { return 5; }
+    virtual size_t column_count() const override {
+        return 5;
+    }
 
     virtual Variant data(Model::Node node, size_t column) const override;
 
     virtual ModelColumn column(size_t column) const override;
 
-    virtual NodeData child(std::optional<Model::Node>, size_t idx) const override { return NodeData { .type = 0, .data = &m_files[idx] }; }
+    virtual NodeData child(std::optional<Model::Node>, size_t idx) const override {
+        return NodeData { .type = 0, .data = &m_files[idx] };
+    }
 
-    std::filesystem::path get_path(size_t row) const { return m_files[row].path; }
-    void add_desired_extension(const std::string ext) { m_desired_extensions.push_back(ext); }
+    std::filesystem::path get_path(size_t row) const {
+        return m_files[row].path;
+    }
+    void add_desired_extension(std::string const ext) {
+        m_desired_extensions.push_back(ext);
+    }
 
     void update_content(
         std::filesystem::path path, std::function<bool(std::filesystem::path)> condition = [](std::filesystem::path) { return true; }
@@ -58,7 +68,9 @@ public:
 
     enum class FileType { File, Directory };
 
-    FileModel* model() { return m_model; }
+    FileModel* model() {
+        return m_model;
+    }
     void open_path(std::filesystem::path path);
 
     std::function<void(std::filesystem::path path)> on_submit;

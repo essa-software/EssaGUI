@@ -20,9 +20,13 @@ namespace GUI {
 
 // FIXME: There is a bunch of narrowing conversions in this file.
 
-TextEditor::TextEditor() { m_lines.push_back(""); }
+TextEditor::TextEditor() {
+    m_lines.push_back("");
+}
 
-int TextEditor::line_height() const { return Application::the().fixed_width_font().line_height(theme().label_font_size); }
+int TextEditor::line_height() const {
+    return Application::the().fixed_width_font().line_height(theme().label_font_size);
+}
 
 int TextEditor::left_margin() const {
     return static_cast<int>(m_multiline ? theme().text_editor_gutter_width + theme().text_editor_margin : theme().text_editor_margin);
@@ -658,7 +662,9 @@ void TextEditor::regenerate_styles() {
     m_error_spans.clear();
 }
 
-void TextEditor::did_content_change() { m_content_changed = true; }
+void TextEditor::did_content_change() {
+    m_content_changed = true;
+}
 
 TextPosition TextEditor::index_to_position(size_t offset) const {
     TextPosition position;

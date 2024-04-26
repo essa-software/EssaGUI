@@ -17,10 +17,16 @@ public:
         : m_matrix(matrix)
         , m_viewport(viewport) { }
 
-    Util::Recti viewport() const { return m_viewport; }
-    Util::Matrix4x4f matrix() const { return m_matrix; }
+    Util::Recti viewport() const {
+        return m_viewport;
+    }
+    Util::Matrix4x4f matrix() const {
+        return m_matrix;
+    }
 
-    void set_viewport(Util::Recti v) { m_viewport = v; }
+    void set_viewport(Util::Recti v) {
+        m_viewport = v;
+    }
 
 private:
     Util::Matrix4x4f m_matrix;

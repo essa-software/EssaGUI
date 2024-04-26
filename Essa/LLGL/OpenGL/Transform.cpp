@@ -7,6 +7,8 @@
 
 namespace llgl {
 
-void set_viewport(Util::Recti rect) { OpenGL::Viewport(rect.left, rect.top, rect.width, rect.height); }
+void set_viewport(Util::Recti rect) {
+    OpenGL::Viewport(rect.left, rect.top, rect.width, rect.height);
+}
 
 }

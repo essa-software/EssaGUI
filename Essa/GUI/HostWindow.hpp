@@ -21,8 +21,12 @@ public:
 
     virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
     virtual void close() override;
-    virtual void set_size(Util::Size2i size) override { llgl::Window::set_size(size.cast<unsigned>()); }
-    virtual HostWindow& host_window() override { return *this; }
+    virtual void set_size(Util::Size2i size) override {
+        llgl::Window::set_size(size.cast<unsigned>());
+    }
+    virtual HostWindow& host_window() override {
+        return *this;
+    }
 
     // TODO: Find a way for this to be private
     void do_draw();
@@ -36,13 +40,21 @@ public:
     // Position is relative to this HostWindow.
     TooltipOverlay& add_tooltip(Util::Point2i position, Tooltip t) const;
 
-    virtual Util::Point2i host_position() const override { return {}; }
-    virtual Util::Size2i size() const override { return llgl::Window::size().cast<int>(); }
-    Util::Recti rect() const { return { {}, size() }; }
+    virtual Util::Point2i host_position() const override {
+        return {};
+    }
+    virtual Util::Size2i size() const override {
+        return llgl::Window::size().cast<int>();
+    }
+    Util::Recti rect() const {
+        return { {}, size() };
+    }
 
     virtual void center_on_screen() override;
 
-    void set_background_color(Util::Color color) { m_background_color = color; }
+    void set_background_color(Util::Color color) {
+        m_background_color = color;
+    }
 
     Theme const& theme() const;
     Gfx::ResourceManager const& resource_manager() const;
@@ -54,13 +66,19 @@ public:
         return WidgetTreeRoot::set_main_widget<T>(std::forward<Args>(args)...);
     }
     // FIXME: Rename this to main_widget after removing the old main_widget
-    Widget* root_widget() { return WidgetTreeRoot::main_widget(); }
+    Widget* root_widget() {
+        return WidgetTreeRoot::main_widget();
+    }
 
     void show_modal(HostWindow* parent);
     void show_modal_non_blocking(HostWindow& parent);
-    bool is_modal() const { return m_modal_parent != nullptr; }
+    bool is_modal() const {
+        return m_modal_parent != nullptr;
+    }
 
-    virtual Util::UString dev_tools_name() const override { return title(); }
+    virtual Util::UString dev_tools_name() const override {
+        return title();
+    }
 
     std::function<void()> on_close;
 
@@ -93,8 +111,12 @@ public:
         m_window = &window;
         window.on_close = [this] { m_window = nullptr; };
     }
-    HostWindow* window() { return m_window; }
-    HostWindow const* window() const { return m_window; }
+    HostWindow* window() {
+        return m_window;
+    }
+    HostWindow const* window() const {
+        return m_window;
+    }
 
 private:
     HostWindow* m_window = nullptr;

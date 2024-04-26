@@ -35,16 +35,36 @@ inline void set_uniform(int location, Util::Color const& color) {
     OpenGL::Uniform4f(location, colorf.r, colorf.g, colorf.b, colorf.a);
 }
 
-inline void set_uniform(int location, Util::Matrix4x4f const& matrix) { OpenGL::UniformMatrix4fv(location, 1, true, matrix.raw_data()); }
-inline void set_uniform(int location, Util::Point2f const& vec) { OpenGL::Uniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Point3f const& vec) { OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, Util::Vector2f const& vec) { OpenGL::Uniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Vector3f const& vec) { OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, Util::Size2f const& vec) { OpenGL::Uniform2f(location, vec.x(), vec.y()); }
-inline void set_uniform(int location, Util::Size3f const& vec) { OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z()); }
-inline void set_uniform(int location, int value) { OpenGL::Uniform1i(location, value); }
-inline void set_uniform(int location, bool value) { OpenGL::Uniform1i(location, value); }
-inline void set_uniform(int location, float value) { OpenGL::Uniform1f(location, value); }
+inline void set_uniform(int location, Util::Matrix4x4f const& matrix) {
+    OpenGL::UniformMatrix4fv(location, 1, true, matrix.raw_data());
+}
+inline void set_uniform(int location, Util::Point2f const& vec) {
+    OpenGL::Uniform2f(location, vec.x(), vec.y());
+}
+inline void set_uniform(int location, Util::Point3f const& vec) {
+    OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z());
+}
+inline void set_uniform(int location, Util::Vector2f const& vec) {
+    OpenGL::Uniform2f(location, vec.x(), vec.y());
+}
+inline void set_uniform(int location, Util::Vector3f const& vec) {
+    OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z());
+}
+inline void set_uniform(int location, Util::Size2f const& vec) {
+    OpenGL::Uniform2f(location, vec.x(), vec.y());
+}
+inline void set_uniform(int location, Util::Size3f const& vec) {
+    OpenGL::Uniform3f(location, vec.x(), vec.y(), vec.z());
+}
+inline void set_uniform(int location, int value) {
+    OpenGL::Uniform1i(location, value);
+}
+inline void set_uniform(int location, bool value) {
+    OpenGL::Uniform1i(location, value);
+}
+inline void set_uniform(int location, float value) {
+    OpenGL::Uniform1f(location, value);
+}
 
 // Concat tuples
 template<class T1, size_t... Id1, class T2, size_t... Id2>
@@ -52,7 +72,8 @@ decltype(auto) concat_tuples_impl(T1 const& t1, std::index_sequence<Id1...>, T2 
     return std::make_tuple(get<Id1>(t1)..., get<Id2>(t2)...);
 }
 
-template<class... T1, class... T2> auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
+template<class... T1, class... T2>
+auto concat_tuples(std::tuple<T1...> const& t1, std::tuple<T2...> const& t2) {
     return concat_tuples_impl(t1, std::make_index_sequence<sizeof...(T1)>(), t2, std::make_index_sequence<sizeof...(T2)>());
 }
 
@@ -71,7 +92,8 @@ concept ShaderImplPartial = requires(T t, T const ct, ShaderType st) {
 
 class Shader;
 
-template<class MT> struct Uniform {
+template<class MT>
+struct Uniform {
     char const* name;
     MT member;
     int location = 0;
@@ -82,36 +104,48 @@ template<class MT> struct Uniform {
 };
 
 // Uniform Mapping - stores uniforms and their locations, responsible for binding them
-template<class... Members> class UniformMapping {
+template<class... Members>
+class UniformMapping {
 public:
     UniformMapping(Uniform<Members>&&... pairs)
         : m_uniforms(std::move(pairs)...) { }
 
-    void bind(Shader& program, auto const& uniforms) { bind_impl(program, uniforms, std::make_index_sequence<sizeof...(Members)>()); }
+    void bind(Shader& program, auto const& uniforms) {
+        bind_impl(program, uniforms, std::make_index_sequence<sizeof...(Members)>());
+    }
 
-    template<class... Members2> auto operator|(UniformMapping<Members2...> const& other) const {
+    template<class... Members2>
+    auto operator|(UniformMapping<Members2...> const& other) const {
         return UniformMapping<Members..., Members2...>(Detail::concat_tuples(m_uniforms, other.m_uniforms));
     }
-    template<class Member> auto operator|(Uniform<Member> const& u1) { return operator|(UniformMapping<Member>(u1)); }
+    template<class Member>
+    auto operator|(Uniform<Member> const& u1) {
+        return operator|(UniformMapping<Member>(u1));
+    }
 
 private:
-    template<class... M2> friend class UniformMapping;
+    template<class... M2>
+    friend class UniformMapping;
 
     explicit UniformMapping(std::tuple<Uniform<Members>...> pairs)
         : m_uniforms(std::move(pairs)) { }
 
-    template<size_t... Idx> void bind_impl(Shader& shader, auto const& uniforms, std::index_sequence<Idx...>);
+    template<size_t... Idx>
+    void bind_impl(Shader& shader, auto const& uniforms, std::index_sequence<Idx...>);
 
-    template<class MT> int resolve_uniform_location(Shader& program, Uniform<MT>& member);
+    template<class MT>
+    int resolve_uniform_location(Shader& program, Uniform<MT>& member);
 
     std::tuple<Uniform<Members>...> m_uniforms;
 };
 
-template<class Member1, class Member2> auto operator|(Uniform<Member1> u1, Uniform<Member2> u2) {
+template<class Member1, class Member2>
+auto operator|(Uniform<Member1> u1, Uniform<Member2> u2) {
     return UniformMapping<Member1, Member2>(std::move(u1), std::move(u2));
 }
 
-template<class... Members> UniformMapping<Members...> make_uniform_mapping(Uniform<Members>&&... members) {
+template<class... Members>
+UniformMapping<Members...> make_uniform_mapping(Uniform<Members>&&... members) {
     return { std::move(members)... };
 }
 
@@ -126,8 +160,12 @@ public:
             OpenGL::DeleteProgram(m_program);
     }
 
-    unsigned program() const { return m_program; }
-    void set_program(unsigned p) { m_program = p; }
+    unsigned program() const {
+        return m_program;
+    }
+    void set_program(unsigned p) {
+        m_program = p;
+    }
 
 private:
     unsigned m_program = 0;
@@ -153,7 +191,8 @@ namespace Detail {
 unsigned compile_shader(GLenum type, std::string_view source);
 unsigned link_shader(std::initializer_list<unsigned> ids);
 
-template<ShaderImplPartial Shader> inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
+template<ShaderImplPartial Shader>
+inline void bind_shader(Shader& shader, typename Shader::Uniforms const& uniforms) {
     if (!shader.program()) {
         auto fragment_shader = compile_shader(GL_FRAGMENT_SHADER, shader.source(ShaderType::Fragment));
         auto vertex_shader = compile_shader(GL_VERTEX_SHADER, shader.source(ShaderType::Vertex));

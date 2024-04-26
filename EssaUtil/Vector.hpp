@@ -18,7 +18,8 @@ namespace Util {
 
 namespace Detail {
 
-template<size_t C, class T> class DeprecatedVector {
+template<size_t C, class T>
+class DeprecatedVector {
 public:
     static constexpr size_t Components = C;
 
@@ -111,9 +112,13 @@ public:
         return result;
     }
 
-    auto length() const { return std::sqrt(length_squared()); }
+    auto length() const {
+        return std::sqrt(length_squared());
+    }
 
-    double inverted_length() const { return 1 / length(); }
+    double inverted_length() const {
+        return 1 / length();
+    }
 
     // Return unit vector of direction the same as original. If original
     // vector is null, return null.
@@ -186,7 +191,9 @@ public:
         return ab;
     }
 
-    constexpr DeprecatedVector& operator+=(DeprecatedVector const& b) { return *this = *this + b; }
+    constexpr DeprecatedVector& operator+=(DeprecatedVector const& b) {
+        return *this = *this + b;
+    }
 
     constexpr DeprecatedVector operator-(DeprecatedVector const& b) const {
         DeprecatedVector ab;
@@ -196,7 +203,9 @@ public:
         return ab;
     }
 
-    constexpr DeprecatedVector& operator-=(DeprecatedVector const& b) { return *this = *this - b; }
+    constexpr DeprecatedVector& operator-=(DeprecatedVector const& b) {
+        return *this = *this - b;
+    }
 
     constexpr DeprecatedVector operator*(double x) const {
         DeprecatedVector ab;
@@ -206,7 +215,9 @@ public:
         return ab;
     }
 
-    constexpr DeprecatedVector& operator*=(double x) { return *this = *this * x; }
+    constexpr DeprecatedVector& operator*=(double x) {
+        return *this = *this * x;
+    }
 
     constexpr DeprecatedVector operator/(double x) const {
         DeprecatedVector ab;
@@ -216,7 +227,9 @@ public:
         return ab;
     }
 
-    constexpr DeprecatedVector& operator/=(double x) { return *this = *this / x; }
+    constexpr DeprecatedVector& operator/=(double x) {
+        return *this = *this / x;
+    }
 
     constexpr DeprecatedVector operator-() const {
         DeprecatedVector ap;
@@ -360,7 +373,9 @@ public:
 
     bool operator==(DeprecatedVector const&) const = default;
 
-    friend std::ostream& operator<<(std::ostream& out, DeprecatedVector const& v) { return out << fmt::format("{}", v); }
+    friend std::ostream& operator<<(std::ostream& out, DeprecatedVector const& v) {
+        return out << fmt::format("{}", v);
+    }
 
     std::array<T, Components> components {};
 
@@ -374,23 +389,27 @@ private:
 
 }
 
-template<size_t C, class T> Detail::DeprecatedVector<C, T> operator*(double fac, Detail::DeprecatedVector<C, T> const& vec) {
+template<size_t C, class T>
+Detail::DeprecatedVector<C, T> operator*(double fac, Detail::DeprecatedVector<C, T> const& vec) {
     return vec * fac;
 }
 
-template<class T> using DeprecatedVector2 = Detail::DeprecatedVector<2, T>;
+template<class T>
+using DeprecatedVector2 = Detail::DeprecatedVector<2, T>;
 using DeprecatedVector2i = DeprecatedVector2<int>;
 using DeprecatedVector2u = DeprecatedVector2<unsigned>;
 using DeprecatedVector2f = DeprecatedVector2<float>;
 using DeprecatedVector2d = DeprecatedVector2<double>;
 
-template<class T> using DeprecatedVector3 = Detail::DeprecatedVector<3, T>;
+template<class T>
+using DeprecatedVector3 = Detail::DeprecatedVector<3, T>;
 using DeprecatedVector3i = DeprecatedVector3<int>;
 using DeprecatedVector3u = DeprecatedVector3<unsigned>;
 using DeprecatedVector3f = DeprecatedVector3<float>;
 using DeprecatedVector3d = DeprecatedVector3<double>;
 
-template<class T> using DeprecatedVector4 = Detail::DeprecatedVector<4, T>;
+template<class T>
+using DeprecatedVector4 = Detail::DeprecatedVector<4, T>;
 using DeprecatedVector4i = DeprecatedVector4<int>;
 using DeprecatedVector4u = DeprecatedVector4<unsigned>;
 using DeprecatedVector4f = DeprecatedVector4<float>;
@@ -416,9 +435,11 @@ constexpr double get_distance_to_line(
 
 }
 
-template<size_t C, class T> class fmt::formatter<Util::Detail::DeprecatedVector<C, T>> : public fmt::formatter<T> {
+template<size_t C, class T>
+class fmt::formatter<Util::Detail::DeprecatedVector<C, T>> : public fmt::formatter<T> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::Detail::DeprecatedVector<C, T> const& v, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(Util::Detail::DeprecatedVector<C, T> const& v, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "[");
         for (size_t s = 0; s < C; s++) {
             ctx.advance_to(fmt::formatter<T>::format(v.components[s], ctx));

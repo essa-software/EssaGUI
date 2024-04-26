@@ -12,7 +12,6 @@
 #include <X11/extensions/Xrender.h>
 #include <cassert>
 #include <fmt/format.h>
-#include <fmt/format.h>
 
 namespace llgl {
 
@@ -26,11 +25,15 @@ int SDLHelpers::get_sdl_gl_attribute([[maybe_unused]] SDL_GLattr id) {
 }
 
 #ifdef SDL_VIDEO_DRIVER_X11
-template<class T> class XDeallocator {
+template<class T>
+class XDeallocator {
 public:
-    void operator()(T* ptr) { XFree(ptr); }
+    void operator()(T* ptr) {
+        XFree(ptr);
+    }
 };
-template<class T> using XUniquePtr = std::unique_ptr<T, XDeallocator<T>>;
+template<class T>
+using XUniquePtr = std::unique_ptr<T, XDeallocator<T>>;
 
 std::optional<VisualID> SDLHelpers::X11::get_transparent_visual_id() {
     auto x_display = XOpenDisplay(NULL);

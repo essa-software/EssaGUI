@@ -42,7 +42,9 @@ void HostWindow::close() {
     }
 }
 
-void HostWindow::center_on_screen() { llgl::Window::center_on_screen(); }
+void HostWindow::center_on_screen() {
+    llgl::Window::center_on_screen();
+}
 
 DBG_DECLARE(GUI_DumpOverlayHandleEventCalls);
 DBG_DECLARE(DevTools);
@@ -112,9 +114,13 @@ TooltipOverlay& HostWindow::add_tooltip(Util::Point2i position, Tooltip t) const
     return tooltip_window.root;
 }
 
-Theme const& HostWindow::theme() const { return Application::the().theme(); }
+Theme const& HostWindow::theme() const {
+    return Application::the().theme();
+}
 
-Gfx::ResourceManager const& HostWindow::resource_manager() const { return Application::the().resource_manager(); }
+Gfx::ResourceManager const& HostWindow::resource_manager() const {
+    return Application::the().resource_manager();
+}
 
 void HostWindow::show_modal(HostWindow* parent) {
     set_always_on_top();

@@ -14,7 +14,9 @@ public:
 
 private:
     virtual LengthVector initial_size() const override;
-    virtual Theme::ButtonColors default_button_colors() const override { return theme().image_button; }
+    virtual Theme::ButtonColors default_button_colors() const override {
+        return theme().image_button;
+    }
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
 };
 

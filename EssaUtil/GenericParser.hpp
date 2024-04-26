@@ -22,11 +22,21 @@ public:
         , m_value(std::move(value))
         , m_range(range) { }
 
-    Type type() const { return m_type; }
-    UString value() const { return m_value; }
-    SourceRange range() const { return m_range; }
-    SourceLocation start() const { return m_range.start; }
-    SourceLocation end() const { return m_range.end; }
+    Type type() const {
+        return m_type;
+    }
+    UString value() const {
+        return m_value;
+    }
+    SourceRange range() const {
+        return m_range;
+    }
+    SourceLocation start() const {
+        return m_range.start;
+    }
+    SourceLocation end() const {
+        return m_range.end;
+    }
 
 private:
     Type m_type;
@@ -34,7 +44,8 @@ private:
     SourceRange m_range;
 };
 
-template<class T> class GenericLexer : protected TextReader {
+template<class T>
+class GenericLexer : protected TextReader {
 public:
     explicit GenericLexer(ReadableStream& stream)
         : TextReader(stream) { }
@@ -52,9 +63,11 @@ struct ParseError {
     SourceRange location;
 };
 
-template<class T> using ParseErrorOr = ErrorOr<T, ParseError>;
+template<class T>
+using ParseErrorOr = ErrorOr<T, ParseError>;
 
-template<class T> class GenericParser {
+template<class T>
+class GenericParser {
 public:
     GenericParser(std::vector<Token<T>> tokens)
         : m_tokens(std::move(tokens)) { }
@@ -62,20 +75,30 @@ public:
     virtual ~GenericParser() = default;
 
 protected:
-    bool is_eof() const { return m_offset >= m_tokens.size(); }
+    bool is_eof() const {
+        return m_offset >= m_tokens.size();
+    }
 
-    size_t offset() const { return m_offset; }
+    size_t offset() const {
+        return m_offset;
+    }
 
     SourceRange range(size_t start, size_t size) const {
         assert(start + size < m_tokens.size());
         return SourceRange { .start = m_tokens[start].start(), .end = m_tokens[start + size - 1].end() };
     }
     // Returns range for last n tokens
-    SourceRange range_for_last(size_t n) const { return range(offset() - n, n); }
+    SourceRange range_for_last(size_t n) const {
+        return range(offset() - n, n);
+    }
     // Returns range from start to current offset (exclusive)
-    SourceRange range_starting_from(size_t start) const { return range(start, offset() - start); }
+    SourceRange range_starting_from(size_t start) const {
+        return range(start, offset() - start);
+    }
     // Returns range from start to end (exclusive)
-    SourceRange range_from_to(size_t start, size_t end) const { return range(start, end - start); }
+    SourceRange range_from_to(size_t start, size_t end) const {
+        return range(start, end - start);
+    }
 
     Token<T> const* get() {
         if (is_eof())
@@ -88,9 +111,13 @@ protected:
         return &m_tokens[m_offset];
     }
 
-    bool next_token_is(T type) const { return peek() && peek()->type() == type; }
+    bool next_token_is(T type) const {
+        return peek() && peek()->type() == type;
+    }
 
-    virtual std::string token_type_to_string(T type) const { return fmt::format("token of type {}", (int)type); }
+    virtual std::string token_type_to_string(T type) const {
+        return fmt::format("token of type {}", (int)type);
+    }
 
     ParseErrorOr<Token<T>> expect(T type) {
         auto token = get();
@@ -121,7 +148,9 @@ protected:
         return ParseError { .message = message, .location = m_tokens[m_offset - 1].range() };
     }
 
-    ParseError expected(std::string what, Token<T> got) { return error("Expected " + what + ", got '" + got.value().encode() + "'"); }
+    ParseError expected(std::string what, Token<T> got) {
+        return error("Expected " + what + ", got '" + got.value().encode() + "'");
+    }
 
     ParseError expected_in_already_read(std::string what, Token<T> got) {
         return error_in_already_read("Expected " + what + ", got '" + got.value().encode() + "'");

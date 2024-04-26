@@ -9,7 +9,9 @@ public:
     ScopeGuard(Callback&& c)
         : m_callback(std::move(c)) { }
 
-    ~ScopeGuard() { m_callback(); }
+    ~ScopeGuard() {
+        m_callback();
+    }
 
 private:
     Callback m_callback;

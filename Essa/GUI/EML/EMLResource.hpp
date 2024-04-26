@@ -6,7 +6,9 @@ namespace EML {
 
 // ResourceManager-compatible wrapper for EML
 struct EMLResource {
-    std::string const& source_string() const { return m_source_string; }
+    std::string const& source_string() const {
+        return m_source_string;
+    }
 
 private:
     friend Gfx::ResourceTraits<EML::EMLResource>;
@@ -19,7 +21,10 @@ private:
 
 }
 
-template<> struct Gfx::ResourceTraits<EML::EMLResource> {
+template<>
+struct Gfx::ResourceTraits<EML::EMLResource> {
     static std::optional<EML::EMLResource> load_from_file(std::string const& path);
-    static std::string_view base_path() { return "layouts"; }
+    static std::string_view base_path() {
+        return "layouts";
+    }
 };

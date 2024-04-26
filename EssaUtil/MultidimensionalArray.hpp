@@ -13,7 +13,8 @@
 
 namespace Util {
 
-template<class T, size_t... Dimensions> class MultidimensionalArray {
+template<class T, size_t... Dimensions>
+class MultidimensionalArray {
 public:
     using Self = MultidimensionalArray<T, Dimensions...>;
     static constexpr size_t Rank = sizeof...(Dimensions);
@@ -21,7 +22,10 @@ public:
     using Point = Detail::Point<Rank, size_t>;
     using Size = Detail::Size<Rank, size_t>;
 
-    template<size_t Dim> static size_t dimension() { return std::get<Dim>(std::tuple { Dimensions... }); }
+    template<size_t Dim>
+    static size_t dimension() {
+        return std::get<Dim>(std::tuple { Dimensions... });
+    }
 
     MultidimensionalArray(Type const& v = {}) {
         m_storage = new Type[size()];
@@ -31,7 +35,9 @@ public:
     MultidimensionalArray(MultidimensionalArray const&) = delete;
     MultidimensionalArray& operator=(MultidimensionalArray const&) = delete;
 
-    MultidimensionalArray(MultidimensionalArray&& arr) { *this = std::move(arr); }
+    MultidimensionalArray(MultidimensionalArray&& arr) {
+        *this = std::move(arr);
+    }
     MultidimensionalArray& operator=(MultidimensionalArray&& arr) {
         if (this == &arr)
             return *this;
@@ -41,25 +47,44 @@ public:
         return *this;
     }
 
-    ~MultidimensionalArray() { delete[] m_storage; }
+    ~MultidimensionalArray() {
+        delete[] m_storage;
+    }
 
-    Size dimensions() const { return { Dimensions... }; }
-    size_t size() const { return (Dimensions * ...); }
+    Size dimensions() const {
+        return { Dimensions... };
+    }
+    size_t size() const {
+        return (Dimensions * ...);
+    }
 
-    bool is_in_bounds(Point const& p) const { return is_in_bounds(p, std::make_index_sequence<Rank>()); }
+    bool is_in_bounds(Point const& p) const {
+        return is_in_bounds(p, std::make_index_sequence<Rank>());
+    }
 
-    void fill(Type const& fill) { std::fill(m_storage, m_storage + size(), fill); }
+    void fill(Type const& fill) {
+        std::fill(m_storage, m_storage + size(), fill);
+    }
 
-    template<std::convertible_to<size_t>... Dim> Type const& ref(Dim... index) const { return *cell(index...); }
+    template<std::convertible_to<size_t>... Dim>
+    Type const& ref(Dim... index) const {
+        return *cell(index...);
+    }
 
-    template<std::convertible_to<size_t>... Dim> Type& ref(Dim... index) {
+    template<std::convertible_to<size_t>... Dim>
+    Type& ref(Dim... index) {
         return const_cast<Type&>(const_cast<Self const*>(this)->ref(index...));
     }
 
-    Type const& ref(Detail::Point<Rank, size_t> const& coords) const { return ref(coords, std::make_index_sequence<Rank>()); }
-    Type& ref(Detail::Point<Rank, size_t> const& coords) { return const_cast<Type&>(const_cast<Self const*>(this)->ref(coords)); }
+    Type const& ref(Detail::Point<Rank, size_t> const& coords) const {
+        return ref(coords, std::make_index_sequence<Rank>());
+    }
+    Type& ref(Detail::Point<Rank, size_t> const& coords) {
+        return const_cast<Type&>(const_cast<Self const*>(this)->ref(coords));
+    }
 
-    template<std::convertible_to<size_t>... Dim> Type get(Dim... index) const {
+    template<std::convertible_to<size_t>... Dim>
+    Type get(Dim... index) const {
         if (!m_storage) {
             // Array doesn't take memory but appears default-initialized here.
             return T {};
@@ -67,9 +92,14 @@ public:
         return *cell(index...);
     }
 
-    Type get(Detail::Point<Rank, size_t> const& coords) const { return get(coords, std::make_index_sequence<Rank>()); }
+    Type get(Detail::Point<Rank, size_t> const& coords) const {
+        return get(coords, std::make_index_sequence<Rank>());
+    }
 
-    template<std::convertible_to<size_t>... Dim> void set(Dim... index, T value) { *cell(index...) = std::move(value); }
+    template<std::convertible_to<size_t>... Dim>
+    void set(Dim... index, T value) {
+        *cell(index...) = std::move(value);
+    }
 
     template<class Callback>
         requires(std::is_invocable_v<Callback, Point, T&>)
@@ -106,29 +136,44 @@ public:
     }
 
 private:
-    template<size_t... Idx> bool is_in_bounds(Point const& p, std::index_sequence<Idx...>) const {
+    template<size_t... Idx>
+    bool is_in_bounds(Point const& p, std::index_sequence<Idx...>) const {
         return ((p.template component<Idx>() < Dimensions) && ...);
     }
 
-    template<size_t... Idx> Type const& ref(Point const& coords, std::index_sequence<Idx...>) const {
+    template<size_t... Idx>
+    Type const& ref(Point const& coords, std::index_sequence<Idx...>) const {
         return ref(coords.component(Idx)...);
     }
-    template<size_t... Idx> Type get(Point const& coords, std::index_sequence<Idx...>) const { return get(coords.component(Idx)...); }
+    template<size_t... Idx>
+    Type get(Point const& coords, std::index_sequence<Idx...>) const {
+        return get(coords.component(Idx)...);
+    }
 
-    template<std::convertible_to<size_t>... Dim> Type* cell(Dim... index) { return &m_storage[coords_to_index(index...)]; }
+    template<std::convertible_to<size_t>... Dim>
+    Type* cell(Dim... index) {
+        return &m_storage[coords_to_index(index...)];
+    }
 
-    template<std::convertible_to<size_t>... Dim> Type const* cell(Dim... index) const { return &m_storage[coords_to_index(index...)]; }
+    template<std::convertible_to<size_t>... Dim>
+    Type const* cell(Dim... index) const {
+        return &m_storage[coords_to_index(index...)];
+    }
 
-    template<std::convertible_to<size_t>... Dim> constexpr size_t coords_to_index(Dim... index) const {
+    template<std::convertible_to<size_t>... Dim>
+    constexpr size_t coords_to_index(Dim... index) const {
         assert((((size_t)index >= 0 && (size_t)index < Dimensions) && ...));
         size_t idx = 0;
         ((idx *= Dimensions, idx += index), ...);
         return idx;
     }
 
-    constexpr Point index_to_coords(size_t index) const { return index_to_coords_impl(index, std::make_index_sequence<Rank>()); }
+    constexpr Point index_to_coords(size_t index) const {
+        return index_to_coords_impl(index, std::make_index_sequence<Rank>());
+    }
 
-    template<size_t... Seq> constexpr Point index_to_coords_impl(size_t index, std::index_sequence<Seq...>) const {
+    template<size_t... Seq>
+    constexpr Point index_to_coords_impl(size_t index, std::index_sequence<Seq...>) const {
         Point out;
         ((out.template set_component<Seq>(index % Dimensions), index /= Dimensions), ...);
         return out;

@@ -15,37 +15,63 @@ public:
 
     virtual void setup(Util::UString title, Util::Size2u size, llgl::WindowSettings const&) override;
 
-    virtual void close() override { m_closed = true; }
-    bool is_closed() const { return m_closed; }
+    virtual void close() override {
+        m_closed = true;
+    }
+    bool is_closed() const {
+        return m_closed;
+    }
 
     virtual void center_on_screen() override;
 
     // Position relative to the MDI::Host.
-    Util::Point2i position() const { return m_position; }
+    Util::Point2i position() const {
+        return m_position;
+    }
     // Position relative to HostWindow.
     virtual Util::Point2i host_position() const override;
-    void set_position(Util::Point2i position) { m_position = position; }
-    virtual Util::Size2i size() const override { return m_size; }
-    virtual void set_size(Util::Size2i size) override { m_size = size; }
+    void set_position(Util::Point2i position) {
+        m_position = position;
+    }
+    virtual Util::Size2i size() const override {
+        return m_size;
+    }
+    virtual void set_size(Util::Size2i size) override {
+        m_size = size;
+    }
     virtual HostWindow& host_window() override;
 
-    Host& host() { return m_host; }
-    Host const& host() const { return m_host; }
+    Host& host() {
+        return m_host;
+    }
+    Host const& host() const {
+        return m_host;
+    }
 
     std::function<void()> on_close;
 
     // If true, window will not receive any events except Global events, or if explicitly focused.
-    void set_ignores_events(bool pass) { m_ignore_events = pass; }
-    bool ignores_events() const { return m_ignore_events; }
+    void set_ignores_events(bool pass) {
+        m_ignore_events = pass;
+    }
+    bool ignores_events() const {
+        return m_ignore_events;
+    }
 
     // If true, focusing a window won't bring it to the top.
-    void set_always_on_bottom(bool value) { m_always_on_bottom = value; }
-    bool always_on_bottom() const { return m_always_on_bottom; }
+    void set_always_on_bottom(bool value) {
+        m_always_on_bottom = value;
+    }
+    bool always_on_bottom() const {
+        return m_always_on_bottom;
+    }
 
     CREATE_VALUE(Util::UString, title, "")
 
     // MDI::Host relative rect
-    Util::Recti client_rect() const { return { position(), size() }; }
+    Util::Recti client_rect() const {
+        return { position(), size() };
+    }
     Util::Recti full_rect() const;
     Util::Recti titlebar_rect() const {
         return {
@@ -76,7 +102,9 @@ private:
     void draw_decorations(Gfx::Painter&) const;
     void constrain_position();
 
-    bool is_borderless() const { return llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless); }
+    bool is_borderless() const {
+        return llgl::has_flag(m_settings.flags, llgl::WindowFlags::Borderless);
+    }
 
     Util::Point2i m_position;
     Util::Size2i m_size;

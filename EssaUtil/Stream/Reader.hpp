@@ -14,7 +14,9 @@ public:
     explicit BufferedReader(ReadableStream& stream)
         : m_stream(stream) { }
 
-    ReadableStream& stream() const { return m_stream; }
+    ReadableStream& stream() const {
+        return m_stream;
+    }
 
     bool is_eof() const;
     OsErrorOr<size_t> read(std::span<uint8_t>);
@@ -24,7 +26,9 @@ public:
     OsErrorOr<void> seek(ssize_t offset, SeekDirection = SeekDirection::FromCurrent);
 
 private:
-    bool buffer_is_empty() const { return m_buffer_offset >= m_buffer.size(); }
+    bool buffer_is_empty() const {
+        return m_buffer_offset >= m_buffer.size();
+    }
     [[nodiscard]] size_t read_from_buffer(std::span<uint8_t>);
     OsErrorOr<size_t> refill_buffer();
 
@@ -41,8 +45,8 @@ public:
 
     template<std::integral T>
         requires requires(T t) {
-                     { convert_from_little_to_host_endian(t) } -> std::same_as<T>;
-                 }
+            { convert_from_little_to_host_endian(t) } -> std::same_as<T>;
+        }
     OsErrorOr<T> read_little_endian() {
         T value;
         if (!TRY(read_all({ reinterpret_cast<uint8_t*>(&value), sizeof(T) })))
@@ -64,8 +68,8 @@ public:
 
     template<std::integral T>
         requires requires(T t) {
-                     { convert_from_big_to_host_endian(t) } -> std::same_as<T>;
-                 }
+            { convert_from_big_to_host_endian(t) } -> std::same_as<T>;
+        }
     OsErrorOr<T> read_big_endian() {
         T value;
         if (!TRY(read_all({ reinterpret_cast<uint8_t*>(&value), sizeof(T) })))
@@ -98,7 +102,8 @@ public:
     // This reads `delim` but doesn't include it in the buffer.
     OsErrorOr<Buffer> read_until(uint8_t delim);
 
-    template<class Callback> OsErrorOr<Buffer> read_while(Callback&& callback) {
+    template<class Callback>
+    OsErrorOr<Buffer> read_while(Callback&& callback) {
         Buffer result;
         auto c = TRY(peek());
         while (c && callback(*c)) {
@@ -116,9 +121,13 @@ public:
         : BufferedReader(stream)
         , m_encoding(encoding) { }
 
-    SourceLocation location() { return m_location; }
+    SourceLocation location() {
+        return m_location;
+    }
 
-    bool is_eof() const { return BufferedReader::is_eof() && !m_peeked_codepoint; }
+    bool is_eof() const {
+        return BufferedReader::is_eof() && !m_peeked_codepoint;
+    }
 
     // Peek at single codepoint without removing it from stream.
     OsErrorOr<std::optional<uint32_t>> peek();
@@ -129,7 +138,8 @@ public:
     // Consumes delim but doesn't include in returned value.
     OsErrorOr<UString> consume_until(uint32_t delim);
 
-    template<class Callback> OsErrorOr<UString> consume_while(Callback&& callback) {
+    template<class Callback>
+    OsErrorOr<UString> consume_while(Callback&& callback) {
         std::vector<uint32_t> result;
         auto c = TRY(peek());
         while (c && callback(*c)) {

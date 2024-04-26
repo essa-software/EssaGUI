@@ -24,7 +24,9 @@ EventLoop& EventLoop::current() {
     return *s_current_event_loop;
 }
 
-bool EventLoop::has_current() { return s_current_event_loop != nullptr; }
+bool EventLoop::has_current() {
+    return s_current_event_loop != nullptr;
+}
 
 void increase_system_timer_resolution() {
     static bool increased = false;
@@ -91,7 +93,9 @@ TimerScopeGuard EventLoop::set_interval_with_guard(Timer::Clock::duration const&
     return TimerScopeGuard(*this, set_interval(timeout, std::move(callback)));
 }
 
-void EventLoop::remove_timer(TimerHandle const& handle) { m_timers.erase(handle.lock()); }
+void EventLoop::remove_timer(TimerHandle const& handle) {
+    m_timers.erase(handle.lock());
+}
 
 void EventLoop::reset_timer(TimerHandle const& handle) {
     if (auto timer = handle.lock()) {

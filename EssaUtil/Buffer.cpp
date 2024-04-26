@@ -7,7 +7,9 @@
 
 namespace Util {
 
-Buffer::~Buffer() { delete[] m_data; }
+Buffer::~Buffer() {
+    delete[] m_data;
+}
 
 Buffer::Buffer(Buffer const& other) {
     resize_uninitialized(other.m_size);
@@ -53,7 +55,9 @@ Buffer Buffer::from_std_string(std::string str) {
     return buffer;
 }
 
-Buffer Buffer::uninitialized(size_t size) { return Buffer(size); }
+Buffer Buffer::uninitialized(size_t size) {
+    return Buffer(size);
+}
 
 Buffer Buffer::filled(size_t size, uint8_t byte) {
     Buffer buffer(size);
@@ -61,7 +65,9 @@ Buffer Buffer::filled(size_t size, uint8_t byte) {
     return buffer;
 }
 
-void Buffer::clear() { resize_uninitialized(0); }
+void Buffer::clear() {
+    resize_uninitialized(0);
+}
 
 void Buffer::append(uint8_t byte) {
     if (m_size == 0) {
@@ -84,11 +90,17 @@ UString Buffer::decode_infallible(UString::Encoding encoding, uint32_t replaceme
     return UString { std::string_view { reinterpret_cast<char const*>(m_data), m_size }, encoding, replacement };
 }
 
-ErrorOr<UString, UString::DecodingErrorTag> Buffer::decode(UString::Encoding encoding) const { return UString::decode(span(), encoding); }
+ErrorOr<UString, UString::DecodingErrorTag> Buffer::decode(UString::Encoding encoding) const {
+    return UString::decode(span(), encoding);
+}
 
-std::string Buffer::to_std_string() const { return std::string(reinterpret_cast<char const*>(m_data), m_size); }
+std::string Buffer::to_std_string() const {
+    return std::string(reinterpret_cast<char const*>(m_data), m_size);
+}
 
-void Buffer::insert(size_t position, uint8_t byte) { insert(position, { &byte, 1 }); }
+void Buffer::insert(size_t position, uint8_t byte) {
+    insert(position, { &byte, 1 });
+}
 
 void Buffer::insert(size_t position, std::span<uint8_t const> data) {
     // FIXME: This makes an unnecessary copy.
@@ -97,7 +109,9 @@ void Buffer::insert(size_t position, std::span<uint8_t const> data) {
     std::copy(data.begin(), data.end(), begin() + position);
 }
 
-void Buffer::take_from_back(size_t s) { resize_uninitialized(m_size - s); }
+void Buffer::take_from_back(size_t s) {
+    resize_uninitialized(m_size - s);
+}
 
 void Buffer::resize_uninitialized(size_t size) {
     reallocate(size);

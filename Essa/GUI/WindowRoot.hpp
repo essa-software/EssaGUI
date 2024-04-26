@@ -18,11 +18,15 @@ public:
     explicit WindowRoot(WidgetTreeRoot& wnd)
         : m_window(wnd) { }
 
-    auto& window() { return m_window; }
+    auto& window() {
+        return m_window;
+    }
 
     CREATE_VALUE(Widget*, focused_widget, nullptr)
 
-    void set_needs_relayout() { m_needs_relayout = true; }
+    void set_needs_relayout() {
+        m_needs_relayout = true;
+    }
 
     template<class T, class... Args>
         requires std::is_base_of_v<Widget, T> && std::is_constructible_v<T, Args...>
@@ -36,7 +40,8 @@ public:
         return *widget_ptr;
     }
 
-    template<class T, class... Args> auto& set_created_main_widget(std::unique_ptr<T> w) {
+    template<class T, class... Args>
+    auto& set_created_main_widget(std::unique_ptr<T> w) {
         auto widget_ptr = w.get();
         m_main_widget = std::move(w);
         m_main_widget->set_window_root(*this);
@@ -50,20 +55,28 @@ public:
             m_main_widget->do_update();
     }
 
-    auto const* main_widget() const { return m_main_widget.get(); }
-    auto* main_widget() { return m_main_widget.get(); }
+    auto const* main_widget() const {
+        return m_main_widget.get();
+    }
+    auto* main_widget() {
+        return m_main_widget.get();
+    }
 
     /*restricted(WidgetTreeRoot)*/ void relayout_and_draw(Gfx::Painter&);
     /*restricted(WidgetTreeRoot)*/ void do_handle_event(llgl::Event const& event);
 
     /*restricted(DevTools)*/ virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
-    /*restricted(DevTools)*/ virtual Util::UString dev_tools_name() const override { return "Generic WindowRoot"; }
+    /*restricted(DevTools)*/ virtual Util::UString dev_tools_name() const override {
+        return "Generic WindowRoot";
+    }
 
 protected:
     void close();
 
 private:
-    virtual Widget::EventHandlerResult handle_event(llgl::Event const&) { return Widget::EventHandlerResult::NotAccepted; }
+    virtual Widget::EventHandlerResult handle_event(llgl::Event const&) {
+        return Widget::EventHandlerResult::NotAccepted;
+    }
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;
 
     bool m_needs_relayout = true;

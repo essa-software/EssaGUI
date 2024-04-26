@@ -11,7 +11,8 @@ class ReadableMemoryStream : public ReadableStream {
 public:
     explicit ReadableMemoryStream(std::span<uint8_t const> data);
 
-    template<size_t S> static ReadableMemoryStream from_string(char const (&data)[S]) {
+    template<size_t S>
+    static ReadableMemoryStream from_string(char const (&data)[S]) {
         return ReadableMemoryStream { { reinterpret_cast<uint8_t const*>(data), S - 1 } };
     }
 
@@ -34,7 +35,9 @@ private:
 
 class WritableMemoryStream : public WritableStream {
 public:
-    std::span<uint8_t const> data() const { return m_data.span(); }
+    std::span<uint8_t const> data() const {
+        return m_data.span();
+    }
 
     virtual OsErrorOr<size_t> write(std::span<uint8_t const>) override;
     virtual OsErrorOr<void> seek(ssize_t count, SeekDirection direction = SeekDirection::FromCurrent) override;

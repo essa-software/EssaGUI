@@ -59,8 +59,12 @@ ESSA_ENUM_WITH_VALUES(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
 ESSA_ENUM_TO_STRING(KeyCode, ENUMERATE_KEYBOARD_KEYCODES)
 
 bool is_key_pressed(KeyCode key);
-inline bool is_shift_pressed() { return is_key_pressed(KeyCode::LShift) || is_key_pressed(KeyCode::RShift); }
-inline bool is_ctrl_pressed() { return is_key_pressed(KeyCode::LCtrl) || is_key_pressed(KeyCode::RCtrl); }
+inline bool is_shift_pressed() {
+    return is_key_pressed(KeyCode::LShift) || is_key_pressed(KeyCode::RShift);
+}
+inline bool is_ctrl_pressed() {
+    return is_key_pressed(KeyCode::LCtrl) || is_key_pressed(KeyCode::RCtrl);
+}
 
 }
 

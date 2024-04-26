@@ -19,7 +19,8 @@ namespace JSON {
 class Object;
 class Value;
 
-template<class T> class PrimitiveWrapper {
+template<class T>
+class PrimitiveWrapper {
 private:
     T val;
 
@@ -27,8 +28,12 @@ public:
     PrimitiveWrapper(T val = 0)
         : val(val) { }
 
-    operator T&() { return val; }
-    T* operator&() { return &val; }
+    operator T&() {
+        return val;
+    }
+    T* operator&() {
+        return &val;
+    }
 };
 
 using Number = PrimitiveWrapper<double>;
@@ -44,7 +49,8 @@ public:
     Object() = default;
     Object(std::initializer_list<std::pair<std::string, Value>> _list);
 
-    template<typename T> Object& add_value(std::string const& key, T const& val);
+    template<typename T>
+    Object& add_value(std::string const& key, T const& val);
 
     Object& add_value(std::string const& key, Value const& val);
 
@@ -61,11 +67,20 @@ class Value {
     static Array parse_array(std::string str);
 
 public:
-    template<typename T> Value(T const& val) { m_data = val; }
+    template<typename T>
+    Value(T const& val) {
+        m_data = val;
+    }
 
-    template<typename T> bool is_type_of() const { return std::holds_alternative<T>(m_data); }
+    template<typename T>
+    bool is_type_of() const {
+        return std::holds_alternative<T>(m_data);
+    }
 
-    template<typename T> T const& get() const { return std::get<T>(m_data); }
+    template<typename T>
+    T const& get() const {
+        return std::get<T>(m_data);
+    }
 
     static Object parse_object(std::string str);
     std::string stringify() const;
@@ -151,7 +166,8 @@ inline std::string Object::stringify() const {
     return ss.str();
 }
 
-template<typename T> Object& Object::add_value(std::string const& key, T const& val) {
+template<typename T>
+Object& Object::add_value(std::string const& key, T const& val) {
     insert({ key, val });
 
     return *this;
@@ -338,6 +354,8 @@ inline Object Value::parse_object(std::string str) {
     return result;
 }
 
-inline Object Marshall(std::string const& str) { return Value::parse_object(str); }
+inline Object Marshall(std::string const& str) {
+    return Value::parse_object(str);
+}
 
 }

@@ -30,7 +30,9 @@ public:
     VariantList(std::initializer_list<GUI::Variant> list)
         : m_list(list) { }
 
-    auto operator[](size_t idx) const { return m_list.begin()[idx]; }
+    auto operator[](size_t idx) const {
+        return m_list.begin()[idx];
+    }
 
 private:
     std::initializer_list<GUI::Variant> m_list;
@@ -49,7 +51,9 @@ public:
     };
 
 private:
-    virtual size_t column_count() const override { return 2; }
+    virtual size_t column_count() const override {
+        return 2;
+    }
 
     virtual GUI::ModelColumn column(size_t column) const override {
         switch (column) {

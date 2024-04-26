@@ -17,25 +17,40 @@ class Container;
 
 using WidgetList = std::vector<std::shared_ptr<Widget>>;
 
-template<class T> struct Box {
+template<class T>
+struct Box {
     T top {};
     T right {};
     T bottom {};
     T left {};
 
-    static Box all_equal(T value) { return { value, value, value, value }; }
+    static Box all_equal(T value) {
+        return { value, value, value, value };
+    }
 
-    T main_start(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? left : top; }
+    T main_start(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? left : top;
+    }
 
-    T main_end(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? right : bottom; }
+    T main_end(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? right : bottom;
+    }
 
-    T main_sum(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? left + right : top + bottom; }
+    T main_sum(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? left + right : top + bottom;
+    }
 
-    T cross_start(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? top : left; }
+    T cross_start(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? top : left;
+    }
 
-    T cross_end(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? bottom : right; }
+    T cross_end(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? bottom : right;
+    }
 
-    T cross_sum(Util::Orientation o) const { return o == Util::Orientation::Horizontal ? top + bottom : left + right; }
+    T cross_sum(Util::Orientation o) const {
+        return o == Util::Orientation::Horizontal ? top + bottom : left + right;
+    }
 
     bool operator==(Box<T> const& other) const = default;
 };
@@ -137,7 +152,9 @@ public:
 
     virtual bool is_focused() const override;
 
-    void shrink(size_t num) { m_widgets.resize(std::min(num, m_widgets.size())); }
+    void shrink(size_t num) {
+        m_widgets.resize(std::min(num, m_widgets.size()));
+    }
 
     template<class T, class... Args>
         requires(std::is_base_of_v<Layout, T> && requires(Args&&... args) { T(args...); })
@@ -148,8 +165,12 @@ public:
         return *layout_ptr;
     }
 
-    void clear_layout() { m_layout = nullptr; }
-    std::unique_ptr<Layout>& get_layout() { return m_layout; }
+    void clear_layout() {
+        m_layout = nullptr;
+    }
+    std::unique_ptr<Layout>& get_layout() {
+        return m_layout;
+    }
 
     virtual void dump(std::ostream& out, unsigned depth) override;
     virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
@@ -211,10 +232,15 @@ public:
     // clang-format on
 
     // Footgun alert, use it only in *Layout::run()!
-    WidgetList& widgets() { return m_widgets; }
-    WidgetList const& widgets() const { return m_widgets; }
+    WidgetList& widgets() {
+        return m_widgets;
+    }
+    WidgetList const& widgets() const {
+        return m_widgets;
+    }
 
-    template<class C> void visit_children(C const& callback) {
+    template<class C>
+    void visit_children(C const& callback) {
         for (auto& widget : m_widgets) {
             callback(*widget);
             if (Util::is<Container>(*widget)) {
@@ -223,8 +249,9 @@ public:
         }
     }
 
-    template<class C> void visit_children(C const& callback) const {
-        for (const auto& widget : m_widgets) {
+    template<class C>
+    void visit_children(C const& callback) const {
+        for (auto const& widget : m_widgets) {
             callback(*widget);
             if (Util::is<Container>(*widget)) {
                 static_cast<Container const&>(*widget).visit_children(callback);
@@ -237,7 +264,9 @@ public:
 protected:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;
     virtual void relayout() override;
-    virtual Boxi intrinsic_padding() const { return {}; }
+    virtual Boxi intrinsic_padding() const {
+        return {};
+    }
     virtual void focus_first_child_or_self() override;
     virtual bool accepts_focus() const override;
     virtual llgl::Cursor const& cursor(Util::Point2i local_position) const override;

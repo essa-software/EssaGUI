@@ -34,7 +34,9 @@ size_t s_current_id = 0;
 
 }
 
-std::map<std::string, DebugSwitch const*>& DebugSwitch::switches() { return s_debug_switches; }
+std::map<std::string, DebugSwitch const*>& DebugSwitch::switches() {
+    return s_debug_switches;
+}
 
 bool is_enabled_from_env(std::string const& switch_) {
     static std::set<std::string> essa_debug_switches = []() {
@@ -63,8 +65,12 @@ DebugSwitch::DebugSwitch(std::string const& string_id)
     }
 }
 
-bool DebugSwitch::get() const { return s_debug_settings.get(*this); }
+bool DebugSwitch::get() const {
+    return s_debug_settings.get(*this);
+}
 
-void DebugSwitch::set(bool value) const { s_debug_settings.set(*this, value); }
+void DebugSwitch::set(bool value) const {
+    s_debug_settings.set(*this, value);
+}
 
 }

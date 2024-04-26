@@ -21,7 +21,8 @@ public:
     void append(uint32_t);
     void append(std::span<uint32_t const>);
 
-    template<class... Args> void appendff(fmt::format_string<Args...> fmtstr, Args&&... args) {
+    template<class... Args>
+    void appendff(fmt::format_string<Args...> fmtstr, Args&&... args) {
         vappendff(fmtstr, fmt::make_format_args(args...));
     }
 
@@ -34,7 +35,9 @@ public:
     // copying.
     UString release_string();
 
-    std::span<uint32_t const> codepoints() const { return { m_storage, m_size }; }
+    std::span<uint32_t const> codepoints() const {
+        return { m_storage, m_size };
+    }
 
 private:
     // Allocate a new array with specified capacity, copying previous data

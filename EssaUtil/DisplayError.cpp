@@ -8,7 +8,8 @@ namespace Util {
 void display_error(ReadableStream& input, DisplayedError error) {
     // TODO: Display also first line&column here
     fmt::print(
-        stderr, "{}\e[1;31mError:\e[m {}\n", error.file_name.empty() ? "" : fmt::format("\e[90m{}: \e[m", error.file_name), error.message.encode()
+        stderr, "{}\e[1;31mError:\e[m {}\n", error.file_name.empty() ? "" : fmt::format("\e[90m{}: \e[m", error.file_name),
+        error.message.encode()
     );
 
     TextReader reader { input };

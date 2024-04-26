@@ -16,7 +16,9 @@ public:
 
     virtual void draw(Gfx::Painter& window) const override = 0;
 
-    bool is_active() const { return m_active; }
+    bool is_active() const {
+        return m_active;
+    }
 
     void set_active(bool active, NotifyUser notify_user = NotifyUser::Yes) {
         if (m_active != active) {
@@ -44,7 +46,9 @@ protected:
     virtual Theme::ButtonColors default_button_colors() const = 0;
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
-    virtual bool accepts_focus() const override { return true; }
+    virtual bool accepts_focus() const override {
+        return true;
+    }
 
 private:
     virtual Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&) override;

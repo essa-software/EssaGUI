@@ -23,12 +23,22 @@ public:
 
     static Application& the();
 
-    Gfx::ResourceManager const& resource_manager() const { return m_resource_manager; }
-    Gfx::ResourceManager& resource_manager() { return m_resource_manager; }
+    Gfx::ResourceManager const& resource_manager() const {
+        return m_resource_manager;
+    }
+    Gfx::ResourceManager& resource_manager() {
+        return m_resource_manager;
+    }
 
-    llgl::TTFFont& font() const { return m_resource_manager.font(); }
-    llgl::TTFFont& bold_font() const { return m_resource_manager.bold_font(); }
-    llgl::TTFFont& fixed_width_font() const { return m_resource_manager.fixed_width_font(); }
+    llgl::TTFFont& font() const {
+        return m_resource_manager.font();
+    }
+    llgl::TTFFont& bold_font() const {
+        return m_resource_manager.bold_font();
+    }
+    llgl::TTFFont& fixed_width_font() const {
+        return m_resource_manager.fixed_width_font();
+    }
     Theme const& theme() const;
 
     HostWindow& create_uninitialized_host_window();
@@ -54,7 +64,9 @@ public:
         };
     }
 
-    std::list<HostWindow>& host_windows() { return m_host_windows; }
+    std::list<HostWindow>& host_windows() {
+        return m_host_windows;
+    }
     void remove_closed_host_windows();
     void redraw_all_host_windows();
 
@@ -62,7 +74,9 @@ public:
     std::function<void()> on_tick;
 
     virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
-    virtual Util::UString dev_tools_name() const override { return "Application"; }
+    virtual Util::UString dev_tools_name() const override {
+        return "Application";
+    }
 
 private:
     virtual void tick() override;
@@ -77,7 +91,9 @@ namespace Detail {
 
 class SimpleApplicationBase : public Application {
 public:
-    auto& window() { return m_window; }
+    auto& window() {
+        return m_window;
+    }
 
 protected:
     explicit SimpleApplicationBase(Util::UString const& title, Util::Size2u window_size, std::unique_ptr<Widget> main_widget);
@@ -100,7 +116,9 @@ public:
     SimpleApplication(Util::UString const& title, Util::Size2u window_size = {}, Args&&... args)
         : Detail::SimpleApplicationBase(title, window_size, std::make_unique<W>(std::forward<Args>(args)...)) { }
 
-    W& main_widget() { return static_cast<W&>(main_widget_impl()); }
+    W& main_widget() {
+        return static_cast<W&>(main_widget_impl());
+    }
 };
 
 }

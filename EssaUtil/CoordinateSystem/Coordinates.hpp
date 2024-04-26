@@ -15,7 +15,8 @@ namespace Util {
 namespace Detail {
 
 // A generic class containing some numbers.
-template<size_t C, class T, template<size_t, class> class Derived> class Coordinates {
+template<size_t C, class T, template<size_t, class> class Derived>
+class Coordinates {
 public:
     static constexpr size_t Components = C;
     using Type = T;
@@ -49,14 +50,16 @@ public:
         assert_components_are_finite();
     }
 
-    template<class OtherT> Derived<C, OtherT> cast() const {
+    template<class OtherT>
+    Derived<C, OtherT> cast() const {
         Derived<C, OtherT> v;
         for (size_t s = 0; s < C; s++) {
             v.set_component(s, static_cast<OtherT>(this->component(s)));
         }
         return v;
     }
-    template<class OtherT> std::optional<Derived<C, OtherT>> safe_cast() const {
+    template<class OtherT>
+    std::optional<Derived<C, OtherT>> safe_cast() const {
         Derived<C, OtherT> v;
         for (size_t s = 0; s < C; s++) {
             auto comp = this->component(s);
@@ -69,7 +72,8 @@ public:
     }
 
     // Component getters
-    template<size_t I> constexpr T component() const {
+    template<size_t I>
+    constexpr T component() const {
         static_assert(I < Components);
         return this->m_components[I];
     }

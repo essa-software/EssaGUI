@@ -23,7 +23,9 @@ public:
     Util::UString get_content_with_labelling() const;
     void step_by();
 
-    size_t value() const { return m_value; }
+    size_t value() const {
+        return m_value;
+    }
     void set_value(size_t const& val) {
         m_value = val;
         if (m_value >= m_max && on_finish)
@@ -39,7 +41,9 @@ public:
 
     std::function<void()> on_finish;
 
-    bool finished() const { return m_value >= m_max; }
+    bool finished() const {
+        return m_value >= m_max;
+    }
 
 private:
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;

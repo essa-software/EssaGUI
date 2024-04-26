@@ -20,7 +20,8 @@ using ModelVertex = llgl::Vertex<Util::Point3f, Util::Colorf, Util::Point2f, Uti
 
 }
 
-template<> struct llgl::VertexMapping<Essa::ModelVertex> {
+template<>
+struct llgl::VertexMapping<Essa::ModelVertex> {
     static constexpr size_t position = 0;
     static constexpr size_t color = 1;
     static constexpr size_t tex_coord = 2;
@@ -39,7 +40,9 @@ public:
     using RangeRenderer
         = std::function<void(llgl::Renderer& renderer, llgl::VertexArray<ModelVertex> const& vao, ModelRenderRange const& range)>;
 
-    void set_range_renderer(RangeRenderer rr) { m_renderer = std::move(rr); }
+    void set_range_renderer(RangeRenderer rr) {
+        m_renderer = std::move(rr);
+    }
 
     void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) {
         for (auto const& vertex : vertices) {
@@ -89,7 +92,9 @@ public:
     // position (xyz), color (rgba), tex coord (st), normal (xyz)
     using Vertex = ModelVertex;
 
-    void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) { m_builder.add_range(vertices, material); }
+    void add_range(std::span<ModelVertex const> vertices, std::optional<Material> material) {
+        m_builder.add_range(vertices, material);
+    }
 
     void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms) const {
         m_builder.render(renderer, shader, uniforms);
@@ -101,7 +106,10 @@ private:
 
 }
 
-template<> struct Gfx::ResourceTraits<Essa::Model> {
+template<>
+struct Gfx::ResourceTraits<Essa::Model> {
     static std::optional<Essa::Model> load_from_file(std::string const&);
-    static std::string_view base_path() { return "models"; }
+    static std::string_view base_path() {
+        return "models";
+    }
 };

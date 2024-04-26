@@ -13,12 +13,16 @@ namespace GUI {
 
 class LayoutTreeModel : public GUI::Model {
 public:
-    static inline const ModelColumn COLUMNS[] = {
+    static inline ModelColumn const COLUMNS[] = {
         { .width = 300, .name = "Name" },
     };
 
-    virtual size_t column_count() const override { return std::size(COLUMNS); }
-    virtual ModelColumn column(size_t column) const override { return COLUMNS[column]; }
+    virtual size_t column_count() const override {
+        return std::size(COLUMNS);
+    }
+    virtual ModelColumn column(size_t column) const override {
+        return COLUMNS[column];
+    }
     virtual GUI::Variant data(Node node, [[maybe_unused]] size_t column) const override {
         auto const& dto = *static_cast<GUI::DevToolsObject const*>(node.data.data);
         auto const* type = typeid(dto).name();

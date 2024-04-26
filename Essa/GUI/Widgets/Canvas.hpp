@@ -8,10 +8,12 @@ namespace GUI {
 
 class Canvas : public Container {
 public:
-    virtual void on_init() override { set_layout<BasicLayout>(); }
+    virtual void on_init() override {
+        set_layout<BasicLayout>();
+    }
 
     template<class T, class... Args>
-        requires(std::is_base_of_v<Sprite, T> && requires(Args && ... args) { T(std::forward<Args>(args)...); })
+        requires(std::is_base_of_v<Sprite, T> && requires(Args&&... args) { T(std::forward<Args>(args)...); })
     T* add_sprite(Args&&... args) {
         auto sprite = std::make_shared<T>(std::forward<Args>(args)...);
         m_widgets.push_back(sprite);

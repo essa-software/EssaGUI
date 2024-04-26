@@ -17,7 +17,9 @@ namespace GUI {
 
 constexpr float IndentSize = 24;
 
-TreeView::TreeView() { set_double_click_enabled(true); }
+TreeView::TreeView() {
+    set_double_click_enabled(true);
+}
 
 std::optional<size_t> TreeView::row_at_y(int local_y) const {
     auto abs_coords = Util::Point2i(0, local_y) + raw_position().to_vector();
@@ -304,7 +306,9 @@ void TreeView::render_rows(Gfx::Painter& painter, float& current_y_pos, std::vec
     }
 }
 
-size_t TreeView::displayed_row_count() const { return recursive_displayed_row_count({}, {}); }
+size_t TreeView::displayed_row_count() const {
+    return recursive_displayed_row_count({}, {});
+}
 
 size_t TreeView::recursive_displayed_row_count(std::optional<Model::Node> node, std::vector<size_t> path) const {
 
@@ -356,7 +360,9 @@ Util::Size2i TreeView::content_size() const {
     return { row_width(), (display_header() ? displayed_row_count() + 1 : displayed_row_count()) * theme().line_height };
 }
 
-bool TreeView::is_expanded(std::vector<size_t> const& path) const { return m_expanded_paths.contains(path); }
+bool TreeView::is_expanded(std::vector<size_t> const& path) const {
+    return m_expanded_paths.contains(path);
+}
 
 EML::EMLErrorOr<void> TreeView::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(AbstractListView::load_from_eml_object(object, loader));

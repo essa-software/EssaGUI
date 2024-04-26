@@ -268,8 +268,12 @@ void BasicLayout::run(Container& container) {
     }
 }
 
-Util::Size2i BasicLayout::total_size(Container const& container) const { return container.raw_size(); }
-LengthVector BasicLayout::initial_size(Container const&) const { return { Util::Length::Auto, Util::Length::Auto }; }
+Util::Size2i BasicLayout::total_size(Container const& container) const {
+    return container.raw_size();
+}
+LengthVector BasicLayout::initial_size(Container const&) const {
+    return { Util::Length::Auto, Util::Length::Auto };
+}
 
 EML_REGISTER_CLASS(BasicLayout);
 
@@ -546,7 +550,9 @@ Widget* Container::find_widget_by_id_recursively(std::string_view id) const {
     return nullptr;
 }
 
-Util::Size2i Container::total_size() const { return m_layout->total_size(*this); }
+Util::Size2i Container::total_size() const {
+    return m_layout->total_size(*this);
+}
 
 EML::EMLErrorOr<void> Container::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));

@@ -12,7 +12,9 @@ public:
     ErrorHandler(std::source_location location = std::source_location::current())
         : m_location(location) { }
 
-    ~ErrorHandler() { handle_error(m_location); }
+    ~ErrorHandler() {
+        handle_error(m_location);
+    }
 
 private:
     std::source_location m_location;

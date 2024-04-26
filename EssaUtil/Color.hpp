@@ -57,16 +57,26 @@ public:
 
     Util::UString to_html_string() const;
 
-    Util::Color with_red(uint8_t red) const { return Util::Color { red, this->g, this->b, this->a }; }
-    Util::Color with_green(uint8_t green) const { return Util::Color { this->r, green, this->b, this->a }; }
-    Util::Color with_blue(uint8_t blue) const { return Util::Color { this->r, this->g, blue, this->a }; }
-    Util::Color with_alpha(uint8_t alpha) const { return Util::Color { this->r, this->g, this->b, alpha }; }
+    Util::Color with_red(uint8_t red) const {
+        return Util::Color { red, this->g, this->b, this->a };
+    }
+    Util::Color with_green(uint8_t green) const {
+        return Util::Color { this->r, green, this->b, this->a };
+    }
+    Util::Color with_blue(uint8_t blue) const {
+        return Util::Color { this->r, this->g, blue, this->a };
+    }
+    Util::Color with_alpha(uint8_t alpha) const {
+        return Util::Color { this->r, this->g, this->b, alpha };
+    }
 
     bool operator==(Color const&) const = default;
 
     static Color rgb_blend(Color const& l, Color const& r, float how_much_r);
 
-    constexpr uint32_t to_rgba32() const { return (r << 24) | (g << 16) | (b << 8) | a; }
+    constexpr uint32_t to_rgba32() const {
+        return (r << 24) | (g << 16) | (b << 8) | a;
+    }
 
     Util::Color brighten(int amount) const {
         return { static_cast<uint8_t>(std::clamp(static_cast<int>(r) + amount, 0, 255)),
@@ -322,9 +332,11 @@ constexpr Color Color::to_grayscale(float saturation) const {
 
 } // namespace Util
 
-template<> class fmt::formatter<Util::Color> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<Util::Color> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::Color const& v, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(Util::Color const& v, FormatContext& ctx) const {
         if (v.a == 255) {
             fmt::format_to(ctx.out(), "rgb({}, {}, {})", v.r, v.g, v.b);
         }

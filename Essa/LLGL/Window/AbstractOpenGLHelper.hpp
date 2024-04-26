@@ -10,8 +10,11 @@
 #include <tuple>
 #include <vector>
 
-#define ADD_OPENGL_FUNCTION(FuncName) \
-    template<typename... Args> static auto FuncName(Args... args) { return gl##FuncName(args...); }
+#define ADD_OPENGL_FUNCTION(FuncName)    \
+    template<typename... Args>           \
+    static auto FuncName(Args... args) { \
+        return gl##FuncName(args...);    \
+    }
 
 class OpenGL {
 public:

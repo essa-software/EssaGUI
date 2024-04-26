@@ -56,9 +56,13 @@ std::string ResourceManager::require_lookup_resource(ResourceIdAndBase const& id
     return *fs_path;
 }
 
-llgl::TTFFont& ResourceManager::font() const { return require<Font>(m_config.get("DefaultFont").value_or("font.ttf")); }
+llgl::TTFFont& ResourceManager::font() const {
+    return require<Font>(m_config.get("DefaultFont").value_or("font.ttf"));
+}
 
-llgl::TTFFont& ResourceManager::bold_font() const { return require<Font>(m_config.get("DefaultBoldFont").value_or("bold-font.ttf")); }
+llgl::TTFFont& ResourceManager::bold_font() const {
+    return require<Font>(m_config.get("DefaultBoldFont").value_or("bold-font.ttf"));
+}
 
 llgl::TTFFont& ResourceManager::fixed_width_font() const {
     return require<Font>(m_config.get("DefaultFixedWidthFont").value_or("fixed-width-font.ttf"));
@@ -133,9 +137,15 @@ void ResourceManager::find_resource_roots() {
     }
 }
 
-void ResourceManager::remove_resource(ResourceIdAndBase const& id_and_base) { m_cached_resources.erase(id_and_base); }
+void ResourceManager::remove_resource(ResourceIdAndBase const& id_and_base) {
+    m_cached_resources.erase(id_and_base);
+}
 
-Texture& ResourceManager::require_texture(std::string path) const { return require<Texture>(std::move(path)); }
-Font& ResourceManager::require_font(std::string path) const { return require<Font>(std::move(path)); }
+Texture& ResourceManager::require_texture(std::string path) const {
+    return require<Texture>(std::move(path));
+}
+Font& ResourceManager::require_font(std::string path) const {
+    return require<Font>(std::move(path));
+}
 
 }

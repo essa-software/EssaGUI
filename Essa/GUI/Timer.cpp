@@ -15,6 +15,8 @@ void Timer::update() {
     }
 }
 
-void Timer::reset() { m_last_run = Clock::now(); }
+void Timer::reset() {
+    m_last_run = Clock::now();
+}
 
 }

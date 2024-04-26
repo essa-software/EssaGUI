@@ -49,7 +49,9 @@ void ValueSlider::on_init() {
     m_unit_textfield->set_size({ 50.0_px, Util::Length::Auto });
 }
 
-double ValueSlider::value() const { return m_slider->value(); }
+double ValueSlider::value() const {
+    return m_slider->value();
+}
 
 void ValueSlider::set_value(double value, NotifyUser notify_user) {
     m_slider->set_value(value, notify_user);

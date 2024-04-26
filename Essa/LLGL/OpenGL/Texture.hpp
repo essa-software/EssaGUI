@@ -16,7 +16,9 @@ public:
     Texture(Texture const& other) = delete;
     Texture& operator=(Texture const& other) = delete;
 
-    Texture(Texture&& other) { *this = std::move(other); }
+    Texture(Texture&& other) {
+        *this = std::move(other);
+    }
 
     Texture& operator=(Texture&& other);
 
@@ -26,13 +28,15 @@ public:
 
     static Texture create_from_image(Image const&);
 
-    template<class T> static Texture create_from_color_array(Util::Size2u, std::span<T const> array, Format = Format::RGBA);
+    template<class T>
+    static Texture create_from_color_array(Util::Size2u, std::span<T const> array, Format = Format::RGBA);
 
     static Texture create_empty(Util::Size2u, Format = Format::RGBA);
 
     Image copy_to_image() const;
 
-    template<class T> void update(Util::Point2u dst_pos, Util::Size2u src_size, std::span<T const> array, Format format);
+    template<class T>
+    void update(Util::Point2u dst_pos, Util::Size2u src_size, std::span<T const> array, Format format);
 
     void recreate(Util::Size2u, Format);
 
@@ -57,8 +61,12 @@ public:
     void set_wrap_x(Wrap);
     void set_wrap_y(Wrap);
 
-    unsigned id() const { return m_id; }
-    Util::Size2u size() const { return m_size; }
+    unsigned id() const {
+        return m_id;
+    }
+    Util::Size2u size() const {
+        return m_size;
+    }
 
     void set_label(std::string const&);
 
@@ -73,8 +81,12 @@ private:
 
 class TextureBinder {
 public:
-    TextureBinder(Texture const& texture) { Texture::bind(&texture); }
-    ~TextureBinder() { Texture::bind(nullptr); }
+    TextureBinder(Texture const& texture) {
+        Texture::bind(&texture);
+    }
+    ~TextureBinder() {
+        Texture::bind(nullptr);
+    }
 };
 
 }

@@ -21,7 +21,9 @@ public:
     File(File&& other);
     File& operator=(File&& other);
 
-    int fd() const { return m_fd; }
+    int fd() const {
+        return m_fd;
+    }
 
     OsErrorOr<void> seek(ssize_t count, SeekDirection direction = SeekDirection::FromCurrent);
 

@@ -25,8 +25,8 @@ private:
         rect.fill_color = Util::Colors::Blue;
         painter.deprecated_draw_rectangle({ 90, 90, 20, 20 }, rect);
 
-        m_stats_label->set_content(Util::UString { fmt::format("Offset={} Zoom={} VisibleArea=({}, {})",
-            offset(), zoom(), visible_area().position(), visible_area().size()) });
+        m_stats_label->set_content(Util::UString {
+            fmt::format("Offset={} Zoom={} VisibleArea=({}, {})", offset(), zoom(), visible_area().position(), visible_area().size()) });
     }
 
     GUI::Textfield* m_stats_label {};

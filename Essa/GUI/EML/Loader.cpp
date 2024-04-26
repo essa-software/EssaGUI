@@ -3,9 +3,13 @@
 
 namespace EML {
 
-void Loader::push_scope(Scope const* scope) { m_scope_stack.push_back(scope); }
+void Loader::push_scope(Scope const* scope) {
+    m_scope_stack.push_back(scope);
+}
 
-void Loader::pop_scope() { m_scope_stack.pop_back(); }
+void Loader::pop_scope() {
+    m_scope_stack.pop_back();
+}
 
 EMLErrorOr<std::unique_ptr<EMLObject>> Loader::construct_object(std::string const& class_name) {
     auto constructor = lookup_constructor(class_name);

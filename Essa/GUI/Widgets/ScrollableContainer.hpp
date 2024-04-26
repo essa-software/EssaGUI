@@ -23,7 +23,9 @@ public:
         return *static_cast<T*>(m_widget.get());
     }
 
-    std::shared_ptr<GUI::Widget> widget() { return m_widget; }
+    std::shared_ptr<GUI::Widget> widget() {
+        return m_widget;
+    }
 
 private:
     virtual Util::Size2i content_size() const override;

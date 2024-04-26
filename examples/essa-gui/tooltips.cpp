@@ -11,18 +11,15 @@ public:
     }
 
 private:
-    virtual bool should_display_tooltip(
-        Util::Point2i const& position) const override {
+    virtual bool should_display_tooltip(Util::Point2i const& position) const override {
         return position.x() > raw_size().x() / 2;
     }
-    virtual Util::UString create_tooltip(
-        Util::Point2i const& position) const override {
+    virtual Util::UString create_tooltip(Util::Point2i const& position) const override {
         if (m_show_position)
             return Util::UString { fmt::format("{}", position) };
         return Widget::create_tooltip(position);
     }
-    virtual void update_tooltip(Util::Point2i const& position,
-        Util::UString& string) const override {
+    virtual void update_tooltip(Util::Point2i const& position, Util::UString& string) const override {
         if (m_show_position)
             string = Util::UString { fmt::format("{}", position) };
     }

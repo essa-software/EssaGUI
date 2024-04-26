@@ -17,8 +17,12 @@ public:
     void on_mouse_move(Util::Point2i new_mouse_position);
     void stop_dragging();
 
-    bool is_dragging() const { return m_dragging; }
-    bool is_actually_dragging() const { return m_actually_dragging; }
+    bool is_dragging() const {
+        return m_dragging;
+    }
+    bool is_actually_dragging() const {
+        return m_actually_dragging;
+    }
 
 private:
     OnDragFunc m_on_drag;

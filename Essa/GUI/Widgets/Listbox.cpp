@@ -13,7 +13,7 @@ void Listbox::sort_vector() {
     if (m_sort_list) {
         std::vector<Util::UString> vec;
 
-        for (const auto& btn : m_list_buttons) {
+        for (auto const& btn : m_list_buttons) {
             vec.push_back(btn->content());
         }
 
@@ -25,7 +25,7 @@ void Listbox::sort_vector() {
     }
 }
 
-void Listbox::add(const Util::UString& label) {
+void Listbox::add(Util::UString const& label) {
     auto btn = add_widget<TextButton>();
     btn->set_content(label);
     btn->set_active_content(label);
@@ -69,7 +69,7 @@ void Listbox::add(const Util::UString& label) {
     sort_vector();
 }
 
-void Listbox::remove(const Util::UString& label) {
+void Listbox::remove(Util::UString const& label) {
     std::vector<TextButton*> new_vec;
     std::vector<size_t> new_indexes;
 
@@ -90,7 +90,7 @@ void Listbox::remove(const Util::UString& label) {
 void Listbox::set_row_height(Util::Length const& height) {
     m_row_height = height;
 
-    for (const auto& btn : m_list_buttons) {
+    for (auto const& btn : m_list_buttons) {
         btn->set_size({ Util::Length::Auto, m_row_height });
     }
 }

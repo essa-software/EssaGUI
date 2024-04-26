@@ -55,7 +55,9 @@ void ScrollableWidget::clamp_scrollbars() {
     }
 }
 
-Util::Vector2i ScrollableWidget::scroll_offset() const { return -m_scroll; }
+Util::Vector2i ScrollableWidget::scroll_offset() const {
+    return -m_scroll;
+}
 
 void ScrollableWidget::set_scroll(Util::Vector2i scroll) {
     m_scroll = scroll;

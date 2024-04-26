@@ -23,7 +23,9 @@ public:
 
     virtual float wanted_size(RichTextContext const&) const override;
     virtual void draw(RichTextContext const&, Util::Point2f position, Gfx::Painter&) const override;
-    virtual std::unique_ptr<Base> clone() const override { return std::make_unique<Text>(*this); }
+    virtual std::unique_ptr<Base> clone() const override {
+        return std::make_unique<Text>(*this);
+    }
 
 private:
     Gfx::Text text(RichTextContext const&) const;
@@ -32,9 +34,13 @@ private:
 };
 
 class LineBreak : public Base {
-    virtual float wanted_size(RichTextContext const&) const override { return 0; }
+    virtual float wanted_size(RichTextContext const&) const override {
+        return 0;
+    }
     virtual void draw(RichTextContext const&, Util::Point2f, Gfx::Painter&) const override { }
-    virtual std::unique_ptr<Base> clone() const override { return std::make_unique<LineBreak>(*this); }
+    virtual std::unique_ptr<Base> clone() const override {
+        return std::make_unique<LineBreak>(*this);
+    }
 };
 
 class Image : public Base {
@@ -45,7 +51,9 @@ public:
 private:
     virtual float wanted_size(RichTextContext const&) const override;
     virtual void draw(RichTextContext const&, Util::Point2f position, Gfx::Painter&) const override;
-    virtual std::unique_ptr<Base> clone() const override { return std::make_unique<Image>(*this); }
+    virtual std::unique_ptr<Base> clone() const override {
+        return std::make_unique<Image>(*this);
+    }
 
     Util::Size2f scaled_image_size(RichTextContext const&) const;
 

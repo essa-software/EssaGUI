@@ -14,12 +14,18 @@ struct TestCase {
     std::string expected_layout_dump;
     Util::Size2i wtr_size;
 };
-std::ostream& operator<<(std::ostream& out, TestCase const& ts) { return out << "TestCase(" << ts.test_name << ")"; }
+std::ostream& operator<<(std::ostream& out, TestCase const& ts) {
+    return out << "TestCase(" << ts.test_name << ")";
+}
 
 class EMLTest : public testing::TestWithParam<TestCase> {
 public:
-    static void SetUpTestSuite() { app.construct(); }
-    static void TearDownTestSuite() { app.destruct(); }
+    static void SetUpTestSuite() {
+        app.construct();
+    }
+    static void TearDownTestSuite() {
+        app.destruct();
+    }
 
 protected:
     static Util::DelayedInit<GUI::Application> app;
@@ -42,8 +48,12 @@ TEST_P(EMLTest, EMLTest) {
             static GUI::HostWindow hw;
             return hw;
         }
-        virtual Util::Point2i host_position() const override { return {}; }
-        virtual Util::Size2i size() const override { return m_testcase.wtr_size; }
+        virtual Util::Point2i host_position() const override {
+            return {};
+        }
+        virtual Util::Size2i size() const override {
+            return m_testcase.wtr_size;
+        }
 
     private:
         TestCase const& m_testcase;

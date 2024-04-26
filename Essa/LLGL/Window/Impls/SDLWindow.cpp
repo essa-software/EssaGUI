@@ -84,8 +84,8 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
         for (int i = 0; i < display_count; i++) {
             SDL_Rect display_bounds;
             SDL_GetDisplayBounds(i, &display_bounds);
-            if (mouse_x >= display_bounds.x && mouse_x < display_bounds.x + display_bounds.w &&
-                mouse_y >= display_bounds.y && mouse_y < display_bounds.y + display_bounds.h) {
+            if (mouse_x >= display_bounds.x && mouse_x < display_bounds.x + display_bounds.w && mouse_y >= display_bounds.y
+                && mouse_y < display_bounds.y + display_bounds.h) {
                 mouse_display = i;
                 break;
             }
@@ -119,7 +119,9 @@ void Window::set_title(Util::UString const& title) {
     SDL_SetWindowTitle(m_data->window, (char*)title.encode().c_str());
 }
 
-Util::UString Window::title() const { return Util::UString { SDL_GetWindowTitle(m_data->window) }; }
+Util::UString Window::title() const {
+    return Util::UString { SDL_GetWindowTitle(m_data->window) };
+}
 
 void Window::set_size_impl(Util::Size2u size) {
     assert(!is_closed());
@@ -301,6 +303,8 @@ Util::Point2i Window::position() const {
     return { x, y };
 }
 
-void Window::capture_mouse(bool capture) { SDL_CaptureMouse(capture ? SDL_TRUE : SDL_FALSE); }
+void Window::capture_mouse(bool capture) {
+    SDL_CaptureMouse(capture ? SDL_TRUE : SDL_FALSE);
+}
 
 }

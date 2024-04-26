@@ -15,21 +15,37 @@ public:
 
     virtual void draw(Gfx::Painter& window) const override;
 
-    size_t line_count() const { return m_lines.size(); }
-    Util::UString const& line(size_t idx) const { return m_lines[idx]; }
-    Util::UString const& first_line() const { return m_lines.front(); }
-    Util::UString const& last_line() const { return m_lines.back(); }
+    size_t line_count() const {
+        return m_lines.size();
+    }
+    Util::UString const& line(size_t idx) const {
+        return m_lines[idx];
+    }
+    Util::UString const& first_line() const {
+        return m_lines.front();
+    }
+    Util::UString const& last_line() const {
+        return m_lines.back();
+    }
 
     Util::UString content() const;
     void set_content(Util::UString content, NotifyUser = NotifyUser::Yes);
-    bool is_empty() const { return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].is_empty()); }
+    bool is_empty() const {
+        return m_lines.empty() || (m_lines.size() == 1 && m_lines[0].is_empty());
+    }
 
     CREATE_VALUE(Util::UString, placeholder, "")
 
-    void set_editable(bool e) { m_editable = e; }
-    bool is_editable() const { return m_editable; }
+    void set_editable(bool e) {
+        m_editable = e;
+    }
+    bool is_editable() const {
+        return m_editable;
+    }
     void set_multiline(bool m);
-    bool is_multiline() const { return m_multiline; }
+    bool is_multiline() const {
+        return m_multiline;
+    }
 
     enum class SetCursorSelectionBehavior { Extend, Clear, DontTouch };
 
@@ -41,18 +57,23 @@ public:
     // for multiline textboxes.
     std::function<void(Util::UString const&)> on_enter;
 
-    void set_syntax_highlighter(std::unique_ptr<SyntaxHighlighter> h) { m_syntax_highlighter = std::move(h); }
+    void set_syntax_highlighter(std::unique_ptr<SyntaxHighlighter> h) {
+        m_syntax_highlighter = std::move(h);
+    }
 
     struct ErrorSpan {
         enum class Type { Note, Warning, Error };
         Type type;
         TextRange range;
     };
-    void set_error_spans(std::vector<ErrorSpan> errors) { m_error_spans = std::move(errors); }
+    void set_error_spans(std::vector<ErrorSpan> errors) {
+        m_error_spans = std::move(errors);
+    }
 
     // Callback is void callback(size_t line, size_t start_column, size_t end_column)
     // Note: This is overflow-safe.
-    template<class Callback> void for_each_line_in_range(TextRange range, Callback&& callback) const {
+    template<class Callback>
+    void for_each_line_in_range(TextRange range, Callback&& callback) const {
         for (size_t line = range.start.line; line <= range.end.line; line++) {
             auto start = line == range.start.line ? range.start.column : 0;
             auto end = line == range.end.line ? range.end.column : m_lines[line].size();
@@ -76,15 +97,23 @@ private:
     virtual Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const& event) override;
     virtual Widget::EventHandlerResult on_mouse_move(Event::MouseMove const& event) override;
 
-    virtual llgl::Cursor const& cursor(Util::Point2i /*local_position*/) const override { return llgl::Cursor::system(llgl::SystemCursor::IBeam); }
+    virtual llgl::Cursor const& cursor(Util::Point2i /*local_position*/) const override {
+        return llgl::Cursor::system(llgl::SystemCursor::IBeam);
+    }
 
     TextPosition text_position_at(Util::Point2i);
     Util::Point2i calculate_cursor_position() const;
     void erase_selected_text();
     virtual void update() override;
-    virtual bool accepts_focus() const override { return true; }
-    virtual bool steals_focus() const override { return m_multiline; }
-    virtual bool can_insert_codepoint(uint32_t) const { return true; }
+    virtual bool accepts_focus() const override {
+        return true;
+    }
+    virtual bool steals_focus() const override {
+        return m_multiline;
+    }
+    virtual bool can_insert_codepoint(uint32_t) const {
+        return true;
+    }
     virtual void on_content_change() { }
     void did_content_change();
 

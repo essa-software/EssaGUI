@@ -39,11 +39,14 @@ struct Object : public Scope {
     EMLErrorOr<Value> require_property(std::string const& name) const;
     Value get_property(std::string const& name, Value&& fallback) const;
 
-    template<Util::Enum T> using FromStringFunction = std::optional<T>(std::string_view);
+    template<Util::Enum T>
+    using FromStringFunction = std::optional<T>(std::string_view);
 
-    template<Util::Enum T> EMLErrorOr<T> get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const;
+    template<Util::Enum T>
+    EMLErrorOr<T> get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const;
 
-    template<Util::Enum T> EMLErrorOr<T> require_enum(std::string const& name, FromStringFunction<T> from_string) const;
+    template<Util::Enum T>
+    EMLErrorOr<T> require_enum(std::string const& name, FromStringFunction<T> from_string) const;
 
     template<class T, class... Args>
     EMLErrorOr<std::unique_ptr<T>> require_and_construct_object(std::string const& name, Loader& loader, Args&&... args) const;
@@ -83,9 +86,12 @@ public:
     explicit Array(std::vector<Value> values);
 
     Value at(size_t index) const;
-    std::vector<Value> const& values() const { return m_values; }
+    std::vector<Value> const& values() const {
+        return m_values;
+    }
 
-    template<class T, size_t S> EMLErrorOr<std::array<T, S>> to_static() const;
+    template<class T, size_t S>
+    EMLErrorOr<std::array<T, S>> to_static() const;
 
 private:
     std::vector<Value> m_values;
@@ -93,18 +99,24 @@ private:
 
 using ValueVariant = std::variant<double, bool, Util::UString, Object, Util::Length, Gfx::ResourceId, Range, Array, Util::Color>;
 
-#define VALUE_TYPE(Type, camel_case)                                                                              \
-    explicit Value(Type v)                                                                                        \
-        : ValueVariant(std::move(v)) { }                                                                          \
-                                                                                                                  \
-    EMLErrorOr<Type> to_##camel_case() const {                                                                    \
-        if (!is_##camel_case())                                                                                   \
-            return EMLError { "Failed to convert " + string() + " to " #camel_case };                             \
-        return std::get<Type>(*this);                                                                             \
-    }                                                                                                             \
-    Type as_##camel_case() const { return std::get<Type>(*this); }                                                \
-    Type as_##camel_case##_or(Type&& fallback) const { return is_##camel_case() ? as_##camel_case() : fallback; } \
-    bool is_##camel_case() const { return std::holds_alternative<Type>(*this); }
+#define VALUE_TYPE(Type, camel_case)                                                  \
+    explicit Value(Type v)                                                            \
+        : ValueVariant(std::move(v)) { }                                              \
+                                                                                      \
+    EMLErrorOr<Type> to_##camel_case() const {                                        \
+        if (!is_##camel_case())                                                       \
+            return EMLError { "Failed to convert " + string() + " to " #camel_case }; \
+        return std::get<Type>(*this);                                                 \
+    }                                                                                 \
+    Type as_##camel_case() const {                                                    \
+        return std::get<Type>(*this);                                                 \
+    }                                                                                 \
+    Type as_##camel_case##_or(Type&& fallback) const {                                \
+        return is_##camel_case() ? as_##camel_case() : fallback;                      \
+    }                                                                                 \
+    bool is_##camel_case() const {                                                    \
+        return std::holds_alternative<Type>(*this);                                   \
+    }
 
 class Value : public ValueVariant {
 public:
@@ -122,7 +134,8 @@ public:
     Value(char const* str)
         : Value(Util::UString { str }) { }
 
-    template<class T> EMLErrorOr<T> to() const {
+    template<class T>
+    EMLErrorOr<T> to() const {
         if (!std::holds_alternative<T>(*this))
             return EMLError { "Invalid type" };
         return std::get<T>(*this);
@@ -131,7 +144,8 @@ public:
     std::string string() const;
 };
 
-template<class T, size_t S> EMLErrorOr<std::array<T, S>> Array::to_static() const {
+template<class T, size_t S>
+EMLErrorOr<std::array<T, S>> Array::to_static() const {
     std::array<T, S> result;
     if (m_values.size() != S)
         return EMLError { fmt::format("Array of size {} required", S) };
@@ -152,14 +166,16 @@ EMLErrorOr<std::unique_ptr<T>> Object::require_and_construct_object(std::string 
     return maybe_object.release_value().construct<T>(loader, std::forward<Args>(args)...);
 }
 
-template<Util::Enum T> EMLErrorOr<T> Object::get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const {
+template<Util::Enum T>
+EMLErrorOr<T> Object::get_enum(std::string const& name, FromStringFunction<T> from_string, T fallback) const {
     if (!properties.contains(name)) {
         return fallback;
     }
     return require_enum(name, from_string);
 }
 
-template<Util::Enum T> EMLErrorOr<T> Object::require_enum(std::string const& name, FromStringFunction<T> from_string) const {
+template<Util::Enum T>
+EMLErrorOr<T> Object::require_enum(std::string const& name, FromStringFunction<T> from_string) const {
     auto object = TRY(require_property(name));
     if (!object.is_string()) {
         // FIXME: Print which enum exactly caused the eror

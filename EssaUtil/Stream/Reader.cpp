@@ -4,7 +4,9 @@ namespace Util {
 
 constexpr auto BufferSize = 4096;
 
-bool BufferedReader::is_eof() const { return m_stream.is_eof() && buffer_is_empty(); }
+bool BufferedReader::is_eof() const {
+    return m_stream.is_eof() && buffer_is_empty();
+}
 
 OsErrorOr<size_t> BufferedReader::read(std::span<uint8_t> data) {
     auto read = read_from_buffer(data);
@@ -146,6 +148,8 @@ OsErrorOr<UString> TextReader::consume_until(uint32_t delim) {
     return result.decode(m_encoding).map_error([&](auto) { return OsError { .error = 0, .function = "consume_until: Decoding failed" }; });
 }
 
-OsErrorOr<UString> TextReader::consume_line() { return TRY(consume_until('\n')); }
+OsErrorOr<UString> TextReader::consume_line() {
+    return TRY(consume_until('\n'));
+}
 
 }

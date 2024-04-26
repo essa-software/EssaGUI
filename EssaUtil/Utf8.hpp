@@ -12,7 +12,8 @@ namespace Util::Utf8 {
 int bytes_required_to_store_codepoint(uint32_t codepoint);
 std::optional<size_t> codepoint_count_if_valid(std::string_view string);
 
-template<class Callback> static bool decode_to_callback(std::string_view string, uint32_t replacement, Callback callback) {
+template<class Callback>
+static bool decode_to_callback(std::string_view string, uint32_t replacement, Callback callback) {
     bool error = false;
     for (size_t s = 0; s < string.size(); s++) {
         auto byte = std::bit_cast<uint8_t>(string[s]);
@@ -76,7 +77,8 @@ template<class Callback> static bool decode_to_callback(std::string_view string,
 // should be used first to check how much space is needed.
 bool decode(std::span<uint32_t> storage, std::string_view string, uint32_t replacement);
 
-template<class Callback> void encode_to_callback(std::span<uint32_t const> codepoints, Callback callback) {
+template<class Callback>
+void encode_to_callback(std::span<uint32_t const> codepoints, Callback callback) {
     for (auto codepoint : codepoints) {
         if (codepoint < 0x80) {
             callback(codepoint);

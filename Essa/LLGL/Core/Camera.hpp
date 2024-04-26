@@ -17,8 +17,12 @@ public:
     [[nodiscard]] Camera rotate_y(Util::Angle angle) const;
     [[nodiscard]] Camera rotate_z(Util::Angle angle) const;
 
-    llgl::Projection projection() const { return m_projection; };
-    Util::Matrix4x4f view_matrix() const { return m_view_matrix; };
+    llgl::Projection projection() const {
+        return m_projection;
+    };
+    Util::Matrix4x4f view_matrix() const {
+        return m_view_matrix;
+    };
 
 private:
     llgl::Projection m_projection;

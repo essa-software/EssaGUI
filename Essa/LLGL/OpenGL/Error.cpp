@@ -4,9 +4,9 @@
 
 #include <GL/glew.h>
 
+#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 #include <GL/glu.h>
 #include <iostream>
-#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 
 namespace llgl::opengl {
 
@@ -15,7 +15,7 @@ void enable_debug_output() {
     OpenGL::Enable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(
         []([[maybe_unused]] GLenum source, GLenum type, [[maybe_unused]] GLuint id, [[maybe_unused]] GLenum severity,
-           [[maybe_unused]] GLsizei length, const GLchar* message, [[maybe_unused]] const void* user_param) {
+           [[maybe_unused]] GLsizei length, GLchar const* message, [[maybe_unused]] void const* user_param) {
             if (type == GL_DEBUG_TYPE_ERROR)
                 std::cout << "GL Error: " << message << std::endl;
         },

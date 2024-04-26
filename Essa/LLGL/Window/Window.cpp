@@ -11,7 +11,9 @@ namespace llgl {
 // of incomplete SDLWindowData
 Window::Window() = default;
 
-Window::Window(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) { create(size, title, settings); }
+Window::Window(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) {
+    create(size, title, settings);
+}
 
 Window Window::create_foreign(std::unique_ptr<Detail::SDLWindowData> data) {
     Window window;
@@ -20,7 +22,9 @@ Window Window::create_foreign(std::unique_ptr<Detail::SDLWindowData> data) {
     return window;
 }
 
-Window::~Window() { close(); }
+Window::~Window() {
+    close();
+}
 
 void Window::create(Util::Size2u size, Util::UString const& title, WindowSettings const& settings) {
     m_size = size;

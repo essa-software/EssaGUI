@@ -36,7 +36,9 @@ public:
     virtual void handle_event(llgl::Event const&);
     void handle_events();
 
-    virtual void update() { m_root->update(); }
+    virtual void update() {
+        m_root->update();
+    }
 
     // Position relative to HostWindow. For HostWindows itself, it's 0.
     // Used in Widget::host_position(), and to calculate widget-relative
@@ -49,22 +51,35 @@ public:
     auto& set_main_widget(Args&&... args) {
         return m_root->set_main_widget<T>(std::forward<Args>(args)...);
     }
-    template<class T> auto& set_created_main_widget(std::unique_ptr<T> w) { return m_root->set_created_main_widget<T>(std::move(w)); }
+    template<class T>
+    auto& set_created_main_widget(std::unique_ptr<T> w) {
+        return m_root->set_created_main_widget<T>(std::move(w));
+    }
 
-    auto* main_widget() { return m_root->main_widget(); }
+    auto* main_widget() {
+        return m_root->main_widget();
+    }
 
-    WindowRoot const& root() const { return *m_root; }
-    WindowRoot& root() { return *m_root; }
+    WindowRoot const& root() const {
+        return *m_root;
+    }
+    WindowRoot& root() {
+        return *m_root;
+    }
 
     // Override default event handler. If this returns Accepted,
     // no events will be passed to widgets.
     std::function<GUI::Widget::EventHandlerResult(llgl::Event const&)> on_event;
 
     virtual std::vector<DevToolsObject const*> dev_tools_children() const override;
-    virtual Util::UString dev_tools_name() const override { return "Generic WTR"; }
+    virtual Util::UString dev_tools_name() const override {
+        return "Generic WTR";
+    }
 
 protected:
-    void set_root(std::unique_ptr<WindowRoot> root) { m_root = std::move(root); }
+    void set_root(std::unique_ptr<WindowRoot> root) {
+        m_root = std::move(root);
+    }
 
     // Deprecated. Override WindowRoot::load_from_eml_object for window-agnostic EML loaders.
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader& loader) override;

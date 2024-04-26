@@ -27,7 +27,9 @@ public:
     }
 
     double value() const;
-    double raw_value() const { return m_val; }
+    double raw_value() const {
+        return m_val;
+    }
     void set_value(double val, NotifyUser = NotifyUser::Yes);
 
     virtual void draw(Gfx::Painter& window) const override;
@@ -44,7 +46,9 @@ private:
     double value_clamped_to_min_max() const;
     float calculate_knob_size() const;
     void round_to_step();
-    virtual bool accepts_focus() const override { return true; }
+    virtual bool accepts_focus() const override {
+        return true;
+    }
     virtual LengthVector initial_size() const override {
         return { Util::Length::Auto, { static_cast<float>(theme().line_height), Util::Length::Px } };
     }

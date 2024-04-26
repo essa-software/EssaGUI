@@ -18,11 +18,17 @@ public:
         m_scroll.set_y(y);
         clamp_scrollbars();
     }
-    Util::Vector2i scroll() const { return m_scroll; }
+    Util::Vector2i scroll() const {
+        return m_scroll;
+    }
 
     // If this is set to false, scrollbar won't be visible even if content overflows.
-    void set_x_scrollbar_visible(bool v) { m_x_scrollbar_visible = v; }
-    void set_y_scrollbar_visible(bool v) { m_y_scrollbar_visible = v; }
+    void set_x_scrollbar_visible(bool v) {
+        m_x_scrollbar_visible = v;
+    }
+    void set_y_scrollbar_visible(bool v) {
+        m_y_scrollbar_visible = v;
+    }
 
     std::function<void()> on_scroll;
 
@@ -39,7 +45,9 @@ private:
     // The rect that the scroll is applied to. Scrollbars are drawn on edges
     // of that rect, and scroll_area_size() is related to this rect. By default,
     // the whole widget is scrollable.
-    virtual Util::Recti scrollable_rect() const { return local_rect(); }
+    virtual Util::Recti scrollable_rect() const {
+        return local_rect();
+    }
 
     // Size of the content that is scrolled over in the scrollable rect. If
     // content size overflows scrollable rect, scrollbars will appear.

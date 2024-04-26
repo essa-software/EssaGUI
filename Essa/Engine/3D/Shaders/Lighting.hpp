@@ -25,10 +25,16 @@ public:
         Util::Colorf m_emission_color = Util::Colors::White;
 
     public:
-        Uniforms() { set_material(Material { .ambient = {}, .diffuse = { Util::Colors::White }, .emission = {} }); }
+        Uniforms() {
+            set_material(Material { .ambient = {}, .diffuse = { Util::Colors::White }, .emission = {} });
+        }
 
-        void set_light_position(Util::Point3f lp) { m_light_position = lp; }
-        void set_light_color(Util::Colorf lc) { m_light_color = lc; }
+        void set_light_position(Util::Point3f lp) {
+            m_light_position = lp;
+        }
+        void set_light_color(Util::Colorf lc) {
+            m_light_color = lc;
+        }
 
         static inline auto mapping
             = llgl::make_uniform_mapping(

@@ -46,13 +46,15 @@
         return {};                                                                  \
     }
 
-#define ESSA_ENUM_FMT_FORMATTER(ToStringNamespace, Enum, EnumMacro)                                                          \
-    namespace fmt {                                                                                                          \
-    template<> struct formatter<ToStringNamespace::Enum> : public formatter<std::string_view> {                              \
-        template<typename FormatContext> constexpr auto format(ToStringNamespace::Enum const& p, FormatContext& ctx) const { \
-            return format_to(ctx.out(), "{}", ToStringNamespace::to_string(p));                                              \
-        }                                                                                                                    \
-    };                                                                                                                       \
+#define ESSA_ENUM_FMT_FORMATTER(ToStringNamespace, Enum, EnumMacro)                         \
+    namespace fmt {                                                                         \
+    template<>                                                                              \
+    struct formatter<ToStringNamespace::Enum> : public formatter<std::string_view> {        \
+        template<typename FormatContext>                                                    \
+        constexpr auto format(ToStringNamespace::Enum const& p, FormatContext& ctx) const { \
+            return format_to(ctx.out(), "{}", ToStringNamespace::to_string(p));             \
+        }                                                                                   \
+    };                                                                                      \
     }
 
 // Based on SerenityOS's AK:

@@ -31,10 +31,16 @@ public:
             llgl::Uniform("fbSize", &Uniforms::m_framebuffer_size)
         );
 
-        void set_framebuffer_size(Util::Size2f size) { m_framebuffer_size = size; }
+        void set_framebuffer_size(Util::Size2f size) {
+            m_framebuffer_size = size;
+        }
 
-        void set_accum(llgl::Texture const* tex) { accum.texture = tex; }
-        void set_pass1(llgl::Texture const* tex) { pass1.texture = tex; }
+        void set_accum(llgl::Texture const* tex) {
+            accum.texture = tex;
+        }
+        void set_pass1(llgl::Texture const* tex) {
+            pass1.texture = tex;
+        }
     };
 
     auto source(llgl::ShaderType type) const {

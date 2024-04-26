@@ -14,17 +14,33 @@ public:
     llgl::Transform transform() const;
     llgl::Transform inverse_transform() const;
 
-    float zoom() const { return m_zoom; }
-    void set_zoom(float z) { m_zoom = z; }
-    auto offset() const { return m_offset; }
-    void set_offset(Util::Vector2f off) { m_offset = off; }
+    float zoom() const {
+        return m_zoom;
+    }
+    void set_zoom(float z) {
+        m_zoom = z;
+    }
+    auto offset() const {
+        return m_offset;
+    }
+    void set_offset(Util::Vector2f off) {
+        m_offset = off;
+    }
     Util::Rectf visible_area() const;
     Util::Point2f screen_to_world(Util::Point2i const&) const;
     Util::Point2i world_to_screen(Util::Point2f const&) const;
-    bool dragging() const { return m_drag_behavior.is_dragging(); }
-    bool actually_dragging() const { return m_drag_behavior.is_actually_dragging(); }
-    void set_pan_button(llgl::MouseButton button) { m_pan_button = button; }
-    void set_zoom_enabled(bool enabled) { m_zoom_enabled = enabled; }
+    bool dragging() const {
+        return m_drag_behavior.is_dragging();
+    }
+    bool actually_dragging() const {
+        return m_drag_behavior.is_actually_dragging();
+    }
+    void set_pan_button(llgl::MouseButton button) {
+        m_pan_button = button;
+    }
+    void set_zoom_enabled(bool enabled) {
+        m_zoom_enabled = enabled;
+    }
 
 protected:
     virtual EventHandlerResult on_mouse_scroll(Event::MouseScroll const& event) override;

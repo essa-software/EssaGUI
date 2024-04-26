@@ -13,7 +13,7 @@ namespace Util {
 
 // FIXME: This could be done at compile time.
 // NOTE: Keep the list sorted by sizes ascending, the algorithm relies on this!
-static const std::map<Quantity, std::vector<Unit>> s_units { { Quantity::Length,
+static std::map<Quantity, std::vector<Unit>> const s_units { { Quantity::Length,
                                                                {
                                                                    { "m", 1 },
                                                                    { "km", 1000 },

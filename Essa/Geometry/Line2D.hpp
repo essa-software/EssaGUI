@@ -23,20 +23,32 @@ public:
     // --- CONSTRUCTION ---
 
     // construct line Ax + By + C = 0
-    static constexpr Line2D from_axbyc(LineAxByC abc) { return Line2D(abc); }
+    static constexpr Line2D from_axbyc(LineAxByC abc) {
+        return Line2D(abc);
+    }
     // construct line Ax + B = y
-    static constexpr Line2D from_axb(LineAxB ab) { return Line2D({ ab.a, -1, ab.b }); }
+    static constexpr Line2D from_axb(LineAxB ab) {
+        return Line2D({ ab.a, -1, ab.b });
+    }
     // construct line x = a
-    static constexpr Line2D vertical(float x) { return Line2D({ 1, 0, -x }); }
+    static constexpr Line2D vertical(float x) {
+        return Line2D({ 1, 0, -x });
+    }
     // construct line y = a
-    static constexpr Line2D horizontal(float y) { return Line2D({ 0, 1, -y }); }
+    static constexpr Line2D horizontal(float y) {
+        return Line2D({ 0, 1, -y });
+    }
     // construct line through 2 points
     static Line2D from_points(Util::Point2f, Util::Point2f);
 
     // --- BASIC PARAMETERS ---
 
-    constexpr bool is_vertical() const { return m_b == 0; }
-    constexpr bool is_horizontal() const { return m_a == 0; }
+    constexpr bool is_vertical() const {
+        return m_b == 0;
+    }
+    constexpr bool is_horizontal() const {
+        return m_a == 0;
+    }
 
     // get dy/dx
     constexpr float dydx() const {
@@ -71,9 +83,15 @@ public:
 
     // --- REPRESENTATIONS ---
 
-    constexpr LineAxByC to_axbyc() const { return { m_a, m_b, m_c }; }
-    constexpr LineAxB to_axb() const { return { dydx(), y_intercept() }; }
-    Util::Vector2f to_vector() const { return { -m_b, m_a }; }
+    constexpr LineAxByC to_axbyc() const {
+        return { m_a, m_b, m_c };
+    }
+    constexpr LineAxB to_axb() const {
+        return { dydx(), y_intercept() };
+    }
+    Util::Vector2f to_vector() const {
+        return { -m_b, m_a };
+    }
 
     // --- ALGORITHMS ---
 

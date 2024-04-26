@@ -20,8 +20,12 @@ public:
     static Image create_uninitialized(Util::Size2u);
     static Image create_filled_with_color(Util::Size2u, Util::Color color);
 
-    std::span<Util::Color const> pixels() const { return { m_pixels, pixel_count() }; }
-    std::span<Util::Color> pixels() { return { m_pixels, pixel_count() }; }
+    std::span<Util::Color const> pixels() const {
+        return { m_pixels, pixel_count() };
+    }
+    std::span<Util::Color> pixels() {
+        return { m_pixels, pixel_count() };
+    }
 
     ESSA_ALWAYS_INLINE Util::Color get_pixel(Util::Point2u pos) const {
         assert(is_point_in_bounds(pos.cast<float>()));
@@ -34,8 +38,12 @@ public:
 
     void insert_image_in_bounds(Image const& other, Util::Point2u where);
 
-    auto size() const { return m_size; }
-    size_t pixel_count() const { return static_cast<size_t>(m_size.x()) * m_size.y(); }
+    auto size() const {
+        return m_size;
+    }
+    size_t pixel_count() const {
+        return static_cast<size_t>(m_size.x()) * m_size.y();
+    }
     bool is_point_in_bounds(Util::Point2f const&) const;
 
     Image flip_x() const;
@@ -44,7 +52,9 @@ public:
 private:
     Image(Util::Size2u size);
 
-    ESSA_ALWAYS_INLINE size_t pixel_index(Util::Point2u pos) const { return pos.x() + pos.y() * m_size.x(); }
+    ESSA_ALWAYS_INLINE size_t pixel_index(Util::Point2u pos) const {
+        return pos.x() + pos.y() * m_size.x();
+    }
 
     Util::Color* m_pixels = nullptr;
     Util::Size2u m_size;

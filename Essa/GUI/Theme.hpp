@@ -36,7 +36,9 @@ public:
         BgFgTextColors unhovered;
 
         BgFgTextColors value(Widget const& w) const;
-        BgFgTextColors value(bool hovered) const { return hovered ? this->hovered : this->unhovered; }
+        BgFgTextColors value(bool hovered) const {
+            return hovered ? this->hovered : this->unhovered;
+        }
 
         void set_colors(Util::Color const& color) {
             unhovered = { .background = color, .foreground = {}, .text = Util::Colors::White };
@@ -110,8 +112,13 @@ public:
 
     float hover_highlight_factor;
 
-    template<class T> void set_renderer() { m_renderer = std::make_unique<T>(*this); }
-    ThemeRenderer const& renderer() const { return *m_renderer; }
+    template<class T>
+    void set_renderer() {
+        m_renderer = std::make_unique<T>(*this);
+    }
+    ThemeRenderer const& renderer() const {
+        return *m_renderer;
+    }
 
 private:
     std::unique_ptr<ThemeRenderer> m_renderer;

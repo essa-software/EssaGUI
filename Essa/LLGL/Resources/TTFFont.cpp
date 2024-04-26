@@ -13,7 +13,9 @@ TTFFont::~TTFFont() {
         TTF_CloseFont(font.second.sdl_font);
 }
 
-TTFFont TTFFont::open_from_file(std::string const& path) { return TTFFont { path }; }
+TTFFont TTFFont::open_from_file(std::string const& path) {
+    return TTFFont { path };
+}
 
 void ensure_sdl_ttf_initialized() {
     static bool s_initialized = false;

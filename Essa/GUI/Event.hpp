@@ -15,12 +15,16 @@ public:
 
 class MouseEnterEvent : public llgl::EventTypes::Base {
 public:
-    static llgl::EventTargetType target_type() { return llgl::EventTargetType::Specific; }
+    static llgl::EventTargetType target_type() {
+        return llgl::EventTargetType::Specific;
+    }
 };
 
 class MouseLeaveEvent : public llgl::EventTypes::Base {
 public:
-    static llgl::EventTargetType target_type() { return llgl::EventTargetType::Specific; }
+    static llgl::EventTargetType target_type() {
+        return llgl::EventTargetType::Specific;
+    }
 };
 
 using Variant = std::variant<
@@ -66,7 +70,9 @@ public:
         });
     }
 
-    bool is_mouse_related() const { return target_type() == llgl::EventTargetType::MouseFocused; }
+    bool is_mouse_related() const {
+        return target_type() == llgl::EventTargetType::MouseFocused;
+    }
 
     Util::Point2i local_mouse_position() const {
         assert(is_mouse_related());
@@ -82,30 +88,38 @@ public:
 
 }
 
-template<> class fmt::formatter<GUI::Event> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<GUI::Event> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext> constexpr auto format(GUI::Event const& event, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(GUI::Event const& event, FormatContext& ctx) const {
         event.visit([&](auto const& evt) { fmt::format_to(ctx.out(), "{}", evt); });
         return ctx.out();
     }
 };
-template<> class fmt::formatter<GUI::EventTypes::MouseDoubleClick> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<GUI::EventTypes::MouseDoubleClick> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(GUI::EventTypes::MouseDoubleClick const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(GUI::EventTypes::MouseDoubleClick const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseDoubleClick(pos={})", event.local_position());
         return ctx.out();
     }
 };
-template<> class fmt::formatter<GUI::EventTypes::MouseEnterEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<GUI::EventTypes::MouseEnterEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(GUI::EventTypes::MouseEnterEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(GUI::EventTypes::MouseEnterEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseEnterEvent");
         return ctx.out();
     }
 };
-template<> class fmt::formatter<GUI::EventTypes::MouseLeaveEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<GUI::EventTypes::MouseLeaveEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(GUI::EventTypes::MouseLeaveEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(GUI::EventTypes::MouseLeaveEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseLeaveEvent");
         return ctx.out();
     }

@@ -29,7 +29,9 @@ class Timer {
     void reset();
 
     // Returns true if timer won't fire again and can be removed.
-    bool finished() const { return m_finished; }
+    bool finished() const {
+        return m_finished;
+    }
 
     Clock::duration m_timeout;
     Callback m_callback;

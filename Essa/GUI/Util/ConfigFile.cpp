@@ -6,7 +6,9 @@
 
 namespace Util {
 
-ConfigFile::ConfigFile(std::ifstream input) { parse(std::move(input)); }
+ConfigFile::ConfigFile(std::ifstream input) {
+    parse(std::move(input));
+}
 
 std::optional<Util::Color> ConfigFile::parse_color(std::string const& value) const {
     if (value == "White")
@@ -98,7 +100,7 @@ std::pair<std::string, std::string> ConfigFile::parse_line(std::string const& li
     std::string key = "";
     std::string value = "";
     bool in_value = false;
-    for (const auto c : line) {
+    for (auto const c : line) {
         if (c == ' ' || c == '\t')
             continue;
         else if (c == '=') {

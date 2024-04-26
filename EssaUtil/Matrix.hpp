@@ -48,10 +48,16 @@ struct Matrix {
         requires(sizeof...(data) == Size * Size)
         : Matrix { std::initializer_list<T> { data... } } { }
 
-    static constexpr Matrix identity() { return {}; }
+    static constexpr Matrix identity() {
+        return {};
+    }
 
-    T& element(size_t row, size_t column) { return m_data[row][column]; }
-    T const& element(size_t row, size_t column) const { return m_data[row][column]; }
+    T& element(size_t row, size_t column) {
+        return m_data[row][column];
+    }
+    T const& element(size_t row, size_t column) const {
+        return m_data[row][column];
+    }
 
     Matrix transposed() const;
     Matrix inverted() const;
@@ -59,7 +65,8 @@ struct Matrix {
     Matrix adjoint() const;
     Matrix<T, Size - 1> minor(size_t row, size_t column) const;
 
-    template<class TT> Matrix<TT, Size> convert() const {
+    template<class TT>
+    Matrix<TT, Size> convert() const {
         Matrix<TT, Size> output;
         for (size_t x = 0; x < Size; x++) {
             for (size_t y = 0; y < Size; y++) {
@@ -71,7 +78,9 @@ struct Matrix {
 
     // This must be transposed to pass this to OpenGL
     // FIXME: Fix that.
-    T const* raw_data() const { return &m_data[0][0]; }
+    T const* raw_data() const {
+        return &m_data[0][0];
+    }
 
     constexpr bool operator==(Matrix<T, Size> const&) const = default;
 
@@ -79,7 +88,8 @@ private:
     T m_data[Size][Size] {};
 };
 
-template<class T, size_t Size> std::ostream& operator<<(std::ostream& out, Matrix<T, Size> const& mat) {
+template<class T, size_t Size>
+std::ostream& operator<<(std::ostream& out, Matrix<T, Size> const& mat) {
     out << "[";
     for (size_t x = 0; x < Size; x++) {
         for (size_t y = 0; y < Size; y++) {
@@ -97,7 +107,8 @@ template<class T, size_t Size> std::ostream& operator<<(std::ostream& out, Matri
 using Matrix4x4f = Matrix<float, 4>;
 using Matrix4x4d = Matrix<double, 4>;
 
-template<class T, size_t Size> Matrix<T, Size> operator*(Matrix<T, Size> const& left, T right) {
+template<class T, size_t Size>
+Matrix<T, Size> operator*(Matrix<T, Size> const& left, T right) {
     Matrix<T, Size> result;
     for (size_t i = 0; i < Size; i++) {
         for (size_t j = 0; j < Size; j++) {
@@ -106,9 +117,13 @@ template<class T, size_t Size> Matrix<T, Size> operator*(Matrix<T, Size> const& 
     }
     return result;
 }
-template<class T, size_t Size> Matrix<T, Size> operator*(T left, Matrix<T, Size> const& right) { return right * left; }
+template<class T, size_t Size>
+Matrix<T, Size> operator*(T left, Matrix<T, Size> const& right) {
+    return right * left;
+}
 
-template<class T, size_t Size> Matrix<T, Size> operator*(Matrix<T, Size> const& left, Matrix<T, Size> const& right) {
+template<class T, size_t Size>
+Matrix<T, Size> operator*(Matrix<T, Size> const& left, Matrix<T, Size> const& right) {
     // FIXME: I am naive
     Matrix<T, Size> result;
     for (size_t i = 0; i < Size; i++) {
@@ -199,7 +214,8 @@ inline Matrix<T, Size> Matrix<T, Size>::adjoint() const {
     return cofactors.transposed();
 }
 
-template<class T> inline Point4<T> operator*(Matrix<T, 4> const& mat, Point4<T> const& vec) {
+template<class T>
+inline Point4<T> operator*(Matrix<T, 4> const& mat, Point4<T> const& vec) {
     Point4<T> result;
     result.set_x(vec.x() * mat.element(0, 0) + vec.y() * mat.element(0, 1) + vec.z() * mat.element(0, 2) + vec.w() * mat.element(0, 3));
     result.set_y(vec.x() * mat.element(1, 0) + vec.y() * mat.element(1, 1) + vec.z() * mat.element(1, 2) + vec.w() * mat.element(1, 3));
@@ -208,7 +224,8 @@ template<class T> inline Point4<T> operator*(Matrix<T, 4> const& mat, Point4<T> 
     return result;
 }
 
-template<class T> inline Vector4<T> operator*(Matrix<T, 4> const& mat, Vector4<T> const& vec) {
+template<class T>
+inline Vector4<T> operator*(Matrix<T, 4> const& mat, Vector4<T> const& vec) {
     Vector4<T> result;
     result.set_x(vec.x() * mat.element(0, 0) + vec.y() * mat.element(0, 1) + vec.z() * mat.element(0, 2) + vec.w() * mat.element(0, 3));
     result.set_y(vec.x() * mat.element(1, 0) + vec.y() * mat.element(1, 1) + vec.z() * mat.element(1, 2) + vec.w() * mat.element(1, 3));

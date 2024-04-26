@@ -4,7 +4,9 @@
 
 namespace Util {
 
-OsErrorOr<size_t> Writer::write(std::span<uint8_t const> data) { return m_stream.write(data); }
+OsErrorOr<size_t> Writer::write(std::span<uint8_t const> data) {
+    return m_stream.write(data);
+}
 
 OsErrorOr<void> Writer::write_all(std::span<uint8_t const> data) {
     size_t bytes_written = 0;
@@ -36,10 +38,16 @@ void Writer::vwriteff(fmt::string_view fmtstr, fmt::format_args args) {
             OutputIt& m_it;
         };
 
-        OutputAdapter operator*() { return OutputAdapter { *this }; }
+        OutputAdapter operator*() {
+            return OutputAdapter { *this };
+        }
 
-        auto& operator++() { return *this; }
-        auto operator++(int) { return *this; }
+        auto& operator++() {
+            return *this;
+        }
+        auto operator++(int) {
+            return *this;
+        }
         bool operator==(OutputIt const& other) const = default;
 
         WritableStream* m_stream;

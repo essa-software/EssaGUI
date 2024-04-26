@@ -13,7 +13,8 @@
 
 using namespace Util;
 
-template<class T> struct FormatIfFormattable {
+template<class T>
+struct FormatIfFormattable {
     T const& t;
 };
 
@@ -21,13 +22,16 @@ namespace fmt {
 template<class T>
     requires(is_formattable<T>::value)
 struct formatter<FormatIfFormattable<T>> : public formatter<T> {
-    template<typename FormatContext> constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) {
+    template<typename FormatContext>
+    constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) {
         return formatter<T>::format(p.t, ctx);
     }
 };
 
-template<class T> struct formatter<FormatIfFormattable<T>> : public formatter<void*> {
-    template<typename FormatContext> constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) const {
+template<class T>
+struct formatter<FormatIfFormattable<T>> : public formatter<void*> {
+    template<typename FormatContext>
+    constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) const {
         return fmt::format_to(ctx.out(), "?{}@{:p}", typeid(p.t).name(), ptr(&p.t));
     }
 };
@@ -91,18 +95,22 @@ constexpr bool Fail = false;
 
 #define EXPECT_NO_ERROR(...) TRY(__TestSuite::expect_no_error((__VA_ARGS__), #__VA_ARGS__, __FILE__, __LINE__))
 
-#define TEST_CASE(name)                                                                 \
-    ErrorOr<void, __TestSuite::TestError> __test_##name##_func();                       \
-    struct __Test_##name {                                                              \
-        __Test_##name() { __TestSuite::tests.insert({ #name, __test_##name##_func }); } \
-    } __test_##name##_adder;                                                            \
+#define TEST_CASE(name)                                                 \
+    ErrorOr<void, __TestSuite::TestError> __test_##name##_func();       \
+    struct __Test_##name {                                              \
+        __Test_##name() {                                               \
+            __TestSuite::tests.insert({ #name, __test_##name##_func }); \
+        }                                                               \
+    } __test_##name##_adder;                                            \
     ErrorOr<void, __TestSuite::TestError> __test_##name##_func()
 
-#define BENCHMARK(name)                                                                                \
-    void __benchmark_##name##_func();                                                                  \
-    struct __Benchmark_##name {                                                                        \
-        __Benchmark_##name() { __TestSuite::benchmarks.insert({ #name, __benchmark_##name##_func }); } \
-    } __benchmark_##name##_adder;                                                                      \
+#define BENCHMARK(name)                                                           \
+    void __benchmark_##name##_func();                                             \
+    struct __Benchmark_##name {                                                   \
+        __Benchmark_##name() {                                                    \
+            __TestSuite::benchmarks.insert({ #name, __benchmark_##name##_func }); \
+        }                                                                         \
+    } __benchmark_##name##_adder;                                                 \
     void __benchmark_##name##_func()
 
 int main(int, char** argv) {

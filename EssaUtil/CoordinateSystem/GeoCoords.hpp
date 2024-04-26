@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Point.hpp"
-#include <fmt/format.h>
 #include <EssaUtil/Angle.hpp>
+#include <fmt/format.h>
 
 namespace Util {
 
@@ -21,10 +21,15 @@ public:
     // - lon ∈ <-π; π>
     GeoCoords normalized() const;
 
-    Angle latitude() const { return m_latitude; }
-    Angle longitude() const { return m_longitude; }
+    Angle latitude() const {
+        return m_latitude;
+    }
+    Angle longitude() const {
+        return m_longitude;
+    }
 
-    template<class T> Detail::Point<3, T> to_cartesian(float radius) const {
+    template<class T>
+    Detail::Point<3, T> to_cartesian(float radius) const {
         // https://en.wikipedia.org/wiki/Spherical_coordinate_system
         auto norm = normalized();
         auto inclination = norm.latitude().rad() + M_PI / 2;
@@ -45,8 +50,10 @@ private:
 
 }
 
-template<> struct fmt::formatter<Util::GeoCoords> : public fmt::formatter<float> {
-    template<typename FormatContext> constexpr auto format(Util::GeoCoords const& coords, FormatContext& ctx) const {
+template<>
+struct fmt::formatter<Util::GeoCoords> : public fmt::formatter<float> {
+    template<typename FormatContext>
+    constexpr auto format(Util::GeoCoords const& coords, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "GeoCoords[");
         ctx.advance_to(fmt::formatter<float>::format(coords.latitude().deg(), ctx));
         fmt::format_to(ctx.out(), ",");

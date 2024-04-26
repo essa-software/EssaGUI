@@ -18,7 +18,9 @@ public:
         m_renderer.m_size = size;
     }
 
-    void clear() { m_renderer.clear(); }
+    void clear() {
+        m_renderer.clear();
+    }
 
     template<class VertT, class DSS>
         requires(std::is_same_v<typename DSS::Vertex, VertT>)
@@ -31,13 +33,23 @@ public:
         m_renderer.m_size = size;
     }
 
-    void set_label(std::string const& label) { m_fbo.set_label(label); }
+    void set_label(std::string const& label) {
+        m_fbo.set_label(label);
+    }
 
-    auto const& color_texture() const& { return m_fbo.color_texture(); }
-    auto color_texture() && { return std::move(m_fbo).color_texture(); }
+    auto const& color_texture() const& {
+        return m_fbo.color_texture();
+    }
+    auto color_texture() && {
+        return std::move(m_fbo).color_texture();
+    }
 
-    Renderer& renderer() { return m_renderer; }
-    auto const& fbo() const { return m_fbo; }
+    Renderer& renderer() {
+        return m_renderer;
+    }
+    auto const& fbo() const {
+        return m_fbo;
+    }
 
 private:
     llgl::opengl::FBO m_fbo;

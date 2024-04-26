@@ -20,7 +20,9 @@ private:
     virtual void draw(Gfx::Painter& window) const override;
 
     virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const& object, EML::Loader&) override;
-    virtual Theme::ButtonColors default_button_colors() const override { return theme().text_button; }
+    virtual Theme::ButtonColors default_button_colors() const override {
+        return theme().text_button;
+    }
     virtual LengthVector initial_size() const override;
 };
 

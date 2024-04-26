@@ -13,7 +13,9 @@ namespace GUI {
 
 class TabButton : public TextButton {
 private:
-    virtual Theme::ButtonColors default_button_colors() const override { return theme().tab_button; }
+    virtual Theme::ButtonColors default_button_colors() const override {
+        return theme().tab_button;
+    }
 
     virtual void draw(Gfx::Painter&) const override;
 };
@@ -39,7 +41,9 @@ void TabButton::draw(Gfx::Painter& window) const {
     text.draw(window);
 }
 
-void TabSelectWidget::on_init() { set_layout<HorizontalBoxLayout>(); }
+void TabSelectWidget::on_init() {
+    set_layout<HorizontalBoxLayout>();
+}
 
 void TabSelectWidget::add_button(Util::UString caption, size_t tab_index) {
     auto button = add_widget<TabButton>();

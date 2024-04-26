@@ -21,7 +21,9 @@ public:
     }
 
     void set_index(size_t index);
-    size_t get_index() const { return m_index; }
+    size_t get_index() const {
+        return m_index;
+    }
 
     std::function<void(size_t)> on_change;
 

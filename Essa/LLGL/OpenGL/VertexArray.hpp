@@ -22,42 +22,65 @@ struct GLAttrType {
     GLenum type;
 };
 
-template<class T> struct CppTypeToGL { };
+template<class T>
+struct CppTypeToGL { };
 
 template<size_t C, class T>
 /*deprecated*/ struct CppTypeToGL<Util::Detail::DeprecatedVector<C, T>> {
-    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
+    static GLAttrType get() {
+        return { .size = C, .type = CppTypeToGL<T>::get().type };
+    }
 };
 
-template<size_t C, class T> struct CppTypeToGL<Util::Detail::Point<C, T>> {
-    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
+template<size_t C, class T>
+struct CppTypeToGL<Util::Detail::Point<C, T>> {
+    static GLAttrType get() {
+        return { .size = C, .type = CppTypeToGL<T>::get().type };
+    }
 };
 
-template<size_t C, class T> struct CppTypeToGL<Util::Detail::Vector<C, T>> {
-    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
+template<size_t C, class T>
+struct CppTypeToGL<Util::Detail::Vector<C, T>> {
+    static GLAttrType get() {
+        return { .size = C, .type = CppTypeToGL<T>::get().type };
+    }
 };
 
-template<size_t C, class T> struct CppTypeToGL<Util::Detail::Size<C, T>> {
-    static GLAttrType get() { return { .size = C, .type = CppTypeToGL<T>::get().type }; }
+template<size_t C, class T>
+struct CppTypeToGL<Util::Detail::Size<C, T>> {
+    static GLAttrType get() {
+        return { .size = C, .type = CppTypeToGL<T>::get().type };
+    }
 };
 
-template<> struct CppTypeToGL<Util::Color> {
-    static GLAttrType get() { return { .size = 4, .type = GL_UNSIGNED_BYTE }; }
+template<>
+struct CppTypeToGL<Util::Color> {
+    static GLAttrType get() {
+        return { .size = 4, .type = GL_UNSIGNED_BYTE };
+    }
 };
 
-template<> struct CppTypeToGL<Util::Colorf> {
-    static GLAttrType get() { return { .size = 4, .type = GL_FLOAT }; }
+template<>
+struct CppTypeToGL<Util::Colorf> {
+    static GLAttrType get() {
+        return { .size = 4, .type = GL_FLOAT };
+    }
 };
 
-template<> struct CppTypeToGL<float> {
-    static GLAttrType get() { return { .size = 1, .type = GL_FLOAT }; }
+template<>
+struct CppTypeToGL<float> {
+    static GLAttrType get() {
+        return { .size = 1, .type = GL_FLOAT };
+    }
 };
 
-template<size_t Idx> struct Index { };
+template<size_t Idx>
+struct Index { };
 
 }
 
-template<class Vertex> class VertexArray {
+template<class Vertex>
+class VertexArray {
 public:
     VertexArray() {
         opengl::ensure_glew();
@@ -116,7 +139,9 @@ public:
         OpenGL::BufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size_bytes(), (void*)indices.data(), GL_STATIC_DRAW);
     }
 
-    void bind() const { OpenGL::BindVertexArray(m_vertex_array); }
+    void bind() const {
+        OpenGL::BindVertexArray(m_vertex_array);
+    }
 
     void draw(llgl::PrimitiveType type) const {
         // fmt::print("VAO: Drawing {} vertices with pt={}\n", m_vertex_count, static_cast<int>(type));
@@ -140,14 +165,16 @@ private:
         bind_attributes(Detail::Index<Vertex::AttributeCount - 1> {});
     }
 
-    template<class T> inline void bind_attribute(size_t attrid, size_t offset) {
+    template<class T>
+    inline void bind_attribute(size_t attrid, size_t offset) {
         OpenGL::EnableVertexAttribArray(attrid);
         Detail::GLAttrType attrtype = Detail::CppTypeToGL<T>::get();
         // fmt::print("glVertexAttribPointer #{} {}/{}\n", attrid, offset, Vertex::stride());
         OpenGL::VertexAttribPointer(attrid, attrtype.size, attrtype.type, GL_FALSE, Vertex::stride(), reinterpret_cast<void*>(offset));
     }
 
-    template<size_t Idx> inline void bind_attributes(Detail::Index<Idx>) {
+    template<size_t Idx>
+    inline void bind_attributes(Detail::Index<Idx>) {
         bind_attribute<typename Vertex::template AttributeType<Idx>>(Idx, Vertex::template offset<Idx>());
         bind_attributes(Detail::Index<Idx - 1> {});
     }

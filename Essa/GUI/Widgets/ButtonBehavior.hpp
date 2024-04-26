@@ -22,7 +22,9 @@ public:
     Widget::EventHandlerResult on_mouse_button_press(Event::MouseButtonPress const&);
     Widget::EventHandlerResult on_mouse_button_release(Event::MouseButtonRelease const&);
 
-    bool is_hovered() const { return m_hovered; }
+    bool is_hovered() const {
+        return m_hovered;
+    }
 
 private:
     HitTester m_hit_tester;

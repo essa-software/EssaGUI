@@ -10,8 +10,12 @@ public:
 
 private:
     virtual void draw(Gfx::Painter&) const override;
-    virtual Boxi intrinsic_padding() const override { return Boxi::all_equal(BorderRadius); }
-    virtual bool steals_focus() const override { return true; }
+    virtual Boxi intrinsic_padding() const override {
+        return Boxi::all_equal(BorderRadius);
+    }
+    virtual bool steals_focus() const override {
+        return true;
+    }
 
 protected:
     using Container::add_created_widget;

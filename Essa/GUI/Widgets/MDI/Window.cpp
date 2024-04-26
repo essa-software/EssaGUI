@@ -37,9 +37,13 @@ void Window::center_on_screen() {
     set_position((window.raw_size() / 2 - size() / 2.f).to_vector().to_point());
 }
 
-Util::Point2i Window::host_position() const { return host().host_position() + position().to_vector(); }
+Util::Point2i Window::host_position() const {
+    return host().host_position() + position().to_vector();
+}
 
-HostWindow& Window::host_window() { return host().host_window(); }
+HostWindow& Window::host_window() {
+    return host().host_window();
+}
 
 void Window::constrain_position() {
     auto& mdi_host = host();

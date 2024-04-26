@@ -11,7 +11,9 @@ public:
     // Calculate row position for index, in widget-local coords.
     Util::Point2i row_position(size_t) const;
 
-    void set_model(std::unique_ptr<Model> model) { m_model = std::move(model); }
+    void set_model(std::unique_ptr<Model> model) {
+        m_model = std::move(model);
+    }
 
     template<class T2, class... Args>
         requires(std::is_base_of_v<Model, T2>)
@@ -24,7 +26,9 @@ public:
 
     CREATE_VALUE(bool, display_header, true);
 
-    Model* model() const { return m_model.get(); }
+    Model* model() const {
+        return m_model.get();
+    }
 
 protected:
     virtual Util::Size2i content_size() const override;

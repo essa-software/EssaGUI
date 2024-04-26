@@ -13,14 +13,16 @@
 
 namespace Util {
 
-template<class T> class MutexProtected {
+template<class T>
+class MutexProtected {
 public:
     template<class... Args>
         requires(std::is_constructible_v<T, Args...>)
     MutexProtected(Args&&... args)
         : m_t(std::forward<Args>(args)...) { }
 
-    template<class Callback> auto with(Callback&& callback) {
+    template<class Callback>
+    auto with(Callback&& callback) {
         std::unique_lock lock { m_mutex };
         return callback(m_t);
     }
@@ -30,7 +32,8 @@ private:
     std::mutex m_mutex;
 };
 
-template<class T> class ThreadPool {
+template<class T>
+class ThreadPool {
 public:
     using Result = T;
     using TaskCallback = std::function<Result()>;

@@ -20,7 +20,9 @@ public:
     virtual void draw_text_editor_border(GUI::Widget const& widget, bool multiline, Gfx::Painter& painter) const = 0;
 
 protected:
-    auto& theme() const { return m_theme; }
+    auto& theme() const {
+        return m_theme;
+    }
 
 private:
     GUI::Theme const& m_theme;

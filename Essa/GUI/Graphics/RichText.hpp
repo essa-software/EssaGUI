@@ -31,7 +31,9 @@ public:
     RichText& append(Util::UString const&);
     RichText& append_image(llgl::Texture const&);
 
-    std::vector<std::unique_ptr<RichTextFragments::Base>> const& fragments() const { return m_fragments; }
+    std::vector<std::unique_ptr<RichTextFragments::Base>> const& fragments() const {
+        return m_fragments;
+    }
 
 private:
     std::vector<std::unique_ptr<RichTextFragments::Base>> m_fragments;
@@ -43,7 +45,9 @@ public:
         : m_text(text)
         , m_context(context) { }
 
-    void set_rect(Util::Rectf rect) { m_rect = rect; }
+    void set_rect(Util::Rectf rect) {
+        m_rect = rect;
+    }
     void draw(Gfx::Painter& painter) const;
 
 private:

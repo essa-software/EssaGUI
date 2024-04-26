@@ -14,11 +14,17 @@ namespace GUI {
 constexpr float MenuWidth = 200;
 constexpr float MenuItemHeight = 30;
 
-Util::Size2i MenuWidget::wanted_size() const { return { MenuWidth, MenuItemHeight * m_actions.size() }; }
+Util::Size2i MenuWidget::wanted_size() const {
+    return { MenuWidth, MenuItemHeight * m_actions.size() };
+}
 
-void MenuWidget::add_action(Util::UString label) { m_actions.push_back(std::move(label)); }
+void MenuWidget::add_action(Util::UString label) {
+    m_actions.push_back(std::move(label));
+}
 
-Util::Rectf MenuWidget::item_rect(size_t index) const { return { 0, index * MenuItemHeight, MenuWidth, MenuItemHeight }; }
+Util::Rectf MenuWidget::item_rect(size_t index) const {
+    return { 0, index * MenuItemHeight, MenuWidth, MenuItemHeight };
+}
 
 void MenuWidget::draw(Gfx::Painter& painter) const {
     Gfx::Text text { "", Application::the().font() };
@@ -60,7 +66,9 @@ Widget::EventHandlerResult MenuWidget::on_mouse_button_press(Event::MouseButtonP
 
 class Separator : public Widget {
 private:
-    virtual LengthVector initial_size() const override { return { Util::Length::Auto, 10.0_px }; }
+    virtual LengthVector initial_size() const override {
+        return { Util::Length::Auto, 10.0_px };
+    }
 
     virtual void draw(Gfx::Painter& painter) const override {
         Gfx::RectangleDrawOptions rect;

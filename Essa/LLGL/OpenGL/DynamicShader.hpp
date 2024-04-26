@@ -7,7 +7,8 @@
 
 namespace llgl {
 
-template<class V> class DynamicShader {
+template<class V>
+class DynamicShader {
 public:
     using Vertex = V;
 
@@ -17,7 +18,9 @@ public:
             : data(std::move(data)) { }
 
         struct DynamicMapping {
-            void bind(DynamicShader const& shader, Uniforms const& uniforms) { return shader.m_mapping_bind_func(uniforms); }
+            void bind(DynamicShader const& shader, Uniforms const& uniforms) {
+                return shader.m_mapping_bind_func(uniforms);
+            }
         };
 
         static inline DynamicMapping mapping;
@@ -25,7 +28,8 @@ public:
         Util::Any data;
     };
 
-    template<llgl::ShaderImplPartial T> DynamicShader(T& shader) {
+    template<llgl::ShaderImplPartial T>
+    DynamicShader(T& shader) {
         m_source_func = [&](llgl::ShaderType type) { return shader.source(type); };
         m_mapping_bind_func = [&](Uniforms const& uniforms) {
             using StrongUniforms = typename T::Uniforms;
@@ -35,9 +39,15 @@ public:
         m_set_program_func = [&](unsigned id) { shader.set_program(id); };
     }
 
-    std::string_view source(llgl::ShaderType type) const { return m_source_func(type); }
-    unsigned program() const { return m_program_func(); }
-    void set_program(unsigned id) { m_set_program_func(id); }
+    std::string_view source(llgl::ShaderType type) const {
+        return m_source_func(type);
+    }
+    unsigned program() const {
+        return m_program_func();
+    }
+    void set_program(unsigned id) {
+        m_set_program_func(id);
+    }
 
 private:
     std::function<std::string_view(llgl::ShaderType)> m_source_func;

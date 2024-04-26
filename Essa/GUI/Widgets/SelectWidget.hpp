@@ -22,7 +22,9 @@ public:
 
     void add_option(SelectOption option);
     void set_selected_index(unsigned idx, NotifyUser = NotifyUser::Yes);
-    unsigned selected_index() const { return m_selected_index; }
+    unsigned selected_index() const {
+        return m_selected_index;
+    }
 
     std::function<void(unsigned)> on_change;
 

@@ -27,7 +27,9 @@ Application::Application() {
     s_the = this;
 }
 
-Application::~Application() { s_the = nullptr; }
+Application::~Application() {
+    s_the = nullptr;
+}
 
 Theme const& Application::theme() const {
     if (!m_cached_theme) {
@@ -37,7 +39,9 @@ Theme const& Application::theme() const {
     return *m_cached_theme;
 }
 
-HostWindow& Application::create_uninitialized_host_window() { return m_host_windows.emplace_back(); }
+HostWindow& Application::create_uninitialized_host_window() {
+    return m_host_windows.emplace_back();
+}
 
 HostWindow& Application::create_host_window(Util::Size2u size, Util::UString const& title, llgl::WindowSettings const& settings) {
     return m_host_windows.emplace_back(size, title, settings);

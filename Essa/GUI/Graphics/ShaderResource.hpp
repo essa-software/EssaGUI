@@ -35,7 +35,8 @@ concept ResourceShaderImpl = requires(T t, T const ct, llgl::ShaderType st) {
 ///     }
 /// };
 /// \endcode
-template<ResourceShaderImpl Shad, llgl::ShaderType... ShaderTypes> class ShaderResource : public llgl::Shader {
+template<ResourceShaderImpl Shad, llgl::ShaderType... ShaderTypes>
+class ShaderResource : public llgl::Shader {
 public:
     using Vertex = typename Shad::Vertex;
     using Uniforms = typename Shad::Uniforms;
@@ -56,7 +57,8 @@ private:
     std::map<llgl::ShaderType, std::string> m_sources;
 };
 
-template<ResourceShaderImpl Shader> using FullShaderResource = ShaderResource<Shader, llgl::ShaderType::Fragment, llgl::ShaderType::Vertex>;
+template<ResourceShaderImpl Shader>
+using FullShaderResource = ShaderResource<Shader, llgl::ShaderType::Fragment, llgl::ShaderType::Vertex>;
 
 }
 
@@ -92,5 +94,7 @@ struct Gfx::ResourceTraits<Gfx::ShaderResource<Shader, ShaderTypes...>> {
         return resource;
     }
 
-    static std::string_view base_path() { return "shaders"; }
+    static std::string_view base_path() {
+        return "shaders";
+    }
 };

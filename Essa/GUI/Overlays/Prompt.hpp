@@ -10,7 +10,9 @@ class Prompt : public WindowRoot {
 public:
     explicit Prompt(WidgetTreeRoot& window, Util::UString help_text, Util::UString window_title, Util::UString placeholder);
 
-    std::optional<Util::UString> result() const { return m_result; }
+    std::optional<Util::UString> result() const {
+        return m_result;
+    }
 
 private:
     virtual Widget::EventHandlerResult handle_event(llgl::Event const&) override;

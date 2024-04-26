@@ -120,7 +120,9 @@ void Text::align(GUI::Align align, Util::Rectf rect) {
     m_position = Util::Point2f(rect.left, rect.top + m_font.ascent(m_font_size)) + offset;
 }
 
-Util::Size2u Text::calculate_text_size() const { return calculate_text_size(m_string); }
+Util::Size2u Text::calculate_text_size() const {
+    return calculate_text_size(m_string);
+}
 
 Util::Size2u Text::calculate_text_size(Util::UString const& string) const {
     Util::Size2u text_size;

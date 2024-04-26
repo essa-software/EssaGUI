@@ -12,7 +12,9 @@ namespace GUI {
 
 class Listbox : public Container {
 public:
-    virtual void on_init() override { set_layout<VerticalBoxLayout>(); }
+    virtual void on_init() override {
+        set_layout<VerticalBoxLayout>();
+    }
 
     void add(Util::UString const& label);
     void remove(Util::UString const& label);
@@ -22,7 +24,9 @@ public:
         sort_vector();
     }
 
-    bool sorted_list() const { return m_sort_list; }
+    bool sorted_list() const {
+        return m_sort_list;
+    }
 
     void allow_multichoose(bool con) {
         m_allow_multichoose = con;
@@ -34,14 +38,20 @@ public:
             m_list_buttons.resize(1);
         }
     }
-    bool allow_multichoose() const { return m_allow_multichoose; }
+    bool allow_multichoose() const {
+        return m_allow_multichoose;
+    }
 
     void set_row_height(Util::Length const& height);
-    Util::Length get_row_height() const { return m_row_height; }
+    Util::Length get_row_height() const {
+        return m_row_height;
+    }
 
     std::function<void(size_t, bool)> on_change;
 
-    std::vector<size_t> indexes() const { return m_index_vector; }
+    std::vector<size_t> indexes() const {
+        return m_index_vector;
+    }
     void set_index(size_t index) {
         m_index_vector.clear();
         m_index_vector.push_back(index);

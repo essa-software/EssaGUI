@@ -17,7 +17,9 @@ std::ostream& operator<<(std::ostream& out, Math::Plane const& plane) {
                << " = 0";
 }
 
-Util::Vector3d Plane::normal() const { return Util::Vector3d(m_a, m_b, m_c).normalized(); }
+Util::Vector3d Plane::normal() const {
+    return Util::Vector3d(m_a, m_b, m_c).normalized();
+}
 
 Util::Point3d Plane::point() const {
     if (m_a == 0) {

@@ -42,9 +42,15 @@ public:
     Painter(llgl::Renderer& renderer)
         : m_renderer(renderer) { }
 
-    auto& builder() const { return m_builder; }
-    auto& builder() { return m_builder; }
-    auto& renderer() const { return m_renderer; }
+    auto& builder() const {
+        return m_builder;
+    }
+    auto& builder() {
+        return m_builder;
+    }
+    auto& renderer() const {
+        return m_renderer;
+    }
 
     void render() const {
         apply_states();
@@ -59,7 +65,9 @@ public:
     void draw_line(std::initializer_list<Util::Point2f> vertices, LineDrawOptions const& options) {
         draw_line(std::span { vertices }, options);
     }
-    void draw_line(Util::Point2f start, Util::Point2f end, LineDrawOptions const& options) { draw_line({ start, end }, options); }
+    void draw_line(Util::Point2f start, Util::Point2f end, LineDrawOptions const& options) {
+        draw_line({ start, end }, options);
+    }
 
     void draw_outline(std::span<Util::Point2f const>, Util::Color color, float thickness);
     void draw_vertices(
@@ -67,7 +75,9 @@ public:
         std::optional<ShaderContext> shader_context = {}
     );
 
-    void reset() { m_builder.reset(); }
+    void reset() {
+        m_builder.reset();
+    }
 
     enum class BlendingFunc {
         Zero = GL_ZERO,
@@ -109,15 +119,31 @@ public:
     };
     // Set blending used for rendering. NOTE/FIXME: This is applied only
     // on actual rendering, not on individual draw() calls.
-    void set_blending(Blending blending) { m_blending = blending; }
-    Blending blending() const { return m_blending; }
+    void set_blending(Blending blending) {
+        m_blending = blending;
+    }
+    Blending blending() const {
+        return m_blending;
+    }
 
-    void set_projection(llgl::Projection projection) { m_projection = projection; }
-    auto projection() const { return m_projection; }
-    void set_view(llgl::Transform const& transform) { m_view = transform; }
-    auto view() const { return m_view; }
-    void set_model(llgl::Transform const& transform) { m_model = transform; }
-    auto model() const { return m_model; }
+    void set_projection(llgl::Projection projection) {
+        m_projection = projection;
+    }
+    auto projection() const {
+        return m_projection;
+    }
+    void set_view(llgl::Transform const& transform) {
+        m_view = transform;
+    }
+    auto view() const {
+        return m_view;
+    }
+    void set_model(llgl::Transform const& transform) {
+        m_model = transform;
+    }
+    auto model() const {
+        return m_model;
+    }
 
 private:
     void apply_states() const;
@@ -127,8 +153,12 @@ private:
     void draw_shape_outline(Drawing::Shape const& shape, std::span<Util::Point2f const> vertices);
 
     // It is not guaranteed to maintain state after drawing calls.
-    void set_submodel(llgl::Transform const& transform) { m_submodel = transform; }
-    auto submodel() const { return m_submodel; }
+    void set_submodel(llgl::Transform const& transform) {
+        m_submodel = transform;
+    }
+    auto submodel() const {
+        return m_submodel;
+    }
 
     GUIBuilder m_builder;
     llgl::Renderer& m_renderer;
@@ -157,7 +187,9 @@ public:
         painter.set_view(transform);
     }
 
-    ~PainterTransformScope() { m_painter.set_view(m_old_transform); }
+    ~PainterTransformScope() {
+        m_painter.set_view(m_old_transform);
+    }
 
 private:
     Gfx::Painter& m_painter;

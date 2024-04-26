@@ -17,7 +17,9 @@ public:
     };
 
     Glyph ensure_glyph(TTFFont const& font, uint32_t codepoint);
-    Texture const& atlas() const { return m_atlas; }
+    Texture const& atlas() const {
+        return m_atlas;
+    }
 
 private:
     uint32_t m_font_size {};

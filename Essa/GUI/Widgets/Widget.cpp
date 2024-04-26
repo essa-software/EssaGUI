@@ -42,7 +42,9 @@ Util::Point2i Widget::local_mouse_position() const {
     return mouse_pos_relative_to_host_window - this->host_position().to_vector();
 }
 
-bool Widget::is_mouse_over(Util::Point2i mouse_pos) const { return absolute_rect().contains(mouse_pos); }
+bool Widget::is_mouse_over(Util::Point2i mouse_pos) const {
+    return absolute_rect().contains(mouse_pos);
+}
 
 Widget::EventHandlerResult Widget::do_handle_event(Event const& event) {
     auto transformed_event = event.relativized(absolute_position().to_vector());
@@ -197,11 +199,17 @@ void Widget::set_focused() {
     m_window_root->set_focused_widget(this);
 }
 
-bool Widget::is_focused() const { return m_window_root->focused_widget() == this; }
+bool Widget::is_focused() const {
+    return m_window_root->focused_widget() == this;
+}
 
-void Widget::focus_first_child_or_self() { set_focused(); }
+void Widget::focus_first_child_or_self() {
+    set_focused();
+}
 
-bool Widget::are_all_parents_enabled() const { return is_enabled() && (m_parent ? m_parent->is_enabled() : true); }
+bool Widget::are_all_parents_enabled() const {
+    return is_enabled() && (m_parent ? m_parent->is_enabled() : true);
+}
 
 bool Widget::is_affected_by_event(Event const& event) const {
     if (!are_all_parents_enabled()) {
@@ -238,17 +246,25 @@ void Widget::do_draw(Gfx::Painter& painter) const {
     }
 }
 
-Util::Point2i Widget::screen_position() const { return host_window().position() + host_position().to_vector(); }
+Util::Point2i Widget::screen_position() const {
+    return host_window().position() + host_position().to_vector();
+}
 
-Util::Point2i Widget::host_position() const { return m_window_root->window().host_position() + absolute_position().to_vector(); }
+Util::Point2i Widget::host_position() const {
+    return m_window_root->window().host_position() + absolute_position().to_vector();
+}
 
 Util::Point2i Widget::absolute_position() const {
     return m_position + (m_parent ? m_parent->absolute_position().to_vector() : Util::Vector2i());
 }
 
-Util::Point2i Widget::parent_relative_position() const { return m_position; }
+Util::Point2i Widget::parent_relative_position() const {
+    return m_position;
+}
 
-void Widget::set_parent_relative_position(Util::Point2i p) { m_position = p; }
+void Widget::set_parent_relative_position(Util::Point2i p) {
+    m_position = p;
+}
 
 void Widget::set_raw_position(Util::Point2i position) {
     m_position = position - (m_parent ? m_parent->raw_position().to_vector() : Util::Vector2i());
@@ -277,9 +293,13 @@ void Widget::copy_initial_sizes() {
         m_input_size.y = initial_size.y;
 }
 
-Theme const& Widget::theme() const { return Application::the().theme(); }
+Theme const& Widget::theme() const {
+    return Application::the().theme();
+}
 
-Gfx::ResourceManager const& Widget::resource_manager() const { return Application::the().resource_manager(); }
+Gfx::ResourceManager const& Widget::resource_manager() const {
+    return Application::the().resource_manager();
+}
 
 HostWindow& Widget::host_window() const {
     auto& window = m_window_root->window();
@@ -322,9 +342,13 @@ EML::EMLErrorOr<void> Widget::load_from_eml_object(EML::Object const& object, EM
     return {};
 }
 
-std::vector<DevToolsObject const*> Widget::dev_tools_children() const { return {}; }
+std::vector<DevToolsObject const*> Widget::dev_tools_children() const {
+    return {};
+}
 
-Util::UString Widget::dev_tools_name() const { return Util::UString(id()); }
+Util::UString Widget::dev_tools_name() const {
+    return Util::UString(id());
+}
 
 EML_REGISTER_CLASS(Widget);
 

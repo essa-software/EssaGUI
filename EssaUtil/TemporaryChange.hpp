@@ -4,7 +4,8 @@
 
 namespace Util {
 
-template<class T> class TemporaryChange {
+template<class T>
+class TemporaryChange {
 public:
     TemporaryChange(T& variable, T&& new_value)
         : m_variable(variable)
@@ -12,7 +13,9 @@ public:
         m_variable = std::move(new_value);
     }
 
-    ~TemporaryChange() { m_variable = std::move(m_old_value); }
+    ~TemporaryChange() {
+        m_variable = std::move(m_old_value);
+    }
 
 private:
     T& m_variable;

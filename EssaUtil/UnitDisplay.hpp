@@ -34,7 +34,9 @@ struct UnitValue {
     UString value {};
     UString unit {};
 
-    UString to_string() const { return value + " " + unit; }
+    UString to_string() const {
+        return value + " " + unit;
+    }
 };
 
 // Display value in the form "value[ × 10^n] <unit>", using predefined units.

@@ -19,6 +19,8 @@ void TooltipOverlay::set_text(Util::UString text) {
     m_textfield->set_content(std::move(text));
     window().set_size(m_textfield->needed_size_for_text().cast<int>());
 }
-Util::UString TooltipOverlay::text() const { return m_text; }
+Util::UString TooltipOverlay::text() const {
+    return m_text;
+}
 
 }

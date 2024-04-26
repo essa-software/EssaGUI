@@ -23,7 +23,8 @@
 
 namespace Util {
 
-template<typename T, typename... ErrorTypes> class [[nodiscard]] ErrorOr;
+template<typename T, typename... ErrorTypes>
+class [[nodiscard]] ErrorOr;
 
 #define TRY(...)                                                                                \
     ({                                                                                          \
@@ -43,17 +44,21 @@ template<typename T, typename... ErrorTypes> class [[nodiscard]] ErrorOr;
         _temporary_result.release_value();               \
     })
 
-template<class... ErrorTypes> using ErrorVariant = std::variant<ErrorTypes...>;
+template<class... ErrorTypes>
+using ErrorVariant = std::variant<ErrorTypes...>;
 
-template<typename T, typename... ErrorTypes> class [[nodiscard]] ErrorOr : public std::variant<T, ErrorTypes...> {
+template<typename T, typename... ErrorTypes>
+class [[nodiscard]] ErrorOr : public std::variant<T, ErrorTypes...> {
 public:
     using Variant = std::variant<T, ErrorTypes...>;
 
     using Error = First<ErrorTypes...>;
 
-    template<class E> static constexpr bool IsConvertibleToError = { (std::is_convertible_v<E, ErrorTypes> || ...) };
+    template<class E>
+    static constexpr bool IsConvertibleToError = { (std::is_convertible_v<E, ErrorTypes> || ...) };
 
-    template<class E> static constexpr bool ContainsError = { (std::is_same_v<E, ErrorTypes> || ...) };
+    template<class E>
+    static constexpr bool ContainsError = { (std::is_same_v<E, ErrorTypes> || ...) };
 
     template<typename U>
     ESSA_ALWAYS_INLINE ErrorOr(U&& value, CppSourceLocation loc = CppSourceLocation::current())
@@ -80,8 +85,12 @@ public:
         : Variant(std::visit([](auto&& v) -> Variant { return v; }, pack))
         , m_location(loc) { }
 
-    T& value() { return std::get<T>(*this); }
-    T const& value() const { return std::get<T>(*this); }
+    T& value() {
+        return std::get<T>(*this);
+    }
+    T const& value() const {
+        return std::get<T>(*this);
+    }
 
     First<ErrorTypes...>& error()
         requires(sizeof...(ErrorTypes) == 1)
@@ -109,7 +118,9 @@ public:
         return std::get<E>(*this);
     }
 
-    bool is_error() const { return !std::holds_alternative<T>(*this); }
+    bool is_error() const {
+        return !std::holds_alternative<T>(*this);
+    }
 
     ErrorVariant<ErrorTypes...> release_error_variant() {
         return std::visit(
@@ -131,11 +142,18 @@ public:
         return std::holds_alternative<E>(*this);
     }
 
-    T release_value() { return std::move(value()); }
+    T release_value() {
+        return std::move(value());
+    }
 
-    template<class E> E release_error_of_type() { return std::move(error_of_type<E>()); }
+    template<class E>
+    E release_error_of_type() {
+        return std::move(error_of_type<E>());
+    }
 
-    auto release_error() { return std::move(error()); }
+    auto release_error() {
+        return std::move(error());
+    }
 
     T release_value_but_fixme_should_propagate_errors(CppSourceLocation loc = CppSourceLocation::current()) {
         if (is_error()) [[unlikely]] {
@@ -157,7 +175,9 @@ public:
         return { callback(release_error()), loc };
     }
 
-    auto location() const { return m_location; }
+    auto location() const {
+        return m_location;
+    }
 
     void dump(std::string_view header, CppSourceLocation loc = CppSourceLocation::current()) const {
         if (is_error()) {
@@ -183,11 +203,13 @@ private:
 };
 
 // Partial specialization for void value type
-template<typename... ErrorTypes> class [[nodiscard]] ErrorOr<void, ErrorTypes...> final : public ErrorOr<std::monostate, ErrorTypes...> {
+template<typename... ErrorTypes>
+class [[nodiscard]] ErrorOr<void, ErrorTypes...> final : public ErrorOr<std::monostate, ErrorTypes...> {
 public:
     using Base = ErrorOr<std::monostate, ErrorTypes...>;
 
-    template<class E> static constexpr bool IsConvertibleToError = { (std::is_convertible_v<E, ErrorTypes> || ...) };
+    template<class E>
+    static constexpr bool IsConvertibleToError = { (std::is_convertible_v<E, ErrorTypes> || ...) };
 
     ErrorOr()
         : Base { std::monostate {} } { }
@@ -215,14 +237,17 @@ struct OsError {
     std::string_view function;
 };
 
-template<class T> using OsErrorOr = ErrorOr<T, OsError>;
+template<class T>
+using OsErrorOr = ErrorOr<T, OsError>;
 
 }
 
 namespace fmt {
 
-template<> struct formatter<Util::OsError> : public formatter<std::string_view> {
-    template<typename FormatContext> constexpr auto format(Util::OsError const& p, FormatContext& ctx) const {
+template<>
+struct formatter<Util::OsError> : public formatter<std::string_view> {
+    template<typename FormatContext>
+    constexpr auto format(Util::OsError const& p, FormatContext& ctx) const {
         return fmt::format_to(ctx.out(), "{}: {}", p.function, strerror(p.error));
     }
 };

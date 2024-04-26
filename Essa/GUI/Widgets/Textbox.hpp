@@ -13,7 +13,9 @@ class Textbox : public TextEditor {
 public:
     enum Type { TEXT, NUMBER };
 
-    virtual void on_init() override { set_multiline(false); }
+    virtual void on_init() override {
+        set_multiline(false);
+    }
 
     CREATE_VALUE(double, min, std::numeric_limits<double>::lowest())
     CREATE_VALUE(double, max, std::numeric_limits<double>::max())

@@ -14,11 +14,14 @@ class GeoCoords;
 
 namespace Detail {
 
-template<size_t C, class T> class Point;
+template<size_t C, class T>
+class Point;
 
-template<size_t C, class T> class Size;
+template<size_t C, class T>
+class Size;
 
-template<size_t C, class T> class Vector : public Coordinates<C, T, Vector> {
+template<size_t C, class T>
+class Vector : public Coordinates<C, T, Vector> {
 public:
     using Super = Coordinates<C, T, Vector>;
     using ThisPoint = Point<C, T>;
@@ -33,7 +36,8 @@ public:
     Vector(Args... a)
         : Super(std::forward<Args>(a)...) { }
 
-    template<class OtherT> static Vector from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
+    template<class OtherT>
+    static Vector from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
         Vector p;
         for (size_t s = 0; s < Super::Components; s++) {
             p.set_component(s, c.components[s]);
@@ -57,9 +61,13 @@ public:
         return result;
     }
 
-    auto length() const { return std::sqrt(length_squared()); }
+    auto length() const {
+        return std::sqrt(length_squared());
+    }
 
-    double inverted_length() const { return 1 / length(); }
+    double inverted_length() const {
+        return 1 / length();
+    }
 
     // Return unit vector of direction the same as original. If original
     // vector is null, return null.
@@ -109,7 +117,9 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator+=(Vector const& b) { return *this = *this + b; }
+    constexpr Vector& operator+=(Vector const& b) {
+        return *this = *this + b;
+    }
 
     constexpr Vector operator-(Vector const& b) const {
         Vector ab;
@@ -119,7 +129,9 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator-=(Vector const& b) { return *this = *this - b; }
+    constexpr Vector& operator-=(Vector const& b) {
+        return *this = *this - b;
+    }
 
     constexpr Vector operator+(T x) const {
         Vector ab;
@@ -129,7 +141,9 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator+=(T x) { return *this = *this + x; }
+    constexpr Vector& operator+=(T x) {
+        return *this = *this + x;
+    }
 
     constexpr Vector operator-(T x) const {
         assert(x != 0);
@@ -140,7 +154,9 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator-=(T x) { return *this = *this - x; }
+    constexpr Vector& operator-=(T x) {
+        return *this = *this - x;
+    }
 
     constexpr Vector operator*(T x) const {
         Vector ab;
@@ -150,7 +166,9 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator*=(T x) { return *this = *this * x; }
+    constexpr Vector& operator*=(T x) {
+        return *this = *this * x;
+    }
 
     constexpr Vector operator/(T x) const {
         assert(x != 0);
@@ -161,7 +179,9 @@ public:
         return ab;
     }
 
-    constexpr Vector& operator/=(T x) { return *this = *this / x; }
+    constexpr Vector& operator/=(T x) {
+        return *this = *this / x;
+    }
 
     constexpr Vector operator-() const {
         Vector ab;
@@ -321,13 +341,18 @@ public:
 
 } // Detail
 
-template<size_t C, class T> Detail::Vector<C, T> operator*(double fac, Detail::Vector<C, T> const& vec) { return vec * fac; }
+template<size_t C, class T>
+Detail::Vector<C, T> operator*(double fac, Detail::Vector<C, T> const& vec) {
+    return vec * fac;
+}
 
 } // Util
 
-template<size_t C, class T> class fmt::formatter<Util::Detail::Vector<C, T>> : public fmt::formatter<T> {
+template<size_t C, class T>
+class fmt::formatter<Util::Detail::Vector<C, T>> : public fmt::formatter<T> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::Detail::Vector<C, T> const& v, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(Util::Detail::Vector<C, T> const& v, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "[");
         for (size_t s = 0; s < C; s++) {
             ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));

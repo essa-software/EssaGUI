@@ -44,8 +44,18 @@ void run(size_t tasks) {
     }
 }
 
-BENCHMARK(threadpool_10) { run(10); }
-BENCHMARK(threadpool_100) { run(100); }
-BENCHMARK(threadpool_1000) { run(1000); }
-BENCHMARK(threadpool_10000) { run(10000); }
-BENCHMARK(threadpool_100000) { run(100000); }
+BENCHMARK(threadpool_10) {
+    run(10);
+}
+BENCHMARK(threadpool_100) {
+    run(100);
+}
+BENCHMARK(threadpool_1000) {
+    run(1000);
+}
+BENCHMARK(threadpool_10000) {
+    run(10000);
+}
+BENCHMARK(threadpool_100000) {
+    run(100000);
+}

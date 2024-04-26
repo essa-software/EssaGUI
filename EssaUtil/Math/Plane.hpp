@@ -17,10 +17,18 @@ public:
 
     Plane(Util::Point3d p1, Util::Point3d p2, Util::Point3d p3);
 
-    double a() const { return m_a; }
-    double b() const { return m_b; }
-    double c() const { return m_c; }
-    double d() const { return m_d; }
+    double a() const {
+        return m_a;
+    }
+    double b() const {
+        return m_b;
+    }
+    double c() const {
+        return m_c;
+    }
+    double d() const {
+        return m_d;
+    }
 
     Util::Vector3d normal() const;
 

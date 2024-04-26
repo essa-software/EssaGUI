@@ -25,8 +25,12 @@ public:
         return *this;
     }
 
-    Util::Vector2f extents() const { return m_extents; }
-    virtual size_t point_count() const override { return m_point_count; }
+    Util::Vector2f extents() const {
+        return m_extents;
+    }
+    virtual size_t point_count() const override {
+        return m_point_count;
+    }
     virtual Util::Point2f point(size_t idx) const override {
         assert(idx < m_point_count);
         float angle = static_cast<float>(idx * M_PI * 2) / m_point_count;

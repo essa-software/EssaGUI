@@ -30,7 +30,9 @@ int main() {
     auto& list = app.main_widget().find<GUI::TreeView>("list");
 
     class TestModel : public GUI::Model {
-        virtual size_t column_count() const override { return 2; }
+        virtual size_t column_count() const override {
+            return 2;
+        }
         virtual GUI::ModelColumn column(size_t column) const override {
             switch (column) {
             case 0:
@@ -49,7 +51,9 @@ int main() {
             }
             ESSA_UNREACHABLE;
         }
-        virtual size_t children_count(std::optional<Node> parent) const override { return parent ? (parent->data.type == 0 ? 3 : 0) : 10; }
+        virtual size_t children_count(std::optional<Node> parent) const override {
+            return parent ? (parent->data.type == 0 ? 3 : 0) : 10;
+        }
         virtual NodeData child(std::optional<Node> parent, size_t) const override {
             return parent ? NodeData { 1, nullptr } : NodeData { 0, nullptr };
         }

@@ -25,17 +25,37 @@ public:
     static Buffer uninitialized(size_t size);
     static Buffer filled(size_t size, uint8_t byte = 0);
 
-    std::span<uint8_t> span() { return { m_data, m_size }; }
-    std::span<uint8_t const> span() const { return { m_data, m_size }; }
-    size_t size() const { return m_size; }
-    size_t capacity() const { return m_capacity; }
-    auto begin() { return m_data; }
-    auto begin() const { return m_data; }
-    auto end() { return m_data + m_size; }
-    auto end() const { return m_data + m_size; }
+    std::span<uint8_t> span() {
+        return { m_data, m_size };
+    }
+    std::span<uint8_t const> span() const {
+        return { m_data, m_size };
+    }
+    size_t size() const {
+        return m_size;
+    }
+    size_t capacity() const {
+        return m_capacity;
+    }
+    auto begin() {
+        return m_data;
+    }
+    auto begin() const {
+        return m_data;
+    }
+    auto end() {
+        return m_data + m_size;
+    }
+    auto end() const {
+        return m_data + m_size;
+    }
 
-    uint8_t operator[](size_t idx) const { return m_data[idx]; }
-    uint8_t& operator[](size_t idx) { return m_data[idx]; }
+    uint8_t operator[](size_t idx) const {
+        return m_data[idx];
+    }
+    uint8_t& operator[](size_t idx) {
+        return m_data[idx];
+    }
 
     void clear();
     void append(uint8_t);
@@ -43,7 +63,9 @@ public:
     void resize_uninitialized(size_t);
     void insert(size_t position, uint8_t byte);
     void insert(size_t position, std::span<uint8_t const> bytes);
-    void insert(size_t position, std::initializer_list<uint8_t> bytes) { insert(position, std::span<uint8_t const> { bytes }); }
+    void insert(size_t position, std::initializer_list<uint8_t> bytes) {
+        insert(position, std::span<uint8_t const> { bytes });
+    }
     void reallocate(size_t capacity);
     void ensure_capacity(size_t capacity);
 
@@ -70,9 +92,11 @@ private:
 
 }
 
-template<> class fmt::formatter<Util::Buffer> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<Util::Buffer> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::Buffer const& p, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(Util::Buffer const& p, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "{{");
         constexpr size_t FirstBytesToPrint = 10;
         for (auto ptr = p.begin(); ptr < p.end() && ptr < p.begin() + FirstBytesToPrint; ptr++) {

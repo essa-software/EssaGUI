@@ -23,7 +23,9 @@ std::optional<Model> ObjLoader::load_object_from_file(std::string const& filenam
     return loader.load(std::filesystem::path { filename }.parent_path());
 }
 
-static inline void error(std::string_view message) { std::cerr << "ObjLoader: Failed to load OBJ file: " << message << std::endl; }
+static inline void error(std::string_view message) {
+    std::cerr << "ObjLoader: Failed to load OBJ file: " << message << std::endl;
+}
 
 std::optional<Model> ObjLoader::load(std::filesystem::path const& base_directory) {
     Model output;

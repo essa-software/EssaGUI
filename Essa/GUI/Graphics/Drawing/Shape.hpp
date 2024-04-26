@@ -27,7 +27,8 @@ public:
         m_origin = o;
         return *this;
     }
-    template<llgl::ShaderImplPartial S> Shape& set_shader(S& shader, typename S::Uniforms uniforms) {
+    template<llgl::ShaderImplPartial S>
+    Shape& set_shader(S& shader, typename S::Uniforms uniforms) {
         m_shader_context = Gfx::ShaderContext { llgl::DynamicShader<Gfx::Vertex>(shader), std::move(uniforms) };
         return *this;
     }
@@ -45,12 +46,22 @@ public:
     }
     Shape& set_fill(Fill fill);
 
-    llgl::Transform transform() const { return m_transform; }
+    llgl::Transform transform() const {
+        return m_transform;
+    }
     // All points are offsetted by -origin() before transforming.
-    Util::Point2f origin() const { return m_origin; }
-    Fill fill() const { return m_fill; }
-    Outline outline() const { return m_outline; }
-    std::optional<ShaderContext> shader_context() const { return m_shader_context; }
+    Util::Point2f origin() const {
+        return m_origin;
+    }
+    Fill fill() const {
+        return m_fill;
+    }
+    Outline outline() const {
+        return m_outline;
+    }
+    std::optional<ShaderContext> shader_context() const {
+        return m_shader_context;
+    }
 
     virtual size_t point_count() const = 0;
     virtual Util::Point2f point(size_t idx) const = 0;
@@ -64,8 +75,12 @@ public:
             Shape const* shape = nullptr;
             size_t index;
 
-            Util::Point2f operator*() const { return shape->point(index); }
-            Util::Point2f operator->() const { return shape->point(index); }
+            Util::Point2f operator*() const {
+                return shape->point(index);
+            }
+            Util::Point2f operator->() const {
+                return shape->point(index);
+            }
             PointIterator& operator++() {
                 index++;
                 return *this;
@@ -77,8 +92,12 @@ public:
         explicit Points(Shape const& s)
             : m_shape(s) { }
 
-        PointIterator begin() const { return PointIterator { &m_shape, 0 }; }
-        PointIterator end() const { return PointIterator { &m_shape, m_shape.point_count() }; }
+        PointIterator begin() const {
+            return PointIterator { &m_shape, 0 };
+        }
+        PointIterator end() const {
+            return PointIterator { &m_shape, m_shape.point_count() };
+        }
 
         std::vector<Util::Point2f> to_vector() const {
             std::vector<Util::Point2f> vector;
@@ -93,13 +112,17 @@ public:
         size_t m_index = 0;
     };
 
-    Points points() const { return Points { *this }; }
+    Points points() const {
+        return Points { *this };
+    }
 
     std::vector<Util::Point2f> const& vertices() const;
     std::vector<Gfx::Vertex> const& fill_vertices() const;
 
 protected:
-    void invalidate() { m_vertex_cache_dirty = true; }
+    void invalidate() {
+        m_vertex_cache_dirty = true;
+    }
 
 private:
     void ensure_cache_up_to_date() const;
@@ -133,12 +156,23 @@ RoundingResult round(RoundingSettings settings);
 
 }
 
-#define __ESSA_DEFINE_SHAPE_CHAINABLES(Subclass)                                                           \
-    Subclass& set_transform(llgl::Transform t) { return static_cast<Subclass&>(Shape::set_transform(t)); } \
-    Subclass& set_origin(Util::Point2f t) { return static_cast<Subclass&>(Shape::set_origin(t)); }         \
-    template<llgl::ShaderImplPartial S> Subclass& set_shader(S& shader, typename S::Uniforms uniforms) {   \
-        return static_cast<Subclass&>(Shape::set_shader(shader, std::move(uniforms)));                     \
-    }                                                                                                      \
-    Subclass& move(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::move(t)); }             \
-    Subclass& rotate(float t) { return static_cast<Subclass&>(Shape::rotate(t)); }                         \
-    Subclass& scale(Util::Vector2f const& t) { return static_cast<Subclass&>(Shape::scale(t)); }
+#define __ESSA_DEFINE_SHAPE_CHAINABLES(Subclass)                                       \
+    Subclass& set_transform(llgl::Transform t) {                                       \
+        return static_cast<Subclass&>(Shape::set_transform(t));                        \
+    }                                                                                  \
+    Subclass& set_origin(Util::Point2f t) {                                            \
+        return static_cast<Subclass&>(Shape::set_origin(t));                           \
+    }                                                                                  \
+    template<llgl::ShaderImplPartial S>                                                \
+    Subclass& set_shader(S& shader, typename S::Uniforms uniforms) {                   \
+        return static_cast<Subclass&>(Shape::set_shader(shader, std::move(uniforms))); \
+    }                                                                                  \
+    Subclass& move(Util::Vector2f const& t) {                                          \
+        return static_cast<Subclass&>(Shape::move(t));                                 \
+    }                                                                                  \
+    Subclass& rotate(float t) {                                                        \
+        return static_cast<Subclass&>(Shape::rotate(t));                               \
+    }                                                                                  \
+    Subclass& scale(Util::Vector2f const& t) {                                         \
+        return static_cast<Subclass&>(Shape::scale(t));                                \
+    }

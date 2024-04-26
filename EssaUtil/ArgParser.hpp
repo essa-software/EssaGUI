@@ -24,11 +24,13 @@ public:
 
     explicit ArgParser(int argc, char* argv[]);
 
-    template<class T> void parameter(std::string_view name, T& target) {
+    template<class T>
+    void parameter(std::string_view name, T& target) {
         m_positional_parameters.push_back(parameter_handler(name, target));
     }
 
-    template<class T> void parameter(std::string_view name, std::optional<T>& target) {
+    template<class T>
+    void parameter(std::string_view name, std::optional<T>& target) {
         m_optional_positional_parameters.push_back({
             .handler = [name, &target](std::string_view value) -> Result {
                 T out;
@@ -40,13 +42,15 @@ public:
         });
     }
 
-    template<class T> void option(std::string_view name, T& target, std::string_view help_string) {
+    template<class T>
+    void option(std::string_view name, T& target, std::string_view help_string) {
         auto opt = option_handler(name, target);
         opt.help_string = help_string;
         m_options.insert({ name, std::move(opt) });
     }
 
-    template<class T> void option(std::string_view name, std::optional<T>& target, std::string_view help_string) {
+    template<class T>
+    void option(std::string_view name, std::optional<T>& target, std::string_view help_string) {
         m_options.insert({
             name,
             Option {

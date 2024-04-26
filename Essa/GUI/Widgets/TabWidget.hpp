@@ -31,14 +31,17 @@ class TabWidget : public Container {
 public:
     virtual void on_init() override;
 
-    template<class T, class... Args> T& add_tab(Util::UString caption, Args&&... args) {
+    template<class T, class... Args>
+    T& add_tab(Util::UString caption, Args&&... args) {
         auto tab = m_tab_container->add_widget<T>(std::forward<Args>(args)...);
         setup_tab(caption, tab);
         return *tab;
     }
 
     void switch_to_tab(size_t index);
-    unsigned index() const { return m_index; }
+    unsigned index() const {
+        return m_index;
+    }
 
     std::function<void(unsigned)> on_tab_switch;
 

@@ -32,12 +32,9 @@ int main() {
     text_editor->set_syntax_highlighter(std::make_unique<TestSyntaxHighlighter>());
 
     text_editor->set_error_spans({
-        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Error,
-            { { 0, 0 }, { 0, 10 } } },
-        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Warning,
-            { { 1, 0 }, { 1, 10 } } },
-        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Note,
-            { { 2, 0 }, { 2, 10 } } },
+        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Error, { { 0, 0 }, { 0, 10 } } },
+        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Warning, { { 1, 0 }, { 1, 10 } } },
+        GUI::TextEditor::ErrorSpan { GUI::TextEditor::ErrorSpan::Type::Note, { { 2, 0 }, { 2, 10 } } },
     });
 
     auto number_text_box = container1.add_widget<GUI::Textbox>();

@@ -15,8 +15,12 @@ Util::UString Clipboard::get_string() {
     return str;
 }
 
-void Clipboard::set_string(Util::UString const& string) { SDL_SetClipboardText(string.encode().c_str()); }
+void Clipboard::set_string(Util::UString const& string) {
+    SDL_SetClipboardText(string.encode().c_str());
+}
 
-bool Clipboard::has_string() { return SDL_HasClipboardText(); }
+bool Clipboard::has_string() {
+    return SDL_HasClipboardText();
+}
 
 }

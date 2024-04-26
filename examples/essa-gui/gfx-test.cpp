@@ -134,12 +134,18 @@ pqrstuvwxyz{|}~
                 : Shape(Gfx::Drawing::Fill::none(), Gfx::Drawing::Outline::rounded(Util::Colors::Red, 2, 5))
                 , m_points(std::move(points)) { }
 
-            virtual size_t point_count() const { return m_points.size(); }
-            virtual Util::Point2f point(size_t idx) const { return m_points[idx]; }
+            virtual size_t point_count() const {
+                return m_points.size();
+            }
+            virtual Util::Point2f point(size_t idx) const {
+                return m_points[idx];
+            }
 
             // Bounds that are used for calculating texture rect. That is,
             // point at [size()] will use bottom right corner of texture rect.
-            virtual Util::Rectf local_bounds() const { return { 0, 0, 1, 1 }; }
+            virtual Util::Rectf local_bounds() const {
+                return { 0, 0, 1, 1 };
+            }
 
         private:
             std::vector<Util::Point2f> m_points;

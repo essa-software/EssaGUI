@@ -13,9 +13,11 @@ namespace Util {
 
 namespace Detail {
 
-template<size_t C, class T> class Vector;
+template<size_t C, class T>
+class Vector;
 
-template<size_t C, class T> class Size : public Coordinates<C, T, Size> {
+template<size_t C, class T>
+class Size : public Coordinates<C, T, Size> {
 public:
     using Super = Coordinates<C, T, Size>;
     using ThisVector = Vector<C, T>;
@@ -30,7 +32,8 @@ public:
     Size(Args... a)
         : Super(std::forward<Args>(a)...) { }
 
-    template<class OtherT> static Size from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
+    template<class OtherT>
+    static Size from_deprecated_vector(DeprecatedVector<C, OtherT> const& c) {
         Size p;
         for (size_t s = 0; s < Super::Components; s++) {
             p.set_component(s, c.components[s]);
@@ -54,7 +57,9 @@ public:
         return result;
     }
 
-    auto diagonal() const { return std::sqrt(diagonal_squared()); }
+    auto diagonal() const {
+        return std::sqrt(diagonal_squared());
+    }
 
     // Returns ratio between x and y coordinate.
     constexpr float aspect_ratio() const
@@ -71,7 +76,9 @@ public:
         return ab;
     }
 
-    constexpr Size& operator+=(ThisVector const& b) { return *this = *this + b; }
+    constexpr Size& operator+=(ThisVector const& b) {
+        return *this = *this + b;
+    }
 
     constexpr Size operator-(ThisVector const& b) const {
         Size ab;
@@ -81,7 +88,9 @@ public:
         return ab;
     }
 
-    constexpr Size& operator-=(ThisVector const& b) { return *this = *this - b; }
+    constexpr Size& operator-=(ThisVector const& b) {
+        return *this = *this - b;
+    }
 
     constexpr Size operator-(Size const& b) const {
         Size ab;
@@ -91,7 +100,9 @@ public:
         return ab;
     }
 
-    constexpr Size& operator-=(Size const& b) { return *this = *this - b; }
+    constexpr Size& operator-=(Size const& b) {
+        return *this = *this - b;
+    }
 
     constexpr Size operator*(double x) const {
         Size ab;
@@ -101,7 +112,9 @@ public:
         return ab;
     }
 
-    constexpr Size& operator*=(double x) { return *this = *this * x; }
+    constexpr Size& operator*=(double x) {
+        return *this = *this * x;
+    }
 
     constexpr Size operator/(double x) const {
         assert(x != 0);
@@ -112,7 +125,9 @@ public:
         return ab;
     }
 
-    constexpr Size& operator/=(double x) { return *this = *this / x; }
+    constexpr Size& operator/=(double x) {
+        return *this = *this / x;
+    }
 
     constexpr Size operator-() const {
         Size ab;
@@ -166,13 +181,18 @@ public:
 
 } // Detail
 
-template<size_t C, class T> Detail::Size<C, T> operator*(double fac, Detail::Size<C, T> const& vec) { return vec * fac; }
+template<size_t C, class T>
+Detail::Size<C, T> operator*(double fac, Detail::Size<C, T> const& vec) {
+    return vec * fac;
+}
 
 } // Util
 
-template<size_t C, class T> class fmt::formatter<Util::Detail::Size<C, T>> : public fmt::formatter<T> {
+template<size_t C, class T>
+class fmt::formatter<Util::Detail::Size<C, T>> : public fmt::formatter<T> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::Detail::Size<C, T> const& v, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(Util::Detail::Size<C, T> const& v, FormatContext& ctx) const {
         for (size_t s = 0; s < C; s++) {
             ctx.advance_to(fmt::formatter<T>::format(v.component(s), ctx));
             if (s != C - 1)

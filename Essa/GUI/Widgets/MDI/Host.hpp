@@ -19,11 +19,14 @@ public:
         return m_background_window->set_main_widget<T>(std::forward<Args>(args)...);
     }
 
-    template<class T> auto& set_created_background_widget(std::shared_ptr<T> w) {
+    template<class T>
+    auto& set_created_background_widget(std::shared_ptr<T> w) {
         return m_background_window->set_created_main_widget<T>(std::move(w));
     }
 
-    auto* background_widget() { return m_background_window->main_widget(); }
+    auto* background_widget() {
+        return m_background_window->main_widget();
+    }
 
     template<class T>
         requires(std::is_base_of_v<WindowRoot, T>)
@@ -52,10 +55,13 @@ public:
     };
     OpenOrFocusResult open_or_focus_window(Util::UString const& title, std::string id);
 
-    Window* focused_window() const { return m_focused_window; }
+    Window* focused_window() const {
+        return m_focused_window;
+    }
     void focus_window(Window&);
 
-    template<class Callback> void for_each_window(Callback&& callback) {
+    template<class Callback>
+    void for_each_window(Callback&& callback) {
         for (auto& wnd : m_windows)
             callback(*wnd);
     }
@@ -71,8 +77,12 @@ private:
     virtual void draw(Gfx::Painter& painter) const override;
     virtual void update() override;
     virtual void relayout() override;
-    virtual bool accepts_focus() const override { return true; }
-    virtual bool steals_focus() const override { return true; }
+    virtual bool accepts_focus() const override {
+        return true;
+    }
+    virtual bool steals_focus() const override {
+        return true;
+    }
 
     Window& open_window_impl(std::unique_ptr<Window>);
     void focus_window_it(WindowList::iterator);

@@ -9,14 +9,20 @@ namespace Gfx {
 using Font = llgl::TTFFont;
 using Texture = llgl::Texture;
 
-template<> struct ResourceTraits<Font> {
+template<>
+struct ResourceTraits<Font> {
     static std::optional<Font> load_from_file(std::string const&);
-    static std::string_view base_path() { return "fonts"; }
+    static std::string_view base_path() {
+        return "fonts";
+    }
 };
 
-template<> struct ResourceTraits<Texture> {
+template<>
+struct ResourceTraits<Texture> {
     static std::optional<Texture> load_from_file(std::string const&);
-    static std::string_view base_path() { return "textures"; }
+    static std::string_view base_path() {
+        return "textures";
+    }
 };
 
 }

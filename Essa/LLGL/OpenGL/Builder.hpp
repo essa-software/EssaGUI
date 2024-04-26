@@ -7,7 +7,8 @@
 
 namespace llgl {
 
-template<class T> struct RenderRange {
+template<class T>
+struct RenderRange {
     size_t first;
     size_t size;
     T data;
@@ -15,7 +16,8 @@ template<class T> struct RenderRange {
 
 // A class which simplifies generating VAOs and abstract away
 // all modifications to it
-template<class Vertex, class RR> class Builder {
+template<class Vertex, class RR>
+class Builder {
 public:
     using MappedVertex = llgl::MappedVertex<Vertex>;
     using StoredRenderRange = RR;
@@ -73,9 +75,12 @@ protected:
         return vertex;
     }
 
-    void set_modified() { m_was_modified = true; }
+    void set_modified() {
+        m_was_modified = true;
+    }
 
-    template<class... Args> void add_render_range_for_last_vertices(size_t count, StoredRenderRange range) {
+    template<class... Args>
+    void add_render_range_for_last_vertices(size_t count, StoredRenderRange range) {
         m_ranges.push_back(llgl::RenderRange<StoredRenderRange> { m_vertices.size() - count, count, std::move(range) });
     }
 

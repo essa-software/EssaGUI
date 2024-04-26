@@ -27,11 +27,17 @@ public:
         else
             m_running = false;
     }
-    float tps() const { return m_tps; }
+    float tps() const {
+        return m_tps;
+    }
 
-    bool is_running() const { return m_running; }
+    bool is_running() const {
+        return m_running;
+    }
 
-    void set_tps_limit(int l) { m_tps_limit = l; }
+    void set_tps_limit(int l) {
+        m_tps_limit = l;
+    }
 
     using TimerHandle = std::weak_ptr<Timer>;
 
@@ -42,7 +48,8 @@ public:
     void remove_timer(TimerHandle const&);
     static void reset_timer(TimerHandle const&);
 
-    template<class Callback> void deferred_invoke(Callback&& c) {
+    template<class Callback>
+    void deferred_invoke(Callback&& c) {
         using namespace std::chrono_literals;
         set_timeout(0s, [c = std::forward<Callback>(c)]() { c(); });
     }

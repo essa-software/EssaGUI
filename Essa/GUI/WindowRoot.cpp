@@ -99,7 +99,9 @@ void WindowRoot::do_handle_event(llgl::Event const& event) {
     );
 }
 
-void WindowRoot::close() { m_window.close(); }
+void WindowRoot::close() {
+    m_window.close();
+}
 
 std::vector<DevToolsObject const*> WindowRoot::dev_tools_children() const {
     if (!m_main_widget) {

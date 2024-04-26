@@ -9,7 +9,9 @@ namespace GUI {
 
 class Checkbox : public Button {
 public:
-    virtual void on_init() override { set_toggleable(true); }
+    virtual void on_init() override {
+        set_toggleable(true);
+    }
 
     virtual void draw(Gfx::Painter& window) const override;
 

@@ -85,7 +85,9 @@ RichText& RichText::append(Util::UString const& string) {
     return *this;
 }
 
-RichText& RichText::append_image(llgl::Texture const& texture) { return append_fragment<Gfx::RichTextFragments::Image>(texture); }
+RichText& RichText::append_image(llgl::Texture const& texture) {
+    return append_fragment<Gfx::RichTextFragments::Image>(texture);
+}
 
 void RichTextDrawable::draw(Gfx::Painter& painter) const {
     float const line_height = static_cast<float>(m_context.default_font.line_height(m_context.font_size));

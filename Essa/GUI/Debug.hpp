@@ -13,11 +13,15 @@ class DebugSwitch {
 public:
     DebugSwitch(std::string const& string_id);
 
-    size_t id() const { return m_id; }
+    size_t id() const {
+        return m_id;
+    }
     bool get() const;
     void set(bool) const;
 
-    operator bool() const { return get(); }
+    operator bool() const {
+        return get();
+    }
 
     static std::map<std::string, DebugSwitch const*>& switches();
 
@@ -28,11 +32,15 @@ private:
 }
 
 #define DBG_ENABLED(name) __debug_##name
-#define DBG_DECLARE(name) \
-    static ::GUI::DebugSwitch __debug_##name { #name }
+#define DBG_DECLARE(name)                      \
+    static ::GUI::DebugSwitch __debug_##name { \
+        #name                                  \
+    }
 #define DBG_DECLARE_EXTERN(name) extern ::GUI::DebugSwitch __debug_##name;
-#define DBG_DEFINE_GLOBAL(name) \
-    /*global*/ ::GUI::DebugSwitch __debug_##name { #name }
+#define DBG_DEFINE_GLOBAL(name)                    \
+    /*global*/ ::GUI::DebugSwitch __debug_##name { \
+        #name                                      \
+    }
 #define DBG_PRINTLN(name, fmtstr, ...)                                    \
     {                                                                     \
         if (DBG_ENABLED(name)) {                                          \

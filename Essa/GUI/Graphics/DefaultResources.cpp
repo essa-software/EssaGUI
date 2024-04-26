@@ -11,6 +11,8 @@ std::optional<Texture> ResourceTraits<Texture>::load_from_file(std::string const
     return llgl::Texture::create_from_image(*image);
 }
 
-std::optional<Font> ResourceTraits<Font>::load_from_file(std::string const& path) { return llgl::TTFFont::open_from_file(path); }
+std::optional<Font> ResourceTraits<Font>::load_from_file(std::string const& path) {
+    return llgl::TTFFont::open_from_file(path);
+}
 
 }

@@ -35,15 +35,21 @@ public:
     virtual ~Model() = default;
 
     size_t row_count() const;
-    size_t root_row_count() const { return children_count({}); }
-    GUI::Variant root_data(size_t row, size_t column) const { return data(Node { row, child({}, row) }, column); }
+    size_t root_row_count() const {
+        return children_count({});
+    }
+    GUI::Variant root_data(size_t row, size_t column) const {
+        return data(Node { row, child({}, row) }, column);
+    }
     size_t depth() const;
     NodeData node_for_path(std::vector<size_t> const&) const;
 
     virtual size_t column_count() const = 0;
     virtual ModelColumn column(size_t column) const = 0;
     virtual GUI::Variant data(Node, size_t column) const = 0;
-    virtual llgl::Texture const* icon(Node) const { return nullptr; }
+    virtual llgl::Texture const* icon(Node) const {
+        return nullptr;
+    }
     virtual size_t children_count(std::optional<Node>) const = 0;
     virtual NodeData child(std::optional<Node>, size_t idx) const = 0;
 

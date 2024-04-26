@@ -1,8 +1,8 @@
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
 #include <Essa/GUI/Widgets/Checkbox.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/Listbox.hpp>
-#include <Essa/GUI/Overlays/MessageBox.hpp>
 #include <Essa/GUI/Widgets/RadioButton.hpp>
 #include <Essa/GUI/Widgets/RadioGroup.hpp>
 #include <Essa/GUI/Widgets/TextEditor.hpp>
@@ -30,9 +30,8 @@ int main() {
     listbox1->set_row_height(15.0_px);
     listbox1->allow_multichoose(false);
     listbox1->sorted_list(true);
-    listbox1->on_change = [](size_t index, bool state) {
-        std::cout << "Element " << index << " is now " << (state ? "enabled" : "disabled") << std::endl;
-    };
+    listbox1->on_change
+        = [](size_t index, bool state) { std::cout << "Element " << index << " is now " << (state ? "enabled" : "disabled") << std::endl; };
 
     auto listbox2 = container1.add_widget<GUI::Listbox>();
     listbox2->add("d");

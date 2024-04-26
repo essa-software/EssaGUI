@@ -5,7 +5,9 @@
 
 namespace Gfx::RichTextFragments {
 
-float Text::wanted_size(RichTextContext const& context) const { return text(context).calculate_text_size().x(); }
+float Text::wanted_size(RichTextContext const& context) const {
+    return text(context).calculate_text_size().x();
+}
 
 void Text::draw(RichTextContext const& context, Util::Point2f position, Gfx::Painter& painter) const {
     auto text = this->text(context);

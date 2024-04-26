@@ -25,12 +25,16 @@ namespace EventTypes {
 
 class Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Specific; }
+    static EventTargetType target_type() {
+        return EventTargetType::Specific;
+    }
 };
 
 class WindowCloseEvent : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Window; }
+    static EventTargetType target_type() {
+        return EventTargetType::Window;
+    }
 };
 
 class WindowResizeEvent : public Base {
@@ -38,8 +42,12 @@ public:
     explicit WindowResizeEvent(Util::Size2u new_size)
         : m_new_size(new_size) { }
 
-    Util::Size2u new_size() const { return m_new_size; }
-    static EventTargetType target_type() { return EventTargetType::Window; }
+    Util::Size2u new_size() const {
+        return m_new_size;
+    }
+    static EventTargetType target_type() {
+        return EventTargetType::Window;
+    }
 
 private:
     Util::Size2u m_new_size;
@@ -47,20 +55,28 @@ private:
 
 class WindowMouseEnterEvent : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Window; }
+    static EventTargetType target_type() {
+        return EventTargetType::Window;
+    }
 };
 class WindowMouseLeaveEvent : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Window; }
+    static EventTargetType target_type() {
+        return EventTargetType::Window;
+    }
 };
 
 class WindowFocusGainedEvent : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Window; }
+    static EventTargetType target_type() {
+        return EventTargetType::Window;
+    }
 };
 class WindowFocusLostEvent : public Base {
 public:
-    static EventTargetType target_type() { return EventTargetType::Window; }
+    static EventTargetType target_type() {
+        return EventTargetType::Window;
+    }
 };
 
 class KeyEvent : public Base {
@@ -76,9 +92,15 @@ public:
         : m_code(key_code)
         , m_modifiers(modifiers) { }
 
-    auto code() const { return m_code; }
-    auto modifiers() const { return m_modifiers; }
-    static EventTargetType target_type() { return EventTargetType::KeyboardFocused; }
+    auto code() const {
+        return m_code;
+    }
+    auto modifiers() const {
+        return m_modifiers;
+    }
+    static EventTargetType target_type() {
+        return EventTargetType::KeyboardFocused;
+    }
 
 private:
     llgl::KeyCode m_code;
@@ -105,9 +127,15 @@ public:
     // Position relative to thing that is currently handling the event
     // (Widget/WTR). The parent is responsible for transforming event using
     // Event::transformed() function.
-    Util::Point2i local_position() const { return m_local_position; }
-    static EventTargetType target_type() { return EventTargetType::MouseFocused; }
-    void relativize(Util::Vector2i offset) { m_local_position -= offset; }
+    Util::Point2i local_position() const {
+        return m_local_position;
+    }
+    static EventTargetType target_type() {
+        return EventTargetType::MouseFocused;
+    }
+    void relativize(Util::Vector2i offset) {
+        m_local_position -= offset;
+    }
 
 private:
     Util::Point2i m_local_position;
@@ -119,7 +147,9 @@ public:
         : MouseEvent(position)
         , m_delta(delta) { }
 
-    Util::Vector2i delta() const { return m_delta; }
+    Util::Vector2i delta() const {
+        return m_delta;
+    }
 
 private:
     Util::Vector2i m_delta;
@@ -131,7 +161,9 @@ public:
         : MouseEvent(position)
         , m_button(button) { }
 
-    auto button() const { return m_button; }
+    auto button() const {
+        return m_button;
+    }
 
 private:
     llgl::MouseButton m_button;
@@ -155,7 +187,9 @@ public:
         : MouseEvent(position)
         , m_delta(delta) { }
 
-    float delta() const { return m_delta; }
+    float delta() const {
+        return m_delta;
+    }
 
 private:
     float m_delta;
@@ -166,8 +200,12 @@ public:
     explicit TextInputEvent(Util::UString text)
         : m_text(std::move(text)) { }
 
-    Util::UString const& text() const { return m_text; }
-    static EventTargetType target_type() { return EventTargetType::KeyboardFocused; }
+    Util::UString const& text() const {
+        return m_text;
+    }
+    static EventTargetType target_type() {
+        return EventTargetType::KeyboardFocused;
+    }
 
 private:
     Util::UString m_text;
@@ -181,7 +219,8 @@ using Variant = std::variant<
 
 }
 
-template<class Ev> class EventBase : public Ev {
+template<class Ev>
+class EventBase : public Ev {
 public:
     using Variant = Ev;
 
@@ -190,16 +229,27 @@ public:
         requires(std::is_constructible_v<Variant, T>)
         : Variant(std::forward<T>(t)) { }
 
-    template<class T> bool is() const { return std::holds_alternative<T>(*this); }
-    template<class T> T const* get() const { return is<T>() ? &std::get<T>(*this) : nullptr; }
-    template<class T> T* get() { return is<T>() ? &std::get<T>(*this) : nullptr; }
+    template<class T>
+    bool is() const {
+        return std::holds_alternative<T>(*this);
+    }
+    template<class T>
+    T const* get() const {
+        return is<T>() ? &std::get<T>(*this) : nullptr;
+    }
+    template<class T>
+    T* get() {
+        return is<T>() ? &std::get<T>(*this) : nullptr;
+    }
 
-    template<class... Callbacks> auto visit(Callbacks&&... callbacks) {
+    template<class... Callbacks>
+    auto visit(Callbacks&&... callbacks) {
         using OverloadedType = Util::Overloaded<Callbacks...>;
         return std::visit(OverloadedType { callbacks... }, *this);
     }
 
-    template<class... Callbacks> auto visit(Callbacks&&... callbacks) const {
+    template<class... Callbacks>
+    auto visit(Callbacks&&... callbacks) const {
         using OverloadedType = Util::Overloaded<Callbacks...>;
         return std::visit(OverloadedType { callbacks... }, *this);
     }
@@ -250,7 +300,9 @@ public:
         });
     }
 
-    bool is_mouse_related() const { return target_type() == EventTargetType::MouseFocused; }
+    bool is_mouse_related() const {
+        return target_type() == EventTargetType::MouseFocused;
+    }
 
     Util::Point2i local_mouse_position() const {
         assert(is_mouse_related());
@@ -266,63 +318,79 @@ public:
 
 }
 
-template<> class fmt::formatter<llgl::Event> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::Event> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext> constexpr auto format(llgl::Event const& event, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(llgl::Event const& event, FormatContext& ctx) const {
         event.visit([&](auto const& evt) { fmt::format_to(ctx.out(), "{}", evt); });
         return ctx.out();
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::WindowCloseEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::WindowCloseEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowCloseEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::WindowCloseEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowCloseEvent");
         return ctx.out();
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::WindowResizeEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::WindowResizeEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowResizeEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::WindowResizeEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowResizeEvent({})", event.new_size());
         return ctx.out();
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::WindowFocusGainedEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::WindowFocusGainedEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusGainedEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::WindowFocusGainedEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowFocusGained");
         return ctx.out();
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::WindowFocusLostEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::WindowFocusLostEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowFocusLostEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::WindowFocusLostEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowFocusLost");
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::WindowMouseEnterEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::WindowMouseEnterEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowMouseEnterEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::WindowMouseEnterEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowMouseEnterEvent");
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::WindowMouseLeaveEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::WindowMouseLeaveEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::WindowMouseLeaveEvent const&, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::WindowMouseLeaveEvent const&, FC& ctx) const {
         fmt::format_to(ctx.out(), "WindowMouseLeaveEvent");
         return ctx.out();
     }
 };
 
-template<> class fmt::formatter<llgl::EventTypes::KeyEvent::KeyModifiers> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::KeyEvent::KeyModifiers> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::KeyEvent::KeyModifiers const& mod, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::KeyEvent::KeyModifiers const& mod, FC& ctx) const {
         if (mod.ctrl) {
             fmt::format_to(ctx.out(), "ctrl ");
         }
@@ -338,51 +406,65 @@ public:
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::KeyPressEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::KeyPressEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::KeyPressEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::KeyPressEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "KeyPressEvent(key={}, mod={})", llgl::to_string(event.code()), event.modifiers());
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::KeyReleaseEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::KeyReleaseEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::KeyReleaseEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::KeyReleaseEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "KeyReleaseEvent(key={}, mod={})", llgl::to_string(event.code()), event.modifiers());
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::MouseMoveEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::MouseMoveEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::MouseMoveEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::MouseMoveEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseMoveEvent(pos={}, delta={})", event.local_position(), event.delta());
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::MouseButtonPressEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::MouseButtonPressEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::MouseButtonPressEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::MouseButtonPressEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseButtonPressEvent(pos={}, btn={})", event.local_position(), llgl::to_string(event.button()));
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::MouseButtonReleaseEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::MouseButtonReleaseEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::MouseButtonReleaseEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::MouseButtonReleaseEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseButtonReleaseEvent(pos={}, btn={})", event.local_position(), llgl::to_string(event.button()));
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::MouseScrollEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::MouseScrollEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::MouseScrollEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::MouseScrollEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "MouseScrollEvent(pos={}, delta={})", event.local_position(), event.delta());
         return ctx.out();
     }
 };
-template<> class fmt::formatter<llgl::EventTypes::TextInputEvent> : public fmt::formatter<std::string_view> {
+template<>
+class fmt::formatter<llgl::EventTypes::TextInputEvent> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FC> constexpr auto format(llgl::EventTypes::TextInputEvent const& event, FC& ctx) const {
+    template<typename FC>
+    constexpr auto format(llgl::EventTypes::TextInputEvent const& event, FC& ctx) const {
         fmt::format_to(ctx.out(), "TextInputEvent({})", event.text().encode());
         return ctx.out();
     }

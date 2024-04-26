@@ -18,9 +18,13 @@ public:
 
     __ESSA_DEFINE_SHAPE_CHAINABLES(Rectangle)
 
-    Util::Size2f size() const { return m_size; }
+    Util::Size2f size() const {
+        return m_size;
+    }
 
-    virtual size_t point_count() const override { return 4; }
+    virtual size_t point_count() const override {
+        return 4;
+    }
     virtual Util::Point2f point(size_t idx) const override {
         switch (idx) {
         case 0:
@@ -34,7 +38,9 @@ public:
         }
         ESSA_UNREACHABLE;
     }
-    virtual Util::Rectf local_bounds() const override { return { {}, m_size }; }
+    virtual Util::Rectf local_bounds() const override {
+        return { {}, m_size };
+    }
 
 private:
     Util::Size2f m_size;

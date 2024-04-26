@@ -37,37 +37,57 @@ template<
     bool source_is_signed = std::numeric_limits<Source>::is_signed>
 struct TypeBoundsChecker;
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, false, false, false> {
-    static constexpr bool is_within_range(Source value) { return value <= std::numeric_limits<Destination>::max(); }
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, false, false, false> {
+    static constexpr bool is_within_range(Source value) {
+        return value <= std::numeric_limits<Destination>::max();
+    }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, false, true, true> {
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, false, true, true> {
     static constexpr bool is_within_range(Source value) {
         return value <= std::numeric_limits<Destination>::max() && std::numeric_limits<Destination>::lowest() <= value;
     }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, false, false, true> {
-    static constexpr bool is_within_range(Source value) { return value >= 0 && value <= std::numeric_limits<Destination>::max(); }
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, false, false, true> {
+    static constexpr bool is_within_range(Source value) {
+        return value >= 0 && value <= std::numeric_limits<Destination>::max();
+    }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, false, true, false> {
-    static constexpr bool is_within_range(Source value) { return value <= static_cast<Source>(std::numeric_limits<Destination>::max()); }
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, false, true, false> {
+    static constexpr bool is_within_range(Source value) {
+        return value <= static_cast<Source>(std::numeric_limits<Destination>::max());
+    }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, true, false, false> {
-    static constexpr bool is_within_range(Source) { return true; }
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, true, false, false> {
+    static constexpr bool is_within_range(Source) {
+        return true;
+    }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, true, true, true> {
-    static constexpr bool is_within_range(Source) { return true; }
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, true, true, true> {
+    static constexpr bool is_within_range(Source) {
+        return true;
+    }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, true, false, true> {
-    static constexpr bool is_within_range(Source value) { return value >= 0; }
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, true, false, true> {
+    static constexpr bool is_within_range(Source value) {
+        return value >= 0;
+    }
 };
 
-template<typename Destination, typename Source> struct TypeBoundsChecker<Destination, Source, true, true, false> {
+template<typename Destination, typename Source>
+struct TypeBoundsChecker<Destination, Source, true, true, false> {
     static constexpr bool is_within_range(Source value) {
         if (sizeof(Destination) > sizeof(Source))
             return true;
@@ -75,7 +95,8 @@ template<typename Destination, typename Source> struct TypeBoundsChecker<Destina
     }
 };
 
-template<typename Destination, typename Source> [[nodiscard]] constexpr bool is_within_range(Source value) {
+template<typename Destination, typename Source>
+[[nodiscard]] constexpr bool is_within_range(Source value) {
     return TypeBoundsChecker<Destination, Source>::is_within_range(value);
 }
 

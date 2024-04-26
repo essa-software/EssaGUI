@@ -67,7 +67,9 @@ void Slider::round_to_step() {
     m_val *= m_step;
 }
 
-float Slider::calculate_knob_size() const { return std::max(4.0, raw_size().x() / (m_max - m_min) * m_step); }
+float Slider::calculate_knob_size() const {
+    return std::max(4.0, raw_size().x() / (m_max - m_min) * m_step);
+}
 
 void Slider::draw(Gfx::Painter& window) const {
     Gfx::RectangleDrawOptions slider;
@@ -91,7 +93,9 @@ void Slider::draw(Gfx::Painter& window) const {
     );
 }
 
-double Slider::value_clamped_to_min_max() const { return std::min(std::max(value(), m_min), m_max); }
+double Slider::value_clamped_to_min_max() const {
+    return std::min(std::max(value(), m_min), m_max);
+}
 
 EML::EMLErrorOr<void> Slider::load_from_eml_object(EML::Object const& object, EML::Loader& loader) {
     TRY(Widget::load_from_eml_object(object, loader));

@@ -142,7 +142,9 @@ uint32_t UString::at(size_t p) const {
     return m_storage[p];
 }
 
-UString UString::substring(size_t start) const { return substring(start, size() - start); }
+UString UString::substring(size_t start) const {
+    return substring(start, size() - start);
+}
 
 UString UString::substring(size_t start, size_t size) const {
     assert(start + size <= m_size);
@@ -271,11 +273,14 @@ std::string UString::dump() const {
     return oss.str();
 }
 
-template<class T> using StoiFunction = T(std::string const& __str, size_t* __idx, int __base);
+template<class T>
+using StoiFunction = T(std::string const& __str, size_t* __idx, int __base);
 
-template<class T> using StofFunction = T(std::string const& __str, size_t* __idx);
+template<class T>
+using StofFunction = T(std::string const& __str, size_t* __idx);
 
-template<class T> OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString const& str, int base) {
+template<class T>
+OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString const& str, int base) {
     try {
         return stot(str.encode(), nullptr, base);
     } catch (...) {
@@ -283,7 +288,8 @@ template<class T> OsErrorOr<T> parse_impl(StoiFunction<T>&& stot, Util::UString 
     }
 }
 
-template<class T> OsErrorOr<T> parse_impl(StofFunction<T>&& stot, Util::UString const& str) {
+template<class T>
+OsErrorOr<T> parse_impl(StofFunction<T>&& stot, Util::UString const& str) {
     try {
         return stot(str.encode(), nullptr);
     } catch (...) {
@@ -291,22 +297,52 @@ template<class T> OsErrorOr<T> parse_impl(StofFunction<T>&& stot, Util::UString 
     }
 }
 
-template<> OsErrorOr<int> UString::parse<int>(int base) const { return parse_impl(std::stoi, *this, base); }
-template<> OsErrorOr<long> UString::parse<long>(int base) const { return parse_impl(std::stol, *this, base); }
-template<> OsErrorOr<long long> UString::parse<long long>(int base) const { return parse_impl(std::stoll, *this, base); }
-template<> OsErrorOr<unsigned long> UString::parse<unsigned long>(int base) const { return parse_impl(std::stoul, *this, base); }
-template<> OsErrorOr<unsigned long long> UString::parse<unsigned long long>(int base) const { return parse_impl(std::stoull, *this, base); }
-template<> OsErrorOr<float> UString::parse<float>() const { return parse_impl(std::stof, *this); }
-template<> OsErrorOr<double> UString::parse<double>() const { return parse_impl(std::stod, *this); }
-template<> OsErrorOr<long double> UString::parse<long double>() const { return parse_impl(std::stold, *this); }
+template<>
+OsErrorOr<int> UString::parse<int>(int base) const {
+    return parse_impl(std::stoi, *this, base);
+}
+template<>
+OsErrorOr<long> UString::parse<long>(int base) const {
+    return parse_impl(std::stol, *this, base);
+}
+template<>
+OsErrorOr<long long> UString::parse<long long>(int base) const {
+    return parse_impl(std::stoll, *this, base);
+}
+template<>
+OsErrorOr<unsigned long> UString::parse<unsigned long>(int base) const {
+    return parse_impl(std::stoul, *this, base);
+}
+template<>
+OsErrorOr<unsigned long long> UString::parse<unsigned long long>(int base) const {
+    return parse_impl(std::stoull, *this, base);
+}
+template<>
+OsErrorOr<float> UString::parse<float>() const {
+    return parse_impl(std::stof, *this);
+}
+template<>
+OsErrorOr<double> UString::parse<double>() const {
+    return parse_impl(std::stod, *this);
+}
+template<>
+OsErrorOr<long double> UString::parse<long double>() const {
+    return parse_impl(std::stold, *this);
+}
 
 std::strong_ordering UString::operator<=>(UString const& other) const {
     return std::lexicographical_compare_three_way(m_storage, m_storage + m_size, other.m_storage, other.m_storage + other.m_size);
 }
 
-bool UString::operator<(UString const& other) const { return (*this <=> other) == std::strong_ordering::less; }
-bool UString::operator==(UString const& other) const { return (*this <=> other) == std::strong_ordering::equal; }
-bool UString::operator>(UString const& other) const { return (*this <=> other) == std::strong_ordering::greater; }
+bool UString::operator<(UString const& other) const {
+    return (*this <=> other) == std::strong_ordering::less;
+}
+bool UString::operator==(UString const& other) const {
+    return (*this <=> other) == std::strong_ordering::equal;
+}
+bool UString::operator>(UString const& other) const {
+    return (*this <=> other) == std::strong_ordering::greater;
+}
 
 UString operator+(UString const& lhs, UString const& rhs) {
     UString result;

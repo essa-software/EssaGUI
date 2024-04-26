@@ -11,7 +11,9 @@ namespace llgl {
 
 class Renderer {
 public:
-    Util::Size2u size() const { return m_size; }
+    Util::Size2u size() const {
+        return m_size;
+    }
 
     void clear(Util::Colorf const& color = Util::Colors::Black) {
         bind_if_not_bound(m_fbo);

@@ -1,8 +1,8 @@
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <Essa/GUI/Widgets/Console.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/GUI/Widgets/ImageWidget.hpp>
-#include <Essa/GUI/Overlays/ToolWindow.hpp>
 
 int main() {
     GUI::Application app;

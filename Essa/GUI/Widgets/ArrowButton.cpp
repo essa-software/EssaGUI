@@ -14,13 +14,13 @@ void ArrowButton::draw(Gfx::Painter& painter) const {
     options.fill_color = colors.background;
     painter.deprecated_draw_rectangle({ {}, raw_size().cast<float>() }, options);
 
-    const auto midpoint = raw_size() / 2;
+    auto const midpoint = raw_size() / 2;
 
     // std::cout << Vector3(midpoint) << "\n";
 
     double real_size = m_arrow_size.value();
 
-    const Util::Point2f points[8] = {
+    Util::Point2f const points[8] = {
         { std::round(midpoint.x() - real_size / 2), std::round(midpoint.y() - real_size / 2) },
         { std::round(midpoint.x() + 0), std::round(midpoint.y() - real_size / 2) },
         { std::round(midpoint.x() + real_size / 2), std::round(midpoint.y() - real_size / 2) },

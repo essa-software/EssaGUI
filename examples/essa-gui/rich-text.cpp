@@ -6,7 +6,9 @@
 
 class RichTextWidget : public GUI::Widget {
 public:
-    void set_content(Gfx::RichText text) { m_text = std::move(text); }
+    void set_content(Gfx::RichText text) {
+        m_text = std::move(text);
+    }
 
 private:
     virtual void draw(Gfx::Painter& painter) const override {

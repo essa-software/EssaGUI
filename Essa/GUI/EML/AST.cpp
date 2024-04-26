@@ -104,7 +104,9 @@ std::string Value::string() const {
 Array::Array(std::vector<Value> values)
     : m_values(std::move(values)) { }
 
-Value Array::at(size_t index) const { return m_values[index]; }
+Value Array::at(size_t index) const {
+    return m_values[index];
+}
 
 EMLErrorOr<Value> Object::require_property(std::string const& name) const {
     auto it = properties.find(name);

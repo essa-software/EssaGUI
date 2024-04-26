@@ -22,10 +22,16 @@ public:
         : m_value(v)
         , m_unit(unit) { }
 
-    constexpr Unit unit() const { return m_unit; }
-    constexpr float value() const { return m_value; }
+    constexpr Unit unit() const {
+        return m_unit;
+    }
+    constexpr float value() const {
+        return m_value;
+    }
 
-    constexpr bool operator==(Length const& other) const { return m_unit == other.m_unit && m_value == other.m_value; }
+    constexpr bool operator==(Length const& other) const {
+        return m_unit == other.m_unit && m_value == other.m_value;
+    }
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Length const& l) {
@@ -48,13 +54,21 @@ private:
 
 }
 
-constexpr Util::Length operator""_px(unsigned long long v) { return Util::Length(static_cast<float>(v), Util::Length::Px); }
+constexpr Util::Length operator""_px(unsigned long long v) {
+    return Util::Length(static_cast<float>(v), Util::Length::Px);
+}
 
-constexpr Util::Length operator""_perc(unsigned long long v) { return Util::Length(static_cast<float>(v), Util::Length::Percent); }
+constexpr Util::Length operator""_perc(unsigned long long v) {
+    return Util::Length(static_cast<float>(v), Util::Length::Percent);
+}
 
 // Kept for compatibility, for now.
 // FIXME: Remove these.
 // FIXME 2: Move this thing to GUI, actually.
-constexpr Util::Length operator""_px(long double v) { return Util::Length(static_cast<float>(v), Util::Length::Px); }
+constexpr Util::Length operator""_px(long double v) {
+    return Util::Length(static_cast<float>(v), Util::Length::Px);
+}
 
-constexpr Util::Length operator""_perc(long double v) { return Util::Length(static_cast<float>(v), Util::Length::Percent); }
+constexpr Util::Length operator""_perc(long double v) {
+    return Util::Length(static_cast<float>(v), Util::Length::Percent);
+}

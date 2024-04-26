@@ -29,9 +29,12 @@ Texture::~Texture() {
     }
 }
 
-Texture Texture::create_from_image(Image const& image) { return create_from_color_array(image.size(), image.pixels()); }
+Texture Texture::create_from_image(Image const& image) {
+    return create_from_color_array(image.size(), image.pixels());
+}
 
-template<class T> Texture Texture::create_from_color_array(Util::Size2u size, std::span<T const> array, Format format) {
+template<class T>
+Texture Texture::create_from_color_array(Util::Size2u size, std::span<T const> array, Format format) {
     Texture texture = create_empty(size);
     texture.update({}, size, array, format);
     return texture;
@@ -104,7 +107,8 @@ update_part_of_bound_texture(Util::Point2u position, Util::Size2u size, std::spa
     glTexSubImage2D(GL_TEXTURE_2D, 0, position.x(), position.y(), size.x(), size.y(), gl_format(format), type, pixels.data());
 }
 
-template<class T> void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<T const> pixels, Format format) {
+template<class T>
+void Texture::update(Util::Point2u dst_position, Util::Size2u src_size, std::span<T const> pixels, Format format) {
     assert(dst_position.x() + src_size.x() <= m_size.x());
     assert(dst_position.y() + src_size.y() <= m_size.y());
     // TODO: Support RGB format
@@ -149,8 +153,12 @@ void Texture::set_wrap_y(Wrap wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_wrap_mode(wrap));
 }
 
-void Texture::bind(Texture const* texture) { OpenGL::BindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0); }
+void Texture::bind(Texture const* texture) {
+    OpenGL::BindTexture(GL_TEXTURE_2D, texture ? texture->id() : 0);
+}
 
-void Texture::set_label(std::string const& label) { OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data()); }
+void Texture::set_label(std::string const& label) {
+    OpenGL::ObjectLabel(GL_TEXTURE, m_id, label.size(), label.data());
+}
 
 }

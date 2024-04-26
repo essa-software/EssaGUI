@@ -25,7 +25,9 @@ public:
 
     enum class ButtonRole { None, Yes, No, Ok };
 
-    ButtonRole clicked_button() const { return m_clicked_button; }
+    ButtonRole clicked_button() const {
+        return m_clicked_button;
+    }
 
 private:
     virtual Widget::EventHandlerResult handle_event(llgl::Event const&) override;

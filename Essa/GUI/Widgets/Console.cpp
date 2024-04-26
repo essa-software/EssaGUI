@@ -32,7 +32,9 @@ void Console::scroll_to_end() {
     set_scroll_x(0);
 }
 
-void Console::clear() { m_lines.clear(); }
+void Console::clear() {
+    m_lines.clear();
+}
 
 void Console::draw(Gfx::Painter& painter) const {
     size_t s = 0;

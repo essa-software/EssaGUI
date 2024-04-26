@@ -7,14 +7,17 @@
 
 namespace Util {
 
-template<class T> struct DependentPtr {
+template<class T>
+struct DependentPtr {
     using Type = T*;
 };
-template<class T> struct DependentPtr<T&> {
+template<class T>
+struct DependentPtr<T&> {
     using Type = T*;
 };
 
-template<class T> class DelayedInit {
+template<class T>
+class DelayedInit {
 public:
     static constexpr bool IsReference = std::is_reference_v<T>;
     using StorageType = std::conditional_t<IsReference, std::remove_reference_t<T>*, T>;
@@ -136,7 +139,9 @@ public:
         return *ptr();
     }
 
-    bool is_initialized() const { return m_initialized; }
+    bool is_initialized() const {
+        return m_initialized;
+    }
 
 private:
     bool m_initialized { false };
@@ -145,7 +150,8 @@ private:
 
 }
 
-template<class T> class fmt::formatter<Util::DelayedInit<T>> : public fmt::formatter<std::remove_cvref_t<T>> {
+template<class T>
+class fmt::formatter<Util::DelayedInit<T>> : public fmt::formatter<std::remove_cvref_t<T>> {
 public:
     auto format(Util::DelayedInit<T> const& obj, fmt::format_context& ctx) const {
         if (!obj.is_initialized()) {

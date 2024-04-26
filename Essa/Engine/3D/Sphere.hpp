@@ -23,14 +23,18 @@ struct SphereSettings {
 
 class Sphere {
 public:
-    template<class Callback = void (*)()> explicit Sphere(SphereSettings<Callback> const& s = {}) { generate(s); }
+    template<class Callback = void (*)()>
+    explicit Sphere(SphereSettings<Callback> const& s = {}) {
+        generate(s);
+    }
 
     void render(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms) const {
         renderer.draw_vertices(m_vao, llgl::DrawState { shader, uniforms, llgl::PrimitiveType::Triangles });
     }
 
 private:
-    template<class Callback> void generate(SphereSettings<Callback> const& settings) {
+    template<class Callback>
+    void generate(SphereSettings<Callback> const& settings) {
         float delta_stack_angle = M_PI / settings.stacks;
         float delta_sector_angle = 2 * M_PI / settings.sectors;
 
@@ -75,7 +79,8 @@ private:
         //     std::cout << m_vertices[i].position << std::endl;
     }
 
-    template<class Callback> size_t vertex_index(SphereSettings<Callback> const& settings, unsigned stack, unsigned sector) const {
+    template<class Callback>
+    size_t vertex_index(SphereSettings<Callback> const& settings, unsigned stack, unsigned sector) const {
         assert(stack <= settings.stacks && sector <= settings.sectors);
         if (stack == settings.stacks)
             return settings.stacks * settings.sectors;

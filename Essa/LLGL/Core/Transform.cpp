@@ -6,7 +6,9 @@
 
 namespace llgl {
 
-Transform Transform::translate_2d(Util::Vector2f const& by) const { return translate({ by, 0.f }); }
+Transform Transform::translate_2d(Util::Vector2f const& by) const {
+    return translate({ by, 0.f });
+}
 
 Transform Transform::translate(Util::Vector3f const& vector) const {
     auto matrix = m_matrix;

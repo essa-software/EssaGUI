@@ -14,9 +14,15 @@ public:
     virtual void draw(Gfx::Painter&) const override;
 
     // FIXME: EML
-    void set_font(llgl::TTFFont const& font) { m_font = &font; }
-    void set_content(Gfx::RichText content) { m_content = std::move(content); }
-    void set_content(Util::UString string) { m_content = std::move(string); }
+    void set_font(llgl::TTFFont const& font) {
+        m_font = &font;
+    }
+    void set_content(Gfx::RichText content) {
+        m_content = std::move(content);
+    }
+    void set_content(Util::UString string) {
+        m_content = std::move(string);
+    }
     CREATE_VALUE(size_t, font_size, theme().label_font_size)
     CREATE_VALUE(Align, alignment, Align::CenterLeft)
     CREATE_VALUE(int, padding, 5)

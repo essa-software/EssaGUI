@@ -8,7 +8,9 @@ ScrollableContainer::ScrollableContainer() {
     on_scroll = [&]() { m_widget->set_parent_relative_position(scroll_offset().to_point()); };
 }
 
-Util::Size2i ScrollableContainer::content_size() const { return m_widget->total_size(); }
+Util::Size2i ScrollableContainer::content_size() const {
+    return m_widget->total_size();
+}
 
 Widget::EventHandlerResult ScrollableContainer::do_handle_event(Event const& event) {
     if (Widget::do_handle_event(event) == EventHandlerResult::Accepted) {

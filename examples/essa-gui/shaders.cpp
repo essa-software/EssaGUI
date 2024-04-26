@@ -20,7 +20,9 @@ public:
 
 class MainWidget : public GUI::Widget {
 private:
-    virtual void on_init() override { m_shader = &resource_manager().require<Gfx::FullShaderResource<Shader>>("Shader.shader"); }
+    virtual void on_init() override {
+        m_shader = &resource_manager().require<Gfx::FullShaderResource<Shader>>("Shader.shader");
+    }
     virtual void draw(Gfx::Painter& painter) const override {
         using namespace Gfx::Drawing;
         using namespace std::chrono_literals;

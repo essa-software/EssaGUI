@@ -22,7 +22,9 @@ static unsigned const COLOR_FIELD_TEX_SIZE = 12;
 
 class ColorField : public Widget {
 public:
-    void set_color(Util::HSV color) { m_color = color; }
+    void set_color(Util::HSV color) {
+        m_color = color;
+    }
 
     // position in range 0..1
     std::function<void(Util::Point2f)> on_change;
@@ -43,7 +45,9 @@ private:
             .value = 1 - static_cast<float>(p.y()),
         };
     }
-    Util::Point2f color_to_position(Util::HSV hsv) const { return { hsv.saturation, 1 - hsv.value }; }
+    Util::Point2f color_to_position(Util::HSV hsv) const {
+        return { hsv.saturation, 1 - hsv.value };
+    }
 
     Util::HSV m_color;
     bool m_dragging = false;
@@ -112,7 +116,9 @@ Widget::EventHandlerResult ColorField::on_mouse_move(GUI::Event::MouseMove const
 
 class ColorSlider : public Widget {
 public:
-    void set_color(Util::HSV color) { m_color = color; }
+    void set_color(Util::HSV color) {
+        m_color = color;
+    }
 
     std::function<void(float fac)> on_change;
 

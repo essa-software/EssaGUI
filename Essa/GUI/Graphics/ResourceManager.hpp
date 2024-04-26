@@ -19,7 +19,8 @@ namespace Gfx {
 using Texture = llgl::Texture;
 using Font = llgl::TTFFont;
 
-template<class T> struct ResourceTraits;
+template<class T>
+struct ResourceTraits;
 
 template<class T>
 concept Resource = requires() {
@@ -34,12 +35,20 @@ public:
         Asset     // Uses predefined directories and resource-dependend base paths
     };
 
-    static ResourceId external(std::string const& path) { return ResourceId { Type::External, path }; }
+    static ResourceId external(std::string const& path) {
+        return ResourceId { Type::External, path };
+    }
 
-    static ResourceId asset(std::string const& path) { return ResourceId { Type::Asset, path }; }
+    static ResourceId asset(std::string const& path) {
+        return ResourceId { Type::Asset, path };
+    }
 
-    Type type() const { return m_type; }
-    std::string path() const { return m_path; }
+    Type type() const {
+        return m_type;
+    }
+    std::string path() const {
+        return m_path;
+    }
 
     bool operator==(ResourceId const&) const = default;
     std::strong_ordering operator<=>(ResourceId const&) const = default;
@@ -74,7 +83,8 @@ struct ResourceWrapperBase {
     virtual ~ResourceWrapperBase() = default;
 };
 
-template<Resource T> struct ResourceWrapper : public ResourceWrapperBase {
+template<Resource T>
+struct ResourceWrapper : public ResourceWrapperBase {
     ResourceWrapper(T&& res)
         : resource(std::forward<T>(res)) { }
     T resource;
@@ -86,12 +96,15 @@ class ResourceManager {
 public:
     ResourceManager();
 
-    Util::ConfigFile const& config() const { return m_config; }
+    Util::ConfigFile const& config() const {
+        return m_config;
+    }
 
     std::optional<std::string> lookup_resource(ResourceIdAndBase const&) const;
     std::string require_lookup_resource(ResourceIdAndBase const&) const;
 
-    template<Resource T> T* get(ResourceId const& id) const {
+    template<Resource T>
+    T* get(ResourceId const& id) const {
         using Traits = ResourceTraits<T>;
         ResourceIdAndBase id_and_base { id, Traits::base_path() };
 
@@ -128,7 +141,8 @@ public:
                     ->resource;
     }
 
-    template<Resource T> T& require(ResourceId const& path) const {
+    template<Resource T>
+    T& require(ResourceId const& path) const {
         auto resource = get<T>(path);
         if (!resource) {
             std::cout << "ResourceManager: Aborting because resource '" << path << "' is required to run" << std::endl;
@@ -139,8 +153,14 @@ public:
 
     void remove_resource(ResourceIdAndBase const&);
 
-    template<Resource T> T& require(std::string path) const { return require<T>(ResourceId::asset(std::move(path))); }
-    template<Resource T> T& require_external(std::string path) const { return require<T>(ResourceId::external(std::move(path))); }
+    template<Resource T>
+    T& require(std::string path) const {
+        return require<T>(ResourceId::asset(std::move(path)));
+    }
+    template<Resource T>
+    T& require_external(std::string path) const {
+        return require<T>(ResourceId::external(std::move(path)));
+    }
 
     Texture& require_texture(std::string path) const;
     Font& require_font(std::string path) const;

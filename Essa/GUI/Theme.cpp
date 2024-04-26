@@ -17,7 +17,9 @@
 
 namespace GUI {
 
-Theme::Theme() { set_renderer<DefaultThemeRenderer>(); }
+Theme::Theme() {
+    set_renderer<DefaultThemeRenderer>();
+}
 
 Theme::BgFgTextColors Theme::ButtonColors::value(Button const& w) const {
     if (!w.are_all_parents_enabled())

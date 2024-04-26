@@ -7,7 +7,8 @@
 
 namespace Util {
 
-template<class T> class Rect {
+template<class T>
+class Rect {
 public:
     T left {};
     T top {};
@@ -28,7 +29,9 @@ public:
         , width(size.x())
         , height(size.y()) { }
 
-    static Rect from_points(Point2<T> p1, Point2<T> p2) { return Rect(p1, (p2 - p1).to_size()).with_negative_size_fixed(); }
+    static Rect from_points(Point2<T> p1, Point2<T> p2) {
+        return Rect(p1, (p2 - p1).to_size()).with_negative_size_fixed();
+    }
 
     template<class U>
     explicit Rect(Rect<U> const& other)
@@ -37,22 +40,35 @@ public:
         , width(other.width)
         , height(other.height) { }
 
-    template<class U> Rect<U> cast() const {
+    template<class U>
+    Rect<U> cast() const {
         return Rect<U>(static_cast<U>(left), static_cast<U>(top), static_cast<U>(width), static_cast<U>(height));
     }
 
-    static Rect centered(Point2<T> center, Size2<T> size) { return Rect { center - size.to_vector() / T { 2 }, size }; }
+    static Rect centered(Point2<T> center, Size2<T> size) {
+        return Rect { center - size.to_vector() / T { 2 }, size };
+    }
 
-    Point2<T> position() const { return { left, top }; }
-    Size2<T> size() const { return { width, height }; }
-    Point2<T> center() const { return { left + width / 2, top + height / 2 }; }
-    Point2<T> bottom_right() const { return { left + width, top + height }; }
+    Point2<T> position() const {
+        return { left, top };
+    }
+    Size2<T> size() const {
+        return { width, height };
+    }
+    Point2<T> center() const {
+        return { left + width / 2, top + height / 2 };
+    }
+    Point2<T> bottom_right() const {
+        return { left + width, top + height };
+    }
 
-    template<class U = T> bool contains(Point2<U> pos) const {
+    template<class U = T>
+    bool contains(Point2<U> pos) const {
         return pos.x() >= left && pos.x() <= left + width && pos.y() >= top && pos.y() <= top + height;
     }
 
-    template<class U = T> Rect<U> intersection(Rect<U> const& other) const {
+    template<class U = T>
+    Rect<U> intersection(Rect<U> const& other) const {
         auto fixed_this = with_negative_size_fixed();
         auto fixed_other = other.with_negative_size_fixed();
 
@@ -65,7 +81,8 @@ public:
         return max_x < min_x && max_y < min_y ? Rect<U>({ max_x, max_y }, { min_x - max_x, min_y - max_y }) : Rect<U>();
     }
 
-    template<class U = T> Rect<U> componentwise_divide(Size2<T> const& size) const {
+    template<class U = T>
+    Rect<U> componentwise_divide(Size2<T> const& size) const {
         return {
             static_cast<U>(left) / size.x(),
             static_cast<U>(top) / size.y(),
@@ -74,25 +91,51 @@ public:
         };
     }
 
-    Rect<T> move_x(T t) const { return Rect { left + t, top, width, height }; }
-    Rect<T> move_y(T t) const { return Rect { left, top + t, width, height }; }
+    Rect<T> move_x(T t) const {
+        return Rect { left + t, top, width, height };
+    }
+    Rect<T> move_y(T t) const {
+        return Rect { left, top + t, width, height };
+    }
 
-    Rect<T> take_top(T t) const { return Rect { left, top, width, t }; }
-    Rect<T> take_right(T t) const { return Rect { left + width - t, top, t, height }; }
-    Rect<T> take_bottom(T t) const { return Rect { left, top + height - t, width, t }; }
-    Rect<T> take_left(T t) const { return Rect { left, top, t, height }; }
+    Rect<T> take_top(T t) const {
+        return Rect { left, top, width, t };
+    }
+    Rect<T> take_right(T t) const {
+        return Rect { left + width - t, top, t, height };
+    }
+    Rect<T> take_bottom(T t) const {
+        return Rect { left, top + height - t, width, t };
+    }
+    Rect<T> take_left(T t) const {
+        return Rect { left, top, t, height };
+    }
 
-    Rect<T> expand_top(T t) const { return Rect { left, top - t, width, height + t }; }
-    Rect<T> expand_right(T t) const { return Rect { left, top, width + t, height }; }
-    Rect<T> expand_bottom(T t) const { return Rect { left, top, width, height + t }; }
-    Rect<T> expand_left(T t) const { return Rect { left - t, top, width + t, height }; }
+    Rect<T> expand_top(T t) const {
+        return Rect { left, top - t, width, height + t };
+    }
+    Rect<T> expand_right(T t) const {
+        return Rect { left, top, width + t, height };
+    }
+    Rect<T> expand_bottom(T t) const {
+        return Rect { left, top, width, height + t };
+    }
+    Rect<T> expand_left(T t) const {
+        return Rect { left - t, top, width + t, height };
+    }
 
     // Return rect with all sides moved by `t` to outside
-    Rect<T> inflated(T t) const { return Rect { left - t, top - t, width + 2 * t, height + 2 * t }; }
+    Rect<T> inflated(T t) const {
+        return Rect { left - t, top - t, width + 2 * t, height + 2 * t };
+    }
     // Return rect with top and bottom sides moved by `t` to outside
-    Rect<T> inflated_vertical(T t) const { return Rect { left, top - t, width, height + 2 * t }; }
+    Rect<T> inflated_vertical(T t) const {
+        return Rect { left, top - t, width, height + 2 * t };
+    }
     // Return rect with left and right sides moved by `t` to outside
-    Rect<T> inflated_horizontal(T t) const { return Rect { left - t, top, width + 2 * t, height }; }
+    Rect<T> inflated_horizontal(T t) const {
+        return Rect { left - t, top, width + 2 * t, height };
+    }
 
     // Fix rect with negative size by moving it's position and making size positive
     Rect with_negative_size_fixed() const {
@@ -124,9 +167,11 @@ using Rectd = Rect<double>;
 
 }
 
-template<class T> class fmt::formatter<Util::Rect<T>> : public fmt::formatter<std::string_view> {
+template<class T>
+class fmt::formatter<Util::Rect<T>> : public fmt::formatter<std::string_view> {
 public:
-    template<typename FormatContext> constexpr auto format(Util::Rect<T> const& p, FormatContext& ctx) const {
+    template<typename FormatContext>
+    constexpr auto format(Util::Rect<T> const& p, FormatContext& ctx) const {
         fmt::format_to(ctx.out(), "Rect[@{} {}x{}]", p.position(), p.size().x(), p.size().y());
         return ctx.out();
     }

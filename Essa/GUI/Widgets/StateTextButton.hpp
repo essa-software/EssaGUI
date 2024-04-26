@@ -8,7 +8,8 @@
 
 namespace GUI {
 
-template<typename T> class StateTextButton : public Widget {
+template<typename T>
+class StateTextButton : public Widget {
     struct State {
         Util::Color bg_color, fg_color, text_color;
         T state;
@@ -25,7 +26,9 @@ public:
 
     std::pair<Util::UString, State> get_element_from_index(unsigned index) const;
 
-    T state() const { return m_states[m_index].second.state; }
+    T state() const {
+        return m_states[m_index].second.state;
+    }
 
     std::function<void(T)> on_change;
 

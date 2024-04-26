@@ -9,6 +9,7 @@ struct EMLError {
     std::string message;
 };
 
-template<class T> using EMLErrorOr = Util::ErrorOr<T, EMLError>;
+template<class T>
+using EMLErrorOr = Util::ErrorOr<T, EMLError>;
 
 }

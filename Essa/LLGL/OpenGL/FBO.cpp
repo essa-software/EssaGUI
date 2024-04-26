@@ -1,7 +1,7 @@
 #include "FBO.hpp"
 
-#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 #include <Essa/LLGL/OpenGL/Extensions.hpp>
+#include <Essa/LLGL/Window/AbstractOpenGLHelper.hpp>
 #include <iostream>
 
 namespace llgl::opengl {

@@ -60,13 +60,21 @@ struct Array {
     std::list<Expression> subexpressions;
 };
 
-template<class OutputIt> void print(OutputIt out, int i) { fmt::format_to(out, "{}", i); }
+template<class OutputIt>
+void print(OutputIt out, int i) {
+    fmt::format_to(out, "{}", i);
+}
 
-template<class OutputIt> void print(OutputIt out, Util::UString const& str) { fmt::format_to(out, "'{}'", str.encode()); }
+template<class OutputIt>
+void print(OutputIt out, Util::UString const& str) {
+    fmt::format_to(out, "'{}'", str.encode());
+}
 
-template<class OutputIt> void print(OutputIt out, Expression const& expr);
+template<class OutputIt>
+void print(OutputIt out, Expression const& expr);
 
-template<class OutputIt> void print(OutputIt out, Array const& array) {
+template<class OutputIt>
+void print(OutputIt out, Array const& array) {
     size_t i = 0;
     fmt::format_to(out, "(");
     for (auto const& expr : array.subexpressions) {
@@ -78,7 +86,8 @@ template<class OutputIt> void print(OutputIt out, Array const& array) {
     fmt::format_to(out, ")");
 }
 
-template<class OutputIt> void print(OutputIt out, Expression const& expr) {
+template<class OutputIt>
+void print(OutputIt out, Expression const& expr) {
     std::visit([out](auto const& value) { print(out, value); }, expr);
 }
 
@@ -139,7 +148,9 @@ ParseErrorOr<int> TestParser::parse_number() {
     );
 }
 
-ParseErrorOr<UString> TestParser::parse_text() { return TRY(expect(TestTokenType::Text)).value(); }
+ParseErrorOr<UString> TestParser::parse_text() {
+    return TRY(expect(TestTokenType::Text)).value();
+}
 
 ErrorOr<void, __TestSuite::TestError> expect_success(std::string_view input, std::string_view result) {
     ReadableMemoryStream stream = ReadableMemoryStream::from_string(input);

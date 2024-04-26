@@ -71,8 +71,12 @@ public:
         return *reinterpret_cast<U*>(m_storage.data());
     }
 
-    T& ref() { return cast<T>(); }
-    T const& ref() const { return cast<T>(); }
+    T& ref() {
+        return cast<T>();
+    }
+    T const& ref() const {
+        return cast<T>();
+    }
 
 private:
     friend class Any;
