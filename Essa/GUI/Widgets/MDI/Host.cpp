@@ -9,19 +9,7 @@
 
 namespace GUI::MDI {
 
-Host::Host() {
-    struct BackgroundWindow : public WindowRoot {
-        BackgroundWindow(WidgetTreeRoot& window)
-            : WindowRoot(window) {
-            window.setup("BackgroundWindow", { 1, 1 }, llgl::WindowSettings { .flags = llgl::WindowFlags::Borderless });
-        }
-    };
-    m_background_window = &open_window<BackgroundWindow>().window;
-    m_background_window->set_position({});
-    m_background_window->set_always_on_bottom(true);
-
-    m_next_window_position = { 10, 10 + theme().tool_window_title_bar_size };
-}
+Host::Host() { }
 
 void Host::focus_window_it(WindowList::iterator new_focused_it) {
     if (m_focused_window == &**new_focused_it) {
@@ -44,6 +32,20 @@ void Host::focus_window_it(WindowList::iterator new_focused_it) {
     auto ptr = std::move(*new_focused_it);
     m_windows.erase(new_focused_it);
     m_windows.push_back(std::move(ptr));
+}
+
+void Host::on_init() {
+    struct BackgroundWindow : public WindowRoot {
+        BackgroundWindow(WidgetTreeRoot& window)
+            : WindowRoot(window) {
+            window.setup("BackgroundWindow", { 1, 1 }, llgl::WindowSettings { .flags = llgl::WindowFlags::Borderless });
+        }
+    };
+    m_background_window = &open_window<BackgroundWindow>().window;
+    m_background_window->set_position({});
+    m_background_window->set_always_on_bottom(true);
+
+    m_next_window_position = { 10, 10 + theme().tool_window_title_bar_size };
 }
 
 Widget::EventHandlerResult Host::do_handle_event(GUI::Event const& event) {

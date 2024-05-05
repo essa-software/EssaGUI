@@ -74,6 +74,7 @@ public:
 private:
     using WindowList = std::list<std::unique_ptr<Window>>;
 
+    virtual void on_init() override;
     virtual void draw(Gfx::Painter& painter) const override;
     virtual void update() override;
     virtual void relayout() override;
