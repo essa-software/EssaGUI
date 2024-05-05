@@ -85,7 +85,8 @@ void WindowRoot::do_handle_event(llgl::Event const& event) {
             return;
         }
     }
-    if (auto const* mousemove = event.get<llgl::Event::MouseMove>()) {
+    if (auto const* mousemove = event.get<llgl::Event::MouseMove>();
+        mousemove && (WidgetTreeRoot*)&this->m_window.host_window() == &this->m_window) {
         llgl::Cursor::set(main_widget()->cursor(mousemove->local_position()));
     }
     event.visit(
