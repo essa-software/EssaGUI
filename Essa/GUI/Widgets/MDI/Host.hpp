@@ -84,6 +84,7 @@ private:
     virtual bool steals_focus() const override {
         return true;
     }
+    virtual llgl::Cursor const& cursor(Util::Point2i mouse_pos) const override;
 
     Window& open_window_impl(std::unique_ptr<Window>);
     void focus_window_it(WindowList::iterator);

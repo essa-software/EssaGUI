@@ -208,6 +208,42 @@ void Host::remove_closed_windows() {
     });
 }
 
+llgl::Cursor const& Host::cursor(Util::Point2i mouse_pos) const {
+    auto is_resizing = [&](Window const& window, Window::ResizeDirection direction) {
+        return window.resize_rect(direction).contains(mouse_pos)
+            || std::ranges::find(window.m_resize_directions, direction) != window.m_resize_directions.end();
+    };
+
+    for (auto const& window : m_windows) {
+        bool top_resize = is_resizing(*window, Window::ResizeDirection::Top);
+        bool right_resize = is_resizing(*window, Window::ResizeDirection::Right);
+        bool bottom_resize = is_resizing(*window, Window::ResizeDirection::Bottom);
+        bool left_resize = is_resizing(*window, Window::ResizeDirection::Left);
+
+        if ((left_resize && top_resize) || (right_resize && bottom_resize)) {
+            return llgl::Cursor::size_nwse();
+        }
+        if ((left_resize && bottom_resize) || (right_resize && top_resize)) {
+            return llgl::Cursor::size_nesw();
+        }
+        if (top_resize || bottom_resize) {
+            return llgl::Cursor::size_ns();
+        }
+        if (left_resize || right_resize) {
+            return llgl::Cursor::size_we();
+        }
+
+        if (window->client_rect().contains(mouse_pos)) {
+            auto* main_widget = window->main_widget();
+            if (main_widget) {
+                auto const& cursor = window->main_widget()->cursor(mouse_pos - window->position().to_vector());
+                return cursor;
+            }
+        }
+    }
+    return llgl::Cursor::arrow();
+}
+
 std::vector<DevToolsObject const*> Host::dev_tools_children() const {
     std::vector<DevToolsObject const*> children;
     for (auto const& wnd : m_windows) {
