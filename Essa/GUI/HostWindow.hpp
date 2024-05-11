@@ -36,7 +36,8 @@ public:
     // function won't return until user chooses an action
     // or dismisses the menu.
     // Position is relative to this HostWindow.
-    void open_context_menu(Util::Point2i position, ContextMenu);
+    [[deprecated("Use open_context_menu_non_blocking()")]] void open_context_menu(Util::Point2i position, ContextMenu);
+    void open_context_menu_non_blocking(Util::Point2i position, ContextMenu);
     // Position is relative to this HostWindow.
     TooltipOverlay& add_tooltip(Util::Point2i position, Tooltip t) const;
 

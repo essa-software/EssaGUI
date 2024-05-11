@@ -107,6 +107,12 @@ void HostWindow::open_context_menu(Util::Point2i position, ContextMenu menu) {
     menu_overlay.window.show_modal(this);
 }
 
+void HostWindow::open_context_menu_non_blocking(Util::Point2i position, ContextMenu menu) {
+    auto menu_overlay = GUI::Application::the().open_host_window<ContextMenuOverlay>(std::move(menu));
+    menu_overlay.window.set_position(this->position() + position.to_vector());
+    menu_overlay.window.show_modal_non_blocking(*this);
+}
+
 TooltipOverlay& HostWindow::add_tooltip(Util::Point2i position, Tooltip t) const {
     Gfx::Text text(t.text, GUI::Application::the().font());
     auto tooltip_window = GUI::Application::the().open_host_window<TooltipOverlay>(std::move(t));
