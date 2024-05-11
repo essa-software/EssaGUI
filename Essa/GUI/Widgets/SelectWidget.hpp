@@ -20,6 +20,7 @@ public:
         Util::UString label;
     };
 
+    void clear_options();
     void add_option(SelectOption option);
     void set_selected_index(unsigned idx, NotifyUser = NotifyUser::Yes);
     unsigned selected_index() const {

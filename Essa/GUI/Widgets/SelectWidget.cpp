@@ -67,6 +67,14 @@ void SelectWidget::on_init() {
     };
 }
 
+void SelectWidget::clear_options() {
+    m_options.clear();
+    m_selected_index = 0;
+    if (m_textbox) {
+        m_textbox->set_content("");
+    }
+}
+
 void SelectWidget::add_option(SelectOption option) {
     m_options.push_back(std::move(option));
     if (m_options.size() == 1) {
