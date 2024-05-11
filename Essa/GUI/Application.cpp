@@ -89,7 +89,6 @@ void Application::tick() {
 
 WindowRoot& Application::setup_window_root(HostWindow& window, std::unique_ptr<WindowRoot> root) {
     // We expect that root will initialize/open the window.
-    assert(!window.is_closed());
     auto* root_ptr = root.get();
     window.set_root(std::move(root));
     return *root_ptr;
