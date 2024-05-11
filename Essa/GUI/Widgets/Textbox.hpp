@@ -20,7 +20,7 @@ public:
     CREATE_VALUE(double, min, std::numeric_limits<double>::lowest())
     CREATE_VALUE(double, max, std::numeric_limits<double>::max())
     CREATE_VALUE(size_t, limit, 1024)
-    CREATE_VALUE(Type, type, Type::NUMBER)
+    CREATE_VALUE(Type, type, Type::TEXT)
 
 private:
     void m_fit_in_range();
