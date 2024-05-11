@@ -70,6 +70,8 @@ public:
         return "Generic WindowRoot";
     }
 
+    /*restricted(WidgetTreeRoot)*/ virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;
+
 protected:
     void close();
 
@@ -77,7 +79,6 @@ private:
     virtual Widget::EventHandlerResult handle_event(llgl::Event const&) {
         return Widget::EventHandlerResult::NotAccepted;
     }
-    virtual EML::EMLErrorOr<void> load_from_eml_object(EML::Object const&, EML::Loader&) override;
 
     bool m_needs_relayout = true;
     std::unique_ptr<Widget> m_main_widget;
