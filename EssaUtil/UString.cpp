@@ -220,7 +220,7 @@ UString UString::insert(UString other, size_t where) const {
     return result;
 }
 
-bool UString::starts_with(UString other) const {
+bool UString::starts_with(UString const& other) const {
     if (other.size() > size()) {
         return false;
     }
@@ -230,6 +230,10 @@ bool UString::starts_with(UString other) const {
         }
     }
     return true;
+}
+
+bool UString::contains(UString const& other) const {
+    return find(other).has_value();
 }
 
 [[nodiscard]] size_t UString::indent() const {

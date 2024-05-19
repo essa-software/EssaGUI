@@ -98,7 +98,8 @@ public:
     [[nodiscard]] std::optional<size_t> find_one_of(std::initializer_list<uint32_t>, size_t start = 0) const;
     [[nodiscard]] UString erase(size_t start, size_t size = 1) const;
     [[nodiscard]] UString insert(UString other, size_t where) const;
-    [[nodiscard]] bool starts_with(UString other) const;
+    [[nodiscard]] bool starts_with(UString const& other) const;
+    [[nodiscard]] bool contains(UString const& other) const;
 
     [[nodiscard]] size_t indent() const;
 
