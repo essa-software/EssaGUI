@@ -25,4 +25,12 @@ struct ResourceTraits<Texture> {
     }
 };
 
+template<>
+struct ResourceTraits<Icon> {
+    static std::optional<Icon> load_from_file(std::string const&);
+    static std::string_view base_path() {
+        return "icons";
+    }
+};
+
 }

@@ -144,6 +144,9 @@ void ResourceManager::remove_resource(ResourceIdAndBase const& id_and_base) {
 Texture& ResourceManager::require_texture(std::string path) const {
     return require<Texture>(std::move(path));
 }
+Icon& ResourceManager::require_icon(std::string path) const {
+    return require<Icon>(std::move(path));
+}
 Font& ResourceManager::require_font(std::string path) const {
     return require<Font>(std::move(path));
 }

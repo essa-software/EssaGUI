@@ -1,12 +1,12 @@
 #pragma once
 
+#include <Essa/GUI/Graphics/Icon.hpp>
 #include <Essa/GUI/Util/ConfigFile.hpp>
 #include <compare>
 #include <map>
 #include <memory>
 #include <optional>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 namespace llgl {
@@ -163,11 +163,12 @@ public:
     }
 
     Texture& require_texture(std::string path) const;
+    Icon& require_icon(std::string path) const;
     Font& require_font(std::string path) const;
 
-    Gfx::Font& font() const;
-    Gfx::Font& bold_font() const;
-    Gfx::Font& fixed_width_font() const;
+    Font& font() const;
+    Font& bold_font() const;
+    Font& fixed_width_font() const;
 
 private:
     void find_resource_roots();

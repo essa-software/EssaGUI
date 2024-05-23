@@ -1,4 +1,5 @@
 #include "FileExplorer.hpp"
+#include "Essa/GUI/Graphics/VectorImage.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/HostWindow.hpp>
@@ -178,12 +179,17 @@ std::string FileModel::file_type(File const& file) {
 }
 
 llgl::Texture const* FileModel::file_icon(File const& file) const {
-    static llgl::Texture& directory_icon = GUI::Application::the().resource_manager().require_texture("gui/directory.png");
-    static llgl::Texture& regular_file_icon = GUI::Application::the().resource_manager().require_texture("gui/regularFile.png");
-    static llgl::Texture& block_device_icon = GUI::Application::the().resource_manager().require_texture("gui/blockDevice.png");
-    static llgl::Texture& symlink_icon = GUI::Application::the().resource_manager().require_texture("gui/symlink.png");
-    static llgl::Texture& socket_icon = GUI::Application::the().resource_manager().require_texture("gui/socket.png");
-    static llgl::Texture& executable_file_icon = GUI::Application::the().resource_manager().require_texture("gui/executableFile.png");
+    auto load = [](std::string const& path) -> llgl::Texture const& {
+        auto const& vector_image = GUI::Application::the().resource_manager().require_icon("essa/gui/file_types/" + path);
+        return vector_image.render({ 16, 16 });
+    };
+
+    static llgl::Texture const& directory_icon = load("directory.tvg");
+    static llgl::Texture const& regular_file_icon = load("regular_file.tvg");
+    static llgl::Texture const& block_device_icon = load("block_device.tvg");
+    static llgl::Texture const& symlink_icon = load("symlink.tvg");
+    static llgl::Texture const& socket_icon = load("socket.tvg");
+    static llgl::Texture const& executable_file_icon = load("executable.tvg");
 
     switch (file.type) {
     case std::filesystem::file_type::directory:

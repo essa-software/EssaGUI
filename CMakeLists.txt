@@ -11,6 +11,7 @@ execute_process(COMMAND git rev-parse --short HEAD
 find_package(GLEW REQUIRED)
 find_package(fmt REQUIRED)
 
+# Google Test
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -20,6 +21,9 @@ FetchContent_Declare(
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
+# TinyVG
+include(cmake/tinyvg.cmake)
 
 include(cmake/utils.cmake)
 
