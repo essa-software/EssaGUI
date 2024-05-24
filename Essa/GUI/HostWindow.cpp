@@ -9,6 +9,7 @@
 #include <Essa/GUI/Widgets/Container.hpp>
 #include <Essa/LLGL/OpenGL/Error.hpp>
 #include <Essa/LLGL/Window/Event.hpp>
+#include <Essa/LLGL/Window/Impls/SDLWindow.hpp>
 #include <Essa/LLGL/Window/Window.hpp>
 #include <EssaUtil/ScopeGuard.hpp>
 
@@ -129,7 +130,7 @@ Gfx::ResourceManager const& HostWindow::resource_manager() const {
 }
 
 void HostWindow::show_modal(HostWindow* parent) {
-    set_always_on_top();
+    set_modal_for(*parent);
 
     class ModalDialogEventLoop : public EventLoop {
     public:
@@ -203,7 +204,7 @@ void HostWindow::show_modal(HostWindow* parent) {
 }
 
 void HostWindow::show_modal_non_blocking(HostWindow& parent) {
-    set_always_on_top();
+    set_modal_for(parent);
     parent.m_is_blocked_by_modal_dialog = true;
     m_modal_parent = &parent;
 }

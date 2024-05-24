@@ -41,6 +41,7 @@ public:
     void request_focus();
     void set_active() const;
     void set_always_on_top(bool on_top = true);
+    void set_modal_for(Window& parent);
     // This does capture_mouse(), but clears capture when the window is closed.
     void set_captures_mouse(bool captures = true);
     void set_mouse_position(Util::Point2i);

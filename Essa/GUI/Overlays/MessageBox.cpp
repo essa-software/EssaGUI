@@ -124,7 +124,6 @@ MessageBox::ButtonRole message_box(HostWindow& host_window, Util::UString messag
 
 MessageBox::ButtonRole message_box(HostWindow* host_window, Util::UString message, Util::UString title, MessageBox::Settings settings) {
     auto msgbox = GUI::Application::the().open_host_window<GUI::MessageBox>(std::move(message), std::move(title), settings);
-    msgbox.window.set_always_on_top();
     msgbox.window.show_modal(host_window);
     return msgbox.root.clicked_button();
 }

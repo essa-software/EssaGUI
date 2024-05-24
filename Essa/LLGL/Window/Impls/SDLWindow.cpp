@@ -274,6 +274,11 @@ void Window::set_always_on_top(bool on_top) {
     SDL_SetWindowAlwaysOnTop(m_data->window, on_top ? SDL_TRUE : SDL_FALSE);
 }
 
+void Window::set_modal_for(Window& parent) {
+    assert(!is_closed());
+    SDL_SetWindowModalFor(m_data->window, parent.m_data->window);
+}
+
 void Window::maximize() {
     assert(!is_closed());
     SDL_MaximizeWindow(m_data->window);
