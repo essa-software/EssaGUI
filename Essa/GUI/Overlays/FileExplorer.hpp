@@ -7,10 +7,9 @@
 #include <Essa/GUI/Widgets/TreeView.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/WindowRoot.hpp>
+#include <chrono>
 #include <filesystem>
 #include <functional>
-#include <memory>
-#include <string_view>
 #include <vector>
 
 namespace GUI {
@@ -22,6 +21,7 @@ public:
         uint64_t size;
         std::filesystem::file_type type;
         bool is_executable;
+        std::chrono::file_clock::time_point last_modified;
     };
 
     virtual size_t children_count(std::optional<Model::Node> node) const override {

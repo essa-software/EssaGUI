@@ -1,7 +1,7 @@
 #include "FileExplorer.hpp"
-#include "Essa/GUI/Graphics/VectorImage.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/VectorImage.hpp>
 #include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
@@ -16,12 +16,12 @@
 #include <EssaUtil/Config.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
+
 #include <filesystem>
-#include <fstream>
+#include <fmt/chrono.h>
 #include <functional>
 #include <iostream>
 #include <map>
-#include <sstream>
 #include <string>
 #include <sys/types.h>
 #include <utility>
@@ -61,15 +61,13 @@ Variant FileModel::data(Node row, size_t column) const {
             return "...";
         }
     }
+    case 3: {
+        using namespace std::chrono;
+        return Util::UString { std::format("{:%Y-%m-%d %H:%M:%S}", time_point_cast<seconds>(file.last_modified)) };
+    }
     case 4: {
         return Util::UString { file_type(file) };
     }
-    case 3:
-        std::time_t cftime
-            = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(std::filesystem::last_write_time(file.path)));
-        std::string string = std::asctime(std::localtime(&cftime));
-        string.pop_back(); // trailing \n
-        return Util::UString { string };
     }
     return "";
 }
@@ -108,6 +106,7 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
                     o.status().permissions()
                     & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)
                 ),
+            .last_modified = std::filesystem::last_write_time(o.path()),
         });
 
         // for(const auto& e : m_content.back())
@@ -331,33 +330,43 @@ FileExplorer::FileExplorer(WidgetTreeRoot& window, Mode mode)
     search_textbox->on_change = [this](Util::UString const& query) {
         // FIXME: Port this to UString instead of encoding this to std::string
         //        because of lazyness.
-        m_model->update_content(m_current_path, [query = query.encode()](std::filesystem::path path) -> bool {
-            // TODO: Support fuzzy search
-            auto str = path.string();
-            auto size = query.size();
+        try {
+            m_model->update_content(m_current_path, [query = query.encode()](std::filesystem::path path) -> bool {
+                // TODO: Support fuzzy search
+                auto str = path.string();
+                auto size = query.size();
 
-            if (query[0] != '*' && query[size - 1] != '*') {
-                return str.substr(0, size) == query;
-            }
-            else if (query[0] != '*' && query[size - 1] == '*') {
-                return str.substr(0, size - 1) == query.substr(0, size - 1);
-            }
-            else if (query[0] == '*' && query[size - 1] != '*') {
-                for (unsigned i = 0; i < str.size(); i++) {
-                    if (str.substr(i, std::min(i + size - 1, str.size())) == query.substr(1, size))
-                        return true;
+                if (query[0] != '*' && query[size - 1] != '*') {
+                    return str.substr(0, size) == query;
+                }
+                else if (query[0] != '*' && query[size - 1] == '*') {
+                    return str.substr(0, size - 1) == query.substr(0, size - 1);
+                }
+                else if (query[0] == '*' && query[size - 1] != '*') {
+                    for (unsigned i = 0; i < str.size(); i++) {
+                        if (str.substr(i, std::min(i + size - 1, str.size())) == query.substr(1, size))
+                            return true;
+                    }
+                    return false;
+                }
+                else {
+                    for (unsigned i = 0; i < str.size(); i++) {
+                        if (str.substr(i, std::min(i + size - 1, str.size())) == query.substr(1, size - 1))
+                            return true;
+                    }
+                    return false;
                 }
                 return false;
-            }
-            else {
-                for (unsigned i = 0; i < str.size(); i++) {
-                    if (str.substr(i, std::min(i + size - 1, str.size())) == query.substr(1, size - 1))
-                        return true;
+            });
+        } catch (std::filesystem::filesystem_error& error) {
+            GUI::message_box(
+                &this->window().host_window(), Util::UString { error.what() }, "Error",
+                {
+                    .buttons = GUI::MessageBox::Buttons::Ok,
+                    .icon = GUI::MessageBox::Icon::Error,
                 }
-                return false;
-            }
-            return false;
-        });
+            );
+        }
     };
 
     auto* parent_directory_button = container->find_widget_of_type_by_id_recursively<TextButton>("parent_directory");
@@ -468,5 +477,4 @@ std::optional<std::filesystem::path> FileExplorer::get_directory_to_open(HostWin
     explorer.window.show_modal(window);
     return result;
 }
-
 }
