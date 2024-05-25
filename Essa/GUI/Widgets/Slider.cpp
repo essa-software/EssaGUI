@@ -4,7 +4,6 @@
 
 #include <Essa/GUI/NotifyUser.hpp>
 #include <cmath>
-#include <iostream>
 
 namespace GUI {
 
@@ -87,8 +86,8 @@ void Slider::draw(Gfx::Painter& window) const {
         = are_all_parents_enabled() ? theme().slider.foreground : theme().slider.foreground - Util::Color { 70, 70, 70, 0 };
     window.deprecated_draw_rectangle(
         { { static_cast<float>((value_clamped_to_min_max() - m_min) / (m_max - m_min) * raw_size().x() - knob_size_x / 2),
-            raw_size().y() / 2 - 10.f },
-          { knob_size_x, 20.f } },
+            0.f },
+          { knob_size_x, raw_size().y() } },
         slider_value
     );
 }
