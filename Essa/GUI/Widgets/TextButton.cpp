@@ -18,26 +18,25 @@ void TextButton::draw(Gfx::Painter& painter) const {
 
     double text_offset = 0;
     if (m_image) {
-        Gfx::RectangleDrawOptions image;
-        image.texture = m_image;
+        auto const* image = m_active_image ? (is_active() ? m_active_image : m_image) : m_image;
+        Gfx::RectangleDrawOptions rect;
+        rect.texture = image;
         if (m_content.is_empty()) {
             painter.deprecated_draw_rectangle(
                 {
-                    (raw_size() / 2 - m_image->size().cast<int>() / 2).cast<float>().to_vector().to_point(),
-                    m_image->size().cast<float>(),
+                    (raw_size() / 2 - image->size().cast<int>() / 2).cast<float>().to_vector().to_point(),
+                    image->size().cast<float>(),
                 },
-                image
+                rect
             );
             return;
         }
-        else {
-            text_offset = 5 + m_image->size().x();
-            painter.deprecated_draw_rectangle(
-                { { 5, raw_size().y() / 2 - m_image->size().y() / 2.f },
-                  { static_cast<float>(m_image->size().x()), static_cast<float>(m_image->size().y()) } },
-                image
-            );
-        }
+        text_offset = 5 + image->size().x();
+        painter.deprecated_draw_rectangle(
+            { { 5, raw_size().y() / 2 - image->size().y() / 2.f },
+              { static_cast<float>(image->size().x()), static_cast<float>(image->size().y()) } },
+            rect
+        );
     }
 
     Gfx::Text text { "", Application::the().font() };
