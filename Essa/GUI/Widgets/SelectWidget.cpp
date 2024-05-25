@@ -89,7 +89,6 @@ void SelectWidget::render_select_overlay() {
         }
 
         auto& button = *root.add_widget<GUI::TextButton>();
-        button.set_image(&resource_manager().require_texture("gui/newFile.png"));
         button.set_content(option.label);
         button.set_alignment(GUI::Align::CenterLeft);
         button.on_click = [this, idx = &option - m_options.data()]() {
