@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Extensions.hpp"
+#include <tuple>
 #include "OpenGL.hpp"
 #include "Texture.hpp"
 #include <EssaUtil/Matrix.hpp>
-#include <concepts>
 #include <string_view>
-#include <tuple>
 #include <type_traits>
 
 // Keep last!

@@ -1,5 +1,7 @@
 #include "Shader.hpp"
 
+#include <Essa/LLGL/OpenGL/Extensions.hpp>
+
 namespace llgl {
 
 namespace Detail {
