@@ -27,9 +27,17 @@ public:
         return std::get<Dim>(std::tuple { Dimensions... });
     }
 
-    MultidimensionalArray(Type const& v = {}) {
+    MultidimensionalArray(Type const& v = {})
+        requires(std::is_copy_constructible_v<Type>)
+    {
         m_storage = new Type[size()];
         fill(v);
+    }
+
+    MultidimensionalArray()
+        requires(!std::is_copy_constructible_v<Type>)
+    {
+        m_storage = new Type[size()];
     }
 
     MultidimensionalArray(MultidimensionalArray const&) = delete;
