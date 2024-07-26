@@ -35,6 +35,16 @@ namespace llgl {
     Ex(X, SDLK_x)                       \
     Ex(Y, SDLK_y)                       \
     Ex(Z, SDLK_z)                       \
+    Ex(Num0, SDLK_0)                    \
+    Ex(Num1, SDLK_1)                    \
+    Ex(Num2, SDLK_2)                    \
+    Ex(Num3, SDLK_3)                    \
+    Ex(Num4, SDLK_4)                    \
+    Ex(Num5, SDLK_5)                    \
+    Ex(Num6, SDLK_6)                    \
+    Ex(Num7, SDLK_7)                    \
+    Ex(Num8, SDLK_8)                    \
+    Ex(Num9, SDLK_9)                    \
     Ex(Up, SDLK_UP)                     \
     Ex(Down, SDLK_DOWN)                 \
     Ex(Left, SDLK_LEFT)                 \
