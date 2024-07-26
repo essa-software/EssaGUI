@@ -49,6 +49,8 @@ void Window::create_impl(Util::Size2u size, Util::UString const& title, WindowSe
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, settings.context_settings.msaa_samples > 0 ? 1 : 0);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings.context_settings.msaa_samples);
 
     uint32_t sdl_flags = SDLHelpers::llgl_window_flags_to_sdl(settings.flags);
     if (has_flag(settings.flags, WindowFlags::TransparentBackground)) {
