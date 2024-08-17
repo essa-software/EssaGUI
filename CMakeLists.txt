@@ -23,7 +23,11 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # TinyVG
-include(cmake/tinyvg.cmake)
+option(ENABLE_TINYVG "Enable TinyVG support" OFF)
+if (ENABLE_TINYVG)
+    include(cmake/tinyvg.cmake)
+    add_compile_definitions(ESSA_ENABLE_TINYVG)
+endif()
 
 include(cmake/utils.cmake)
 

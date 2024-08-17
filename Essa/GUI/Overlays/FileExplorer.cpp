@@ -1,7 +1,9 @@
 #include "FileExplorer.hpp"
 
 #include <Essa/GUI/Application.hpp>
-#include <Essa/GUI/Graphics/VectorImage.hpp>
+#ifdef ESSA_ENABLE_TINYVG
+#    include <Essa/GUI/Graphics/VectorImage.hpp>
+#endif
 #include <Essa/GUI/HostWindow.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
@@ -183,12 +185,18 @@ llgl::Texture const* FileModel::file_icon(File const& file) const {
         return vector_image.render({ 16, 16 });
     };
 
-    static llgl::Texture const& directory_icon = load("directory.tvg");
-    static llgl::Texture const& regular_file_icon = load("regular_file.tvg");
-    static llgl::Texture const& block_device_icon = load("block_device.tvg");
-    static llgl::Texture const& symlink_icon = load("symlink.tvg");
-    static llgl::Texture const& socket_icon = load("socket.tvg");
-    static llgl::Texture const& executable_file_icon = load("executable.tvg");
+#ifdef ESSA_ENABLE_TINYVG
+    auto path = [](std::string const& stem) { return stem + ".tvg"; };
+#else
+    auto path = [](std::string const& stem) { return stem + ".png"; };
+#endif
+
+    static llgl::Texture const& directory_icon = load(path("directory"));
+    static llgl::Texture const& regular_file_icon = load(path("regular_file"));
+    static llgl::Texture const& block_device_icon = load(path("block_device"));
+    static llgl::Texture const& symlink_icon = load(path("symlink"));
+    static llgl::Texture const& socket_icon = load(path("socket"));
+    static llgl::Texture const& executable_file_icon = load(path("executable"));
 
     switch (file.type) {
     case std::filesystem::file_type::directory:

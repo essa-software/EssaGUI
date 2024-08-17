@@ -30,7 +30,6 @@ add_library(GUI SHARED
     Graphics/RichText/Fragments.cpp
     Graphics/ShaderResource.cpp
     Graphics/Text.cpp
-    Graphics/VectorImage.cpp
     
     Graphics/Drawing/Shape.cpp
     
@@ -87,12 +86,24 @@ add_library(GUI SHARED
     Widgets/MDI/Host.cpp
     Widgets/MDI/Window.cpp
 )
+
+if (ENABLE_TINYVG)
+    target_sources(GUI PRIVATE
+        Graphics/VectorImage.cpp
+    )
+endif()
+
 add_library(Essa::GUI ALIAS GUI)
 
 set_target_properties(GUI PROPERTIES OUTPUT_NAME "essa-gui")
 set_target_properties(GUI PROPERTIES SOVERSION ${ESSA_GIT_REVISION})
 essautil_setup_target(GUI)
-target_link_libraries(GUI PUBLIC Util LLGL-OpenGL LLGL-Window LLGL-Resources tinyvg)
+if (ENABLE_TINYVG)
+    set(TINYVG tinyvg)
+else()
+    set(TINYVG "")
+endif()
+target_link_libraries(GUI PUBLIC Util LLGL-OpenGL LLGL-Window LLGL-Resources ${TINYVG})
 
 # FIXME: This breaks build of eml/AST.cpp somewhere in Value::string()
 target_compile_options(GUI PRIVATE -Wno-restrict)

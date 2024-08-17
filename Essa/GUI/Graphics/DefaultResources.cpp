@@ -19,6 +19,8 @@ std::optional<Font> ResourceTraits<Font>::load_from_file(std::string const& path
 
 namespace IconImpl {
 
+#ifdef ESSA_ENABLE_TINYVG
+
 class TVG : public Detail::IconImpl {
 public:
     explicit TVG(TVGVectorImage image)
@@ -37,6 +39,8 @@ private:
     TVGVectorImage m_image;
     std::optional<llgl::Texture> m_cached_texture;
 };
+
+#endif
 
 class Image : public Detail::IconImpl {
 public:
@@ -61,6 +65,7 @@ private:
 
 std::optional<Icon> ResourceTraits<Icon>::load_from_file(std::string const& path) {
     auto extension = path.substr(path.find_last_of('.') + 1);
+#ifdef ESSA_ENABLE_TINYVG
     if (extension == "tvg") {
         auto maybe_image = TVGVectorImage::load_from_file(path);
         if (!maybe_image) {
@@ -68,6 +73,12 @@ std::optional<Icon> ResourceTraits<Icon>::load_from_file(std::string const& path
         }
         return Icon(std::make_unique<IconImpl::TVG>(std::move(*maybe_image)));
     }
+#else
+    if (extension == "tvg") {
+        fmt::println(stderr, "TinyVG support is disabled, cannot load TVG images");
+        return {};
+    }
+#endif
     auto maybe_image = llgl::ImageLoader::load_from_file(path);
     if (!maybe_image) {
         return {};
