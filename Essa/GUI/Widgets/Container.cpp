@@ -1,3 +1,4 @@
+#include "fmt/ranges.h"
 #include <Essa/GUI/Widgets/Container.hpp>
 
 #include <Essa/GUI/Application.hpp>

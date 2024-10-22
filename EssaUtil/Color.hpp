@@ -93,7 +93,7 @@ struct HSV {
     constexpr Color to_rgb() const;
 };
 
-constexpr Color operator*(Color const& left, auto fac) {
+constexpr Color operator*(Color const& left, double fac) {
     using Fac = decltype(fac);
     return { static_cast<uint8_t>(std::min<Fac>(255, left.r * fac)), static_cast<uint8_t>(std::min<Fac>(255, left.g * fac)),
              static_cast<uint8_t>(std::min<Fac>(255, left.b * fac)), left.a };

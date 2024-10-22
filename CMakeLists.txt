@@ -9,7 +9,8 @@ execute_process(COMMAND git rev-parse --short HEAD
 )
 
 find_package(GLEW REQUIRED)
-find_package(fmt REQUIRED)
+set(BUILD_SHARED_LIBS 1)
+add_subdirectory(ThirdParty/fmt)
 
 # Google Test
 include(FetchContent)
@@ -40,6 +41,8 @@ option(ESSAGUI_TESTS "Compile tests" ON)
 option(ESSAGUI_UTIL_ONLY "Compile only EssaUtil (no GUI or Engine)" OFF)
 
 include_directories(${Essa_SOURCE_DIR})
+# Apparently cmake is too dumb to use the include directory from fmt::fmt
+include_directories(${Essa_SOURCE_DIR}/ThirdParty/fmt/include)
 
 add_subdirectory(EssaUtil)
 

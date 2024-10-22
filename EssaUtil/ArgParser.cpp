@@ -1,4 +1,5 @@
 #include "ArgParser.hpp"
+#include "fmt/ranges.h"
 
 #include <algorithm>
 #include <fmt/format.h>

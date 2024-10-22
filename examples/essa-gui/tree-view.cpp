@@ -4,6 +4,7 @@
 #include <EssaUtil/Config.hpp>
 #include <cassert>
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 
 struct Column {
     std::string name;

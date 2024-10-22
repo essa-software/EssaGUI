@@ -23,7 +23,7 @@ template<class T>
     requires(is_formattable<T>::value)
 struct formatter<FormatIfFormattable<T>> : public formatter<T> {
     template<typename FormatContext>
-    constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) {
+    constexpr auto format(FormatIfFormattable<T> const& p, FormatContext& ctx) const {
         return formatter<T>::format(p.t, ctx);
     }
 };
