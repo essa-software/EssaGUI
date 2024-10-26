@@ -129,7 +129,7 @@ std::vector<Util::Point2f> calculate_vertices_for_rounded_shape(Drawing::Shape c
     }
     {
         auto [first, last] = std::ranges::unique(output_vertices, [](auto l, auto r) { return l.is_approximately_equal(r); });
-        input_vertices.erase(first, last);
+        output_vertices.erase(first, last);
     }
     while (!output_vertices.empty() && output_vertices.front() == output_vertices.back()) {
         output_vertices.pop_back();
