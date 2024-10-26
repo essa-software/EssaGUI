@@ -327,7 +327,15 @@ Widget::EventHandlerResult TextEditor::on_key_press(Event::KeyPress const& event
                             m_cursor.column--;
                             m_lines[m_cursor.line] = m_lines[m_cursor.line].erase(m_cursor.column);
                         };
-                        if (isspace(m_lines[m_cursor.line].at(m_cursor.column - 1))) {
+                        // deindent if we are line with only whitespaces before cursor
+                        bool should_deindent = true;
+                        for (size_t s = 0; s < m_cursor.column; s++) {
+                            if (!isspace(m_lines[m_cursor.line].at(s))) {
+                                should_deindent = false;
+                                break;
+                            }
+                        }
+                        if (should_deindent) {
                             do {
                                 remove_character();
                             } while (m_cursor.column > 0 && m_cursor.column % 4 != 0
