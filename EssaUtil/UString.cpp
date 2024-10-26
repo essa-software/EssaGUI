@@ -265,6 +265,18 @@ void UString::reallocate(size_t size) {
     // std::cout << __PRETTY_FUNCTION__ << " with size = " << size << " result = " << dump() << std::endl;
 }
 
+UString UString::trim_whitespace() const {
+    size_t start = 0;
+    size_t end = m_size;
+    while (start < m_size && isspace((int)m_storage[start])) {
+        start++;
+    }
+    while (end > start && isspace((int)m_storage[end - 1])) {
+        end--;
+    }
+    return substring(start, end - start);
+}
+
 std::string UString::dump() const {
     std::ostringstream oss;
     oss << "US[" << m_storage << " +" << m_size << "] ";

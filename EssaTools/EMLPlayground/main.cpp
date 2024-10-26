@@ -1,3 +1,4 @@
+#include "Essa/GUI/EML/Formatter.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/SyntaxHighlighter.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
@@ -13,7 +14,7 @@
 
 int main() {
     GUI::Application app;
-    auto& host_window = app.create_host_window({ 500, 500 }, "EML Playground");
+    auto& host_window = app.create_host_window({ 1280, 720 }, "EML Playground");
 
     auto& container = host_window.set_root_widget<GUI::Container>();
     container.set_layout<GUI::VerticalBoxLayout>();
@@ -24,7 +25,11 @@ int main() {
 
     auto* open_window = toolbar->add_widget<GUI::TextButton>();
     open_window->set_content("Open Window");
-    open_window->set_size({ 120.0_px, Util::Length::Auto });
+    // open_window->set_size({ 120.0_px, Util::Length::Auto });
+
+    auto* format = toolbar->add_widget<GUI::TextButton>();
+    format->set_content("Format");
+    // format->set_size({ 120.0_px, Util::Length::Auto });
 
     auto* preview = container.add_widget<GUI::HorizontalSplitter>();
 
@@ -41,6 +46,8 @@ int main() {
     };
     eml_editor->set_syntax_highlighter(std::make_unique<EML::SyntaxHighlighter>());
 
+    eml_editor->set_size({ 80_perc, Util::Length::Initial });
+
     open_window->on_click = [&]() {
         if (tool_window) {
             tool_window->window().close();
@@ -53,6 +60,11 @@ int main() {
                 tool_window = nullptr;
             }
         };
+    };
+
+    format->on_click = [&]() {
+        auto formatted = EML::Formatter { eml_editor->content().encode() }.format();
+        eml_editor->set_content(Util::UString(formatted));
     };
 
     app.run();

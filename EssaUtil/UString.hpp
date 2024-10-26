@@ -125,6 +125,8 @@ public:
         for_each_split("\n", std::forward<Callback>(callback));
     }
 
+    [[nodiscard]] UString trim_whitespace() const;
+
     std::strong_ordering operator<=>(UString const& other) const;
     bool operator<(UString const& other) const;
     bool operator==(UString const& other) const;

@@ -15,6 +15,7 @@ add_library(GUI SHARED
     EML/AST.cpp
     EML/EMLObject.cpp
     EML/EMLResource.cpp
+    EML/Formatter.cpp
     EML/Lexer.cpp
     EML/Loader.cpp
     EML/Parser.cpp

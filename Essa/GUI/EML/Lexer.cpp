@@ -37,8 +37,8 @@ Util::OsErrorOr<std::vector<Token>> Lexer::lex() {
         else if (next == '/') {
             TRY(consume());
             if (TRY(peek()) == '/') {
-                TRY(consume_until('\n'));
-                tokens.push_back(create_token(TokenType::Comment, "comment", start));
+                auto comment = TRY(consume_until('\n'));
+                tokens.push_back(create_token(TokenType::Comment, comment.substring(1), start));
             }
             else {
                 tokens.push_back(create_token(TokenType::Garbage, "/", start));

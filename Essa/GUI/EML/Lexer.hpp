@@ -6,7 +6,6 @@
 namespace EML {
 
 enum class TokenType {
-    AngleBracketString, // <abc>
     Comment,            // //abc
     Identifier,         // abc
     Number,             // 123

@@ -11,7 +11,7 @@
 struct TestCase {
     std::string test_name;
     std::string eml_input;
-    std::string expected_layout_dump;
+    std::string expected_formatted_eml;
     Util::Size2i wtr_size;
 };
 std::ostream& operator<<(std::ostream& out, TestCase const& ts) {
@@ -72,13 +72,13 @@ TEST_P(EMLTest, EMLTest) {
 
     std::ostringstream oss;
     main_widget.dump(oss, 0);
-    if (p.expected_layout_dump.empty()) {
+    if (p.expected_formatted_eml.empty()) {
         fmt::print(stderr, "\e[31mNo expectation for test {}, printing actual output:\e[m\n", p.test_name);
         main_widget.dump(std::cerr, 0);
         FAIL() << "No expectation for test";
     }
     else {
-        EXPECT_EQ(oss.str(), p.expected_layout_dump);
+        EXPECT_EQ(oss.str(), p.expected_formatted_eml);
     }
 }
 
@@ -115,7 +115,7 @@ std::vector<TestCase> read_test_cases() {
             tests.push_back(TestCase {
                 .test_name = file.path().lexically_relative(TESTCASES_PATH).string(),
                 .eml_input = MUST(input_file.decode()).encode(),
-                .expected_layout_dump = MUST(expectation_file.decode()).encode(),
+                .expected_formatted_eml = MUST(expectation_file.decode()).encode(),
                 .wtr_size = wtr_size,
             });
         }
